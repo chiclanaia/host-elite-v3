@@ -483,8 +483,40 @@
             </div>
             }
             @case ('listing') {
-            <!-- Same as existing Listing -->
-            <!-- ... (Listing Preview) -->
+            <!-- Listing Preview -->
+            <div class="bg-white border border-slate-200 rounded-lg p-6 animate-fade-in">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">Prévisualisation de l'Annonce</h2>
+                <div class="max-w-4xl mx-auto">
+                    <img [src]="editorForm.get('coverImageUrl')?.value" alt="Photo principale de la propriété"
+                        class="w-full h-80 object-cover rounded-lg shadow-lg mb-6">
+                    <h3 class="text-3xl font-bold text-slate-900">{{ propertyName() }}</h3>
+                    <p class="text-md text-slate-500 mt-1">{{ editorForm.get('address')?.value }}</p>
+                    <div class="flex items-center space-x-4 text-sm text-slate-600 mt-4 border-y border-slate-200 py-4">
+                        <span>4 voyageurs</span><span>·</span><span>2 chambres</span><span>·</span><span>2
+                            lits</span><span>·</span><span>1 salle de bain</span>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="text-xl font-semibold text-slate-800 mb-2">À propos de ce logement</h4>
+                        <p class="text-slate-600 whitespace-pre-wrap">{{
+                            editorForm.get('bienvenue.messageBienvenue')?.value }}</p>
+                    </div>
+                    <div class="mt-8">
+                        <h4 class="text-xl font-semibold text-slate-800 mb-4">Équipements</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-slate-600">
+                            @if (propertyEquipments().length > 0) {
+                            @for(equip of propertyEquipments(); track equip) {
+                            <span class="flex items-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg><span>{{ equip }}</span></span>
+                            }
+                            } @else { <p class="text-sm italic text-slate-400 col-span-full">Aucun équipement configuré.
+                            </p> }
+                        </div>
+                    </div>
+                </div>
+            </div>
             }
             @case ('microsite') {
             <!-- NEW DYNAMIC MICROSITE PREVIEW -->

@@ -48,6 +48,7 @@ export class WelcomeBookletViewComponent implements OnInit, OnDestroy {
     isLocationOpen = signal(false);
 
     propertyId = signal<string | null>(null);
+    propertyEquipments = signal<string[]>([]);
     propertyPhotos = signal<{ url: string, category: string, visible: boolean }[]>([]);
 
     // Microsite Config for accurate preview
@@ -442,6 +443,10 @@ export class WelcomeBookletViewComponent implements OnInit, OnDestroy {
             if (propData) {
                 this.propertyId.set(propData.id);
                 this.marketingText.set(propData.listing_description || '');
+
+                if (propData.property_equipments) {
+                    this.propertyEquipments.set(propData.property_equipments.map((e: any) => e.name));
+                }
 
                 if (propData.property_photos) {
                     // Merge DB photos with local visible state logic if needed
