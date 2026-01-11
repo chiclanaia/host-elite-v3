@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { BookletSection, CONTROL_LABELS } from '../booklet-definitions';
@@ -19,10 +19,11 @@ export class WelcomeBookletSectionEditorComponent {
     aiService = inject(WelcomeBookletAiService);
     mainService = inject(WelcomeBookletService);
 
-    isOpen = signal(true); // Or controlled by parent
+    @Input() isOpen = false;
+    @Output() toggleRequest = new EventEmitter<void>();
 
     toggle() {
-        this.isOpen.update(v => !v);
+        this.toggleRequest.emit();
     }
 
     getFields() {

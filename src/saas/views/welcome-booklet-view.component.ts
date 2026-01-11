@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
 import { WelcomeBookletEditorComponent } from './welcome-booklet/components/welcome-booklet-editor.component';
@@ -7,7 +7,7 @@ import { WelcomeBookletMicrositeComponent } from './welcome-booklet/components/w
 import { WelcomeBookletPreviewComponent } from './welcome-booklet/components/welcome-booklet-preview.component';
 
 @Component({
-    selector: 'app-welcome-booklet-view',
+    selector: 'saas-welcome-booklet-view',
     standalone: true,
     imports: [
         CommonModule,
@@ -19,11 +19,21 @@ import { WelcomeBookletPreviewComponent } from './welcome-booklet/components/wel
     templateUrl: './welcome-booklet-view.component.html',
 })
 export class WelcomeBookletViewComponent {
+    @Input() set propertyName(value: string) {
+        this.service.propertyName.set(value);
+    }
+
     service = inject(WelcomeBookletService);
 
     activeTab = this.service.activeTab;
+    isLoading = this.service.isLoading;
+    saveMessage = this.service.saveMessage;
 
     setActiveTab(tab: 'edit' | 'listing' | 'microsite' | 'booklet') {
         this.service.activeTab.set(tab);
+    }
+
+    save() {
+        this.service.save();
     }
 }

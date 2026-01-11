@@ -88,7 +88,7 @@ export class WelcomeBookletService implements OnDestroy {
                     group[key] = [''];
                     group[key + '_pdf'] = [''];
                 }
-                form.addControl(section.formGroupName, this.fb.group(group));
+                (form as FormGroup).addControl(section.formGroupName, this.fb.group(group));
             }
         });
 
