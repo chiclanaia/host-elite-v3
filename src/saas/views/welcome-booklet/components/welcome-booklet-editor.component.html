@@ -1,0 +1,33 @@
+<div class="p-6 max-w-4xl mx-auto space-y-6" [formGroup]="form">
+    <!-- General Info -->
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Informations Générales</h2>
+        <div class="grid grid-cols-1 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Adresse du logement</label>
+                <input type="text" formControlName="address"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    placeholder="ex: 12 Rue de la Paix, 75000 Paris">
+                <p class="mt-1 text-xs text-gray-500">Sert à localiser les widgets (météo, transports...).</p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Image de couverture (URL)</label>
+                <input type="text" formControlName="coverImageUrl"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+            </div>
+
+            <div *ngIf="form.get('coverImageUrl')?.value"
+                class="mt-2 h-40 w-full overflow-hidden rounded-md bg-gray-100">
+                <img [src]="form.get('coverImageUrl')?.value" class="h-full w-full object-cover" alt="Cover">
+            </div>
+        </div>
+    </div>
+
+    <!-- Sections Loop -->
+    <div class="space-y-4">
+        <app-welcome-booklet-section-editor *ngFor="let section of sections" [section]="section"
+            [group]="getSectionGroup(section.formGroupName)" [parentForm]="form">
+        </app-welcome-booklet-section-editor>
+    </div>
+</div>

@@ -1,0 +1,232 @@
+import { Injectable, inject, signal, computed, effect, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { HostRepository } from '../../../services/host-repository.service';
+import { WidgetService } from '../../../services/widget.service';
+import { SessionStore } from '../../../state/session.store';
+import { BookletSection, WidgetDisplayData, CONTROL_LABELS, SECTIONS_CONFIG, WIDGET_DEFINITIONS } from './booklet-definitions';
+import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
+
+@Injectable({ providedIn: 'root' })
+export class WelcomeBookletService implements OnDestroy {
+    repository = inject(HostRepository);
+    widgetService = inject(WidgetService);
+    store = inject(SessionStore);
+    fb = inject(FormBuilder);
+    sanitizer = inject(DomSanitizer);
+
+    editorForm: FormGroup;
+    propertyId = signal<string | null>(null);
+    propertyName = signal<string>('');
+
+    // State
+    activeTab = signal<'edit' | 'listing' | 'microsite' | 'booklet'>('edit');
+    isLoading = signal(false);
+    saveMessage = signal<string | null>(null);
+
+    // Data
+    availableCategories = signal<string[]>(['Salon', 'Cuisine', 'Chambre 1', 'Chambre 2', 'Salle de bain', 'Extérieur', 'Piscine', 'Autre']);
+    activeWidgets = signal<Record<string, boolean>>({});
+    propertyPhotos = signal<{ url: string, category: string }[]>([]);
+    propertyEquipments = signal<string[]>([]);
+    micrositeConfig = signal<any>({ template: 'modern', primaryColor: '#3b82f6', headline: 'Bienvenue', visibleSections: ['gallery', 'amenities', 'guide'], showDescription: true, showContact: true });
+
+    sections: BookletSection[] = SECTIONS_CONFIG.map(s => ({
+        ...s,
+        icon: this.sanitizer.bypassSecurityTrustHtml(s.iconSource!)
+    }));
+
+    widgetData = signal<Record<string, WidgetDisplayData>>({
+        'weather': { value: '--' },
+        'air-quality': { value: '--' },
+        'uv-index': { value: '--' },
+        'tides': { value: 'Voir horaires' },
+        'avalanche-risk': { value: 'Voir bulletin' },
+        'pharmacy': { value: 'Voir à proximité' },
+        'local-events': { value: 'Agenda local' },
+        'public-transport': { value: 'Itinéraires' },
+        'currency-converter': { value: '--' },
+    });
+
+    private refreshInterval: any;
+    private addressSub: Subscription | undefined;
+
+    constructor() {
+        this.editorForm = this.initForm();
+
+        effect(() => {
+            const name = this.propertyName();
+            if (name) this.loadData(name);
+        });
+
+        this.refreshInterval = setInterval(() => this.refreshRealWidgetData(), 3600000);
+    }
+
+    ngOnDestroy() {
+        clearInterval(this.refreshInterval);
+        this.addressSub?.unsubscribe();
+    }
+
+    initForm(): FormGroup {
+        const togglesGroup: { [key: string]: any } = {};
+        this.sections.forEach(s => togglesGroup[s.id] = [true]);
+
+        const form = this.fb.group({
+            coverImageUrl: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop'],
+            address: [''],
+            gpsCoordinates: [''],
+            photos: this.fb.array([]),
+            toggles: this.fb.group(togglesGroup)
+        });
+
+        SECTIONS_CONFIG.forEach(section => {
+            const fields = CONTROL_LABELS[section.formGroupName];
+            if (fields) {
+                const group: any = {};
+                for (const key in fields) {
+                    group[key] = [''];
+                    group[key + '_pdf'] = [''];
+                }
+                form.addControl(section.formGroupName, this.fb.group(group));
+            }
+        });
+
+        // Address change listener
+        this.addressSub = form.get('address')?.valueChanges.pipe(
+            debounceTime(1500), distinctUntilChanged(), filter(v => v && v.length > 5)
+        ).subscribe(() => this.refreshRealWidgetData());
+
+        return form;
+    }
+
+    async loadData(name: string) {
+        this.isLoading.set(true);
+        try {
+            const prop = await this.repository.getPropertyByName(name);
+            const booklet = await this.repository.getBooklet(name);
+
+            if (prop) {
+                this.propertyId.set(prop.id);
+                if (prop.property_equipments) this.propertyEquipments.set(prop.property_equipments.map((e: any) => e.name));
+
+                // Photos
+                const pArray = this.editorForm.get('photos') as FormArray;
+                pArray.clear();
+                if (prop.property_photos?.length) {
+                    this.propertyPhotos.set(prop.property_photos);
+                    prop.property_photos.forEach((p: any) => pArray.push(this.fb.group({ url: [p.url], category: [p.category] })));
+                }
+
+                // Init Form basic data
+                const defaults: any = {
+                    address: prop.address || '',
+                    bienvenue: { messageBienvenue: prop.listing_description || '', coordonneesHote: prop.cleaning_contact_info || '', numeroUrgenceHote: prop.emergency_contact_info || '' },
+                    systemes: { wifi: prop.wifi_code ? `Code Wi-Fi : ${prop.wifi_code}` : '' },
+                    regles: { heuresSilence: prop.house_rules_text || '', gestionCles: prop.arrival_instructions || '' }
+                };
+                if (prop.cover_image_url) defaults.coverImageUrl = prop.cover_image_url;
+                this.editorForm.patchValue(defaults);
+            }
+
+            if (booklet) {
+                if (booklet.widgets) this.activeWidgets.set(booklet.widgets);
+                if (booklet.microsite_config) this.micrositeConfig.set(typeof booklet.microsite_config === 'string' ? JSON.parse(booklet.microsite_config) : booklet.microsite_config);
+                this.editorForm.patchValue(this.removeEmpty(booklet));
+                if (booklet.gpsCoordinates) this.editorForm.patchValue({ gpsCoordinates: booklet.gpsCoordinates });
+            }
+
+            const cats = await this.repository.getPropertyCategories(name);
+            if (cats?.length) this.availableCategories.set(cats);
+
+            this.refreshRealWidgetData();
+        } catch (e) { console.error(e); } finally { this.isLoading.set(false); }
+    }
+
+    async save() {
+        if (!this.editorForm.valid) return;
+        try {
+            await this.repository.saveBooklet(this.propertyName(), this.editorForm.value);
+            await this.repository.savePropertyCategories(this.propertyName(), this.availableCategories());
+            if (this.propertyId()) {
+                const photos = this.editorForm.value.photos;
+                await this.repository.savePropertyPhotos(this.propertyId()!, photos);
+                this.propertyPhotos.set(photos.filter((p: any) => p.url));
+            }
+            this.saveMessage.set("Enregistré !");
+            setTimeout(() => this.saveMessage.set(null), 3000);
+            this.refreshRealWidgetData();
+        } catch (e) { console.error(e); alert("Erreur sauvegarde"); }
+    }
+
+    async refreshRealWidgetData() {
+        const address = this.editorForm.get('address')?.value;
+        if (!address || address.length < 5) return;
+
+        // Set loading...
+        this.widgetData.update(c => ({ ...c, 'weather': { value: '...' }, 'air-quality': { value: '...' } }));
+
+        const coords = await this.widgetService.getCoordinates(address);
+        if (!coords) return;
+
+        if (!this.editorForm.get('gpsCoordinates')?.value) {
+            this.editorForm.patchValue({ gpsCoordinates: `https://www.google.com/maps?q=${coords.lat},${coords.lon}` });
+        }
+
+        const [weather, air, rate] = await Promise.all([
+            this.widgetService.getWeatherData(coords.lat, coords.lon),
+            this.widgetService.getAirQuality(coords.lat, coords.lon),
+            this.widgetService.getExchangeRate('EUR', 'USD')
+        ]);
+
+        this.widgetData.update(current => {
+            const updated = { ...current };
+            const encodedAddress = encodeURIComponent(address);
+
+            if (weather) {
+                const temp = weather.temperature_2m;
+                const desc = this.widgetService.getWeatherDescription(weather.weather_code);
+                updated['weather'] = { value: `${temp}°C ${desc}` };
+                updated['uv-index'] = { value: weather.uv_index ? `${weather.uv_index}` : 'Faible' };
+            } else {
+                updated['weather'] = { value: 'Indisponible' };
+            }
+
+            if (air) {
+                updated['air-quality'] = { value: `${air} AQI ${this.widgetService.getAirQualityLabel(air)}` };
+            } else {
+                updated['air-quality'] = { value: '--' };
+            }
+
+            if (rate) {
+                updated['currency-converter'] = { value: `1€ = $${rate.toFixed(2)}` };
+            } else {
+                updated['currency-converter'] = { value: '--' };
+            }
+
+            updated['pharmacy'] = { value: 'Pharmacies à proximité', link: `https://www.google.com/maps/search/pharmacie+near+${encodedAddress}` };
+            updated['public-transport'] = { value: 'Transports & Arrêts', link: `https://www.google.com/maps/search/bus+metro+station+near+${encodedAddress}` };
+            updated['local-events'] = { value: 'Agenda & Sorties', link: `https://www.google.com/search?q=evenements+aujourd'hui+near+${encodedAddress}` };
+            updated['tides'] = { value: 'Horaires des Marées', link: `https://www.google.com/search?q=marees+${encodedAddress}` };
+            updated['avalanche-risk'] = { value: 'Bulletin Avalanche', link: `https://www.google.com/search?q=risque+avalanche+${encodedAddress}` };
+
+            return updated;
+        });
+    }
+
+    removeEmpty(obj: any): any {
+        if (typeof obj !== 'object' || obj === null) return obj;
+        if (Array.isArray(obj)) return obj.map(v => this.removeEmpty(v));
+        const newObj: any = {};
+        for (const key in obj) {
+            const val = obj[key];
+            if (typeof val === 'object' && val !== null) {
+                const cleanVal = this.removeEmpty(val);
+                if (Object.keys(cleanVal).length > 0) newObj[key] = cleanVal;
+            } else if (val !== '' && val !== null && val !== undefined) {
+                newObj[key] = val;
+            }
+        }
+        return newObj;
+    }
+}

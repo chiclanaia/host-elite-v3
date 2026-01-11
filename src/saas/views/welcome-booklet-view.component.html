@@ -1,695 +1,79 @@
-<div class="relative">
-    <!-- Notifications -->
-    @if (saveMessage()) {
-    <div class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce">
-        {{ saveMessage() }}
-    </div>
-    }
-
-    @if (isLoading()) {
-    <div class="absolute inset-0 bg-white/80 z-40 flex justify-center items-start pt-20">
-        <div class="flex items-center space-x-3 bg-white px-6 py-4 rounded-lg shadow-lg border border-slate-200">
-            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-            <span class="text-slate-600 font-medium">Chargement des données...</span>
-        </div>
-    </div>
-    }
-
-    <!-- AI Loading Overlay -->
-    @if (isAiLoading()) {
-    <div class="fixed inset-0 bg-slate-900/60 z-[60] flex flex-col justify-center items-center backdrop-blur-sm">
-        <div
-            class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center animate-bounce-in max-w-sm text-center">
-            <div class="relative w-20 h-20 mb-6">
-                <div class="absolute inset-0 border-4 border-indigo-200 rounded-full animate-ping"></div>
-                <div class="absolute inset-0 border-4 border-indigo-600 rounded-full border-t-transparent animate-spin">
-                </div>
-                <div class="absolute inset-0 flex items-center justify-center text-2xl">✨</div>
-            </div>
-            <h3 class="text-xl font-bold text-slate-800 mb-2">Magie en cours...</h3>
-            <p class="text-slate-600">L'IA recherche les meilleures adresses locales pour votre propriété.</p>
-        </div>
-    </div>
-    }
-
-    <div class="space-y-6">
-        <div>
-            <h1 class="text-3xl font-bold text-slate-800">Informations de la Propriété</h1>
-            <p class="text-slate-500">Gérez les données et prévisualisez les supports de communication pour {{
-                propertyName() }}.</p>
-        </div>
-
-        <!-- Sub-navigation Tabs -->
-        <div class="border-b border-slate-200">
-            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                <button (click)="setActiveTab('edit')"
-                    [class]="activeTab() === 'edit' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
-                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+<div class="flex h-full flex-col bg-white">
+    <!-- Header / Tabs -->
+    <div class="flex items-center justify-between border-b px-6 py-3 bg-gray-50/50">
+        <div class="flex space-x-6">
+            <button (click)="setActiveTab('edit')"
+                [class]="activeTab() === 'edit' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                        <path
+                            d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
+                        <path
+                            d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
+                    </svg>
                     Saisie Données
-                </button>
-                <button (click)="setActiveTab('listing')"
-                    [class]="activeTab() === 'listing' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
-                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                </span>
+            </button>
+
+            <!-- Annonce -->
+            <button (click)="setActiveTab('listing')"
+                [class]="activeTab() === 'listing' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                        <path
+                            d="M10 2c-1.716 0-3.408.106-5.07.31C3.806 2.45 3 3.414 3 4.517V17.25a.75.75 0 001.075.676L10 15.08l5.925 2.846A.75.75 0 0017 17.25V4.517c0-1.103-.806-2.068-1.93-2.207A41.403 41.403 0 0010 2z" />
+                    </svg>
                     Annonce
-                </button>
-                <button (click)="setActiveTab('microsite')"
-                    [class]="activeTab() === 'microsite' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
-                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                </span>
+            </button>
+
+            <!-- Informations Propriété (Renamed from Welcome Book) -->
+            <button (click)="setActiveTab('booklet')"
+                [class]="activeTab() === 'booklet' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                        <path
+                            d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                    </svg>
+                    Informations Propriété
+                </span>
+            </button>
+
+            <button (click)="setActiveTab('microsite')"
+                [class]="activeTab() === 'microsite' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                        <path fill-rule="evenodd"
+                            d="M10 2a8 8 0 100 16 8 8 0 000-16zM5.312 8.789a.75.75 0 01.996.11l2.5 2.5a.75.75 0 010 1.06l-2.5 2.5a.75.75 0 01-1.06-1.06l1.97-1.97H3.75a.75.75 0 010-1.5h3.468l-1.97-1.97a.75.75 0 01.114-.996zM13.75 6.5a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75z"
+                            clip-rule="evenodd" />
+                    </svg>
                     Microsite Public
-                </button>
-                <button (click)="setActiveTab('booklet')"
-                    [class]="activeTab() === 'booklet' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
-                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-                    Welcome Book
-                </button>
-            </nav>
+                </span>
+            </button>
         </div>
 
-        <!-- Content based on active tab -->
-        <div class="pt-2">
-            @switch (activeTab()) {
-            @case ('edit') {
-            <div class="animate-fade-in">
-
-                <!-- AI Action Bar -->
-                <div
-                    class="flex justify-between items-center mb-6 bg-indigo-50 border border-indigo-100 p-4 rounded-lg shadow-sm">
-                    <div class="flex items-center space-x-3">
-                        <div class="bg-indigo-100 p-2 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-6 h-6 text-indigo-600">
-                                <path fill-rule="evenodd"
-                                    d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813a3.75 3.75 0 0 0 2.576-2.576l.813-2.846A.75.75 0 0 1 9 4.5ZM1.5 13.5a.75.75 0 0 1 .75.75v6.75a.75.75 0 0 1-1.5 0v-6.75a.75.75 0 0 1 .75-.75Zm1.75.25a.25.25 0 0 0-.25.25v3.75c0 .138.112.25.25.25h3.75a.25.25 0 0 0 .25-.25v-3.75a.25.25 0 0 0-.25-.25H3.25Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold text-indigo-900">Remplissage Intelligent</h3>
-                            <p class="text-xs text-indigo-700">Laissez l'IA trouver les infos locales manquantes
-                                (Restaurants, Médecins, Transports...).</p>
-                        </div>
-                    </div>
-
-                    <button type="button" (click)="hasAiAccess() ? autoFillAI() : null"
-                        [disabled]="!hasAiAccess() || isAiLoading()" [class]="hasAiAccess() 
-                            ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5' 
-                            : 'bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300'"
-                        class="flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-semibold transition-all">
-
-                        <!-- Badge Logic -->
-                        @let badge = getBadge('ai-prompts');
-                        @if (badge) {
-                        <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider mr-2"
-                            [class]="badge.colorClass">
-                            {{ badge.label }}
-                        </span>
-                        }
-
-                        @if(hasAiAccess()) {
-                        <span>✨ Remplir avec l'IA</span>
-                        } @else {
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                            class="w-4 h-4 text-slate-500 mr-1">
-                            <path fill-rule="evenodd"
-                                d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span>Remplir avec l'IA (Verrouillé)</span>
-                        }
-                    </button>
-                </div>
-
-                <form [formGroup]="editorForm" (ngSubmit)="save()" class="space-y-8">
-
-
-                    <!-- General Image Card (Collapsible) -->
-                    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                        <div class="p-6 border-b border-slate-200 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors"
-                            (click)="toggleCoverSection()">
-                            <div class="flex items-center space-x-3">
-                                <h2 class="text-lg font-semibold text-slate-800 flex items-center">
-                                    <span class="mr-2 text-slate-400" style="width: 24px; height: 24px;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                                        </svg>
-                                    </span>
-                                    Image de Couverture
-                                </h2>
-                                <!-- Simple Progress Indicator -->
-                                @let progress = getSectionCompletion('cover');
-                                <div class="flex items-center space-x-2 ml-4">
-                                    <div
-                                        class="w-20 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                                        <div class="h-full transition-all duration-500 ease-out"
-                                            [style.width.%]="progress" [class.bg-red-400]="progress < 30"
-                                            [class.bg-orange-400]="progress >= 30 && progress < 100"
-                                            [class.bg-green-500]="progress === 100">
-                                        </div>
-                                    </div>
-                                    <span class="text-xs font-medium text-slate-500">{{ progress }}%</span>
-                                </div>
-                            </div>
-                            <button type="button"
-                                class="p-1 rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                    class="w-5 h-5 transition-transform duration-200"
-                                    [class.rotate-180]="isCoverOpen()">
-                                    <path fill-rule="evenodd"
-                                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        @if(isCoverOpen()) {
-                        <div
-                            class="p-6 flex flex-col sm:flex-row items-start gap-4 border-t border-slate-200 animate-fade-in">
-                            <div class="flex-grow w-full">
-                                <label for="coverImageUrl" class="block text-sm font-medium text-slate-700">URL de
-                                    l'image de couverture</label>
-                                <input type="url" id="coverImageUrl" formControlName="coverImageUrl"
-                                    class="mt-1 block w-full rounded-md border-slate-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="https://...">
-                            </div>
-                            @if(editorForm.get('coverImageUrl')?.value) {
-                            <div
-                                class="flex-shrink-0 mt-6 h-20 w-32 rounded-md overflow-hidden border border-slate-300 shadow-sm bg-slate-50">
-                                <img [src]="editorForm.get('coverImageUrl')?.value" class="h-full w-full object-cover"
-                                    alt="Aperçu couverture">
-                            </div>
-                            }
-                        </div>
-                        }
-                    </div>
-
-                    <!-- Location Card -->
-                    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                        <div class="p-6 border-b border-slate-200 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors"
-                            (click)="toggleLocationSection()">
-                            <div class="flex items-center space-x-3">
-                                <h2 class="text-lg font-semibold text-slate-800 flex items-center">
-                                    <span class="mr-2 text-slate-400" style="width: 24px; height: 24px;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                                        </svg>
-                                    </span>
-                                    Localisation du Logement
-                                </h2>
-                                <!-- Simple Progress Indicator -->
-                                @let locProgress = getSectionCompletion('location');
-                                <div class="flex items-center space-x-2 ml-4">
-                                    <div
-                                        class="w-20 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                                        <div class="h-full transition-all duration-500 ease-out"
-                                            [style.width.%]="locProgress" [class.bg-red-400]="locProgress < 30"
-                                            [class.bg-orange-400]="locProgress >= 30 && locProgress < 100"
-                                            [class.bg-green-500]="locProgress === 100">
-                                        </div>
-                                    </div>
-                                    <span class="text-xs font-medium text-slate-500">{{ locProgress }}%</span>
-                                </div>
-                            </div>
-                            <button type="button"
-                                class="p-1 rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                    class="w-5 h-5 transition-transform duration-200"
-                                    [class.rotate-180]="isLocationOpen()">
-                                    <path fill-rule="evenodd"
-                                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        @if(isLocationOpen()) {
-                        <div class="p-6 space-y-4 border-t border-slate-200 animate-fade-in">
-                            <div>
-                                <label for="address" class="block text-sm font-medium text-slate-700">Adresse exacte du
-                                    logement</label>
-                                <textarea id="address" formControlName="address" rows="2"
-                                    class="mt-1 block w-full rounded-md border-slate-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="10 Rue de la Paix, 75000 Paris"></textarea>
-                                <p class="text-xs text-slate-500 mt-1">Utilisée pour guider les voyageurs et permettre à
-                                    l'IA de trouver des recommandations locales.</p>
-                            </div>
-                            <div>
-                                <label for="gpsCoordinates" class="block text-sm font-medium text-slate-700">Coordonnées
-                                    GPS (Lien Google Maps)</label>
-                                <input type="text" id="gpsCoordinates" formControlName="gpsCoordinates"
-                                    class="mt-1 block w-full rounded-md border-slate-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="https://maps.google.com/...">
-                            </div>
-                        </div>
-                        }
-                    </div>
-
-                    <!-- Photos Gallery Section (Collapsible) -->
-                    <!-- ... Same as before ... -->
-                    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                        <div class="p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 cursor-pointer"
-                            (click)="togglePhotosSection()">
-                            <div class="flex items-center space-x-3">
-                                <h2 class="text-lg font-semibold text-slate-800 flex items-center">
-                                    <span class="mr-2 text-slate-400" style="width: 24px; height: 24px;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-                                        </svg>
-                                    </span>
-                                    Photos de la Propriété
-                                </h2>
-                                <!-- Simple Progress Indicator -->
-                                @let photoProgress = getSectionCompletion('photos');
-                                <div class="flex items-center space-x-2 ml-4">
-                                    <div
-                                        class="w-20 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                                        <div class="h-full transition-all duration-500 ease-out"
-                                            [style.width.%]="photoProgress" [class.bg-red-400]="photoProgress < 30"
-                                            [class.bg-orange-400]="photoProgress >= 30 && photoProgress < 100"
-                                            [class.bg-green-500]="photoProgress === 100">
-                                        </div>
-                                    </div>
-                                    <span class="text-xs font-medium text-slate-500">{{ photoProgress }}%</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-3" (click)="$event.stopPropagation()">
-                                @if(isPhotosOpen()) {
-                                <button type="button" (click)="toggleCategoryManager()"
-                                    class="text-sm bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-1 px-3 rounded transition-colors flex items-center shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        class="w-4 h-4 mr-1">
-                                        <path
-                                            d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-                                    </svg>
-                                    Gérer catégories
-                                </button>
-                                <button type="button" (click)="addPhoto('', '', true)"
-                                    class="text-sm bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-1 px-3 rounded transition-colors flex items-center shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        class="w-4 h-4 mr-1">
-                                        <path fill-rule="evenodd"
-                                            d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    Ajouter photo
-                                </button>
-                                }
-                                <button type="button" (click)="togglePhotosSection()"
-                                    class="p-1 rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        class="w-5 h-5 transition-transform duration-200"
-                                        [class.rotate-180]="isPhotosOpen()">
-                                        <path fill-rule="evenodd"
-                                            d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        @if(isPhotosOpen()) {
-                        <!-- Category Manager Panel -->
-                        @if(showCategoryManager()) {
-                        <div class="bg-blue-50 px-6 py-4 border-b border-blue-100 animate-fade-in">
-                            <h3 class="text-sm font-bold text-blue-800 mb-2">Modifier la liste des catégories</h3>
-                            <div class="flex gap-2 mb-3">
-                                <input type="text" [value]="newCategoryName()" (input)="updateNewCategoryName($event)"
-                                    (keyup.enter)="addCategory()" placeholder="Nouvelle catégorie (ex: Sauna)"
-                                    class="block w-full rounded-md border-blue-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                                <button type="button" (click)="addCategory()"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium">Ajouter</button>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                @for(cat of availableCategories(); track cat) {
-                                <span
-                                    class="inline-flex items-center rounded-full bg-white border border-blue-200 py-0.5 pl-2.5 pr-1 text-xs font-medium text-blue-700">
-                                    {{ cat }}
-                                    <button type="button" (click)="removeCategory(cat)"
-                                        class="ml-1 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500 focus:bg-blue-500 focus:text-white focus:outline-none">
-                                        <span class="sr-only">Supprimer</span>
-                                        <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                                            <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" />
-                                        </svg>
-                                    </button>
-                                </span>
-                                }
-                            </div>
-                            <p class="text-xs text-blue-600 mt-2 italic">Ces catégories seront disponibles pour toutes
-                                vos photos une fois enregistrées.</p>
-                        </div>
-                        }
-
-                        <div class="p-6 space-y-3 bg-white" formArrayName="photos">
-                            <!-- Corrected Loop: Tracking by photoGroup object instead of index to fix display issues on insertion -->
-                            @for(photoGroup of photosArray.controls; track photoGroup; let i = $index) {
-                            <div [formGroupName]="i"
-                                class="flex items-start space-x-3 bg-slate-50 p-3 rounded-md border border-slate-100">
-                                <div class="flex-grow grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                    <div class="sm:col-span-2">
-                                        <label class="block text-xs font-medium text-slate-500 mb-1">URL de la
-                                            photo</label>
-                                        <input type="text" formControlName="url"
-                                            class="block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
-                                            placeholder="https://...">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-500 mb-1">Catégorie</label>
-                                        <select formControlName="category"
-                                            class="block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                                            <option value="" disabled selected>-- Choisir --</option>
-                                            @for(cat of availableCategories(); track cat) {
-                                            <option [value]="cat">{{ cat }}</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- Thumb Preview -->
-                                @if(getPhotoGroup(i).get('url')?.value) {
-                                <div
-                                    class="flex-shrink-0 mt-6 h-16 w-16 rounded-md overflow-hidden border border-slate-300 shadow-sm bg-white">
-                                    <img [src]="getPhotoGroup(i).get('url')?.value" class="h-full w-full object-cover"
-                                        alt="Aperçu" onerror="this.style.display='none'">
-                                </div>
-                                }
-
-                                <div class="flex-shrink-0 pt-6">
-                                    <button type="button" (click)="removePhoto(i)"
-                                        class="text-red-500 hover:text-red-700 p-1" title="Supprimer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                            class="w-5 h-5">
-                                            <path fill-rule="evenodd"
-                                                d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            }
-                            @if(photosArray.length === 0) {
-                            <p class="text-sm text-slate-400 italic text-center py-2">Aucune photo ajoutée. Cliquez sur
-                                "Ajouter photo".</p>
-                            }
-                        </div>
-                        }
-                    </div>
-
-                    <!-- Accordion for Chapters -->
-                    @for (section of sections; track section.id) {
-                    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden mb-4">
-                        <div class="flex justify-between items-center p-6 text-left cursor-pointer hover:bg-slate-50 transition-colors"
-                            (click)="toggleChapter(section.id)">
-                            <div class="flex items-center space-x-3">
-                                <h2 class="text-lg font-semibold text-slate-800 flex items-center">
-                                    <span class="mr-2 text-slate-400 block" style="width: 24px; height: 24px;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6"
-                                            [innerHTML]="section.icon">
-                                        </svg>
-                                    </span>
-                                    {{ section.editorTitle }}
-                                </h2>
-                                <!-- Dynamic Progress Indicator -->
-                                @let progress = getSectionCompletion(section.id);
-                                <div class="flex items-center space-x-2 ml-4">
-                                    <div
-                                        class="w-20 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                                        <div class="h-full transition-all duration-500 ease-out"
-                                            [style.width.%]="progress" [class.bg-red-400]="progress < 30"
-                                            [class.bg-orange-400]="progress >= 30 && progress < 100"
-                                            [class.bg-green-500]="progress === 100">
-                                        </div>
-                                    </div>
-                                    <span class="text-xs font-medium text-slate-500">{{ progress }}%</span>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center space-x-4" (click)="$event.stopPropagation()">
-                                <div class="flex items-center space-x-2" formGroupName="toggles">
-                                    <span class="text-sm font-medium"
-                                        [class]="editorForm.get('toggles.' + section.id)?.value ? 'text-slate-700' : 'text-slate-400'">
-                                        {{ editorForm.get('toggles.' + section.id)?.value ? 'Activé' : 'Désactivé' }}
-                                    </span>
-                                    <input type="checkbox" [formControlName]="section.id"
-                                        class="toggle-checkbox ml-2" />
-                                </div>
-                                <button type="button" (click)="toggleChapter(section.id)"
-                                    class="p-1 rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        class="w-5 h-5 transition-transform duration-200"
-                                        [class.rotate-180]="openChapter() === section.id">
-                                        <path fill-rule="evenodd"
-                                            d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Content Rendered when Open -->
-                        @if (openChapter() === section.id) {
-                        <div class="p-6 border-t border-slate-200 space-y-6 transition-opacity bg-white"
-                            [formGroupName]="section.formGroupName">
-
-                            <div *ngFor="let control of getGroupControls(section.formGroupName)"
-                                class="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                                <label [for]="section.id + '-' + control"
-                                    class="block text-sm font-bold text-slate-700 mb-2">
-                                    {{ getLabelForControl(section.id, control) }}
-                                </label>
-                                <textarea [id]="section.id + '-' + control" [formControlName]="control" rows="3"
-                                    class="mt-1 block w-full rounded-md border-slate-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="Saisissez les instructions ici..."></textarea>
-                            </div>
-                        </div>
-                        }
-                    </div>
-                    }
-
-                    <div class="flex justify-end pt-5 pb-10">
-                        <button type="submit" [disabled]="editorForm.invalid"
-                            class="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-3 px-10 text-base font-medium text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-300 transition-all transform hover:-translate-y-0.5">
-                            Enregistrer
-                        </button>
-                    </div>
-                </form>
+        <div class="flex items-center space-x-3">
+            <div *ngIf="saveMessage()" class="text-green-600 text-sm font-medium animate-pulse">{{ saveMessage() }}
             </div>
-            }
-            @case ('listing') {
-            <!-- Listing Preview -->
-            <div class="bg-white border border-slate-200 rounded-lg p-6 animate-fade-in">
-                <h2 class="text-2xl font-bold text-slate-800 mb-6">Prévisualisation de l'Annonce</h2>
-                <div class="max-w-4xl mx-auto">
-                    <img [src]="editorForm.get('coverImageUrl')?.value" alt="Photo principale de la propriété"
-                        class="w-full h-80 object-cover rounded-lg shadow-lg mb-6">
-                    <h3 class="text-3xl font-bold text-slate-900">{{ propertyName() }}</h3>
-                    <p class="text-md text-slate-500 mt-1">{{ editorForm.get('address')?.value }}</p>
-                    <div class="flex items-center space-x-4 text-sm text-slate-600 mt-4 border-y border-slate-200 py-4">
-                        <span>4 voyageurs</span><span>·</span><span>2 chambres</span><span>·</span><span>2
-                            lits</span><span>·</span><span>1 salle de bain</span>
-                    </div>
-                    <div class="mt-6">
-                        <h4 class="text-xl font-semibold text-slate-800 mb-2">À propos de ce logement</h4>
-                        <p class="text-slate-600 whitespace-pre-wrap">{{
-                            editorForm.get('bienvenue.messageBienvenue')?.value }}</p>
-                    </div>
-                    <div class="mt-8">
-                        <h4 class="text-xl font-semibold text-slate-800 mb-4">Équipements</h4>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-slate-600">
-                            @if (propertyEquipments().length > 0) {
-                            @for(equip of propertyEquipments(); track equip) {
-                            <span class="flex items-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg"
-                                    class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
-                                </svg><span>{{ equip }}</span></span>
-                            }
-                            } @else { <p class="text-sm italic text-slate-400 col-span-full">Aucun équipement configuré.
-                            </p> }
-                        </div>
-                    </div>
-                </div>
-            </div>
-            }
-            @case ('microsite') {
-            <!-- NEW DYNAMIC MICROSITE PREVIEW -->
-            @let config = micrositeConfig();
-
-            <div class="bg-white border border-slate-200 rounded-lg p-6 animate-fade-in">
-                <h2 class="text-2xl font-bold text-slate-800 mb-6">Prévisualisation du Microsite Public</h2>
-
-                <div class="bg-slate-50 p-4 rounded-md flex justify-center">
-                    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-lg overflow-hidden min-h-[600px] transition-all duration-500"
-                        [class.font-serif]="config.template === 'cozy'" [class.font-sans]="config.template !== 'cozy'"
-                        [class.bg-slate-900]="config.template === 'luxury'"
-                        [class.text-white]="config.template === 'luxury'">
-
-                        <!-- Header / Hero Section with Parallax Effect -->
-                        <div class="relative h-[400px] w-full group overflow-hidden">
-                            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[2000ms] ease-out group-hover:scale-110"
-                                [style.backgroundImage]="'url(' + (config.headerPhotoUrl || editorForm.get('coverImageUrl')?.value) + ')'">
-                            </div>
-                            <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60">
-                            </div>
-
-                            <div
-                                class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10">
-                                <h1
-                                    class="text-4xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-lg tracking-tight">
-                                    {{ config.headline }}</h1>
-                                <button [style.backgroundColor]="config.primaryColor"
-                                    class="px-8 py-3 rounded-full text-white font-bold text-lg shadow-xl transform transition hover:scale-105 hover:shadow-2xl border-2 border-white/20 backdrop-blur-sm">
-                                    Réserver
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Main Content Loop -->
-                        <main class="py-8 px-8 space-y-10">
-
-                            <!-- Description (Toggleable) -->
-                            @if (config.showDescription) {
-                            <section class="text-center max-w-3xl mx-auto">
-                                <h4 class="text-2xl font-bold mb-4"
-                                    [style.color]="config.template === 'luxury' ? '#fbbf24' : config.primaryColor">
-                                    Bienvenue</h4>
-                                <p class="text-lg leading-relaxed opacity-90 whitespace-pre-wrap">{{
-                                    editorForm.get('bienvenue.messageBienvenue')?.value || 'Bienvenue dans notre
-                                    propriété.' }}</p>
-                            </section>
-                            }
-
-                            <!-- Dynamic Sections Loop based on config.visibleSections -->
-                            @for(sectionId of config.visibleSections; track sectionId) {
-
-                            @if(sectionId === 'gallery' && propertyPhotos().length > 0) {
-                            <section>
-                                <h4 class="text-2xl font-bold mb-6 text-center opacity-90 uppercase tracking-wide">
-                                    Galerie</h4>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    @for(photo of propertyPhotos().slice(0, 8); track $index) {
-                                    <div
-                                        class="relative group aspect-square rounded-lg overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all">
-                                        <img [src]="photo.url"
-                                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                            [alt]="photo.category">
-                                    </div>
-                                    }
-                                </div>
-                            </section>
-                            }
-
-                            @if(sectionId === 'amenities') {
-                            <section class="py-8 border-t border-b border-opacity-10"
-                                [style.borderColor]="config.primaryColor">
-                                <h4 class="text-2xl font-bold mb-6 text-center opacity-90 uppercase tracking-wide">
-                                    Équipements</h4>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                                    @if(editorForm.get('systemes.wifi')?.value) {
-                                    <div class="p-4 bg-opacity-5 rounded-lg border border-opacity-10"
-                                        [style.backgroundColor]="config.primaryColor + '10'">
-                                        <div class="text-2xl mb-1">🛜</div>
-                                        <div class="font-semibold text-sm">Wifi</div>
-                                    </div>
-                                    }
-                                    @if(editorForm.get('cuisine.machineExpresso')?.value) {
-                                    <div class="p-4 bg-opacity-5 rounded-lg border border-opacity-10"
-                                        [style.backgroundColor]="config.primaryColor + '10'">
-                                        <div class="text-2xl mb-1">☕</div>
-                                        <div class="font-semibold text-sm">Café</div>
-                                    </div>
-                                    }
-                                    @if(editorForm.get('salon.television')?.value) {
-                                    <div class="p-4 bg-opacity-5 rounded-lg border border-opacity-10"
-                                        [style.backgroundColor]="config.primaryColor + '10'">
-                                        <div class="text-2xl mb-1">📺</div>
-                                        <div class="font-semibold text-sm">TV</div>
-                                    </div>
-                                    }
-                                    <div class="p-4 bg-opacity-5 rounded-lg border border-opacity-10"
-                                        [style.backgroundColor]="config.primaryColor + '10'">
-                                        <div class="text-2xl mb-1">✨</div>
-                                        <div class="font-semibold text-sm">Confort</div>
-                                    </div>
-                                </div>
-                            </section>
-                            }
-
-                            @if(sectionId === 'guide') {
-                            <section>
-                                <h4 class="text-2xl font-bold mb-6 text-center opacity-90 uppercase tracking-wide">Guide
-                                    Local</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div
-                                        class="p-6 rounded-xl shadow-md border border-opacity-10 bg-white text-slate-800">
-                                        <div class="text-4xl mb-2 text-center">🍝</div>
-                                        <h5 class="font-bold text-center mb-2">Restaurants</h5>
-                                        <p class="text-xs text-slate-500 line-clamp-4 text-center">{{
-                                            editorForm.get('guideGastro.recommandationRestaurants')?.value || 'Nos
-                                            meilleures adresses.' }}</p>
-                                    </div>
-                                    <div
-                                        class="p-6 rounded-xl shadow-md border border-opacity-10 bg-white text-slate-800">
-                                        <div class="text-4xl mb-2 text-center">🏃</div>
-                                        <h5 class="font-bold text-center mb-2">Activités</h5>
-                                        <p class="text-xs text-slate-500 line-clamp-4 text-center">{{
-                                            editorForm.get('guideActivites.guideActivites')?.value || 'Quoi faire dans
-                                            le coin.' }}</p>
-                                    </div>
-                                    <div
-                                        class="p-6 rounded-xl shadow-md border border-opacity-10 bg-white text-slate-800">
-                                        <div class="text-4xl mb-2 text-center">🛒</div>
-                                        <h5 class="font-bold text-center mb-2">Pratique</h5>
-                                        <p class="text-xs text-slate-500 line-clamp-4 text-center">{{
-                                            editorForm.get('transports.taxisLocaux')?.value || 'Transports et courses.'
-                                            }}</p>
-                                    </div>
-                                </div>
-                            </section>
-                            }
-
-                            @if(sectionId === 'rules') {
-                            <section class="text-center opacity-80 text-sm">
-                                <p>🕒 Départ avant {{ editorForm.get('depart.heureLimiteCheckout')?.value || '11h00' }}
-                                </p>
-                                @if(editorForm.get('regles.politiqueNonFumeur')?.value) { <p>🚭 Non fumeur</p> }
-                            </section>
-                            }
-                            }
-
-                            <!-- Contact (Toggleable) -->
-                            @if (config.showContact) {
-                            <div class="py-12 px-8 text-white text-center rounded-xl"
-                                [style.backgroundColor]="config.template === 'luxury' ? '#1e293b' : '#1e293b'">
-                                <h3 class="text-xl font-bold mb-4">Une question ?</h3>
-                                <button
-                                    class="inline-flex items-center bg-white text-slate-900 px-6 py-2 rounded-full font-bold shadow-lg hover:bg-slate-100 transition-colors">
-                                    Contacter l'Hôte
-                                </button>
-                            </div>
-                            }
-                        </main>
-
-                        <!-- Footer -->
-                        <div class="py-6 text-center text-xs opacity-50 bg-black/5">
-                            <p>&copy; 2024 - {{ config.headline }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            }
-            @case ('booklet') {
-            <!-- Booklet Preview -->
-            <!-- ... (Booklet Preview) -->
-            }
-            }
+            <button (click)="save()" [disabled]="isLoading()"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center shadow-sm disabled:opacity-50">
+                <span *ngIf="isLoading()" class="mr-2">...</span>
+                {{ isLoading() ? 'Chargement...' : 'Enregistrer' }}
+            </button>
         </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-hidden relative">
+        @switch (activeTab()) {
+        @case ('edit') { <app-welcome-booklet-editor class="h-full block overflow-hidden" /> }
+        @case ('listing') { <app-welcome-booklet-listing class="h-full block overflow-y-auto" /> }
+        @case ('booklet') { <app-welcome-booklet-preview class="h-full block overflow-y-auto" /> }
+        @case ('microsite') { <app-welcome-booklet-microsite class="h-full block overflow-hidden" /> }
+        }
     </div>
 </div>
