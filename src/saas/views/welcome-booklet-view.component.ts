@@ -465,6 +465,18 @@ export class WelcomeBookletViewComponent implements OnInit, OnDestroy {
 
             // Populate Form
             if (bookletData) {
+                // Parse Microsite Config
+                if (bookletData.microsite_config) {
+                    try {
+                        const config = typeof bookletData.microsite_config === 'string'
+                            ? JSON.parse(bookletData.microsite_config)
+                            : bookletData.microsite_config;
+                        this.micrositeConfig.set(config);
+                    } catch (e) {
+                        console.error("Error parsing microsite config", e);
+                    }
+                }
+
                 this.editorForm.patchValue({
                     coverImageUrl: bookletData.coverImageUrl,
                     address: propData?.address, // Prioritize property table address
