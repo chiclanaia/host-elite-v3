@@ -1,0 +1,77 @@
+@if (store.showEmailWarning()) {
+<div
+  class="bg-amber-100 border-b border-amber-200 text-amber-800 px-4 py-2 text-center text-sm font-semibold relative z-50">
+  ⚠️ Votre email n'est pas vérifié. Vous avez 48h pour confirmer votre inscription avant le blocage du compte.
+</div>
+}
+
+@switch (store.currentStep()) {
+@case ('landing') {
+<app-landing-page (submitContext)="store.setContext($event)">
+</app-landing-page>
+}
+@case ('dashboard') {
+@if(store.contextData() && store.scores() && store.reportData()) {
+<saas-app [contextData]="store.contextData()!" [scores]="store.scores()!" [reportData]="store.reportData()!"
+  (logout)="store.resetSession()">
+</saas-app>
+} @else {
+<div class="min-h-screen flex flex-col items-center justify-center p-4 bg-slate-100">
+  <div class="text-center p-8 bg-white rounded-lg shadow-md max-w-md">
+    <h2 class="text-xl font-bold text-slate-800">Initialisation du profil...</h2>
+    <p class="mt-2 text-slate-600 mb-6">Nous configurons votre espace. Si ce message persiste, veuillez vous
+      reconnecter.</p>
+    <button (click)="store.resetSession()"
+      class="px-6 py-2 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors">
+      Recharger la session
+    </button>
+  </div>
+</div>
+}
+}
+@default {
+<main class="min-h-screen flex flex-col items-center justify-start pt-12 pb-12 p-4 md:p-8 bg-white text-slate-800">
+  <div class="w-full max-w-4xl mx-auto">
+    <header class="text-center mb-10">
+      <h1 class="text-4xl md:text-5xl font-bold text-slate-900">Votre parcours d'hôte d'élite</h1>
+      <p class="text-slate-600 mt-4 max-w-3xl mx-auto">Diagnostic & Plan d'action personnalisé</p>
+    </header>
+
+    <app-stepper [currentStepIndex]="store.stepIndex()"></app-stepper>
+
+    <div
+      class="mt-10 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden transition-all duration-500 min-h-[400px]">
+      <div class="p-6 md:p-10">
+        @switch (store.currentStep()) {
+        @case ('onboarding_context') {
+        <app-context-step (submitContext)="store.setContext($event)">
+        </app-context-step>
+        }
+        @case ('evaluation') {
+        <app-evaluation-step (next)="store.submitEvaluation($event)" [error]="store.error()">
+        </app-evaluation-step>
+        }
+        @case ('loading') {
+        <div class="flex flex-col items-center justify-center space-y-4 py-20">
+          <div class="w-16 h-16 border-4 border-slate-800 border-dashed rounded-full animate-spin"></div>
+          <p class="text-lg font-semibold text-slate-700">Analyse en cours...</p>
+          <p class="text-sm text-slate-500 text-center">Notre IA prépare votre plan d'action.</p>
+        </div>
+        }
+        @case ('results') {
+        @if (store.reportData() && store.scores()) {
+        <app-results-step [report]="store.reportData()!" [scores]="store.scores()!" (restart)="store.resetSession()"
+          (explorePlan)="store.enterDashboard()">
+        </app-results-step>
+        }
+        }
+        }
+      </div>
+    </div>
+  </div>
+  <footer class="text-center mt-12 pb-6">
+    <p class="text-sm text-slate-500">Powered by Hôte d'Exception & Gemini AI</p>
+  </footer>
+</main>
+}
+}

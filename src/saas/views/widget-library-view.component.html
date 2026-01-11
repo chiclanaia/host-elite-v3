@@ -1,0 +1,49 @@
+
+<div class="relative">
+    @if (saveMessage()) {
+        <div class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce">
+            {{ saveMessage() }}
+        </div>
+    }
+
+    <div class="space-y-2">
+    <h1 class="text-3xl font-bold text-slate-800">Bibliothèque de Widgets</h1>
+    <p class="text-slate-500">Activez ou désactivez les widgets d'informations pratiques pour le livret d'accueil de {{ propertyName() }}.</p>
+    </div>
+
+    <div class="mt-8 space-y-10">
+        @for(group of widgetGroups(); track group.title; let gIdx = $index) {
+            <div>
+                <h2 class="text-xl font-bold text-slate-800 mb-4">{{ group.title }}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @for(widget of group.widgets; track widget.id; let wIdx = $index) {
+                        <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col transition-all hover:shadow-md" [class.border-blue-300]="widget.enabled">
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-2xl">{{ widget.icon }}</span>
+                                        <h3 class="font-bold text-slate-800" [class.text-blue-700]="widget.enabled">{{ widget.name }}</h3>
+                                    </div>
+                                    <div class="relative inline-block w-10 ml-2 align-middle select-none transition duration-200 ease-in">
+                                        <input type="checkbox" [checked]="widget.enabled" (change)="toggleWidget(gIdx, wIdx)" [id]="widget.id" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label [for]="widget.id" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <p class="mt-3 text-sm text-slate-500">{{ widget.description }}</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<style>
+.toggle-checkbox:checked {
+  right: 0;
+  border-color: #3b82f6; /* blue-500 */
+}
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #3b82f6; /* blue-500 */
+}
+</style>

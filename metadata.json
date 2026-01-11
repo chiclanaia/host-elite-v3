@@ -1,0 +1,7 @@
+{
+  "name": "Hôte BnB d'Exception: Diagnostic IA (Jose)",
+  "description": "An AI-powered diagnostic tool for Airbnb hosts to assess their skills across 7 key areas and receive a personalized action plan, inspired by the 'Roue de l'Hôte' concept.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

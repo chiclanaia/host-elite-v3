@@ -1,0 +1,198 @@
+
+<div class="h-[calc(100vh-120px)] flex flex-col animate-fade-in relative overflow-hidden">
+    
+    <!-- Notification (Fixed Z-Index) -->
+    @if (saveMessage()) {
+        <div class="fixed top-4 right-4 bg-emerald-500 text-white px-6 py-3 rounded-lg shadow-2xl z-50 animate-bounce font-bold border border-white/20 backdrop-blur-md">
+            {{ saveMessage() }}
+        </div>
+    }
+
+    <!-- Header Compact -->
+    <div class="flex flex-row justify-between items-center mb-4 flex-shrink-0 px-2">
+        <div>
+            <h1 class="text-2xl font-extrabold text-white drop-shadow-lg tracking-tight flex items-center">
+                <span class="mr-2">🧭</span> Roue de la Vie
+            </h1>
+        </div>
+        <button (click)="saveProgress()" [disabled]="isSaving()" class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white text-sm px-5 py-2 rounded-full font-bold shadow-lg transition-all transform hover:scale-105 disabled:opacity-50 flex items-center">
+            @if(isSaving()) {
+                <svg class="animate-spin -ml-1 mr-2 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                Sauvegarde...
+            } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" /></svg>
+                Enregistrer
+            }
+        </button>
+    </div>
+
+    <!-- Main Content Grid (Cockpit Layout) -->
+    <div class="grid grid-cols-12 gap-6 flex-1 min-h-0">
+        
+        <!-- LEFT COLUMN: Sliders (33% width - Compact Mode) -->
+        <div class="col-span-12 lg:col-span-4 flex flex-col min-h-0">
+            <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5 shadow-2xl flex-1 flex flex-col overflow-y-auto custom-scrollbar">
+                <h3 class="font-bold text-white text-sm uppercase tracking-widest mb-4 flex items-center opacity-80 border-b border-white/10 pb-2 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15ZM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM15.657 5.404a.75.75 0 1 0-1.06-1.06l-1.061 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM6.464 14.596a.75.75 0 1 0-1.06-1.06l-1.06 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM18 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 18 10ZM5 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 5 10ZM14.596 15.657a.75.75 0 0 0 1.06-1.06l-1.06-1.061a.75.75 0 1 0-1.06 1.06l1.06 1.06ZM5.404 6.464a.75.75 0 0 0 1.06-1.06l-1.06-1.06a.75.75 0 1 0-1.06 1.06l1.06 1.06Z"/></svg>
+                    Niveaux
+                </h3>
+                
+                <div class="space-y-3"> <!-- Reduced gap -->
+                    @for (key of angleKeys; track key; let i = $index) {
+                        <div class="group">
+                            <!-- Compact Label Row -->
+                            <div class="flex justify-between items-end mb-1">
+                                <label [for]="key" class="text-sm font-medium text-slate-200 group-hover:text-white transition-colors flex items-center">
+                                    <span class="w-2 h-2 rounded-full mr-2 shadow-[0_0_5px_rgba(255,255,255,0.4)]" [style.backgroundColor]="categoryColors[key].from"></span>
+                                    {{ angleLabels[i] }}
+                                </label>
+                                <span class="text-xs font-bold text-white bg-white/10 px-2 py-0.5 rounded border border-white/5">
+                                    {{ currentScores()[key] }}/10
+                                </span>
+                            </div>
+                            
+                            <!-- Slim Slider -->
+                            <div class="relative h-5 flex items-center">
+                                <input 
+                                    [id]="key" 
+                                    type="range" 
+                                    min="1" max="10" 
+                                    [value]="currentScores()[key]" 
+                                    (input)="updateScore(key, $event)"
+                                    [style.background]="getSliderBackground(key)"
+                                    class="w-full appearance-none h-1 rounded-full transition-all cursor-pointer focus:h-1.5">
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+                <!-- Bottom Info Context (Moved from separate card to fill space left) -->
+                <div class="mt-auto pt-4 border-t border-white/10 text-xs text-slate-400">
+                    <div class="flex justify-between mb-1">
+                        <span>Challenge:</span>
+                        <span class="text-white text-right truncate ml-2 max-w-[150px]">{{ contextData().challenge }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Situation:</span>
+                        <span class="text-white text-right">{{ contextData().situation }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Chart + Summary (66% width) -->
+        <div class="col-span-12 lg:col-span-8 flex flex-col gap-4 min-h-0">
+            
+            <!-- Polar Chart (Maximizing Height) -->
+            <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-2 shadow-2xl flex-grow flex items-center justify-center relative overflow-hidden min-h-0">
+                <!-- Background Glow -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-white/5 pointer-events-none"></div>
+                
+                <!-- SVG Container: w-full h-full but constrained by max-height to ensure visibility -->
+                <div class="relative w-full h-full flex items-center justify-center p-4">
+                    <svg [attr.viewBox]="'0 0 ' + size + ' ' + size" class="drop-shadow-2xl max-h-full w-auto h-auto" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            @for (sector of polarSectors(); track sector.id) {
+                                <radialGradient [id]="'grad-' + sector.id" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                    <stop offset="0%" [attr.stop-color]="sector.color.to" stop-opacity="0.3" />
+                                    <stop offset="100%" [attr.stop-color]="sector.color.from" stop-opacity="0.8" />
+                                </radialGradient>
+                            }
+                        </defs>
+
+                        <!-- Grid Circles -->
+                        @for (level of [1, 2, 3, 4, 5]; track level) {
+                            <circle [attr.cx]="center" [attr.cy]="center" [attr.r]="(radius / 5) * level" 
+                                    fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.5" />
+                        }
+
+                        <!-- Sectors -->
+                        @for (sector of polarSectors(); track sector.id) {
+                            <g class="transition-all duration-500 ease-out hover:opacity-90 group">
+                                <path [attr.d]="sector.path" 
+                                      [attr.fill]="'url(#grad-' + sector.id + ')'" 
+                                      [attr.stroke]="sector.color.stroke" 
+                                      stroke-width="1"
+                                      stroke-opacity="0.8"
+                                      class="cursor-pointer group-hover:stroke-white group-hover:stroke-[2px]" />
+                                
+                                <!-- Label inside SVG for perfect positioning -->
+                                <text [attr.x]="sector.labelX" [attr.y]="sector.labelY" 
+                                      text-anchor="middle" dominant-baseline="middle" 
+                                      class="text-[11px] font-bold fill-white uppercase tracking-widest drop-shadow-md pointer-events-none"
+                                      style="font-family: 'Sora', sans-serif;">
+                                    {{ sector.label }}
+                                </text>
+                            </g>
+                        }
+
+                        <!-- Center Score -->
+                        <circle [attr.cx]="center" [attr.cy]="center" r="38" fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.2)" stroke-width="1" class="backdrop-blur-md" />
+                        <text [attr.x]="center" [attr.y]="center" dy="-4" text-anchor="middle" class="text-3xl font-extrabold fill-white drop-shadow-lg" style="font-family: 'Sora', sans-serif;">{{ averageScore() }}</text>
+                        <text [attr.x]="center" [attr.y]="center" dy="16" text-anchor="middle" class="text-[9px] font-light fill-slate-300 uppercase tracking-widest">Moyenne</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Rappel / Summary (Integrated at bottom of right col - Compact) -->
+            <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-lg flex-shrink-0 h-auto">
+                <div class="grid grid-cols-2 gap-6 h-full">
+                    <!-- Strengths -->
+                    <div class="overflow-y-auto max-h-[100px] custom-scrollbar pr-2">
+                        <h3 class="text-xs font-bold text-green-400 uppercase tracking-wide mb-2 sticky top-0 bg-black/20 backdrop-blur-md p-1 rounded">
+                            <span class="mr-1">✨</span> Points Forts
+                        </h3>
+                        <ul class="space-y-1.5">
+                            @for (strength of reportData().strengths; track $index) {
+                                <li class="flex items-start text-slate-200 text-xs leading-tight">
+                                    <span class="w-1.5 h-1.5 bg-green-400 rounded-full mr-2 mt-1 flex-shrink-0"></span>
+                                    {{ strength }}
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- Opportunities -->
+                    <div class="overflow-y-auto max-h-[100px] custom-scrollbar pr-2 border-l border-white/10 pl-4">
+                        <h3 class="text-xs font-bold text-[#D4AF37] uppercase tracking-wide mb-2 sticky top-0 bg-black/20 backdrop-blur-md p-1 rounded">
+                            <span class="mr-1">🚀</span> Axes d'Amélioration
+                        </h3>
+                        <ul class="space-y-1.5">
+                            @for (opportunity of reportData().opportunities; track $index) {
+                                <li class="flex items-start text-slate-200 text-xs leading-tight">
+                                    <span class="w-1.5 h-1.5 bg-[#D4AF37] rounded-full mr-2 mt-1 flex-shrink-0"></span>
+                                    {{ opportunity }}
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Scrollbar for inner containers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+</style>

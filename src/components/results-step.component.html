@@ -1,0 +1,67 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h2 class="text-2xl font-semibold text-center text-slate-800">Étape 3: Votre Bilan</h2>
+    <p class="text-center text-slate-600">Voici votre analyse personnalisée et votre plan d'action.</p>
+  </div>
+
+  <!-- Radar Chart -->
+  <div class="flex justify-center">
+    <svg [attr.width]="size" [attr.height]="size" [attr.viewBox]="'-35 -35 ' + (size + 70) + ' ' + (size + 70)">
+      <g class="radar-grid">
+        @for (polygon of radarChartPolygons().grid; track $index) {
+          <polygon [attr.points]="polygon" class="fill-slate-100 stroke-slate-200" />
+        }
+        @for (label of radarChartLabels(); track $index) {
+           <text [attr.x]="label.x" [attr.y]="label.y" dominant-baseline="middle" text-anchor="middle" class="text-xs fill-slate-500 font-medium">{{ label.text }}</text>
+        }
+      </g>
+      <g class="radar-data">
+        <polygon [attr.points]="radarChartPolygons().data" class="fill-slate-800/20 stroke-slate-900" stroke-width="2" />
+      </g>
+    </svg>
+  </div>
+
+  <!-- AI Analysis -->
+  <div class="space-y-6">
+    <!-- Recommended Plan -->
+    <div class="bg-slate-100 border border-slate-200 rounded-lg p-6 text-center">
+        <h3 class="text-lg font-bold text-slate-800">Votre Plan Recommandé</h3>
+        <div class="my-3 inline-block" [ngClass]="getPlanClasses(report().recommendedPlan)">
+            Plan {{ report().recommendedPlan }}
+        </div>
+        <p class="text-slate-700">{{ report().planJustification }}</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Strengths -->
+      <div class="bg-green-50/50 p-6 rounded-lg border border-green-200">
+        <h3 class="text-lg font-bold text-green-800 mb-3">Points Forts</h3>
+        <ul class="space-y-2 list-disc list-inside text-green-700">
+          @for (strength of report().strengths; track $index) {
+            <li>{{ strength }}</li>
+          }
+        </ul>
+      </div>
+
+      <!-- Opportunities -->
+      <div class="bg-yellow-50/50 p-6 rounded-lg border border-yellow-200">
+        <h3 class="text-lg font-bold text-yellow-800 mb-3">Opportunités</h3>
+        <ul class="space-y-2 list-disc list-inside text-yellow-700">
+          @for (opportunity of report().opportunities; track $index) {
+            <li>{{ opportunity }}</li>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final CTA -->
+  <div class="text-center pt-6 space-y-4">
+    <button (click)="onExplorePlanClick()" class="w-full md:w-auto flex justify-center py-3 px-8 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+      Explorer le Plan {{ report().recommendedPlan }}
+    </button>
+    <button (click)="onRestartClick()" class="text-sm text-slate-500 hover:text-slate-700">
+      Recommencer le diagnostic
+    </button>
+  </div>
+</div>

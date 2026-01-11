@@ -1,0 +1,376 @@
+
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { UserRole, View, Property } from '../types';
+import { SessionStore } from '../state/session.store';
+
+@Component({
+  selector: 'saas-sidebar',
+  standalone: true,
+  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <aside class="w-64 flex-shrink-0 flex flex-col h-full bg-slate-900/80 backdrop-blur-xl border-r border-white/10 shadow-2xl relative z-20 text-white transition-all duration-300">
+      <!-- Logo Header -->
+      <div class="px-6 h-16 flex items-center border-b border-white/10 flex-shrink-0">
+        <h1 class="text-lg font-bold flex items-center space-x-3 leading-tight tracking-wide">
+            <div class="p-1.5 bg-white/10 rounded-lg backdrop-blur-sm border border-white/5 shadow-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-[#D4AF37]"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd" /></svg>
+            </div>
+            <span class="truncate bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">
+                Hôte d'Exception
+            </span>
+        </h1>
+      </div>
+      
+      <!-- Scrollable Nav -->
+      <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+        
+        <!-- Standard User Navigation (Hidden for Admins) -->
+        @if (userRole() !== 'admin') {
+            <!-- Main Navigation -->
+            <div class="space-y-1">
+            @for (view of mainViews; track view.id) {
+                <a (click)="isLocked(view) ? null : changeView(view)"
+                class="group flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-all duration-200 border border-transparent"
+                [class]="activeView().id === view.id 
+                    ? 'bg-white/10 text-[#D4AF37] border-l-2 border-[#D4AF37] shadow-inner' 
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'"
+                [class.opacity-50]="isLocked(view)"
+                [class.cursor-not-allowed]="isLocked(view)">
+                <div class="flex items-center">
+                    <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors" 
+                          [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
+                          [innerHTML]="getIcon(view.icon)"></span>
+                    {{ view.title }}
+                </div>
+                <!-- Badge -->
+                @if (view.featureId) {
+                    @let badge = getBadge(view.featureId);
+                    @if (badge) {
+                        <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ml-2 whitespace-nowrap opacity-80" [class]="badge.colorClass">
+                            {{ badge.label }}
+                        </span>
+                    }
+                }
+                <!-- Lock Icon -->
+                @if (isLocked(view)) {
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-slate-600 ml-2"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
+                }
+                </a>
+            }
+            </div>
+            
+            <!-- Properties Menu -->
+            <div class="pt-6">
+                <div class="px-3 pb-3">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Gestion</span>
+                </div>
+                <div class="px-2 space-y-2">
+                    @if(properties().length > 0) {
+                    <div class="relative">
+                        <!-- Dropdown Trigger -->
+                        <button (click)="togglePropertyDropdown()" 
+                                class="w-full flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-all border border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/20 shadow-lg group">
+                            <div class="flex items-center min-w-0">
+                                <span class="w-5 h-5 mr-2 flex items-center justify-center flex-shrink-0 text-[#D4AF37]" [innerHTML]="getIcon('property')"></span>
+                                <span class="truncate">Mes Propriétés</span>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 transition-transform duration-200 flex-shrink-0 text-slate-400 group-hover:text-white" [class.rotate-180]="isPropertyDropdownOpen()">
+                                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        @if(isPropertyDropdownOpen()) {
+                        <div class="absolute z-50 left-0 right-0 mt-2 bg-slate-800 rounded-lg shadow-2xl border border-white/10 overflow-hidden ring-1 ring-black/20 backdrop-blur-md">
+                            @for (property of properties(); track property.id) {
+                            <a (click)="selectProperty(property)" 
+                            class="w-full text-left px-4 py-3 text-sm cursor-pointer flex items-center justify-between group border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors"
+                            [class]="property.name === selectedProperty()?.name ? 'text-[#D4AF37] font-semibold bg-white/5' : 'text-slate-300'">
+                                <span class="truncate">{{ property.name }}</span>
+                                @if(property.name === selectedProperty()?.name) {
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_8px_#D4AF37]"></span>
+                                }
+                            </a>
+                            }
+                            <div class="bg-slate-900/50">
+                                <a (click)="createProperty()" class="block w-full text-left px-4 py-3 text-xs text-blue-400 hover:bg-white/5 hover:text-blue-300 cursor-pointer font-bold uppercase tracking-wide flex items-center border-t border-white/10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 mr-2"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>
+                                    Nouvelle propriété
+                                </a>
+                            </div>
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Sub-views for the currently active property -->
+                    @if(selectedProperty(); as prop) {
+                        <div class="pl-2 space-y-1 mt-3 border-l border-white/10 ml-2">
+                            <p class="px-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 truncate opacity-60">{{ prop.name }}</p>
+                            @for(subView of prop.subViews; track subView.id) {
+                                <a (click)="isLocked(subView) ? null : changeView(subView, prop.name)"
+                                class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-r-lg cursor-pointer transition-colors relative"
+                                [class]="activeView().id === subView.id && activeView().propertyName === prop.name 
+                                    ? 'text-white bg-white/5 border-l-2 border-[#D4AF37] -ml-[1px]' 
+                                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'"
+                                [class.opacity-50]="isLocked(subView)"
+                                [class.cursor-not-allowed]="isLocked(subView)">
+                                
+                                <div class="flex items-center min-w-0">
+                                    <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors" 
+                                          [class]="activeView().id === subView.id && activeView().propertyName === prop.name ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-slate-400'"
+                                          [innerHTML]="getIcon(subView.icon)"></span>
+                                    <span class="truncate">{{ subView.title }}</span>
+                                </div>
+                                <!-- Badge -->
+                                @if (subView.featureId) {
+                                    @let badge = getBadge(subView.featureId);
+                                    @if (badge) {
+                                        <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ml-1 whitespace-nowrap opacity-70" [class]="badge.colorClass">
+                                            {{ badge.label }}
+                                        </span>
+                                    }
+                                }
+                                <!-- Lock Icon -->
+                                @if (isLocked(subView)) {
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600 ml-1"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
+                                }
+                            </a>
+                            }
+                        </div>
+                    }
+
+                    } @else {
+                        <!-- No property state -->
+                        <button (click)="createProperty()" class="w-full flex items-center justify-center px-3 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors bg-[#D4AF37] text-slate-900 hover:bg-yellow-500 shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-2"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>
+                            Créer ma 1ère propriété
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Training Menu -->
+            <div class="pt-6">
+                <div class="px-3 pb-3">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Académie</span>
+                </div>
+                <div class="space-y-1">
+                @for (view of trainingViews; track view.id) {
+                    <a (click)="isLocked(view) ? null : changeView(view)"
+                    class="group flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-all duration-200 border border-transparent"
+                    [class]="activeView().id === view.id 
+                        ? 'bg-white/10 text-[#D4AF37] border-l-2 border-[#D4AF37] shadow-inner' 
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'"
+                    [class.opacity-50]="isLocked(view)"
+                    [class.cursor-not-allowed]="isLocked(view)">
+                    <div class="flex items-center">
+                        <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
+                              [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
+                              [innerHTML]="getIcon(view.icon)"></span>
+                        {{ view.title }}
+                    </div>
+                    @if (view.featureId) {
+                        @let badge = getBadge(view.featureId);
+                        @if (badge) {
+                            <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ml-2 whitespace-nowrap opacity-80" [class]="badge.colorClass">
+                                {{ badge.label }}
+                            </span>
+                        }
+                    }
+                    <!-- Lock Icon -->
+                    @if (isLocked(view)) {
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600 ml-2"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
+                    }
+                    </a>
+                }
+                </div>
+            </div>
+            
+            <!-- Account & Support -->
+            <div class="pt-6">
+                <div class="px-3 pb-3">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Compte</span>
+                </div>
+                <div class="space-y-1">
+                @for (view of accountViews; track view.id) {
+                    <a (click)="changeView(view)"
+                    class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-colors border border-transparent"
+                    [class]="activeView().id === view.id 
+                        ? 'bg-white/10 text-[#D4AF37] border-white/5' 
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'">
+                    <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
+                          [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
+                          [innerHTML]="getIcon(view.icon)"></span>
+                    {{ view.title }}
+                    </a>
+                }
+                </div>
+            </div>
+        }
+
+        <!-- Administration (Visible only for Admins) -->
+        @if (userRole() === 'admin') {
+            <div class="pt-6">
+                <div class="px-3 pb-3">
+                    <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest">Administration</span>
+                </div>
+                <div class="space-y-1">
+                    @for (view of adminViews; track view.id) {
+                        <a (click)="changeView(view)"
+                        class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-colors border border-transparent"
+                        [class]="activeView().id === view.id 
+                            ? 'bg-purple-900/30 text-purple-300 border-purple-500/20' 
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'">
+                        <span class="w-5 h-5 mr-3 flex items-center justify-center text-purple-500 group-hover:text-purple-300" [innerHTML]="getIcon(view.icon)"></span>
+                        {{ view.title }}
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+      </nav>
+
+      <!-- Footer User Profile -->
+      <div class="px-4 py-4 border-t border-white/10 flex-shrink-0 bg-black/20 backdrop-blur-sm">
+        <div class="flex items-center">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center font-bold mr-3 shadow-md border border-white/10"
+                 [class.from-purple-900.to-purple-700]="userRole() === 'admin'">
+                {{ userName().charAt(0) }}
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-sm font-bold text-slate-200 truncate">{{ userName() }}</p>
+                <div class="flex items-center text-xs">
+                    <span class="font-semibold mr-1" [class]="getPlanColor()">{{ userPlan() }}</span>
+                    @if(userRole() === 'admin') {
+                        <span class="bg-purple-900/50 text-purple-300 border border-purple-500/30 text-[9px] px-1.5 py-0.5 rounded-full ml-1">ADMIN</span>
+                    }
+                </div>
+            </div>
+        </div>
+        <button (click)="onLogout()" class="w-full mt-4 text-left flex items-center px-3 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+            <span class="w-4 h-4 mr-2 flex items-center justify-center" [innerHTML]="getIcon('logout')"></span>
+            Se déconnecter
+        </button>
+      </div>
+    </aside>
+  `
+})
+export class SidebarComponent {
+    activeView = input.required<View>();
+    userPlan = input.required<string>();
+    userName = input.required<string>();
+    userRole = input.required<UserRole>();
+    properties = input.required<Property[]>();
+    viewChange = output<View>();
+    logout = output<void>();
+
+    private sanitizer: DomSanitizer = inject(DomSanitizer);
+    private store = inject(SessionStore); // Injected to resolve badges
+
+    isPropertyDropdownOpen = signal<boolean>(false);
+
+    selectedProperty = computed(() => {
+        const propName = this.activeView().propertyName;
+        const props = this.properties();
+        if (!props || props.length === 0) return null;
+
+        if (!propName) {
+            return props[0];
+        }
+        return props.find(p => p.name === propName) ?? props[0];
+    });
+
+    mainViews: View[] = [
+        { id: 'dashboard', title: 'Bienvenue', icon: 'home' },
+        { id: 'global-dashboard', title: 'Tableau de bord', icon: 'dashboard', featureId: 'analytics' },
+    ];
+
+    trainingViews: View[] = [
+      { id: 'wheel', title: 'Ma Roue de l\'Hôte', icon: 'wheel', featureId: 'wheel' },
+      { id: 'training', title: 'Formations', icon: 'training', featureId: 'training' }
+    ];
+
+    accountViews: View[] = [
+        { id: 'account', title: 'Mon Compte', icon: 'account' },
+        { id: 'support', title: 'Support', icon: 'support' },
+    ];
+
+    adminViews: View[] = [
+        { id: 'admin-users', title: 'Utilisateurs', icon: 'users' }
+    ];
+    
+    private readonly icons: Record<string, string> = {
+        home: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 10.414V18a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7.586a1 1 0 0 1 .293-.707l7-7Z" clip-rule="evenodd" /></svg>`,
+        dashboard: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M7 3a1 1 0 0 0-1 1v12a1 1 0 1 0 2 0V4a1 1 0 0 0-1-1ZM13 5a1 1 0 0 0-1 1v10a1 1 0 1 0 2 0V6a1 1 0 0 0-1-1Z" /><path fill-rule="evenodd" d="M3 9a1 1 0 0 1 1-1h.5a.5.5 0 0 0 .5-.5V6a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1.5a.5.5 0 0 0 .5.5H9a1 1 0 1 1 0 2H7.5a.5.5 0 0 0-.5.5V14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1.5a.5.5 0 0 0-.5-.5H3a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Zm12 0a1 1 0 0 1 1-1h.5a.5.5 0 0 0 .5-.5V6a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1.5a.5.5 0 0 0 .5.5H9a1 1 0 1 1 0 2h-1.5a.5.5 0 0 0-.5.5V14a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1.5a.5.5 0 0 0-.5-.5H15a1 1 0 0 1 0-2Z" clip-rule="evenodd" /></svg>`,
+        wheel: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M16.313 5.422a7.5 7.5 0 0 1 0 9.156 1 1 0 0 0-1.24 1.562 9.5 9.5 0 0 0 0-12.28 1 1 0 0 0 1.24 1.562ZM18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM5.5 10a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Z" /><path d="M10 6.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z" /></svg>`,
+        logout: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.75a.75.75 0 0 0 0 1.5h9.5a.75.75 0 0 0 .75-.75Z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M15.28 6.22a.75.75 0 0 0-1.06 1.06L16.44 9.5H8.75a.75.75 0 0 0 0 1.5h7.69l-2.22 2.22a.75.75 0 1 0 1.06 1.06l3.5-3.5a.75.75 0 0 0 0-1.06l-3.5-3.5Z" clip-rule="evenodd" /></svg>`,
+        account: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z M10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z" clip-rule="evenodd" /></svg>`,
+        support: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8.5-2.5a.75.75 0 0 1 1.5 0v.5c0 .534.213.984.57 1.332l.716.67c.5.471.814 1.12.814 1.849a3.5 3.5 0 0 1-7 0c0-.73.314-1.378.814-1.849l.716-.67A1.99 1.99 0 0 0 9.5 8v-.5a.75.75 0 0 1 .75-.75Z M10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>`,
+        property: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M5.5 10.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z" /><path fill-rule="evenodd" d="m.842 6.417 5.694 2.135a.75.75 0 0 0 .868-.14l5.695-4.272a.75.75 0 0 1 .983-.026l5.043 3.782a.75.75 0 0 1 .16.945l-2.424 4.31a.75.75 0 0 1-1.012.316l-5.74-2.152a.75.75 0 0 0-.868.14l-5.695 4.272a.75.75 0 0 1-.983.026L.99 11.62a.75.75 0 0 1-.148-.945L3.266 6.36a.75.75 0 0 1 1.012-.316l5.74 2.153a.75.75 0 0 0 .868-.14l5.695-4.272a.75.75 0 0 1 .983.026L19.01 7.38a.75.75 0 0 1 .148.945l-2.424 4.31a.75.75 0 0 1-1.012.316l-5.74-2.153a.75.75 0 0 0-.868.14l-5.695 4.272a.75.75 0 0 1-.983.026L.99 13.62a.75.75 0 0 1-.148-.945l2.424-4.31a.75.75 0 0 1 1.012-.316l.011.004Z" clip-rule="evenodd" /></svg>`,
+        widgets: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M3 4.75A.75.75 0 0 1 3.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 3 4.75ZM3 9.75A.75.75 0 0 1 3.75 9h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 3 9.75ZM3 14.75A.75.75 0 0 1 3.75 14h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 3 14.75ZM9.75 4a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM9.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM9.75 14a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z" /></svg>`,
+        concierge: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4ZM5.25 4a.75.75 0 0 0-1.5 0v6a4.5 4.5 0 1 0 9 0V4a.75.75 0 0 0-1.5 0v6a3 3 0 1 1-6 0V4Z" /></svg>`,
+        settings: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 0 1-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 0 1 .947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 0 1-2.287-.947ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" /></svg>`,
+        users: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM14.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.532-2.405 1.968 1.968 0 0 1 1.45 2.318c-.81 3.074-2.474 4.463-5.494 4.463-2.178 0-4.653-.642-6.919-3.201ZM19.777 15.277a1.968 1.968 0 0 0-1.64-2.363 6.58 6.58 0 0 0-3.41-1.302 7.36 7.36 0 0 1-.409 3.078c.156.058.316.128.478.214.616.33 2.987 1.761 2.144 5.096h.002c.932 0 1.908-.481 2.835-3.042V16.96a1.223 1.223 0 0 0-.001-1.683Z" /></svg>`,
+        info: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>`,
+        training: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M10 1a6 6 0 0 0-3.815 10.631C7.237 12.5 8 13.443 8 14.456v.644a.75.75 0 0 0 .572.729 6.016 6.016 0 0 0 2.856 0A.75.75 0 0 0 12 15.1v-.644c0-1.013.762-1.957 1.815-2.825A6 6 0 0 0 10 1ZM8.863 17.414a.75.75 0 0 0-.226 1.483 9.001 9.001 0 0 0 2.726 0 .75.75 0 0 0-.226-1.483 7.5 7.5 0 0 1-2.274 0Z" /></svg>`
+    };
+
+    getIcon(id: string): SafeHtml {
+        const iconSvg = this.icons[id] || id;
+        return this.sanitizer.bypassSecurityTrustHtml(iconSvg);
+    }
+
+    getBadge(featureId: string) {
+        return this.store.getFeatureBadge(featureId);
+    }
+
+    // New Helper to check permission
+    isLocked(view: View): boolean {
+        // If a view has a featureId, we check if the user has that feature
+        // If they don't, it's locked.
+        if (view.featureId) {
+            return !this.store.hasFeature(view.featureId);
+        }
+        return false;
+    }
+
+    getPlanColor = computed(() => {
+        switch(this.userPlan()) {
+            case 'Bronze': return 'text-amber-400';
+            case 'Silver': return 'text-slate-300';
+            case 'Gold': return 'text-yellow-400';
+            default: return 'text-slate-500';
+        }
+    });
+
+    changeView(view: View, propertyName?: string): void {
+      if (propertyName) {
+        this.viewChange.emit({ ...view, propertyName });
+      } else {
+        this.viewChange.emit(view);
+      }
+    }
+
+    onLogout(): void {
+        this.logout.emit();
+    }
+
+    togglePropertyDropdown(): void {
+      this.isPropertyDropdownOpen.update(v => !v);
+    }
+    
+    selectProperty(property: Property): void {
+        this.isPropertyDropdownOpen.set(false);
+        const manageView = property.subViews.find(v => v.id === 'manage-property') || property.subViews[0];
+        // Check lock on first available view if managed view is locked? 
+        // For simplicity, we assume 'manage-property' is always available or we check lock inside changeView
+        this.changeView(manageView, property.name);
+    }
+
+    createProperty(): void {
+        this.isPropertyDropdownOpen.set(false);
+        this.viewChange.emit({ id: 'create-property', title: 'Nouvelle Propriété', icon: 'property' });
+    }
+}
