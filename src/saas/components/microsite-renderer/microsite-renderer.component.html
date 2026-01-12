@@ -1,0 +1,242 @@
+<!-- Full Screen Modal for Guide -->
+@if (guideModalState().isOpen) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+    (click)="closeGuideModal()">
+    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[80%] flex flex-col overflow-hidden animate-fade-in-up"
+        (click)="$event.stopPropagation()">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl">{{ guideModalState().icon }}</span>
+                <h3 class="text-xl font-bold text-slate-800">{{ guideModalState().title }}</h3>
+            </div>
+            <button (click)="closeGuideModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto">
+            <p class="text-slate-600 whitespace-pre-wrap leading-relaxed">{{ guideModalState().content || 'Aucune
+                information renseignée pour le moment.' }}</p>
+        </div>
+        <div class="p-4 bg-slate-50 border-t border-slate-100 text-center">
+            <button (click)="closeGuideModal()"
+                class="text-sm font-semibold text-blue-600 hover:underline">Fermer</button>
+        </div>
+    </div>
+</div>
+}
+
+<div class="w-full bg-slate-50 min-h-screen">
+    <div class="w-full mx-auto bg-white shadow-xl overflow-hidden min-h-screen"
+        [class.font-serif]="config.template === 'cozy'" [class.font-sans]="config.template !== 'cozy'"
+        [class.bg-slate-900]="config.template === 'luxury'" [class.text-white]="config.template === 'luxury'">
+
+        <!-- Header / Hero Section -->
+        <div class="relative h-[60vh] md:h-[500px] w-full group overflow-hidden">
+            @if(config.headerPhotoUrl || content?.coverImageUrl) {
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[3000ms] ease-out hover:scale-105"
+                [style.backgroundImage]="'url(' + (config.headerPhotoUrl || content?.coverImageUrl) + ')'">
+            </div>
+            <!-- Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60"></div>
+            } @else {
+            <div class="h-full w-full bg-slate-300 flex items-center justify-center text-slate-500">Pas d'image d'entête
+            </div>
+            }
+
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10">
+                <h1
+                    class="text-4xl md:text-7xl font-extrabold text-white mb-6 drop-shadow-lg tracking-tight animate-fade-in-up">
+                    {{ config.headline }}</h1>
+                <button [style.backgroundColor]="config.primaryColor"
+                    class="px-8 md:px-10 py-3 md:py-4 rounded-full text-white font-bold text-lg shadow-xl transform transition hover:scale-105 hover:shadow-2xl border-2 border-white/20 backdrop-blur-sm animate-bounce-subtle">
+                    Réserver votre séjour
+                </button>
+            </div>
+        </div>
+
+        <!-- Description -->
+        @if (config.showDescription && marketingText) {
+        <div class="p-8 md:p-12 max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8 relative inline-block"
+                [style.color]="config.template === 'luxury' ? '#fbbf24' : config.primaryColor">
+                À propos du lieu
+                <span
+                    class="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-12 h-1 bg-current opacity-50 rounded-full"></span>
+            </h2>
+            <p
+                class="text-lg md:text-xl leading-relaxed opacity-90 whitespace-pre-wrap font-light text-justify md:text-center">
+                {{ marketingText }}</p>
+        </div>
+        }
+
+        <!-- Dynamic Sections -->
+        @for (sectionId of config.visibleSections; track sectionId) {
+
+        @if(sectionId === 'gallery') {
+        @if(photos.length > 0) {
+        <div class="p-8 md:p-12 bg-opacity-5" [style.backgroundColor]="config.primaryColor + '10'">
+            <h3 class="text-2xl font-bold text-center mb-8 opacity-90 tracking-wide uppercase">La Galerie</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+                @for(photo of photos; track $index) {
+                <div
+                    class="aspect-square overflow-hidden rounded-xl cursor-pointer relative group shadow-md hover:shadow-xl transition-all duration-300">
+                    <img [src]="photo.url"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300">
+                    </div>
+                    <div
+                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="white" class="w-8 h-8 drop-shadow-md">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+        }
+        }
+
+        @if(sectionId === 'amenities') {
+        <div class="py-16 px-8 text-center border-t border-white/10">
+            <h3 class="text-2xl font-bold mb-10 opacity-90 tracking-wide uppercase">Équipements & Confort</h3>
+            @if(propertyDetails?.property_equipments?.length > 0) {
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                @for(eq of propertyDetails.property_equipments; track eq.name) {
+                <div class="p-6 bg-white/5 border border-slate-200 rounded-xl hover:shadow-lg transition-shadow">
+                    <div class="text-2xl mb-2 text-center">✨</div>
+                    <div class="font-semibold opacity-80 text-center">{{ eq.name }}</div>
+                </div>
+                }
+            </div>
+            } @else {
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                <!-- Default placeholders hidden in preview if real data exists, but showing simplistic list if empty -->
+                <div class="p-6 bg-white/5 border border-slate-200 rounded-xl">
+                    <span class="opacity-60 italic">Aucun équipement listé.</span>
+                </div>
+            </div>
+            }
+        </div>
+        }
+
+        @if(sectionId === 'reviews') {
+        <div class="py-16 text-center border-t border-white/10 bg-opacity-5"
+            [style.backgroundColor]="config.primaryColor + '05'">
+            <h3 class="text-2xl font-bold mb-10 opacity-90 tracking-wide uppercase">Livre d'Or</h3>
+            <div
+                class="max-w-2xl mx-auto bg-white/40 backdrop-blur-sm p-8 rounded-2xl border border-white/50 shadow-sm relative">
+                <div class="text-6xl absolute -top-4 -left-2 opacity-10 font-serif">"</div>
+                <div class="flex justify-center space-x-1 text-yellow-400 mb-4 text-xl">★★★★★</div>
+                <p class="text-xl italic opacity-80 mb-4 leading-relaxed">"Un séjour absolument magnifique, tout était
+                    parfait ! L'emplacement est idéal et la décoration superbe."</p>
+                <p class="font-bold text-sm opacity-60 uppercase tracking-widest">- Voyageur Heureux</p>
+            </div>
+        </div>
+        }
+
+        @if(sectionId === 'rules') {
+        <div class="py-16 px-8 border-t border-white/10 text-center">
+            <h3 class="text-2xl font-bold mb-10 opacity-90 tracking-wide uppercase">Règles de la Maison</h3>
+            <div
+                class="max-w-2xl mx-auto bg-slate-50 border border-slate-100 rounded-xl p-8 opacity-90 text-sm space-y-3">
+                <p class="flex items-center justify-center"><span class="mr-2">🕒</span> Arrivée après 15h00, Départ
+                    avant {{ content?.depart?.heureLimiteCheckout || '11h00' }}</p>
+                @if(content?.regles?.politiqueFetes) {
+                <p class="flex items-center justify-center"><span class="mr-2">🎉</span> {{
+                    content.regles.politiqueFetes }}</p>
+                }
+                @if(content?.regles?.politiqueNonFumeur) {
+                <p class="flex items-center justify-center"><span class="mr-2">🚭</span> {{
+                    content.regles.politiqueNonFumeur }}</p>
+                }
+                @if(content?.regles?.heuresSilence) {
+                <p class="flex items-center justify-center"><span class="mr-2">🤝</span> {{ content.regles.heuresSilence
+                    }}</p>
+                }
+            </div>
+        </div>
+        }
+
+        @if(sectionId === 'guide') {
+        <div class="py-16 px-8 border-t border-white/10 bg-gradient-to-b from-transparent to-black/5">
+            <h3 class="text-2xl font-bold mb-10 text-center opacity-90 tracking-wide uppercase">Guide Local</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+                <div (click)="openGuideModal('Restaurants & Gastronomie', content?.guideGastro?.recommandationRestaurants || 'Ask host', '🍝')"
+                    class="bg-white p-6 rounded-xl shadow-md border border-slate-100 hover:-translate-y-1 hover:shadow-lg cursor-pointer transition-all duration-300 flex flex-col group relative">
+                    <div
+                        class="h-32 bg-slate-100 rounded-lg mb-4 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform">
+                        🍝</div>
+                    <h4 class="font-bold text-lg mb-2 text-slate-800">Restaurants</h4>
+                    <p class="text-sm text-slate-600 line-clamp-3">{{ content?.guideGastro?.recommandationRestaurants ||
+                        'Découvrez la cuisine locale...' }}</p>
+                    <div
+                        class="mt-4 text-blue-600 text-xs font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        Voir la liste
+                    </div>
+                </div>
+
+                <div (click)="openGuideModal('Activités & Découvertes', content?.guideActivites?.guideActivites || 'Ask host', '🏃')"
+                    class="bg-white p-6 rounded-xl shadow-md border border-slate-100 hover:-translate-y-1 hover:shadow-lg cursor-pointer transition-all duration-300 flex flex-col group relative">
+                    <div
+                        class="h-32 bg-slate-100 rounded-lg mb-4 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform">
+                        🏃</div>
+                    <h4 class="font-bold text-lg mb-2 text-slate-800">Activités</h4>
+                    <p class="text-sm text-slate-600 line-clamp-3">{{ content?.guideActivites?.guideActivites ||
+                        'Randonnées et visites...' }}</p>
+                    <div
+                        class="mt-4 text-blue-600 text-xs font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        Voir les activités
+                    </div>
+                </div>
+
+                <div (click)="openGuideModal('Infos Pratiques & Transports', content?.transports?.taxisLocaux || 'Ask host', '🛒')"
+                    class="bg-white p-6 rounded-xl shadow-md border border-slate-100 hover:-translate-y-1 hover:shadow-lg cursor-pointer transition-all duration-300 flex flex-col group relative">
+                    <div
+                        class="h-32 bg-slate-100 rounded-lg mb-4 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform">
+                        🛒</div>
+                    <h4 class="font-bold text-lg mb-2 text-slate-800">Pratique</h4>
+                    <p class="text-sm text-slate-600 line-clamp-3">{{ content?.transports?.taxisLocaux ||
+                        'Supermarchés...' }}</p>
+                    <div
+                        class="mt-4 text-blue-600 text-xs font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        Voir détails
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
+        }
+
+        <!-- Contact Section -->
+        @if (config.showContact) {
+        <div class="py-16 px-8 bg-slate-900 text-white text-center">
+            <h3 class="text-2xl font-bold mb-6">Une question ?</h3>
+            <p class="mb-8 opacity-80 max-w-lg mx-auto">Nous sommes là pour vous aider à préparer votre séjour.</p>
+            <a [href]="'mailto:' + userEmail"
+                class="inline-flex items-center bg-white text-slate-900 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-slate-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
+                    <path
+                        d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" />
+                    <path
+                        d="M19 8.839l-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" />
+                </svg>
+                Contacter l'Hôte
+            </a>
+        </div>
+        }
+
+        <!-- Footer -->
+        <div class="py-8 bg-black/5 text-center text-xs opacity-50">
+            <p>&copy; 2024 - {{ config.headline }}</p>
+            <p class="mt-1">Localisation approximative : Centre Ville (Adresse exacte fournie après réservation)</p>
+        </div>
+    </div>
+</div>

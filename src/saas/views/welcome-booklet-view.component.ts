@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
 import { WelcomeBookletEditorComponent } from './welcome-booklet/components/welcome-booklet-editor.component';
@@ -18,7 +18,7 @@ import { WelcomeBookletPreviewComponent } from './welcome-booklet/components/wel
     ],
     templateUrl: './welcome-booklet-view.component.html',
 })
-export class WelcomeBookletViewComponent {
+export class WelcomeBookletViewComponent implements OnInit {
     @Input() set propertyName(value: string) {
         this.service.propertyName.set(value);
     }
@@ -29,11 +29,23 @@ export class WelcomeBookletViewComponent {
     isLoading = this.service.isLoading;
     saveMessage = this.service.saveMessage;
 
+    ngOnInit() {
+        // Force reload to ensure fresh data even if propertyName hasn't changed (e.g. returning from Marketing view)
+        this.refreshData();
+    }
+
     setActiveTab(tab: 'edit' | 'listing' | 'microsite' | 'booklet') {
         this.service.activeTab.set(tab);
     }
 
     save() {
         this.service.save();
+    }
+
+    refreshData() {
+        const name = this.service.propertyName();
+        if (name) {
+            this.service.loadData(name);
+        }
     }
 }

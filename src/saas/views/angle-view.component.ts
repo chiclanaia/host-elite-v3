@@ -6,6 +6,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angul
 import { HostRepository } from '../../services/host-repository.service';
 import { GeminiService } from '../../services/gemini.service';
 import { SessionStore } from '../../state/session.store';
+import { MicrositeConfig, BuilderPhoto, SectionDef, resolveMicrositeConfig } from './welcome-booklet/booklet-definitions';
+import { MicrositeRendererComponent } from '../components/microsite-renderer/microsite-renderer.component';
+import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
 
 type Plan = 'Freemium' | 'Bronze' | 'Silver' | 'Gold';
 
@@ -25,131 +28,101 @@ interface AngleDetails {
 type QuestionLevel = 'Bronze' | 'Silver' | 'Gold';
 
 interface OnboardingQuestion {
-  id: string;
-  text: string;
-  level: QuestionLevel;
-  subQuestion?: {
     id: string;
-    label: string;
-    type: 'text' | 'url' | 'number';
-    placeholder?: string;
-  }
+    text: string;
+    level: QuestionLevel;
+    subQuestion?: {
+        id: string;
+        label: string;
+        type: 'text' | 'url' | 'number';
+        placeholder?: string;
+    }
 }
 
-// Microsite Types
-interface MicrositeConfig {
-    template: 'modern' | 'cozy' | 'luxury';
-    primaryColor: string;
-    showDescription: boolean;
-    showContact: boolean; // New: Toggle contact section
-    visibleSections: string[]; // Ordered list of visible section IDs
-    headerPhotoUrl: string | null; // New: Specific header photo
-    hiddenPhotoUrls: string[]; 
-    heroLayout: 'full' | 'split';
-    headline: string;
-}
-
-interface BuilderPhoto {
-    url: string;
-    category: string;
-    visible: boolean;
-}
-
-interface SectionDef {
-    id: string;
-    label: string;
-}
-
-// Guide Modal State
-interface GuideModalState {
-    isOpen: boolean;
-    title: string;
-    content: string;
-    icon: string;
-}
+// Microsite Types imported from booklet-definitions.ts
 
 const ONBOARDING_DATA: Record<string, OnboardingQuestion[]> = {
-  marketing: [
-    { id: 'm_q1', text: 'Votre annonce est-elle publiée sur au moins une plateforme (ex: Airbnb, Booking) ?', level: 'Bronze', subQuestion: { id: 'm_q1_url', label: 'URL de votre annonce principale', type: 'url', placeholder: 'https://airbnb.com/h/mon-logement' } },
-    { id: 'm_q2', text: 'Vos photos de propriété sont-elles lumineuses, bien cadrées et réalisées par un professionnel (ou de qualité professionnelle) ?', level: 'Silver' },
-    { id: 'm_q3', text: 'Votre titre d\'annonce est-il accrocheur et met-il en avant votre atout principal (ex: "Vue Mer", "Plein Centre") ?', level: 'Silver', subQuestion: { id: 'm_q3_title', label: 'Quel est votre titre d\'annonce actuel ?', type: 'text', placeholder: 'Ex: Studio cosy vue Tour Eiffel' } },
-    { id: 'm_q4', text: 'Votre description textuelle est-elle complète, engageante et raconte-t-elle une "histoire" qui donne envie de réserver ?', level: 'Silver' },
-    { id: 'm_q5', text: 'Avez-vous clairement identifié votre "clientèle cible" (ex: familles, couples, digital nomads) pour ce bien ?', level: 'Gold', subQuestion: { id: 'm_q5_target', label: 'Décrivez votre clientèle cible', type: 'text', placeholder: 'Ex: Familles avec jeunes enfants' } },
-    { id: 'm_q6', text: 'Demandez-vous activement des avis et avez-vous maintenu une note supérieure à 4.8 étoiles sur 5 ?', level: 'Gold', subQuestion: { id: 'm_q6_rating', label: 'Quelle est votre note moyenne actuelle ?', type: 'number', placeholder: 'Ex: 4.92' } },
-    { id: 'm_q7', text: 'Utilisez-vous les réseaux sociaux (ex: Instagram, Pinterest) pour promouvoir spécifiquement ce logement ?', level: 'Gold', subQuestion: { id: 'm_q7_social', label: 'Lien vers votre page (ex: Instagram)', type: 'url', placeholder: 'https://instagram.com/monlogement' } },
-    { id: 'm_q8', text: 'Proposez-vous une "visite virtuelle" 3D ou une vidéo professionnelle de votre logement ?', level: 'Gold', subQuestion: { id: 'm_q8_tour', label: 'Lien vers la visite virtuelle ou vidéo', type: 'url', placeholder: 'https://...' } },
-    { id: 'm_q9', text: 'Avez-vous un site web personnel pour générer des réservations directes (hors plateforme) pour ce bien ?', level: 'Gold', subQuestion: { id: 'm_q9_url', label: 'URL de votre site de réservation directe', type: 'url', placeholder: 'https://mon-site.com' } },
-    { id: 'm_q10', text: 'Collectez-vous (légalement) les e-mails de vos Invités pour des actions de fidélisation (ex: promo -10% pour un futur séjour) ?', level: 'Gold' },
-  ],
-  experience: [
-    { id: 'e_q1', text: 'Le logement est-il impeccablement propre (qualité hôtelière) avant chaque arrivée ?', level: 'Bronze' },
-    { id: 'e_q2', text: 'Le processus d\'arrivée (check-in) est-il simple, clair, et 100% fiable (ex: boîte à clés fonctionnelle, serrure connectée) ?', level: 'Silver', subQuestion: { id: 'e_q2_method', label: 'Quelle est votre méthode de check-in ?', type: 'text', placeholder: 'Ex: Boîte à clés, accueil en personne...' } },
-    { id: 'e_q3', text: 'Fournissez-vous un livret d\'accueil (numérique ou physique) avec au moins les informations vitales (Wi-Fi, règles, contacts) ?', level: 'Silver', subQuestion: { id: 'e_q3_link', label: 'Lien vers votre livret d\'accueil numérique (si applicable)', type: 'url', placeholder: 'https://example.com/livret' } },
-    { id: 'e_q4', text: 'Répondez-vous aux messages des Invités en moins d\'une heure (pendant les heures de journée) ?', level: 'Silver' },
-    { id: 'e_q5', text: 'Votre livret d\'accueil est-il complet (guides d\'appareils, urgences, recommandations locales) au-delà des bases ?', level: 'Gold' },
-    { id: 'e_q6', text: 'Fournissez-vous un "panier de bienvenue" attentionné (ex: café, thé, snacks, une bouteille d\'eau ou de vin) ?', level: 'Gold', subQuestion: { id: 'e_q6_basket', label: 'Que contient votre panier de bienvenue ?', type: 'text', placeholder: 'Ex: Café, thé, gâteaux locaux' } },
-    { id: 'e_q7', text: 'Utilisez-vous des messages automatisés (confirmation, J-1, mi-séjour, départ) pour une communication fluide ?', level: 'Gold', subQuestion: { id: 'e_q7_tool', label: 'Quel outil de messagerie automatisée utilisez-vous ?', type: 'text', placeholder: 'Ex: Airbnb, Smoobu, etc.' } },
-    { id: 'e_q8', text: 'Personnalisez-vous l\'accueil (ex: un mot de bienvenue nominatif, une attention pour un anniversaire) ?', level: 'Gold' },
-    { id: 'e_q9', text: 'Avez-vous mis en place des partenariats (chef à domicile, VTC, baby-sitting) que vous proposez activement à vos Invités ?', level: 'Gold', subQuestion: { id: 'e_q9_partner', label: 'Exemple de partenaire', type: 'text', placeholder: 'Ex: Chef "Le Bon Goût"' } },
-    { id: 'e_q10', text: 'Anticipez-vous les besoins "non-dits" (ex: parapluie à disposition, chargeurs universels, jeux de société) ?', level: 'Gold' },
-  ],
-  operations: [
-    { id: 'o_q1', text: 'Avez-vous une solution de nettoyage (vous-même ou une équipe) qui est 100% fiable ?', level: 'Bronze', subQuestion: { id: 'o_q1_cleaner', label: 'Nom de votre prestataire de nettoyage (si externe)', type: 'text', placeholder: 'Ex: NettoyagePro' } },
-    { id: 'o_q2', text: 'Disposez-vous d\'au moins deux (idéalement trois) jeux complets de linge de lit et de serviettes par lit/personne ?', level: 'Silver', subQuestion: { id: 'o_q2_sets', label: 'Combien de jeux de linge complets possédez-vous ?', type: 'number', placeholder: '3' } },
-    { id: 'o_q3', text: 'Avez-vous une checklist de nettoyage détaillée (écrite ou visuelle) que votre équipe (ou vous) suit à la lettre ?', level: 'Silver' },
-    { id: 'o_q4', text: 'Gérez-vous activement le stock des consommables (savon, papier toilette, café, éponges...) pour ne jamais être en rupture ?', level: 'Silver' },
-    { id: 'o_q5', text: 'Avez-vous un prestataire de maintenance (plombier, électricien) joignable en cas d\'urgence le week-end ?', level: 'Gold', subQuestion: { id: 'o_q5_maintenance', label: 'Nom de votre prestataire de maintenance', type: 'text', placeholder: 'Ex: Plomberie Express' } },
-    { id: 'o_q6', text: 'Avez-vous une solution professionnelle pour la buanderie (service externe ou machine/sèche-linge sur place efficace) ?', level: 'Gold' },
-    { id: 'o_q7', text: 'Utilisez-vous un logiciel (Channel Manager ou PMS) pour synchroniser vos calendriers si vous êtes sur plusieurs plateformes ?', level: 'Gold', subQuestion: { id: 'o_q7_software', label: 'Quel logiciel utilisez-vous ?', type: 'text', placeholder: 'Ex: Smoobu, Hostaway...' } },
-    { id: 'o_q8', text: 'Avez-vous un système de "contrôle qualité" (ex: l\'équipe de nettoyage vous envoie des photos) après chaque nettoyage ?', level: 'Gold' },
-    { id: 'o_q9', text: 'Avez-vous des procédures écrites (SOPs) pour les tâches courantes (check-in, check-out, gestion d\'une panne) ?', level: 'Gold' },
-    { id: 'o_q10', text: 'Estimez-vous que votre gestion (ménage, communication, maintenance) est automatisée ou déléguée à plus de 80% ?', level: 'Gold' },
-  ],
-  pricing: [
-    { id: 'p_q1', text: 'Avez-vous défini un prix de base "plancher" pour votre nuitée (basé sur vos coûts) ?', level: 'Bronze', subQuestion: { id: 'p_q1_price', label: 'Quel est votre prix plancher par nuit (€) ?', type: 'number', placeholder: 'Ex: 50' } },
-    { id: 'p_q2', text: 'Avez-vous défini des frais de ménage séparés qui couvrent exactement le coût réel du nettoyage ?', level: 'Silver', subQuestion: { id: 'p_q2_fee', label: 'Quel est le montant de vos frais de ménage (€) ?', type: 'number', placeholder: 'Ex: 25' } },
-    { id: 'p_q3', text: 'Différenciez-vous activement vos prix entre la haute saison et la basse saison ?', level: 'Silver' },
-    { id: 'p_q4', text: 'Avez-vous des prix différents pour les jours de semaine (lun-jeu) et les week-ends (ven-dim) ?', level: 'Silver' },
-    { id: 'p_q5', text: 'Analysez-vous (au moins 1x/mois) les prix de vos 5 concurrents directs ?', level: 'Gold' },
-    { id: 'p_q6', text: 'Ajustez-vous manuellement vos prix à la hausse pour les événements locaux (concerts, salons, vacances scolaires) ?', level: 'Gold' },
-    { id: 'p_q7', text: 'Avez-vous défini des règles de séjour minimum dynamiques (ex: 2 nuits le WE, 7 nuits en été) pour optimiser votre calendrier ?', level: 'Gold' },
-    { id: 'p_q8', text: 'Utilisez-vous un outil de tarification dynamique externe (ex: PriceLabs, Wheelhouse) pour automatiser vos prix ?', level: 'Gold', subQuestion: { id: 'p_q8_tool', label: 'Quel outil de tarification utilisez-vous ?', type: 'text', placeholder: 'Ex: PriceLabs, Wheelhouse...' } },
-    { id: 'p_q9', text: 'Proposez-vous des tarifs dégressifs (ex: -10% semaine, -25% mois) pour attirer les séjours longs ?', level: 'Gold' },
-    { id: 'p_q10', text: 'Connaissez-vous et suivez-vous votre "RevPAR" (Revenu Par Chambre Disponible) ?', level: 'Gold', subQuestion: { id: 'p_q10_revpar', label: 'Quel est votre RevPAR moyen (€) ?', type: 'number', placeholder: 'Ex: 85' } },
-  ],
-  accomodation: [
-    { id: 'a_q1', text: 'Le logement est-il 100% conforme aux normes de sécurité (détecteurs de fumée, CO, extincteur) ?', level: 'Bronze' },
-    { id: 'a_q2', text: 'Le Wi-Fi est-il rapide (fibre/haut débit), fiable et couvre-t-il 100% du logement (pas de "zone morte") ?', level: 'Silver', subQuestion: { id: 'a_q2_speed', label: 'Quel est le débit descendant (en Mbit/s) ?', type: 'number', placeholder: 'Ex: 100' } },
-    { id: 'a_q3', text: 'La cuisine est-elle équipée de tous les ustensiles essentiels et de qualité pour qu\'un Invité puisse vraiment cuisiner ?', level: 'Silver' },
-    { id: 'a_q4', text: 'La literie (matelas, oreillers, couette) est-elle de qualité hôtelière et confortable (et non "premier prix") ?', level: 'Silver' },
-    { id: 'a_q5', text: 'La décoration est-elle soignée, moderne (ou thématique) et "dépersonnalisée" (pas de photos de famille) ?', level: 'Gold' },
-    { id: 'a_q6', text: 'Fournissez-vous des équipements "expérientiels" (ex: Netflix, enceinte Bluetooth, machine Nespresso avec capsules) ?', level: 'Gold', subQuestion: { id: 'a_q6_example', label: 'Exemple d\'équipement expérientiel fourni', type: 'text', placeholder: 'Ex: Abonnement Netflix, enceinte Bose' } },
-    { id: 'a_q7', text: 'Avez-vous un espace de travail dédié (vrai bureau, bonne chaise, bonne lumière) pour les télétravailleurs ?', level: 'Gold' },
-    { id: 'a_q8', text: 'Votre logement est-il optimisé pour votre clientèle cible (ex: lit bébé et chaise haute si vous visez les familles) ?', level: 'Gold' },
-    { id: 'a_q9', text: 'Avez-vous investi dans un atout "Whaou" ou "Instagrammable" (ex: Jacuzzi, vue exceptionnelle, balançoire, mur végétal) ?', level: 'Gold', subQuestion: { id: 'a_q9_asset', label: 'Décrivez votre atout "Whaou"', type: 'text', placeholder: 'Ex: Jacuzzi sur la terrasse' } },
-    { id: 'a_q10', text: 'Planifiez-vous un budget annuel de "rafraîchissement" (peinture, remplacement du linge usé, coussins) ?', level: 'Gold' },
-  ],
-  legal: [
-    { id: 'l_q1', text: 'Avez-vous vérifié que votre règlement de copropriété (si applicable) autorise explicitement la location courte durée ?', level: 'Silver' },
-    { id: 'l_q2', text: 'Avez-vous déclaré votre activité en mairie et obtenu un numéro d\'enregistrement (si requis dans votre ville) ?', level: 'Silver', subQuestion: { id: 'l_q2_number', label: 'Quel est votre numéro d\'enregistrement ?', type: 'text', placeholder: 'Ex: 7510101234567' } },
-    { id: 'l_q3', text: 'Collectez-vous et reversez-vous la taxe de séjour (si elle n\'est pas gérée automatiquement par la plateforme) ?', level: 'Silver' },
-    { id: 'l_q4', text: 'Déclarez-vous 100% de vos revenus de location aux impôts ?', level: 'Silver' },
-    { id: 'l_q5', text: 'Avez-vous souscrit une assurance spécifique (Responsabilité Civile Pro / PNO) en plus de la garantie Airbnb/Booking ?', level: 'Gold', subQuestion: { id: 'l_q5_insurance', label: 'Nom de votre compagnie d\'assurance', type: 'text', placeholder: 'Ex: AXA, Allianz...' } },
-    { id: 'l_q6', text: 'Avez-vous un règlement intérieur clair et affiché, que les Invités acceptent légalement lors de la réservation ?', level: 'Gold' },
-    { id: 'l_q7', text: 'Avez-vous choisi un statut fiscal optimisé (ex: LMNP au réel) pour votre activité ?', level: 'Gold', subQuestion: { id: 'l_q7_status', label: 'Quel est votre statut fiscal ?', type: 'text', placeholder: 'Ex: LMNP au réel' } },
-    { id: 'l_q8', text: 'Tenez-vous une comptabilité analytique (un "P&L") qui suit précisément tous vos coûts (ménage, produits, électricité, commissions...) ?', level: 'Gold' },
-    { id: 'l_q9', text: 'Travaillez-vous avec un expert-comptable spécialisé dans l\'immobilier ou la location meublée ?', level: 'Gold', subQuestion: { id: 'l_q9_firm', label: 'Nom de l\'expert-comptable ou du cabinet', type: 'text', placeholder: 'Ex: Cabinet Dupont' } },
-    { id: 'l_q10', text: 'Calculez-vous (au moins 1x/trimestre) votre rentabilité nette (Bénéfice Net) et votre ROI (Retour sur Investissement) ?', level: 'Gold' },
-  ]
+    marketing: [
+        { id: 'm_q1', text: 'Votre annonce est-elle publiée sur au moins une plateforme (ex: Airbnb, Booking) ?', level: 'Bronze', subQuestion: { id: 'm_q1_url', label: 'URL de votre annonce principale', type: 'url', placeholder: 'https://airbnb.com/h/mon-logement' } },
+        { id: 'm_q2', text: 'Vos photos de propriété sont-elles lumineuses, bien cadrées et réalisées par un professionnel (ou de qualité professionnelle) ?', level: 'Silver' },
+        { id: 'm_q3', text: 'Votre titre d\'annonce est-il accrocheur et met-il en avant votre atout principal (ex: "Vue Mer", "Plein Centre") ?', level: 'Silver', subQuestion: { id: 'm_q3_title', label: 'Quel est votre titre d\'annonce actuel ?', type: 'text', placeholder: 'Ex: Studio cosy vue Tour Eiffel' } },
+        { id: 'm_q4', text: 'Votre description textuelle est-elle complète, engageante et raconte-t-elle une "histoire" qui donne envie de réserver ?', level: 'Silver' },
+        { id: 'm_q5', text: 'Avez-vous clairement identifié votre "clientèle cible" (ex: familles, couples, digital nomads) pour ce bien ?', level: 'Gold', subQuestion: { id: 'm_q5_target', label: 'Décrivez votre clientèle cible', type: 'text', placeholder: 'Ex: Familles avec jeunes enfants' } },
+        { id: 'm_q6', text: 'Demandez-vous activement des avis et avez-vous maintenu une note supérieure à 4.8 étoiles sur 5 ?', level: 'Gold', subQuestion: { id: 'm_q6_rating', label: 'Quelle est votre note moyenne actuelle ?', type: 'number', placeholder: 'Ex: 4.92' } },
+        { id: 'm_q7', text: 'Utilisez-vous les réseaux sociaux (ex: Instagram, Pinterest) pour promouvoir spécifiquement ce logement ?', level: 'Gold', subQuestion: { id: 'm_q7_social', label: 'Lien vers votre page (ex: Instagram)', type: 'url', placeholder: 'https://instagram.com/monlogement' } },
+        { id: 'm_q8', text: 'Proposez-vous une "visite virtuelle" 3D ou une vidéo professionnelle de votre logement ?', level: 'Gold', subQuestion: { id: 'm_q8_tour', label: 'Lien vers la visite virtuelle ou vidéo', type: 'url', placeholder: 'https://...' } },
+        { id: 'm_q9', text: 'Avez-vous un site web personnel pour générer des réservations directes (hors plateforme) pour ce bien ?', level: 'Gold', subQuestion: { id: 'm_q9_url', label: 'URL de votre site de réservation directe', type: 'url', placeholder: 'https://mon-site.com' } },
+        { id: 'm_q10', text: 'Collectez-vous (légalement) les e-mails de vos Invités pour des actions de fidélisation (ex: promo -10% pour un futur séjour) ?', level: 'Gold' },
+    ],
+    experience: [
+        { id: 'e_q1', text: 'Le logement est-il impeccablement propre (qualité hôtelière) avant chaque arrivée ?', level: 'Bronze' },
+        { id: 'e_q2', text: 'Le processus d\'arrivée (check-in) est-il simple, clair, et 100% fiable (ex: boîte à clés fonctionnelle, serrure connectée) ?', level: 'Silver', subQuestion: { id: 'e_q2_method', label: 'Quelle est votre méthode de check-in ?', type: 'text', placeholder: 'Ex: Boîte à clés, accueil en personne...' } },
+        { id: 'e_q3', text: 'Fournissez-vous un livret d\'accueil (numérique ou physique) avec au moins les informations vitales (Wi-Fi, règles, contacts) ?', level: 'Silver', subQuestion: { id: 'e_q3_link', label: 'Lien vers votre livret d\'accueil numérique (si applicable)', type: 'url', placeholder: 'https://example.com/livret' } },
+        { id: 'e_q4', text: 'Répondez-vous aux messages des Invités en moins d\'une heure (pendant les heures de journée) ?', level: 'Silver' },
+        { id: 'e_q5', text: 'Votre livret d\'accueil est-il complet (guides d\'appareils, urgences, recommandations locales) au-delà des bases ?', level: 'Gold' },
+        { id: 'e_q6', text: 'Fournissez-vous un "panier de bienvenue" attentionné (ex: café, thé, snacks, une bouteille d\'eau ou de vin) ?', level: 'Gold', subQuestion: { id: 'e_q6_basket', label: 'Que contient votre panier de bienvenue ?', type: 'text', placeholder: 'Ex: Café, thé, gâteaux locaux' } },
+        { id: 'e_q7', text: 'Utilisez-vous des messages automatisés (confirmation, J-1, mi-séjour, départ) pour une communication fluide ?', level: 'Gold', subQuestion: { id: 'e_q7_tool', label: 'Quel outil de messagerie automatisée utilisez-vous ?', type: 'text', placeholder: 'Ex: Airbnb, Smoobu, etc.' } },
+        { id: 'e_q8', text: 'Personnalisez-vous l\'accueil (ex: un mot de bienvenue nominatif, une attention pour un anniversaire) ?', level: 'Gold' },
+        { id: 'e_q9', text: 'Avez-vous mis en place des partenariats (chef à domicile, VTC, baby-sitting) que vous proposez activement à vos Invités ?', level: 'Gold', subQuestion: { id: 'e_q9_partner', label: 'Exemple de partenaire', type: 'text', placeholder: 'Ex: Chef "Le Bon Goût"' } },
+        { id: 'e_q10', text: 'Anticipez-vous les besoins "non-dits" (ex: parapluie à disposition, chargeurs universels, jeux de société) ?', level: 'Gold' },
+    ],
+    operations: [
+        { id: 'o_q1', text: 'Avez-vous une solution de nettoyage (vous-même ou une équipe) qui est 100% fiable ?', level: 'Bronze', subQuestion: { id: 'o_q1_cleaner', label: 'Nom de votre prestataire de nettoyage (si externe)', type: 'text', placeholder: 'Ex: NettoyagePro' } },
+        { id: 'o_q2', text: 'Disposez-vous d\'au moins deux (idéalement trois) jeux complets de linge de lit et de serviettes par lit/personne ?', level: 'Silver', subQuestion: { id: 'o_q2_sets', label: 'Combien de jeux de linge complets possédez-vous ?', type: 'number', placeholder: '3' } },
+        { id: 'o_q3', text: 'Avez-vous une checklist de nettoyage détaillée (écrite ou visuelle) que votre équipe (ou vous) suit à la lettre ?', level: 'Silver' },
+        { id: 'o_q4', text: 'Gérez-vous activement le stock des consommables (savon, papier toilette, café, éponges...) pour ne jamais être en rupture ?', level: 'Silver' },
+        { id: 'o_q5', text: 'Avez-vous un prestataire de maintenance (plombier, électricien) joignable en cas d\'urgence le week-end ?', level: 'Gold', subQuestion: { id: 'o_q5_maintenance', label: 'Nom de votre prestataire de maintenance', type: 'text', placeholder: 'Ex: Plomberie Express' } },
+        { id: 'o_q6', text: 'Avez-vous une solution professionnelle pour la buanderie (service externe ou machine/sèche-linge sur place efficace) ?', level: 'Gold' },
+        { id: 'o_q7', text: 'Utilisez-vous un logiciel (Channel Manager ou PMS) pour synchroniser vos calendriers si vous êtes sur plusieurs plateformes ?', level: 'Gold', subQuestion: { id: 'o_q7_software', label: 'Quel logiciel utilisez-vous ?', type: 'text', placeholder: 'Ex: Smoobu, Hostaway...' } },
+        { id: 'o_q8', text: 'Avez-vous un système de "contrôle qualité" (ex: l\'équipe de nettoyage vous envoie des photos) après chaque nettoyage ?', level: 'Gold' },
+        { id: 'o_q9', text: 'Avez-vous des procédures écrites (SOPs) pour les tâches courantes (check-in, check-out, gestion d\'une panne) ?', level: 'Gold' },
+        { id: 'o_q10', text: 'Estimez-vous que votre gestion (ménage, communication, maintenance) est automatisée ou déléguée à plus de 80% ?', level: 'Gold' },
+    ],
+    pricing: [
+        { id: 'p_q1', text: 'Avez-vous défini un prix de base "plancher" pour votre nuitée (basé sur vos coûts) ?', level: 'Bronze', subQuestion: { id: 'p_q1_price', label: 'Quel est votre prix plancher par nuit (€) ?', type: 'number', placeholder: 'Ex: 50' } },
+        { id: 'p_q2', text: 'Avez-vous défini des frais de ménage séparés qui couvrent exactement le coût réel du nettoyage ?', level: 'Silver', subQuestion: { id: 'p_q2_fee', label: 'Quel est le montant de vos frais de ménage (€) ?', type: 'number', placeholder: 'Ex: 25' } },
+        { id: 'p_q3', text: 'Différenciez-vous activement vos prix entre la haute saison et la basse saison ?', level: 'Silver' },
+        { id: 'p_q4', text: 'Avez-vous des prix différents pour les jours de semaine (lun-jeu) et les week-ends (ven-dim) ?', level: 'Silver' },
+        { id: 'p_q5', text: 'Analysez-vous (au moins 1x/mois) les prix de vos 5 concurrents directs ?', level: 'Gold' },
+        { id: 'p_q6', text: 'Ajustez-vous manuellement vos prix à la hausse pour les événements locaux (concerts, salons, vacances scolaires) ?', level: 'Gold' },
+        { id: 'p_q7', text: 'Avez-vous défini des règles de séjour minimum dynamiques (ex: 2 nuits le WE, 7 nuits en été) pour optimiser votre calendrier ?', level: 'Gold' },
+        { id: 'p_q8', text: 'Utilisez-vous un outil de tarification dynamique externe (ex: PriceLabs, Wheelhouse) pour automatiser vos prix ?', level: 'Gold', subQuestion: { id: 'p_q8_tool', label: 'Quel outil de tarification utilisez-vous ?', type: 'text', placeholder: 'Ex: PriceLabs, Wheelhouse...' } },
+        { id: 'p_q9', text: 'Proposez-vous des tarifs dégressifs (ex: -10% semaine, -25% mois) pour attirer les séjours longs ?', level: 'Gold' },
+        { id: 'p_q10', text: 'Connaissez-vous et suivez-vous votre "RevPAR" (Revenu Par Chambre Disponible) ?', level: 'Gold', subQuestion: { id: 'p_q10_revpar', label: 'Quel est votre RevPAR moyen (€) ?', type: 'number', placeholder: 'Ex: 85' } },
+    ],
+    accomodation: [
+        { id: 'a_q1', text: 'Le logement est-il 100% conforme aux normes de sécurité (détecteurs de fumée, CO, extincteur) ?', level: 'Bronze' },
+        { id: 'a_q2', text: 'Le Wi-Fi est-il rapide (fibre/haut débit), fiable et couvre-t-il 100% du logement (pas de "zone morte") ?', level: 'Silver', subQuestion: { id: 'a_q2_speed', label: 'Quel est le débit descendant (en Mbit/s) ?', type: 'number', placeholder: 'Ex: 100' } },
+        { id: 'a_q3', text: 'La cuisine est-elle équipée de tous les ustensiles essentiels et de qualité pour qu\'un Invité puisse vraiment cuisiner ?', level: 'Silver' },
+        { id: 'a_q4', text: 'La literie (matelas, oreillers, couette) est-elle de qualité hôtelière et confortable (et non "premier prix") ?', level: 'Silver' },
+        { id: 'a_q5', text: 'La décoration est-elle soignée, moderne (ou thématique) et "dépersonnalisée" (pas de photos de famille) ?', level: 'Gold' },
+        { id: 'a_q6', text: 'Fournissez-vous des équipements "expérientiels" (ex: Netflix, enceinte Bluetooth, machine Nespresso avec capsules) ?', level: 'Gold', subQuestion: { id: 'a_q6_example', label: 'Exemple d\'équipement expérientiel fourni', type: 'text', placeholder: 'Ex: Abonnement Netflix, enceinte Bose' } },
+        { id: 'a_q7', text: 'Avez-vous un espace de travail dédié (vrai bureau, bonne chaise, bonne lumière) pour les télétravailleurs ?', level: 'Gold' },
+        { id: 'a_q8', text: 'Votre logement est-il optimisé pour votre clientèle cible (ex: lit bébé et chaise haute si vous visez les familles) ?', level: 'Gold' },
+        { id: 'a_q9', text: 'Avez-vous investi dans un atout "Whaou" ou "Instagrammable" (ex: Jacuzzi, vue exceptionnelle, balançoire, mur végétal) ?', level: 'Gold', subQuestion: { id: 'a_q9_asset', label: 'Décrivez votre atout "Whaou"', type: 'text', placeholder: 'Ex: Jacuzzi sur la terrasse' } },
+        { id: 'a_q10', text: 'Planifiez-vous un budget annuel de "rafraîchissement" (peinture, remplacement du linge usé, coussins) ?', level: 'Gold' },
+    ],
+    legal: [
+        { id: 'l_q1', text: 'Avez-vous vérifié que votre règlement de copropriété (si applicable) autorise explicitement la location courte durée ?', level: 'Silver' },
+        { id: 'l_q2', text: 'Avez-vous déclaré votre activité en mairie et obtenu un numéro d\'enregistrement (si requis dans votre ville) ?', level: 'Silver', subQuestion: { id: 'l_q2_number', label: 'Quel est votre numéro d\'enregistrement ?', type: 'text', placeholder: 'Ex: 7510101234567' } },
+        { id: 'l_q3', text: 'Collectez-vous et reversez-vous la taxe de séjour (si elle n\'est pas gérée automatiquement par la plateforme) ?', level: 'Silver' },
+        { id: 'l_q4', text: 'Déclarez-vous 100% de vos revenus de location aux impôts ?', level: 'Silver' },
+        { id: 'l_q5', text: 'Avez-vous souscrit une assurance spécifique (Responsabilité Civile Pro / PNO) en plus de la garantie Airbnb/Booking ?', level: 'Gold', subQuestion: { id: 'l_q5_insurance', label: 'Nom de votre compagnie d\'assurance', type: 'text', placeholder: 'Ex: AXA, Allianz...' } },
+        { id: 'l_q6', text: 'Avez-vous un règlement intérieur clair et affiché, que les Invités acceptent légalement lors de la réservation ?', level: 'Gold' },
+        { id: 'l_q7', text: 'Avez-vous choisi un statut fiscal optimisé (ex: LMNP au réel) pour votre activité ?', level: 'Gold', subQuestion: { id: 'l_q7_status', label: 'Quel est votre statut fiscal ?', type: 'text', placeholder: 'Ex: LMNP au réel' } },
+        { id: 'l_q8', text: 'Tenez-vous une comptabilité analytique (un "P&L") qui suit précisément tous vos coûts (ménage, produits, électricité, commissions...) ?', level: 'Gold' },
+        { id: 'l_q9', text: 'Travaillez-vous avec un expert-comptable spécialisé dans l\'immobilier ou la location meublée ?', level: 'Gold', subQuestion: { id: 'l_q9_firm', label: 'Nom de l\'expert-comptable ou du cabinet', type: 'text', placeholder: 'Ex: Cabinet Dupont' } },
+        { id: 'l_q10', text: 'Calculez-vous (au moins 1x/trimestre) votre rentabilité nette (Bénéfice Net) et votre ROI (Retour sur Investissement) ?', level: 'Gold' },
+    ]
 };
 
 
 @Component({
-  selector: 'saas-angle-view',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './angle-view.component.html',
+    selector: 'saas-angle-view',
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeRendererComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './angle-view.component.html',
 })
 export class AngleViewComponent implements OnInit {
     view = input.required<View>();
@@ -159,6 +132,7 @@ export class AngleViewComponent implements OnInit {
     private repository = inject(HostRepository);
     private geminiService = inject(GeminiService);
     private store = inject(SessionStore);
+    private bookletService = inject(WelcomeBookletService);
     private fb: FormBuilder = inject(FormBuilder);
 
     isModalOpen = signal(false);
@@ -179,12 +153,8 @@ export class AngleViewComponent implements OnInit {
     bookletContent = signal<any>(null);
 
     // Guide Modal State
-    guideModalState = signal<GuideModalState>({
-        isOpen: false,
-        title: '',
-        content: '',
-        icon: ''
-    });
+    // Guide Modal State - Handled by renderer now
+
 
     // User contact info
     userEmail = computed(() => this.store.userProfile()?.email || '');
@@ -202,10 +172,10 @@ export class AngleViewComponent implements OnInit {
         headline: 'Bienvenue chez vous'
     });
     micrositePhotos = signal<BuilderPhoto[]>([]);
-    
+
     // Computed signal for visible photos to avoid arrow function in template
     visiblePhotos = computed(() => this.micrositePhotos().filter(p => p.visible));
-    
+
     // Available sections definition - Moved UP to ensure availability
     readonly availableSections: SectionDef[] = [
         { id: 'gallery', label: 'Galerie Photos' },
@@ -333,9 +303,65 @@ export class AngleViewComponent implements OnInit {
                     this.marketingText.set(prop.listing_description || '');
                 }
 
-                // Load saved configuration for microsite
+                // Check if WelcomeBookletService has hot data for this property
+                console.log(`[DEBUG] AngleView Load: ViewProp=${v.propertyName}, ServiceProp=${this.bookletService.propertyName()}, ServiceLoading=${this.bookletService.isLoading()}`);
+
+                if (this.bookletService.propertyName() === v.propertyName && !this.bookletService.isLoading()) {
+                    console.log('[DEBUG] AngleView: Using hot data from WelcomeBookletService');
+                    const rawContent = this.bookletService.editorForm.getRawValue();
+                    console.log('[DEBUG] Raw Content Keys:', Object.keys(rawContent));
+                    console.log('[DEBUG] Guide Content:', rawContent?.guideGastro, rawContent?.guideActivites);
+
+                    this.bookletContent.set(rawContent);
+
+                    // Sync Marketing Text (Welcome Message)
+                    if (rawContent.bienvenue?.messageBienvenue) {
+                        this.marketingText.set(rawContent.bienvenue.messageBienvenue);
+                    }
+
+                    // Re-evaluate Smart Defaults
+                    let currentConfig = { ...this.bookletService.micrositeConfig() };
+                    console.log('[DEBUG] Service Config Visible Sections (Before):', currentConfig.visibleSections);
+
+                    const smartSections = new Set(currentConfig.visibleSections);
+
+                    // Force enable Guide if content exists
+                    if (rawContent?.guideGastro?.recommandationRestaurants || rawContent?.guideActivites?.guideActivites) {
+                        console.log('[DEBUG] Force enabling Guide');
+                        smartSections.add('guide');
+                    }
+                    if (rawContent?.regles?.politiqueFetes || rawContent?.regles?.politiqueNonFumeur ||
+                        rawContent?.regles?.heuresSilence || rawContent?.depart?.heureLimiteCheckout) {
+                        console.log('[DEBUG] Force enabling Rules');
+                        smartSections.add('rules');
+                    }
+
+                    currentConfig.visibleSections = Array.from(smartSections);
+                    console.log('[DEBUG] Final Config Visible Sections:', currentConfig.visibleSections);
+
+                    this.micrositeConfig.set(currentConfig);
+                    const smartConfig = currentConfig;
+
+                    // Sync Photos from service
+                    const servicePhotos = this.bookletService.propertyPhotos();
+                    console.log('[DEBUG] Service Photos Count:', servicePhotos?.length);
+
+                    if (servicePhotos) {
+                        const photosWithVisibility = servicePhotos.map((p: any) => ({
+                            ...p,
+                            visible: !smartConfig.hiddenPhotoUrls.includes(p.url)
+                        }));
+                        this.micrositePhotos.set(photosWithVisibility);
+                    }
+                    return; // EXIT EARLY - Data Loaded
+                } else {
+                    console.log('[DEBUG] Hot sync skipped. Fallback to DB.');
+                }
+
+                // Load saved configuration for microsite (Fallback to DB)
                 const bookletData = await this.repository.getBooklet(v.propertyName);
-                let savedConfig: Partial<MicrositeConfig> = {};
+                console.log('[DEBUG] DB Booklet Data:', bookletData ? 'Found' : 'Null');
+                let savedConfig: Partial<MicrositeConfig> | null = null;
 
                 // Ensure basic structure exists for booklet content even if DB is partial
                 const defaultContent = {
@@ -358,23 +384,34 @@ export class AngleViewComponent implements OnInit {
 
                 if (bookletData && bookletData.microsite_config) {
                     try {
-                        savedConfig = typeof bookletData.microsite_config === 'string' 
-                            ? JSON.parse(bookletData.microsite_config) 
+                        savedConfig = typeof bookletData.microsite_config === 'string'
+                            ? JSON.parse(bookletData.microsite_config)
                             : bookletData.microsite_config;
                     } catch (e) { console.error("Error parsing microsite config", e); }
                 }
 
                 if (prop) {
-                    // Merge Config with Defaults
-                    this.micrositeConfig.set({ 
-                        ...this.micrositeConfig(), 
-                        ...savedConfig,
-                        // Ensure arrays exist
-                        visibleSections: savedConfig.visibleSections || ['gallery', 'amenities', 'guide'],
-                        hiddenPhotoUrls: savedConfig.hiddenPhotoUrls || [],
-                        headerPhotoUrl: savedConfig.headerPhotoUrl || (prop.property_photos?.[0]?.url || null),
-                        showContact: savedConfig.showContact !== false // Default true if undefined
-                    });
+                    // Use shared helper to resolve config (Smart Defaults or Saved)
+                    const resolved = resolveMicrositeConfig(mergedBooklet, savedConfig as any);
+
+                    // Override defaults with property-specific data if needed (e.g. valid backup photo)
+                    if (!resolved.headerPhotoUrl && prop.property_photos?.[0]) {
+                        resolved.headerPhotoUrl = prop.property_photos[0].url;
+                    }
+
+                    // Force Re-evaluate Smart Defaults (Ensure visibility if content exists)
+                    // This fixes the issue where DB config might hide sections that now have content
+                    const smartSections = new Set(resolved.visibleSections);
+                    if (mergedBooklet?.guideGastro?.recommandationRestaurants || mergedBooklet?.guideActivites?.guideActivites) {
+                        smartSections.add('guide');
+                    }
+                    if (mergedBooklet?.regles?.politiqueFetes || mergedBooklet?.regles?.politiqueNonFumeur ||
+                        mergedBooklet?.regles?.heuresSilence || mergedBooklet?.depart?.heureLimiteCheckout) {
+                        smartSections.add('rules');
+                    }
+                    resolved.visibleSections = Array.from(smartSections);
+
+                    this.micrositeConfig.set(resolved);
 
                     // Init Photos with visibility state based on saved config
                     if (prop.property_photos) {
@@ -383,7 +420,7 @@ export class AngleViewComponent implements OnInit {
                             visible: !this.micrositeConfig().hiddenPhotoUrls.includes(p.url)
                         }));
                         this.micrositePhotos.set(photosWithVisibility);
-                        
+
                         // Set default header if not set
                         if (!this.micrositeConfig().headerPhotoUrl && photosWithVisibility.length > 0) {
                             this.updateConfig('headerPhotoUrl', photosWithVisibility[0].url);
@@ -467,7 +504,7 @@ export class AngleViewComponent implements OnInit {
             newPhotos[index] = { ...newPhotos[index], visible: !newPhotos[index].visible };
             return newPhotos;
         });
-        
+
         // Sync to config for saving later
         const hidden = this.micrositePhotos().filter(p => !p.visible).map(p => p.url);
         this.micrositeConfig.update(c => ({ ...c, hiddenPhotoUrls: hidden }));
@@ -490,31 +527,31 @@ export class AngleViewComponent implements OnInit {
     async generateMicrositeWithAI() {
         if (!this.hasAiAccess()) return;
         if (!this.view().propertyName) return;
-        
+
         this.isAiDesigning.set(true);
         try {
             // Fetch property context
             const propName = this.view().propertyName!;
             const bookletData = await this.repository.getBooklet(propName);
             const propData = await this.repository.getPropertyByName(propName);
-            
+
             // Construct context object
             const context = {
                 name: propName,
                 description: propData.listing_description,
                 address: propData.address,
                 type: 'Vacation Rental',
-                amenities: propData.property_equipments ? propData.property_equipments.map((e:any) => e.name) : [],
+                amenities: propData.property_equipments ? propData.property_equipments.map((e: any) => e.name) : [],
                 bookletSummary: bookletData ? JSON.stringify(bookletData).substring(0, 1000) : ''
             };
 
             const aiConfig = await this.geminiService.generateMicrositeDesign(context);
-            
+
             if (aiConfig) {
                 this.micrositeConfig.update(c => ({
                     ...c,
                     ...aiConfig,
-                    visibleSections: (aiConfig.visibleSections || []).filter((s: string) => 
+                    visibleSections: (aiConfig.visibleSections || []).filter((s: string) =>
                         this.availableSections.some(avail => avail.id === s)
                     )
                 }));
@@ -531,10 +568,10 @@ export class AngleViewComponent implements OnInit {
 
     async saveMicrosite() {
         if (!this.view().propertyName) return;
-        
+
         try {
             this.saveMessage.set(null);
-            
+
             // Sync hidden photos before saving config
             const hidden = this.micrositePhotos().filter(p => !p.visible).map(p => p.url);
             const configToSave = { ...this.micrositeConfig(), hiddenPhotoUrls: hidden };
@@ -555,7 +592,7 @@ export class AngleViewComponent implements OnInit {
                 await this.repository.updatePropertyData(this.currentPropertyId()!, {
                     marketing: { description: this.marketingText() }
                 });
-                
+
                 // Sync to booklet data for consistency + Save all edited booklet fields
                 // We construct a payload matching the structure expected by saveBooklet
                 const bookletPayload: any = {
@@ -584,19 +621,7 @@ export class AngleViewComponent implements OnInit {
         }
     }
 
-    // --- Guide Modal Logic ---
-    openGuideModal(title: string, content: string, icon: string) {
-        this.guideModalState.set({
-            isOpen: true,
-            title,
-            content,
-            icon
-        });
-    }
 
-    closeGuideModal() {
-        this.guideModalState.update(s => ({ ...s, isOpen: false }));
-    }
 
     // --- Marketing AI Logic ---
     async generateDescription() {
@@ -615,7 +640,7 @@ export class AngleViewComponent implements OnInit {
                 // Convert JSON booklet to string context
                 context += JSON.stringify(bookletData);
             }
-            
+
             const generated = await this.geminiService.generateMarketingDescription(context);
             this.marketingText.set(generated);
         } catch (e) {
@@ -655,7 +680,7 @@ export class AngleViewComponent implements OnInit {
             (acc[q.level] = acc[q.level] || []).push(q);
             return acc;
         }, {} as Record<QuestionLevel, OnboardingQuestion[]>);
-        
+
         return {
             Bronze: grouped.Bronze || [],
             Silver: grouped.Silver || [],

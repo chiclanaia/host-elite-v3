@@ -236,3 +236,77 @@ export const SECTIONS_CONFIG: BookletSection[] = [
     { id: 'servicesAdditionnels', formGroupName: 'servicesAdditionnels', editorTitle: `Services Additionnels`, previewTitle: 'EXTRAS', iconSource: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-11.25a.75.75 0 0 0-1.5 0v2.5h-2.5a.75.75 0 0 0 0 1.5h2.5v2.5a.75.75 0 0 0 1.5 0v-2.5h2.5a.75.75 0 0 0 0-1.5h-2.5v-2.5Z" clip-rule="evenodd" /></svg>` },
     { id: 'depart', formGroupName: 'depart', editorTitle: `Procédure de Départ`, previewTitle: 'DÉPART', iconSource: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M11.053 2.2a.75.75 0 0 1 .792.052l4.5 3.5a.75.75 0 0 1-.097 1.298h-1.25a.75.75 0 0 0-.75.75V15.5a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v1.5a.75.75 0 0 1-1.5 0V8.25a.75.75 0 0 0-.75-.75h-1.25a.75.75 0 0 1-.097-1.298l4.5-3.5a.75.75 0 0 1 .645-.102ZM12.25 10.5a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5Z" clip-rule="evenodd" /><path d="M8.75 3.5a.75.75 0 0 0-1.5 0v.093c-.456.286-.829.74-1.042 1.256l-.107.266a.75.75 0 0 0 .888.97l.383-.153a1.75 1.75 0 0 1 1.63.023l.111.058a.75.75 0 0 0 .868-.024l.058-.046a1.75 1.75 0 0 1 1.83-.004l.16.1a.75.75 0 0 0 .82-.187l.034-.05a1.75 1.75 0 0 1 1.493-.016l.245.147a.75.75 0 0 0 .96-.888l-.107-.266A1.75 1.75 0 0 1 15 5.093V3.5a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 0 .25.25c.023 0 .045.002.067.005a.25.25 0 0 1 .184.39l-.034.05a.25.25 0 0 0-.213.002l-.16-.1a.25.25 0 0 0-.26 0l-.059.046a.75.75 0 0 1-.868.024l-.11-.058a.25.25 0 0 0-.233-.003l-.383.153a.75.75 0 0 1-.888-.97l.107-.266a.25.25 0 0 0 .148-.214V5.25a.25.25 0 0 0 .25-.25v-1.5Z" /></svg>` },
 ];
+
+// -- Microsite Definitions --
+
+export interface MicrositeConfig {
+    template: 'modern' | 'cozy' | 'luxury';
+    primaryColor: string;
+    showDescription: boolean;
+    showContact: boolean;
+    visibleSections: string[];
+    headerPhotoUrl: string | null;
+    hiddenPhotoUrls: string[];
+    heroLayout: 'full' | 'split';
+    headline: string;
+}
+
+export interface BuilderPhoto {
+    url: string;
+    category: string;
+    visible: boolean;
+}
+
+export interface SectionDef {
+    id: string;
+    label: string;
+}
+
+/**
+ * Resolves the Microsite Configuration.
+ * If a saved configuration exists, it is returned (merging over defaults).
+ * If NO saved configuration exists, it generates a "Smart Default" based on
+ * the content present in the bookletData (e.g. auto-enabling Guide if populated).
+ */
+export function resolveMicrositeConfig(bookletData: any, savedConfig: Partial<MicrositeConfig> | null | undefined, defaultHeadline: string = 'Bienvenue'): MicrositeConfig {
+    const defaults: MicrositeConfig = {
+        template: 'modern',
+        primaryColor: '#3b82f6',
+        showDescription: true,
+        showContact: true,
+        visibleSections: ['gallery', 'amenities'],
+        headerPhotoUrl: null,
+        hiddenPhotoUrls: [],
+        heroLayout: 'full',
+        headline: defaultHeadline
+    };
+
+    if (savedConfig) {
+        return {
+            ...defaults,
+            ...savedConfig,
+            // Ensure array integrity if saved as null/undefined
+            visibleSections: savedConfig.visibleSections || defaults.visibleSections,
+            hiddenPhotoUrls: savedConfig.hiddenPhotoUrls || []
+        };
+    }
+
+    // -- Smart Default Generation --
+    // Analyze bookletData to see what sections should be enabled by default
+    const smartSections = ['gallery', 'amenities'];
+
+    // Check Guide (Gastro or Activities)
+    if (bookletData?.guideGastro?.recommandationRestaurants || bookletData?.guideActivites?.guideActivites) {
+        smartSections.push('guide');
+    }
+
+    // Check Rules (Rules or Departure)
+    if (bookletData?.regles?.politiqueFetes || bookletData?.regles?.politiqueNonFumeur || bookletData?.regles?.heuresSilence || bookletData?.depart?.heureLimiteCheckout) {
+        smartSections.push('rules');
+    }
+
+    return {
+        ...defaults,
+        visibleSections: smartSections
+    };
+}

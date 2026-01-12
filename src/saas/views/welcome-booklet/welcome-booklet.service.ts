@@ -4,7 +4,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { HostRepository } from '../../../services/host-repository.service';
 import { WidgetService } from '../../../services/widget.service';
 import { SessionStore } from '../../../state/session.store';
-import { BookletSection, WidgetDisplayData, CONTROL_LABELS, SECTIONS_CONFIG, WIDGET_DEFINITIONS } from './booklet-definitions';
+import { BookletSection, WidgetDisplayData, CONTROL_LABELS, SECTIONS_CONFIG, WIDGET_DEFINITIONS, MicrositeConfig, resolveMicrositeConfig } from './booklet-definitions';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 
@@ -30,7 +30,9 @@ export class WelcomeBookletService implements OnDestroy {
     activeWidgets = signal<Record<string, boolean>>({});
     propertyPhotos = signal<{ url: string, category: string }[]>([]);
     propertyEquipments = signal<string[]>([]);
-    micrositeConfig = signal<any>({ template: 'modern', primaryColor: '#3b82f6', headline: 'Bienvenue', visibleSections: ['gallery', 'amenities', 'guide'], showDescription: true, showContact: true });
+
+    // Initialize with a resolved default config
+    micrositeConfig = signal<MicrositeConfig>(resolveMicrositeConfig({}, null));
 
     sections: BookletSection[] = SECTIONS_CONFIG.map(s => ({
         ...s,
@@ -129,12 +131,22 @@ export class WelcomeBookletService implements OnDestroy {
                 this.editorForm.patchValue(defaults);
             }
 
+            let savedConfig = null;
             if (booklet) {
                 if (booklet.widgets) this.activeWidgets.set(booklet.widgets);
-                if (booklet.microsite_config) this.micrositeConfig.set(typeof booklet.microsite_config === 'string' ? JSON.parse(booklet.microsite_config) : booklet.microsite_config);
+
+                // Parse config but don't set signal yet
+                if (booklet.microsite_config) {
+                    savedConfig = typeof booklet.microsite_config === 'string' ? JSON.parse(booklet.microsite_config) : booklet.microsite_config;
+                }
+
                 this.editorForm.patchValue(this.removeEmpty(booklet));
                 if (booklet.gpsCoordinates) this.editorForm.patchValue({ gpsCoordinates: booklet.gpsCoordinates });
             }
+
+            // Resolve Config using the fully patched form data (Smart Default or Saved)
+            const resolved = resolveMicrositeConfig(this.editorForm.value, savedConfig);
+            this.micrositeConfig.set(resolved);
 
             const cats = await this.repository.getPropertyCategories(name);
             if (cats?.length) this.availableCategories.set(cats);
@@ -146,7 +158,10 @@ export class WelcomeBookletService implements OnDestroy {
     async save() {
         if (!this.editorForm.valid) return;
         try {
-            await this.repository.saveBooklet(this.propertyName(), this.editorForm.value);
+            await this.repository.saveBooklet(this.propertyName(), {
+                ...this.editorForm.value,
+                microsite_config: JSON.stringify(this.micrositeConfig())
+            });
             await this.repository.savePropertyCategories(this.propertyName(), this.availableCategories());
             if (this.propertyId()) {
                 const photos = this.editorForm.value.photos;
