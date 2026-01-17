@@ -301,7 +301,8 @@ export class SidebarComponent {
     ];
 
     adminViews: View[] = [
-        { id: 'admin-users', title: 'Utilisateurs', icon: 'users' }
+        { id: 'admin-users', title: 'Utilisateurs', icon: 'users' },
+        { id: 'admin-debug', title: 'Debug Console', icon: 'bug' }
     ];
 
     private readonly icons: Record<string, string> = {
@@ -317,7 +318,8 @@ export class SidebarComponent {
         settings: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 0 1-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 0 1 .947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 0 1-2.287-.947ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" /></svg>`,
         users: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM14.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.532-2.405 1.968 1.968 0 0 1 1.45 2.318c-.81 3.074-2.474 4.463-5.494 4.463-2.178 0-4.653-.642-6.919-3.201ZM19.777 15.277a1.968 1.968 0 0 0-1.64-2.363 6.58 6.58 0 0 0-3.41-1.302 7.36 7.36 0 0 1-.409 3.078c.156.058.316.128.478.214.616.33 2.987 1.761 2.144 5.096h.002c.932 0 1.908-.481 2.835-3.042V16.96a1.223 1.223 0 0 0-.001-1.683Z" /></svg>`,
         info: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>`,
-        training: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M10 1a6 6 0 0 0-3.815 10.631C7.237 12.5 8 13.443 8 14.456v.644a.75.75 0 0 0 .572.729 6.016 6.016 0 0 0 2.856 0A.75.75 0 0 0 12 15.1v-.644c0-1.013.762-1.957 1.815-2.825A6 6 0 0 0 10 1ZM8.863 17.414a.75.75 0 0 0-.226 1.483 9.001 9.001 0 0 0 2.726 0 .75.75 0 0 0-.226-1.483 7.5 7.5 0 0 1-2.274 0Z" /></svg>`
+        training: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M10 1a6 6 0 0 0-3.815 10.631C7.237 12.5 8 13.443 8 14.456v.644a.75.75 0 0 0 .572.729 6.016 6.016 0 0 0 2.856 0A.75.75 0 0 0 12 15.1v-.644c0-1.013.762-1.957 1.815-2.825A6 6 0 0 0 10 1ZM8.863 17.414a.75.75 0 0 0-.226 1.483 9.001 9.001 0 0 0 2.726 0 .75.75 0 0 0-.226-1.483 7.5 7.5 0 0 1-2.274 0Z" /></svg>`,
+        bug: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M10 2a1 1 0 0 1 1 1v1.323l3.954 1.582 1.599-.8a1 1 0 0 1 1.486 1.125l-2.001 5.097 2.01 4.757a1 1 0 0 1-1.353 1.258l-8.695-4.524-8.695 4.524a1 1 0 0 1-1.353-1.258l2.01-4.757-2.001-5.097a1 1 0 0 1 1.486-1.125l1.6-.8L9 4.323V3a1 1 0 0 1 1-1Z" clip-rule="evenodd" /></svg>`
     };
 
     getIcon(id: string): SafeHtml {

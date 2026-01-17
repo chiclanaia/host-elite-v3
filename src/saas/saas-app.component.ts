@@ -16,6 +16,7 @@ import { HostInfoViewComponent } from './views/host-info-view.component';
 import { PropertyViewComponent } from './views/property-view.component';
 import { PropertyDataViewComponent } from './views/property-data-view.component';
 import { AdminUsersViewComponent } from './views/admin-users-view.component';
+import { AdminDebugViewComponent } from './views/admin-debug-view.component';
 import { HostRepository } from '../services/host-repository.service';
 import { SessionStore } from '../state/session.store';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -41,6 +42,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
     PropertyViewComponent,
     PropertyDataViewComponent,
     AdminUsersViewComponent,
+    AdminDebugViewComponent,
     TranslatePipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -26,4 +26,21 @@ export class TranslationService {
         const dict = this.dictionaries[lang] || this.dictionaries['en'];
         return dict[key] || key;
     }
+
+    // Debug Support
+    debugMode = signal(false);
+
+    getKeysForValue(text: string): string[] {
+        if (!text) return [];
+        const lang = this.currentLang();
+        const dict = this.dictionaries[lang] || this.dictionaries['en'];
+
+        // Normalize text (trim, remove extra spaces) to improve matching
+        const normalizedText = text.trim();
+
+        // Reverse lookup
+        return Object.entries(dict)
+            .filter(([_, value]) => value === normalizedText) // Exact match for now
+            .map(([key]) => key);
+    }
 }

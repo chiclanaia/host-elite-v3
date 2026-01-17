@@ -1,10 +1,9 @@
-
 <div class="space-y-6 animate-fade-in relative">
     <!-- Success Toast -->
     @if (successMessage()) {
-      <div class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce-in">
-          {{ successMessage() }}
-      </div>
+    <div class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce-in">
+        {{ successMessage() }}
+    </div>
     }
 
     <!-- API Keys Management Section -->
@@ -14,339 +13,371 @@
                 <h2 class="text-lg font-bold text-indigo-900">Gestion des Clés IA</h2>
                 <p class="text-sm text-indigo-700">Stockage sécurisé (chiffré) des clés API Google Gemini.</p>
             </div>
-            <button (click)="openAddKeyModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-bold shadow-sm transition-colors flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+            <button (click)="openAddKeyModal()"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-bold shadow-sm transition-colors flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
                 Nouvelle Clé
             </button>
         </div>
-        
+
         <div class="p-0">
             @if (apiKeys().length === 0) {
-                <div class="p-8 text-center text-slate-500 italic">
-                    Aucune clé configurée. L'IA ne fonctionnera pas.
-                </div>
+            <div class="p-8 text-center text-slate-500 italic">
+                Aucune clé configurée. L'IA ne fonctionnera pas.
+            </div>
             } @else {
-                <table class="min-w-full divide-y divide-indigo-100">
-                    <thead class="bg-indigo-50/50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-indigo-800 uppercase tracking-wider">Nom</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-indigo-800 uppercase tracking-wider">Statut</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-indigo-800 uppercase tracking-wider">Créée le</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-indigo-800 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-slate-100">
-                        @for(key of apiKeys(); track key.id) {
-                            <tr class="hover:bg-slate-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                                    {{ key.name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if(key.is_active) {
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                                    } @else {
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 text-slate-800">Inactive</span>
-                                    }
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                                    {{ key.created_at | date:'short' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                    @if(!key.is_active) {
-                                        <button 
-                                            (click)="activateKey(key)" 
-                                            [disabled]="processingKeyId() === key.id"
-                                            class="text-indigo-600 hover:text-indigo-900 font-semibold disabled:text-indigo-300 disabled:cursor-not-allowed">
-                                            @if (processingKeyId() === key.id) { ... } @else { Activer }
-                                        </button>
-                                        <span class="text-slate-300">|</span>
-                                    }
-                                    <button 
-                                        (click)="deleteApiKey(key)" 
-                                        [disabled]="processingKeyId() === key.id"
-                                        class="text-red-500 hover:text-red-700 disabled:text-red-300">
-                                        Supprimer
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <table class="min-w-full divide-y divide-indigo-100">
+                <thead class="bg-indigo-50/50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-indigo-800 uppercase tracking-wider">Nom
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-indigo-800 uppercase tracking-wider">
+                            Statut</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-indigo-800 uppercase tracking-wider">
+                            Créée le</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-indigo-800 uppercase tracking-wider">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-100">
+                    @for(key of apiKeys(); track key.id) {
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                            {{ key.name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if(key.is_active) {
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                            } @else {
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 text-slate-800">Inactive</span>
+                            }
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                            {{ key.created_at | date:'short' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                            @if(!key.is_active) {
+                            <button (click)="activateKey(key)" [disabled]="processingKeyId() === key.id"
+                                class="text-indigo-600 hover:text-indigo-900 font-semibold disabled:text-indigo-300 disabled:cursor-not-allowed">
+                                @if (processingKeyId() === key.id) { ... } @else { Activer }
+                            </button>
+                            <span class="text-slate-300">|</span>
+                            }
+                            <button (click)="deleteApiKey(key)" [disabled]="processingKeyId() === key.id"
+                                class="text-red-500 hover:text-red-700 disabled:text-red-300">
+                                Supprimer
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
             }
         </div>
     </div>
 
     <!-- PLANS & PRICING CONFIGURATION -->
     <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden mb-8">
-        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div
+            class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h2 class="text-lg font-bold text-slate-900">Configuration des Offres</h2>
-                <p class="text-sm text-slate-600">Définissez les prix et les fonctionnalités disponibles pour chaque abonnement.</p>
+                <p class="text-sm text-slate-600">Définissez les prix et les fonctionnalités disponibles pour chaque
+                    abonnement.</p>
             </div>
             <!-- Plan Badges Toggle Moved Here -->
-            <div class="flex items-center space-x-3 bg-white px-4 py-2 rounded-md border border-slate-200 shadow-sm">
-                <span class="text-sm font-medium text-slate-700">Afficher les pastilles</span>
-                <div class="relative inline-block w-10 align-middle select-none transition duration-200 ease-in">
-                    <input type="checkbox" 
-                           [checked]="showPlanBadges()"
-                           (change)="toggleBadges($event)" 
-                           id="toggleBadges" 
-                           class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
-                    <label for="toggleBadges" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer"></label>
-                </div>
-            </div>
+            <!-- Toggle moved to Debug Section -->
         </div>
-        
+
         @if (loadingPlans()) {
-            <div class="p-8 text-center text-slate-500">Chargement des offres...</div>
+        <div class="p-8 text-center text-slate-500">Chargement des offres...</div>
         } @else {
-            <div class="grid grid-cols-1 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
-                @for (plan of plans(); track plan.id) {
-                    @let styles = getPlanStyle(plan.id);
-                    <div class="flex flex-col h-full">
-                        <!-- Dynamic Header Color -->
-                        <div class="p-4 border-b border-slate-100" [class]="styles.header">
-                            <div class="flex justify-between items-center">
-                                <h3 class="text-lg font-bold">{{ plan.id }}</h3>
-                                <div class="flex items-center bg-white/20 px-2 py-1 rounded">
-                                    <input type="number" [value]="plan.price" (blur)="updatePrice(plan, $event)" class="w-16 text-right font-bold bg-transparent border-b border-white/50 focus:border-white focus:outline-none p-0 text-white placeholder-white" min="0">
-                                    <span class="ml-1 text-sm text-white/80">€</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-6 bg-white flex-1">
-                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Fonctionnalités incluses</p>
-                            <div class="space-y-2">
-                                @for (feat of availableFeatures; track feat.id) {
-                                    <div class="flex items-start">
-                                        <div class="flex h-5 items-center">
-                                            <input 
-                                                [id]="plan.id + '_' + feat.id" 
-                                                type="checkbox" 
-                                                [checked]="isFeatureEnabled(plan, feat.id)"
-                                                (change)="toggleFeature(plan, feat.id, $event)"
-                                                class="h-4 w-4 rounded border-slate-300 cursor-pointer focus:ring-opacity-50"
-                                                [class]="styles.accent">
-                                        </div>
-                                        <div class="ml-2 text-sm">
-                                            <label 
-                                                [for]="plan.id + '_' + feat.id" 
-                                                class="font-medium cursor-pointer transition-colors"
-                                                [class]="isFeatureEnabled(plan, feat.id) ? styles.text : 'text-slate-400'">
-                                                {{ feat.label }}
-                                            </label>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
+            @for (plan of plans(); track plan.id) {
+            @let styles = getPlanStyle(plan.id);
+            <div class="flex flex-col h-full">
+                <!-- Dynamic Header Color -->
+                <div class="p-4 border-b border-slate-100" [class]="styles.header">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">{{ plan.id }}</h3>
+                        <div class="flex items-center bg-white/20 px-2 py-1 rounded">
+                            <input type="number" [value]="plan.price" (blur)="updatePrice(plan, $event)"
+                                class="w-16 text-right font-bold bg-transparent border-b border-white/50 focus:border-white focus:outline-none p-0 text-white placeholder-white"
+                                min="0">
+                            <span class="ml-1 text-sm text-white/80">€</span>
                         </div>
                     </div>
-                }
+                </div>
+
+                <div class="p-6 bg-white flex-1">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Fonctionnalités
+                        incluses</p>
+                    <div class="space-y-2">
+                        @for (feat of availableFeatures; track feat.id) {
+                        <div class="flex items-start">
+                            <div class="flex h-5 items-center">
+                                <input [id]="plan.id + '_' + feat.id" type="checkbox"
+                                    [checked]="isFeatureEnabled(plan, feat.id)"
+                                    (change)="toggleFeature(plan, feat.id, $event)"
+                                    class="h-4 w-4 rounded border-slate-300 cursor-pointer focus:ring-opacity-50"
+                                    [class]="styles.accent">
+                            </div>
+                            <div class="ml-2 text-sm">
+                                <label [for]="plan.id + '_' + feat.id"
+                                    class="font-medium cursor-pointer transition-colors"
+                                    [class]="isFeatureEnabled(plan, feat.id) ? styles.text : 'text-slate-400'">
+                                    {{ feat.label }}
+                                </label>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
             </div>
+            }
+        </div>
         }
     </div>
 
     <!-- Users Management Header -->
     <div class="flex justify-between items-center">
-      <div>
-         <h1 class="text-3xl font-bold text-slate-800">Administration Utilisateurs</h1>
-         <p class="mt-2 text-slate-500">Gérez les comptes, les rôles et les abonnements.</p>
-      </div>
-      <div class="flex items-center space-x-4">
-          <div class="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-lg font-semibold text-sm border border-indigo-200">
-              {{ users().length }} Utilisateurs
-          </div>
-          <button (click)="openAddUserModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow-md transition-colors flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-              </svg>
-              Ajouter un utilisateur
-          </button>
-      </div>
+        <div>
+            <h1 class="text-3xl font-bold text-slate-800">Administration Utilisateurs</h1>
+            <p class="mt-2 text-slate-500">Gérez les comptes, les rôles et les abonnements.</p>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div
+                class="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-lg font-semibold text-sm border border-indigo-200">
+                {{ users().length }} Utilisateurs
+            </div>
+            <button (click)="openAddUserModal()"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow-md transition-colors flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                        clip-rule="evenodd" />
+                </svg>
+                Ajouter un utilisateur
+            </button>
+        </div>
     </div>
 
     <!-- Users Table -->
     <div class="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-      <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-slate-200">
-          <thead class="bg-slate-50">
-              <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Utilisateur</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Rôle</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Plan</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Statut Abo</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email Confirmé</th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
-              </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-slate-200">
-              @for (user of users(); track user.id) {
-              <tr class="hover:bg-slate-50 transition-colors">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                      <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-bold text-white"
-                           [class.bg-slate-500]="user.role === 'user'"
-                           [class.bg-purple-600]="user.role === 'admin'">
-                          {{ user.full_name.charAt(0) }}
-                      </div>
-                      <div class="ml-4">
-                      <div class="text-sm font-medium text-slate-900">{{ user.full_name }}</div>
-                      <div class="text-sm text-slate-500">{{ user.email }}</div>
-                      </div>
-                  </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                      [class.bg-purple-100]="user.role === 'admin'"
-                      [class.text-purple-800]="user.role === 'admin'"
-                      [class.bg-slate-100]="user.role === 'user'"
-                      [class.text-slate-800]="user.role === 'user'">
-                      {{ user.role | uppercase }}
-                  </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                  <select 
-                      [ngModel]="user.plan" 
-                      (ngModelChange)="updatePlan(user, $event)"
-                      class="text-sm border-slate-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white cursor-pointer py-1">
-                      <option value="Freemium">Freemium</option>
-                      <option value="Bronze">Bronze</option>
-                      <option value="Silver">Silver</option>
-                      <option value="Gold">Gold</option>
-                  </select>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="flex items-center">
-                           <div class="h-2.5 w-2.5 rounded-full mr-2"
-                              [class.bg-green-500]="user.subscription_status === 'active'"
-                              [class.bg-red-500]="user.subscription_status !== 'active'"></div>
-                           <span class="text-sm text-slate-700 capitalize">{{ user.subscription_status || 'Inactif' }}</span>
-                      </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="relative inline-block w-10 align-middle select-none">
-                          <input type="checkbox" 
-                                 [checked]="user.email_confirmed" 
-                                 (change)="toggleEmailConfirmed(user, $event)" 
-                                 [id]="'toggle-' + user.id" 
-                                 class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
-                          <label [for]="'toggle-' + user.id" 
-                                 class="toggle-label block overflow-hidden h-5 rounded-full cursor-pointer"
-                                 [class.bg-green-400]="user.email_confirmed"
-                                 [class.bg-gray-300]="!user.email_confirmed"></label>
-                      </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div class="flex items-center justify-end space-x-2">
-                           <button (click)="resetPassword(user)" class="text-yellow-600 hover:text-yellow-900 font-semibold px-2" title="Envoyer email de réinitialisation">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fill-rule="evenodd" d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" clip-rule="evenodd" />
-                              </svg>
-                           </button>
-                           <button (click)="openEditUserModal(user)" class="text-indigo-600 hover:text-indigo-900 font-semibold px-2" title="Éditer">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                              </svg>
-                          </button>
-                          <button (click)="deleteUser(user)" class="text-red-500 hover:text-red-700 font-semibold px-2" title="Supprimer">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                              </svg>
-                          </button>
-                      </div>
-                  </td>
-              </tr>
-              }
-          </tbody>
-          </table>
-      </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Utilisateur</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Rôle
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Plan
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Statut Abo</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Email Confirmé</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-200">
+                    @for (user of users(); track user.id) {
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-bold text-white"
+                                    [class.bg-slate-500]="user.role === 'user'"
+                                    [class.bg-purple-600]="user.role === 'admin'">
+                                    {{ user.full_name.charAt(0) }}
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-slate-900">{{ user.full_name }}</div>
+                                    <div class="text-sm text-slate-500">{{ user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                [class.bg-purple-100]="user.role === 'admin'"
+                                [class.text-purple-800]="user.role === 'admin'"
+                                [class.bg-slate-100]="user.role === 'user'"
+                                [class.text-slate-800]="user.role === 'user'">
+                                {{ user.role | uppercase }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <select [ngModel]="user.plan" (ngModelChange)="updatePlan(user, $event)"
+                                class="text-sm border-slate-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white cursor-pointer py-1">
+                                <option value="Freemium">Freemium</option>
+                                <option value="Bronze">Bronze</option>
+                                <option value="Silver">Silver</option>
+                                <option value="Gold">Gold</option>
+                            </select>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="h-2.5 w-2.5 rounded-full mr-2"
+                                    [class.bg-green-500]="user.subscription_status === 'active'"
+                                    [class.bg-red-500]="user.subscription_status !== 'active'"></div>
+                                <span class="text-sm text-slate-700 capitalize">{{ user.subscription_status || 'Inactif'
+                                    }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="relative inline-block w-10 align-middle select-none">
+                                <input type="checkbox" [checked]="user.email_confirmed"
+                                    (change)="toggleEmailConfirmed(user, $event)" [id]="'toggle-' + user.id"
+                                    class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer" />
+                                <label [for]="'toggle-' + user.id"
+                                    class="toggle-label block overflow-hidden h-5 rounded-full cursor-pointer"
+                                    [class.bg-green-400]="user.email_confirmed"
+                                    [class.bg-gray-300]="!user.email_confirmed"></label>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex items-center justify-end space-x-2">
+                                <button (click)="resetPassword(user)"
+                                    class="text-yellow-600 hover:text-yellow-900 font-semibold px-2"
+                                    title="Envoyer email de réinitialisation">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <button (click)="openEditUserModal(user)"
+                                    class="text-indigo-600 hover:text-indigo-900 font-semibold px-2" title="Éditer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path
+                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                </button>
+                                <button (click)="deleteUser(user)"
+                                    class="text-red-500 hover:text-red-700 font-semibold px-2" title="Supprimer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 
-  <!-- Add/Edit User Modal -->
-  @if (isUserModalOpen()) {
-      <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-          <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" (click)="closeUserModal()"></div>
-          <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-              <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
-                  <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                      <h3 class="text-xl font-bold leading-6 text-slate-900 mb-4">
-                          {{ editingUserId() ? 'Modifier l\'utilisateur' : 'Ajouter un utilisateur' }}
-                      </h3>
-                      <form [formGroup]="userForm" (ngSubmit)="submitUserForm()" class="space-y-4">
-                          <div>
-                              <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
-                              <input type="email" id="email" formControlName="email" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border">
-                          </div>
-                          <div>
-                              <label for="fullName" class="block text-sm font-medium text-slate-700">Nom complet</label>
-                              <input type="text" id="fullName" formControlName="fullName" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border">
-                          </div>
-                          <div class="grid grid-cols-2 gap-4">
-                              <div>
-                                  <label for="role" class="block text-sm font-medium text-slate-700">Rôle</label>
-                                  <select id="role" formControlName="role" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border bg-white">
-                                      <option value="user">User</option>
-                                      <option value="admin">Admin</option>
-                                  </select>
-                              </div>
-                              <div>
-                                  <label for="plan" class="block text-sm font-medium text-slate-700">Plan</label>
-                                  <select id="plan" formControlName="plan" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border bg-white">
-                                      <option value="Freemium">Freemium</option>
-                                      <option value="Bronze">Bronze</option>
-                                      <option value="Silver">Silver</option>
-                                      <option value="Gold">Gold</option>
-                                  </select>
-                              </div>
-                          </div>
-                           <div class="flex items-center">
-                              <input type="checkbox" id="email_confirmed" formControlName="email_confirmed" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                              <label for="email_confirmed" class="ml-2 block text-sm text-slate-900">Email confirmé (Force)</label>
-                          </div>
-                          
-                          <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                              <button type="submit" [disabled]="userForm.invalid" class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:col-start-2">
-                                  {{ editingUserId() ? 'Enregistrer' : 'Créer' }}
-                              </button>
-                              <button type="button" (click)="closeUserModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:col-start-1 sm:mt-0">Annuler</button>
-                          </div>
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
-  }
+    <!-- Add/Edit User Modal -->
+    @if (isUserModalOpen()) {
+    <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" (click)="closeUserModal()"></div>
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div
+                class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <h3 class="text-xl font-bold leading-6 text-slate-900 mb-4">
+                        {{ editingUserId() ? 'Modifier l\'utilisateur' : 'Ajouter un utilisateur' }}
+                    </h3>
+                    <form [formGroup]="userForm" (ngSubmit)="submitUserForm()" class="space-y-4">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
+                            <input type="email" id="email" formControlName="email"
+                                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border">
+                        </div>
+                        <div>
+                            <label for="fullName" class="block text-sm font-medium text-slate-700">Nom complet</label>
+                            <input type="text" id="fullName" formControlName="fullName"
+                                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="role" class="block text-sm font-medium text-slate-700">Rôle</label>
+                                <select id="role" formControlName="role"
+                                    class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border bg-white">
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="plan" class="block text-sm font-medium text-slate-700">Plan</label>
+                                <select id="plan" formControlName="plan"
+                                    class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border bg-white">
+                                    <option value="Freemium">Freemium</option>
+                                    <option value="Bronze">Bronze</option>
+                                    <option value="Silver">Silver</option>
+                                    <option value="Gold">Gold</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="email_confirmed" formControlName="email_confirmed"
+                                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <label for="email_confirmed" class="ml-2 block text-sm text-slate-900">Email confirmé
+                                (Force)</label>
+                        </div>
 
-  <!-- Add API Key Modal -->
-  @if (isKeyModalOpen()) {
-      <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-          <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" (click)="closeKeyModal()"></div>
-          <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-              <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
-                  <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                      <h3 class="text-xl font-bold leading-6 text-indigo-900 mb-4 text-center">Ajouter une Clé Gemini</h3>
-                      <form [formGroup]="apiKeyForm" (ngSubmit)="submitApiKey()" class="space-y-4">
-                          <div>
-                              <label for="keyName" class="block text-sm font-medium text-slate-700">Nom de la clé</label>
-                              <input type="text" id="keyName" formControlName="name" placeholder="Ex: Clé Prod 2024" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border focus:ring-indigo-500 focus:border-indigo-500">
-                          </div>
-                          <div>
-                              <label for="keyValue" class="block text-sm font-medium text-slate-700">Valeur de la clé (AIza...)</label>
-                              <input type="password" id="keyValue" formControlName="key" placeholder="AIzaSy..." class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border focus:ring-indigo-500 focus:border-indigo-500">
-                              <p class="text-xs text-slate-500 mt-1">Sera chiffrée en base de données.</p>
-                          </div>
-                          
-                          <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                              <button type="submit" [disabled]="apiKeyForm.invalid" class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:col-start-2">
-                                  Ajouter
-                              </button>
-                              <button type="button" (click)="closeKeyModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:col-start-1 sm:mt-0">Annuler</button>
-                          </div>
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
-  }
+                        <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                            <button type="submit" [disabled]="userForm.invalid"
+                                class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:col-start-2">
+                                {{ editingUserId() ? 'Enregistrer' : 'Créer' }}
+                            </button>
+                            <button type="button" (click)="closeUserModal()"
+                                class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:col-start-1 sm:mt-0">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Add API Key Modal -->
+    @if (isKeyModalOpen()) {
+    <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" (click)="closeKeyModal()"></div>
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div
+                class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <h3 class="text-xl font-bold leading-6 text-indigo-900 mb-4 text-center">Ajouter une Clé Gemini</h3>
+                    <form [formGroup]="apiKeyForm" (ngSubmit)="submitApiKey()" class="space-y-4">
+                        <div>
+                            <label for="keyName" class="block text-sm font-medium text-slate-700">Nom de la clé</label>
+                            <input type="text" id="keyName" formControlName="name" placeholder="Ex: Clé Prod 2024"
+                                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="keyValue" class="block text-sm font-medium text-slate-700">Valeur de la clé
+                                (AIza...)</label>
+                            <input type="password" id="keyValue" formControlName="key" placeholder="AIzaSy..."
+                                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border focus:ring-indigo-500 focus:border-indigo-500">
+                            <p class="text-xs text-slate-500 mt-1">Sera chiffrée en base de données.</p>
+                        </div>
+
+                        <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                            <button type="submit" [disabled]="apiKeyForm.invalid"
+                                class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:col-start-2">
+                                Ajouter
+                            </button>
+                            <button type="button" (click)="closeKeyModal()"
+                                class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:col-start-1 sm:mt-0">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
 </div>

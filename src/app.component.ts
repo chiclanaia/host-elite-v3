@@ -6,6 +6,7 @@ import { LandingPageComponent } from './components/landing-page.component';
 import { ContextStepComponent } from './components/context-step.component';
 import { SaaSAppComponent } from './saas/saas-app.component';
 import { StepperComponent } from './components/stepper.component';
+import { DebugTooltipComponent } from './components/debug-tooltip.component';
 import { SessionStore } from './state/session.store';
 
 @Component({
@@ -19,7 +20,8 @@ import { SessionStore } from './state/session.store';
     EvaluationStepComponent,
     ResultsStepComponent,
     SaaSAppComponent,
-    StepperComponent
+    StepperComponent,
+    DebugTooltipComponent
   ],
   styles: [`
     :host {
