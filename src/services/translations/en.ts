@@ -362,6 +362,7 @@ export const en = {
     'ANGLE.AuditDescription': 'Evaluate your mastery of this angle by answering a few questions.',
     'ANGLE.LaunchAudit': 'Launch Audit',
     'ANGLE.AssociatedTools': 'Associated Tools',
+    'ANGLE.SaveToBooklet': 'Save to Welcome Booklet',
 
     // Tools
     'TOOL.microsite_name': 'Microsite Configuration',

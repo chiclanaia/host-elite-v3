@@ -136,6 +136,8 @@ export class WelcomeBookletService implements OnDestroy {
                     rules: { quietHours: prop.house_rules_text || '', keyManagement: prop.arrival_instructions || '' }
                 };
                 if (prop.cover_image_url) defaults.coverImageUrl = prop.cover_image_url;
+
+                console.log('[WelcomeBookletService] Patching Defaults:', defaults.welcome);
                 this.editorForm.patchValue(defaults);
             }
 
@@ -158,6 +160,7 @@ export class WelcomeBookletService implements OnDestroy {
                     };
                 }
 
+                console.log('[WelcomeBookletService] Patching Booklet Data:', booklet.welcome);
                 this.editorForm.patchValue(this.removeEmpty(booklet));
                 if (booklet.gpsCoordinates) this.editorForm.patchValue({ gpsCoordinates: booklet.gpsCoordinates });
             }

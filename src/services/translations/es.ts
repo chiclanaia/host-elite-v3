@@ -363,6 +363,7 @@ export const es = {
     'ANGLE.AuditDescription': 'Evalúe su dominio de este ángulo respondiendo a algunas preguntas.',
     'ANGLE.LaunchAudit': 'Lanzar Auditoría',
     'ANGLE.AssociatedTools': 'Herramientas Asociadas',
+    'ANGLE.SaveToBooklet': 'Guardar en el Folleto',
 
     // Tools
     'TOOL.microsite_name': 'Configuración de Microsite',

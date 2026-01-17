@@ -639,25 +639,15 @@ export class AngleViewComponent implements OnInit {
                 // Save Booklet/Microsite Config
                 await this.repository.saveBooklet(this.view().propertyName!, bookletPayload);
 
-                // FORCE SYNC: Update the shared service state immediately so the Booklet View reflects changes
-                this.logToUi('Checking Sync Condition:', {
-                    serviceProp: this.bookletService.propertyName(),
-                    viewProp: this.view().propertyName
-                });
-
-                if (this.bookletService.propertyName() === this.view().propertyName) {
-                    this.logToUi('Syncing saved description to WelcomeBookletService...');
-                    console.log('[AngleView] Form Current Value:', this.bookletService.editorForm.get('welcome.welcomeMessage')?.value);
-                    this.bookletService.editorForm.patchValue({
-                        welcome: { welcomeMessage: this.marketingText() }
-                    });
-                    console.log('[AngleView] Form New Value:', this.bookletService.editorForm.get('welcome.welcomeMessage')?.value);
-                    this.logToUi('Sync Complete. Form Value Updated (English keys).');
+                if (this.bookletService.propertyName() !== this.view().propertyName) {
+                    this.logToUi('Switching Service Property to Sync:', this.view().propertyName);
+                    this.bookletService.propertyName.set(this.view().propertyName!);
+                    // Effect will trigger loadData
                 } else {
-                    this.logToUi('Sync Skipped: Property Name Mismatch', {
-                        expected: this.view().propertyName,
-                        actual: this.bookletService.propertyName()
-                    });
+                    console.log('[AngleView] Triggering Direct LoadData for:', this.view().propertyName);
+                    this.logToUi('Reloading Service Data to Sync...');
+                    // Force reload since we updated the DB behind the service's back
+                    await this.bookletService.loadData(this.view().propertyName!);
                 }
             }
 

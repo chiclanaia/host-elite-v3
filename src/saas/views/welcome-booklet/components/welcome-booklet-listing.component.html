@@ -1,29 +1,144 @@
-<div class="bg-white border border-slate-200 rounded-lg p-6 animate-fade-in">
-    <h2 class="text-2xl font-bold text-slate-800 mb-6">{{ 'NAV.Listing' | translate }} - Preview</h2>
-    <div class="max-w-4xl mx-auto">
-        <img [src]="editorForm.get('coverImageUrl')?.value" alt="Photo principale de la propriété"
-            class="w-full h-80 object-cover rounded-lg shadow-lg mb-6">
-        <h3 class="text-3xl font-bold text-slate-900">{{ propertyName() }}</h3>
-        <p class="text-md text-slate-500 mt-1">{{ editorForm.get('address')?.value }}</p>
-        <div class="flex items-center space-x-4 text-sm text-slate-600 mt-4 border-y border-slate-200 py-4">
-            <span>4 voyageurs</span><span>·</span><span>2 chambres</span><span>·</span><span>2
-                lits</span><span>·</span><span>1 salle de bain</span>
+<div class="bg-white border border-slate-200 rounded-lg p-6 animate-fade-in font-sans text-slate-800">
+
+    <div class="max-w-5xl mx-auto">
+
+        <!-- 1. Header & Title -->
+        <div class="mb-6">
+            <h2 class="text-3xl font-bold text-slate-900 mb-2">{{ propertyName() }}</h2>
+            <div class="flex items-center text-sm text-slate-600 space-x-2">
+                <span>★ 4.98 · {{ editorForm.get('address')?.value || 'Adresse masquée' }}</span>
+            </div>
         </div>
-        <div class="mt-6">
-            <h4 class="text-xl font-semibold text-slate-800 mb-2">{{ 'LISTING.About' | translate }}</h4>
-            <p class="text-slate-600 whitespace-pre-wrap">{{ editorForm.get('welcome.welcomeMessage')?.value }}</p>
-        </div>
-        <div class="mt-8">
-            <h4 class="text-xl font-semibold text-slate-800 mb-4">{{ 'LISTING.Equipments' | translate }}</h4>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-slate-600">
-                @if (propertyEquipments().length > 0) {
-                @for(equip of propertyEquipments(); track equip) {
-                <span class="flex items-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg><span>{{ equip }}</span></span>
+
+        <!-- 2. Photo Grid (First 5 photos) -->
+        @let photos = visiblePhotos();
+        <div class="grid grid-cols-4 grid-rows-2 gap-2 h-[350px] rounded-2xl overflow-hidden mb-8 shadow-sm">
+            <!-- Main Photo (Left) -->
+            <div class="col-span-2 row-span-2 relative group cursor-pointer">
+                <img [src]="photos[0]?.url || 'assets/placeholder.jpg'"
+                    class="w-full h-full object-cover group-hover:brightness-90 transition-all">
+            </div>
+
+            <!-- Side Photos -->
+            @for (i of [1, 2, 3, 4]; track i) {
+            <div class="relative group cursor-pointer col-span-1 row-span-1">
+                <img [src]="photos[i]?.url || 'assets/placeholder.jpg'"
+                    class="w-full h-full object-cover group-hover:brightness-90 transition-all">
+                @if(i === 4 && photos.length > 5) {
+                <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold text-lg">
+                    +{{ photos.length - 5 }} photos
+                </div>
                 }
-                } @else { <p class="text-sm italic text-slate-400 col-span-full">Aucun équipement configuré.</p> }
+            </div>
+            }
+        </div>
+
+        <!-- 3. Layout: Content (Left) + Sidebar (Right) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+
+            <!-- Left Column: Description -->
+            <div class="md:col-span-2 space-y-8">
+                <!-- Host Info -->
+                <div class="flex justify-between items-center pb-6 border-b border-gray-200">
+                    <div>
+                        <h3 class="text-xl font-semibold">Logement entier : hôte, {{ userEmail()?.email?.split('@')?.[0]
+                            || 'Un Superhost' }}</h3>
+                        <p class="text-slate-500 text-sm">2 voyageurs · 1 chambre · 1 lit · 1 salle de bain</p>
+                    </div>
+                    <div class="w-12 h-12 bg-slate-200 rounded-full overflow-hidden">
+                        <svg class="w-full h-full text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Highlights -->
+                <div class="space-y-4 pb-6 border-b border-gray-200">
+                    <div class="flex items-start">
+                        <div class="font-bold text-lg mr-4 w-6">♕</div>
+                        <div>
+                            <div class="font-bold text-base">Hôte expérimenté</div>
+                            <div class="text-sm text-slate-500">Cet hôte a reçu d'excellentes évaluations.</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="font-bold text-lg mr-4 w-6">📍</div>
+                        <div>
+                            <div class="font-bold text-base">Idéalement situé</div>
+                            <div class="text-sm text-slate-500">95 % des voyageurs récents ont noté l'emplacement 5
+                                étoiles.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- THE DESCRIPTION -->
+                <div class="py-4">
+                    <h3 class="text-xl font-bold mb-4">À propos de ce logement</h3>
+                    <div
+                        class="prose prose-slate max-w-none text-base leading-relaxed whitespace-pre-line text-slate-700">
+                        {{ editorForm.get('welcome.welcomeMessage')?.value }}
+                    </div>
+                </div>
+
+                <!-- Amenities -->
+                <div class="py-6 border-t border-gray-200">
+                    <h3 class="text-xl font-bold mb-4">Ce que propose ce logement</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        @if (propertyEquipments().length > 0) {
+                        @for(equip of propertyEquipments(); track equip) {
+                        <div class="flex items-center space-x-3 text-slate-700">
+                            <span class="w-6 text-center text-xl">•</span>
+                            <span>{{ equip }}</span>
+                        </div>
+                        }
+                        } @else {
+                        <div class="flex items-center space-x-3 text-slate-700"><span class="w-6 text-center">📶</span>
+                            <span>Wifi rapide</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-slate-700"><span class="w-6 text-center">🍳</span>
+                            <span>Cuisine équipée</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-slate-700"><span class="w-6 text-center">🅿️</span>
+                            <span>Parking gratuit</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-slate-700"><span class="w-6 text-center">❄️</span>
+                            <span>Climatisation</span>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Contact Host (Independent Style) -->
+            <div class="hidden md:block">
+                <div class="sticky top-6 border border-gray-200 rounded-xl p-8 shadow-xl bg-white text-center">
+                    <h3 class="text-xl font-bold mb-2">Ce logement vous intéresse ?</h3>
+                    <p class="text-slate-500 text-sm mb-6">Les tarifs et disponibilités sont sur demande directe.</p>
+
+                    <div class="space-y-4">
+                        <button
+                            class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg text-lg transition-colors">
+                            Contacter l'Hôte
+                        </button>
+                        <button
+                            class="w-full bg-white border-2 border-slate-900 text-slate-900 font-bold py-3 rounded-lg text-lg hover:bg-slate-50 transition-colors">
+                            Demander un Devis
+                        </button>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-gray-100">
+                        <div class="flex items-center justify-center space-x-2 text-sm text-slate-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span>Réponse garantie sous 24h</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
