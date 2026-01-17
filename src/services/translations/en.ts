@@ -27,6 +27,7 @@ export const en = {
     'NAV.dashboard': 'Dashboard',
     'NAV.global-dashboard': 'Global Dashboard',
     'NAV.manage-property': 'Manage',
+    'NAV.Listing': 'Listing',
     'NAV.property-data': 'Details',
     'NAV.welcome-booklet': 'Welcome Booklet',
     'NAV.widget-library': 'Widgets',

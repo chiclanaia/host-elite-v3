@@ -27,6 +27,7 @@ export const fr = {
     'NAV.dashboard': 'Tableau de bord',
     'NAV.global-dashboard': 'Tableau de bord Global',
     'NAV.manage-property': 'Gérer',
+    'NAV.Listing': 'Annonce',
     'NAV.property-data': 'Détails',
     'NAV.welcome-booklet': 'Livret d\'Accueil',
     'NAV.widget-library': 'Widgets',

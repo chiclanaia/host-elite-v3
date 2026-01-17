@@ -28,7 +28,13 @@ export class TranslationService {
     }
 
     // Debug Support
-    debugMode = signal(false);
+    debugMode = signal(localStorage.getItem('debug_show_tags') === 'true');
+
+    toggleDebugMode() {
+        const newValue = !this.debugMode();
+        this.debugMode.set(newValue);
+        localStorage.setItem('debug_show_tags', String(newValue));
+    }
 
     getKeysForValue(text: string): string[] {
         if (!text) return [];

@@ -118,7 +118,7 @@ export class AdminDebugViewComponent {
     isDebugTags = this.ts.debugMode;
 
     toggleDebugTags() {
-        this.ts.debugMode.update(v => !v);
+        this.ts.toggleDebugMode();
     }
 
     async toggleBadges() {

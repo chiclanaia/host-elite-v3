@@ -256,6 +256,9 @@ export class SessionStore {
         }
 
         this.currentStep.set('dashboard');
+
+        // Apply Debug Override if exists
+        await this.checkDebugPlanOverride();
     }
 
     private setUserFromSupabase(user: any, profile: UserProfile | null = null) {
@@ -356,13 +359,30 @@ export class SessionStore {
 
     // Debug Helper
     async setPlan(plan: AppPlan) {
-        this.userProfile.update(u => u ? { ...u, plan } : null);
-        // Reload features for this plan
-        try {
-            const features = await this.repository.getPlanFeatures(plan);
-            this.userFeatures.set(features);
-        } catch (e) {
-            console.warn("Could not fetch plan features for debug:", e);
+        if (this.userProfile()) {
+            // If we are "turning off" simulation (returning to real plan), we might need a way to know what the real plan was. 
+            // But simpler: just update and store. "Freemium" is default but we don't know if it's the real one.
+            // Ideally we shouldn't persist simulation unless explicitly desired. 
+            // Let's assume user wants it persisted.
+            localStorage.setItem('debug_simulated_plan', plan);
+
+            this.userProfile.update(u => u ? { ...u, plan } : null);
+            // Reload features for this plan
+            try {
+                const features = await this.repository.getPlanFeatures(plan);
+                this.userFeatures.set(features);
+            } catch (e) {
+                console.warn("Could not fetch plan features for debug:", e);
+            }
+        }
+    }
+
+    // Internal: Check for debug override and apply it
+    private async checkDebugPlanOverride() {
+        const debugPlan = localStorage.getItem('debug_simulated_plan') as AppPlan | null;
+        if (debugPlan && this.userProfile()) {
+            console.log("Applying Debug Plan Override:", debugPlan);
+            await this.setPlan(debugPlan); // Reuse logic (will re-save to localstorage but that's fine)
         }
     }
 }
