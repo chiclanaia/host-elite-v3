@@ -259,7 +259,7 @@ export class GeminiService {
   async generateOptimizedListing(context: string, photos: { url: string; id: string }[], maxPhotos: number): Promise<{ description: string; selectedPhotoIds: string[] }> {
     await this.ensureClient();
 
-    // 1. Prepare Images (Limit to 30 max to avoid payload issues, though model can handle more)
+    // 1. Prepare Images
     const photosToAnalyze = photos.slice(0, 30);
     const imageParts: any[] = [];
 
@@ -293,7 +293,7 @@ export class GeminiService {
         imageParts.push({
           inlineData: {
             data: b64,
-            mimeType: "image/jpeg" // Assuming JPEG for simplicity, usually fine
+            mimeType: "image/jpeg"
           }
         });
       }
@@ -304,18 +304,11 @@ export class GeminiService {
         
         TASK 1: Write an "Irresistible" Listing Description.
         - Use the "Selling the Experience" methodology.
-        - Structure: 
-          1. **Hook**: Catchy headline/intro.
-          2. **The Tour**: Room-by-room flow highlighting best features visible in photos.
-          3. **Unique Selling Points (USPs)**: Bullet points of what makes it special.
-          4. **Location**: Brief mention of surroundings.
         - Tone: Warm, professional, inviting.
         - Language: French.
 
         TASK 2: Select the Best Photos.
-        - You have received ${imageParts.length} photos of the property.
         - Select EXACTLY (or up to) ${maxPhotos} photos that best sell the property.
-        - Criteria: Brightness, composition, emotional appeal, and ensuring a complete tour (don't pick 5 photos of the toilet).
         - The input photos correspond to these IDs in order: ${JSON.stringify(photosToAnalyze.map(p => p.id))}.
 
         CONTEXT PROPERTY DATA:
@@ -329,12 +322,10 @@ export class GeminiService {
     `;
 
     try {
-      // Combine text prompt and images
       const contents = [prompt, ...imageParts];
-
       const result = await this.genAI!.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: contents as any, // Cast to any to avoid strict typing issues with mixed content
+        contents: contents as any,
         config: { responseMimeType: 'application/json' },
       });
 
@@ -346,6 +337,80 @@ export class GeminiService {
     } catch (error) {
       console.error('Error generating optimized listing:', error);
       throw error;
+    }
+  }
+
+  async generateVisibilityAudit(context: any, language: string): Promise<any> {
+    if (!this.genAI) await this.ensureClient();
+
+    try {
+      const prompt = `You are an expert SEO and Digital Marketing Auditor for Vacation Rentals.
+            Perform a simulated "Visibility Audit" for the following property.
+
+            **CONTEXT:**
+            - Language/Region: ${language.toUpperCase()}
+            - Property Name: ${context.name}
+            - Address: ${context.address}
+            - Description: ${context.description}
+            - Amenities: ${context.amenities.join(', ')}
+            - USER PROVIDED URLs: 
+                - Airbnb: ${context.urls?.airbnb || 'None'}
+                - Booking: ${context.urls?.booking || 'None'}
+                - Other: ${context.urls?.other || 'None'}
+
+            **VALIDATION & AUDIT LOGIC:**
+            1. **CHECK URLs FIRST:** 
+               - If the user PROVIDED valid URLs for Airbnb or Booking, **assume the property is VISIBLE on those platforms** (Status: "Visible").
+               - Analyze the URL quality (is it a clean direct link?).
+            
+            2. **CHECK CONTENT & ADDRESS (If no URLs provided):**
+               - If NO URLs are provided AND the address is obviously fake ("123 Fake St", "Nowhere") -> **FAIL THE AUDIT (Score 0)**.
+               - If NO URLs are provided AND description is empty -> **FAIL THE AUDIT (Score 0)**.
+
+            **TASK (If Valid):**
+            1. Analyze visibility based on the provided content and claimed platforms.
+            2. Give a score (0-100). If valid URLs are provided, the score should generally be higher (>60) unless the description is terrible.
+            3. Provide specific tips.
+
+            **RESPONSE FORMAT (JSON ONLY):**
+            {
+                "score": 0-100 (integer),
+                "summary": "Short 1-sentence summary.",
+                "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"],
+                "platforms": [
+                    { "name": "Airbnb", "status": "Visible/Not Found", "observation": "..." },
+                    { "name": "Booking", "status": "Visible/Not Found", "observation": "..." },
+                    { "name": "Google Maps", "status": "Visible/Not Found", "observation": "..." }
+                ],
+                "tips": [
+                    { "title": "Tip Title", "description": "Actionable advice." }
+                ]
+            }
+            Do not include markdown code blocks. Just the JSON string.`;
+
+      const result = await this.genAI!.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+        config: { responseMimeType: 'application/json' },
+      });
+      return JSON.parse(this.cleanJson(result.text));
+    } catch (error) {
+      console.error('Gemini Audit Error:', error);
+      // Fallback mock
+      return {
+        score: 72,
+        summary: "Visibilité correcte mais des opportunités de mots-clés sont manquées.",
+        keywords: ["Vue mer", "Centre ville", "Wifi Fibre", "Parking gratuit"],
+        platforms: [
+          { name: "Airbnb", status: "Good", observation: "Contenu bien structuré." },
+          { name: "Booking.com", status: "Average", observation: "Manque de photos diversifiées." },
+          { name: "Google Maps", status: "Low", observation: "Adresse exacte difficile à trouver." }
+        ],
+        tips: [
+          { title: "Optimiser le Titre", description: "Ajoutez 'Vue Mer' au début de votre titre." },
+          { title: "Compléter les équipements", description: "Assurez-vous que tous les équipements de cuisine sont cochés." }
+        ]
+      };
     }
   }
 

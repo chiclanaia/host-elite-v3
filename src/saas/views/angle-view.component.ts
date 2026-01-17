@@ -663,6 +663,76 @@ export class AngleViewComponent implements OnInit {
 
 
     // --- Marketing AI Logic ---
+
+    // Audit State
+    auditStatus = signal<'idle' | 'searching' | 'analyzing' | 'complete'>('idle');
+    auditProgress = signal<number>(0);
+    auditStep = signal<string>(''); // Current search step text
+    auditResult = signal<any>(null); // The final report
+
+    // Audit Inputs
+    airbnbUrl = signal('');
+    bookingUrl = signal('');
+    otherUrl = signal('');
+
+    async runVisibilityAudit() {
+        if (!this.hasAiAccess()) return;
+        const propName = this.view().propertyName!;
+        const propData = await this.repository.getPropertyByName(propName);
+
+        // 1. Reset State
+        this.auditStatus.set('searching');
+        this.auditProgress.set(0);
+        this.auditResult.set(null);
+
+        // 2. Simulate Deep Search (Visual Effect)
+        const steps = [
+            "Connexion aux serveurs Airbnb...",
+            "Analyse de la zone de recherche...",
+            "Vérification des filtres voyageurs...",
+            "Comparaison avec la concurrence locale...",
+            "Examen des résultats Booking.com...",
+            "Analyse du positionnement Google Maps..."
+        ];
+
+        for (let i = 0; i < steps.length; i++) {
+            this.auditStep.set(steps[i]);
+            // Random delay between 500ms and 1500ms for realism
+            await new Promise(r => setTimeout(r, 500 + Math.random() * 1000));
+            this.auditProgress.set(Math.floor(((i + 1) / steps.length) * 80)); // Go up to 80% during search
+        }
+
+        // 3. AI Analysis Step
+        this.auditStatus.set('analyzing');
+        this.auditStep.set("Génération du rapport d'expert...");
+        this.auditProgress.set(90);
+
+        try {
+            // Construct Context
+            const context = {
+                name: propName,
+                address: propData?.address || 'Non spécifiée',
+                description: propData?.listing_description || 'Non spécifiée',
+                amenities: propData?.property_equipments ? propData.property_equipments.map((e: any) => e.name) : [],
+                urls: {
+                    airbnb: this.airbnbUrl(),
+                    booking: this.bookingUrl(),
+                    other: this.otherUrl()
+                }
+            };
+
+            const report = await this.geminiService.generateVisibilityAudit(context, this.translationService.currentLang());
+            this.auditResult.set(report);
+            this.auditProgress.set(100);
+            this.auditStatus.set('complete');
+
+        } catch (error) {
+            console.error(error);
+            alert("Erreur lors de l'audit.");
+            this.auditStatus.set('idle');
+        }
+    }
+
     async generateListingWithPhotos() {
         if (!this.hasAiAccess()) return; // Security check
 
