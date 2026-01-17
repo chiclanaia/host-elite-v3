@@ -18,6 +18,12 @@ export const en = {
     // Sidebar & Root Nav
     'SIDEBAR.Management': 'Management',
     'SIDEBAR.Personal': 'Personal',
+    'SIDEBAR.MyProperties': 'My Properties',
+    'SIDEBAR.NewProperty': 'New Property',
+    'SIDEBAR.CreateFirst': 'Create my first property',
+    'SIDEBAR.Academy': 'Academy',
+    'SIDEBAR.Account': 'My Account',
+    'SIDEBAR.Logout': 'Logout',
     'NAV.dashboard': 'Dashboard',
     'NAV.global-dashboard': 'Global Dashboard',
     'NAV.manage-property': 'Manage',

@@ -18,6 +18,12 @@ export const fr = {
     // Sidebar & Root Nav
     'SIDEBAR.Management': 'Gestion',
     'SIDEBAR.Personal': 'Personnel',
+    'SIDEBAR.MyProperties': 'Mes Propriétés',
+    'SIDEBAR.NewProperty': 'Nouvelle propriété',
+    'SIDEBAR.CreateFirst': 'Créer ma première propriété',
+    'SIDEBAR.Academy': 'Académie',
+    'SIDEBAR.Account': 'Mon Compte',
+    'SIDEBAR.Logout': 'Se déconnecter',
     'NAV.dashboard': 'Tableau de bord',
     'NAV.global-dashboard': 'Tableau de bord Global',
     'NAV.manage-property': 'Gérer',
