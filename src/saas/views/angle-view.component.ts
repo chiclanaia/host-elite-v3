@@ -8,6 +8,8 @@ import { GeminiService } from '../../services/gemini.service';
 import { SessionStore } from '../../state/session.store';
 import { MicrositeConfig, BuilderPhoto, SectionDef, resolveMicrositeConfig } from './welcome-booklet/booklet-definitions';
 import { MicrositeRendererComponent } from '../components/microsite-renderer/microsite-renderer.component';
+import { TranslationService } from '../../services/translation.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
 
 type Plan = 'Freemium' | 'Bronze' | 'Silver' | 'Gold';
@@ -120,11 +122,12 @@ const ONBOARDING_DATA: Record<string, OnboardingQuestion[]> = {
 @Component({
     selector: 'saas-angle-view',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeRendererComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeRendererComponent, TranslatePipe],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './angle-view.component.html',
 })
 export class AngleViewComponent implements OnInit {
+    translationService = inject(TranslationService);
     view = input.required<View>();
     // Note: userPlan input might be string, force casting or handling in logic
     userPlan = input.required<string>();
@@ -134,6 +137,8 @@ export class AngleViewComponent implements OnInit {
     private store = inject(SessionStore);
     private bookletService = inject(WelcomeBookletService);
     private fb: FormBuilder = inject(FormBuilder);
+
+
 
     isModalOpen = signal(false);
     onboardingForm = signal<FormGroup | null>(null);
@@ -147,6 +152,11 @@ export class AngleViewComponent implements OnInit {
     isAiDesigning = signal(false);
     saveMessage = signal<string | null>(null);
     currentPropertyId = signal<string | null>(null);
+
+    // AI Listing State
+    targetPhotoCount = signal<number>(15);
+    aiAnalysisStatus = signal<string>(''); // For feedback "Analyzing images..."
+    isPreviewMode = signal(false); // Toggle for AI tool preview
 
     // Dynamic Content Signals
     propertyDetails = signal<any>(null);
@@ -215,67 +225,67 @@ export class AngleViewComponent implements OnInit {
 
     private allAngleData: Record<string, AngleDetails> = {
         'marketing': {
-            title: 'Marketing & Visibilité',
-            description: 'Attirez plus de voyageurs et maximisez votre visibilité en ligne.',
+            title: 'NAV.marketing',
+            description: 'ANGLE.marketing_desc',
             tools: [
-                { id: 'microsite', name: 'Configuration de Microsite', description: 'Créez et personnalisez un site vitrine pour la réservation directe (WYSIWYG).', requiredPlan: 'Bronze' },
-                { id: 'ai-prompts', name: 'Prompts IA pour Annonces', description: 'Générez des descriptions de listing percutantes.', requiredPlan: 'Silver' },
-                { id: 'visibility-audit', name: 'Audit IA de Visibilité', description: 'Analysez et améliorez votre positionnement sur les plateformes.', requiredPlan: 'Gold' },
+                { id: 'microsite', name: 'TOOL.microsite_name', description: 'TOOL.microsite_desc', requiredPlan: 'Bronze' },
+                { id: 'ai-prompts', name: 'TOOL.ai_listing_name', description: 'TOOL.ai_listing_desc', requiredPlan: 'Silver' },
+                { id: 'visibility-audit', name: 'TOOL.audit_vis_name', description: 'TOOL.audit_vis_desc', requiredPlan: 'Gold' },
             ]
         },
         'experience': {
-            title: 'Expérience Client',
-            description: 'Offrez une expérience 5 étoiles inoubliable à vos voyageurs.',
+            title: 'NAV.experience',
+            description: 'ANGLE.experience_desc',
             tools: [
-                { id: 'booklet', name: 'Template Livret d\'Accueil', description: 'Un guide digital complet pour vos invités.', requiredPlan: 'Bronze' },
-                { id: 'ai-assistant', name: 'Assistant IA Messages (N1)', description: 'Automatisez les réponses aux questions fréquentes.', requiredPlan: 'Silver' },
-                { id: 'guest-screening', name: 'Guest Screening IA', description: 'Analysez le profil des voyageurs pour plus de sérénité.', requiredPlan: 'Gold' },
+                { id: 'booklet', name: 'TOOL.booklet_name', description: 'TOOL.booklet_desc', requiredPlan: 'Bronze' },
+                { id: 'ai-assistant', name: 'TOOL.ai_msg_name', description: 'TOOL.ai_msg_desc', requiredPlan: 'Silver' },
+                { id: 'guest-screening', name: 'TOOL.screening_name', description: 'TOOL.screening_desc', requiredPlan: 'Gold' },
             ]
         },
         'operations': {
-            title: 'Gestion Opérationnelle',
-            description: 'Simplifiez et automatisez la gestion quotidienne de votre location.',
+            title: 'NAV.operations',
+            description: 'ANGLE.operations_desc',
             tools: [
-                { id: 'checklists', name: 'Checklists Interactives', description: 'Ne rien oublier pour le ménage et la maintenance.', requiredPlan: 'Bronze' },
-                { id: 'ical-sync', name: 'Synchronisation iCal', description: 'Centralisez vos calendriers depuis toutes les plateformes.', requiredPlan: 'Silver' },
-                { id: 'delegation-sim', name: 'Simulateur IA de Délégation', description: 'Estimez les coûts et l\'impact de l\'externalisation.', requiredPlan: 'Gold' },
+                { id: 'checklists', name: 'TOOL.checklists_name', description: 'TOOL.checklists_desc', requiredPlan: 'Bronze' },
+                { id: 'ical-sync', name: 'TOOL.ical_name', description: 'TOOL.ical_desc', requiredPlan: 'Silver' },
+                { id: 'delegation-sim', name: 'TOOL.delegation_name', description: 'TOOL.delegation_desc', requiredPlan: 'Gold' },
             ]
         },
         'pricing': {
-            title: 'Stratégie Tarifaire',
-            description: 'Optimisez vos prix pour maximiser vos revenus toute l\'année.',
+            title: 'NAV.pricing',
+            description: 'ANGLE.pricing_desc',
             tools: [
-                { id: 'profitability', name: 'Templates de Calcul de Rentabilité', description: 'Calculez vos marges et fixez vos prix de base.', requiredPlan: 'Bronze' },
-                { id: 'market-alerts', name: 'Alertes de Marché', description: 'Soyez notifié des événements locaux pour ajuster vos prix.', requiredPlan: 'Silver' },
-                { id: 'pricing-tools', name: 'Intégration Outils Pricing', description: 'Connectez votre compte à des outils de tarification dynamique.', requiredPlan: 'Gold' },
+                { id: 'profitability', name: 'TOOL.profit_name', description: 'TOOL.profit_desc', requiredPlan: 'Bronze' },
+                { id: 'market-alerts', name: 'TOOL.alerts_name', description: 'TOOL.alerts_desc', requiredPlan: 'Silver' },
+                { id: 'pricing-tools', name: 'TOOL.dynamic_name', description: 'TOOL.dynamic_desc', requiredPlan: 'Gold' },
             ]
         },
         'accomodation': {
-            title: 'Optimisation Logement',
-            description: 'Mettez en valeur votre bien et assurez sa conformité.',
+            title: 'NAV.accomodation',
+            description: 'ANGLE.accomodation_desc',
             tools: [
-                { id: 'airbnb-ready', name: 'Quiz "Airbnb-Ready"', description: 'Vérifiez si votre logement respecte les standards.', requiredPlan: 'Bronze' },
-                { id: 'security-check', name: 'Checklist Équipements & Sécurité', description: 'Assurez-vous que rien ne manque pour le confort et la sécurité de vos voyageurs.', requiredPlan: 'Bronze' },
-                { id: 'manual-gen', name: 'Générateur de Modes d\'Emploi', description: 'Créez des guides illustrés pour vos équipements.', requiredPlan: 'Silver' },
-                { id: 'unique-gen', name: 'Générateur "Plus Unique" (IA)', description: 'Trouvez des idées pour rendre votre logement unique.', requiredPlan: 'Gold' },
+                { id: 'airbnb-ready', name: 'TOOL.airbnb_ready_name', description: 'TOOL.airbnb_ready_desc', requiredPlan: 'Bronze' },
+                { id: 'security-check', name: 'TOOL.security_name', description: 'TOOL.security_desc', requiredPlan: 'Bronze' },
+                { id: 'manual-gen', name: 'TOOL.manual_name', description: 'TOOL.manual_desc', requiredPlan: 'Silver' },
+                { id: 'unique-gen', name: 'TOOL.unique_name', description: 'TOOL.unique_desc', requiredPlan: 'Gold' },
             ]
         },
         'legal': {
-            title: 'Légal & Finance',
-            description: 'Naviguez la complexité administrative et financière en toute sérénité.',
+            title: 'NAV.legal',
+            description: 'ANGLE.legal_desc',
             tools: [
-                { id: 'reminders', name: 'Rappels Administratifs', description: 'Des notifications pour les échéances fiscales et légales.', requiredPlan: 'Bronze' },
-                { id: 'kpis-simple', name: 'Dashboard KPIs Simplifié', description: 'Suivez vos revenus, dépenses et taux d\'occupation.', requiredPlan: 'Silver' },
-                { id: 'kpis-advanced', name: 'Dashboard KPIs Avancé', description: 'Analysez vos performances en profondeur (RevPAR, etc.).', requiredPlan: 'Gold' },
+                { id: 'reminders', name: 'TOOL.reminders_name', description: 'TOOL.reminders_desc', requiredPlan: 'Bronze' },
+                { id: 'kpis-simple', name: 'TOOL.kpi_simple_name', description: 'TOOL.kpi_simple_desc', requiredPlan: 'Silver' },
+                { id: 'kpis-advanced', name: 'TOOL.kpi_adv_name', description: 'TOOL.kpi_adv_desc', requiredPlan: 'Gold' },
             ]
         },
         'mindset': {
-            title: 'Mindset & Développement',
-            description: 'Développez vos compétences pour devenir un entrepreneur de l\'hospitalité.',
+            title: 'NAV.mindset',
+            description: 'ANGLE.mindset_desc',
             tools: [
-                { id: 'elearning', name: 'Bibliothèque E-learning', description: 'Accédez à nos cours vidéo sur les fondamentaux.', requiredPlan: 'Bronze' },
-                { id: 'community', name: 'Communauté Privée', description: 'Échangez avec d\'autres hôtes et nos experts.', requiredPlan: 'Silver' },
-                { id: 'coaching', name: 'Coaching 1:1 & Groupe', description: 'Des sessions de coaching pour surmonter vos blocages.', requiredPlan: 'Gold' },
+                { id: 'elearning', name: 'TOOL.elearning_name', description: 'TOOL.elearning_desc', requiredPlan: 'Bronze' },
+                { id: 'community', name: 'TOOL.community_name', description: 'TOOL.community_desc', requiredPlan: 'Silver' },
+                { id: 'coaching', name: 'TOOL.coaching_name', description: 'TOOL.coaching_desc', requiredPlan: 'Gold' },
             ]
         },
     };
@@ -285,6 +295,13 @@ export class AngleViewComponent implements OnInit {
             // Reload data when the view changes (e.g., switching property)
             this.activeToolId.set(null); // Reset active tool on view change
             this.loadPropertyData();
+
+            // CRITICAL FIX: Initialize Booklet Service with current property
+            const currentProp = this.view().propertyName;
+            if (currentProp && this.bookletService.propertyName() !== currentProp) {
+                console.log('[AngleView] Initializing BookletService with:', currentProp);
+                this.bookletService.propertyName.set(currentProp);
+            }
         });
     }
 
@@ -586,33 +603,6 @@ export class AngleViewComponent implements OnInit {
                 await this.repository.savePropertyPhotos(this.currentPropertyId()!, this.micrositePhotos());
             }
 
-            // 3. Save Description & Content Updates (Booklet Text)
-            if (this.currentPropertyId()) {
-                // Update listing description in properties table
-                await this.repository.updatePropertyData(this.currentPropertyId()!, {
-                    marketing: { description: this.marketingText() }
-                });
-
-                // Sync to booklet data for consistency + Save all edited booklet fields
-                // We construct a payload matching the structure expected by saveBooklet
-                const bookletPayload: any = {
-                    bienvenue: { messageBienvenue: this.marketingText() },
-                    // Save Guide fields
-                    guideGastro: { recommandationRestaurants: this.bookletContent()?.guideGastro?.recommandationRestaurants },
-                    guideActivites: { guideActivites: this.bookletContent()?.guideActivites?.guideActivites },
-                    transports: { taxisLocaux: this.bookletContent()?.transports?.taxisLocaux },
-                    // Save Rules fields
-                    depart: { heureLimiteCheckout: this.bookletContent()?.depart?.heureLimiteCheckout },
-                    regles: {
-                        politiqueFetes: this.bookletContent()?.regles?.politiqueFetes,
-                        politiqueNonFumeur: this.bookletContent()?.regles?.politiqueNonFumeur,
-                        heuresSilence: this.bookletContent()?.regles?.heuresSilence
-                    }
-                };
-
-                await this.repository.saveBooklet(this.view().propertyName!, bookletPayload);
-            }
-
             this.saveMessage.set("Microsite publié et contenu sauvegardé !");
             setTimeout(() => this.saveMessage.set(null), 3000);
         } catch (e) {
@@ -621,10 +611,69 @@ export class AngleViewComponent implements OnInit {
         }
     }
 
+    // Debug logging state
+    debugLogs = signal<string[]>(['Debug System Ready']);
+
+    private logToUi(message: string, data?: any) {
+        const timestamp = new Date().toLocaleTimeString();
+        const fullMessage = `[${timestamp}] ${message} ${data ? JSON.stringify(data) : ''}`;
+        console.log(message, data); // Keep console log
+        this.debugLogs.update(logs => [fullMessage, ...logs].slice(0, 10));
+    }
+
+    async saveDescription() {
+        if (!this.marketingText()) return;
+
+        // 1. Create Booklet payload
+        const bookletPayload: any = {
+            welcome: { welcomeMessage: this.marketingText() }
+        };
+
+        try {
+            // 2. Save to Repository (DB)
+            if (this.currentPropertyId()) {
+                await this.repository.updatePropertyData(this.currentPropertyId()!, {
+                    marketing: { description: this.marketingText() }
+                });
+
+                // Save Booklet/Microsite Config
+                await this.repository.saveBooklet(this.view().propertyName!, bookletPayload);
+
+                // FORCE SYNC: Update the shared service state immediately so the Booklet View reflects changes
+                this.logToUi('Checking Sync Condition:', {
+                    serviceProp: this.bookletService.propertyName(),
+                    viewProp: this.view().propertyName
+                });
+
+                if (this.bookletService.propertyName() === this.view().propertyName) {
+                    this.logToUi('Syncing saved description to WelcomeBookletService...');
+                    console.log('[AngleView] Form Current Value:', this.bookletService.editorForm.get('welcome.welcomeMessage')?.value);
+                    this.bookletService.editorForm.patchValue({
+                        welcome: { welcomeMessage: this.marketingText() }
+                    });
+                    console.log('[AngleView] Form New Value:', this.bookletService.editorForm.get('welcome.welcomeMessage')?.value);
+                    this.logToUi('Sync Complete. Form Value Updated (English keys).');
+                } else {
+                    this.logToUi('Sync Skipped: Property Name Mismatch', {
+                        expected: this.view().propertyName,
+                        actual: this.bookletService.propertyName()
+                    });
+                }
+            }
+
+            this.saveMessage.set("Microsite publié et contenu sauvegardé !");
+            setTimeout(() => this.saveMessage.set(null), 3000);
+
+        } catch (error) {
+            console.error('Error saving:', error);
+            this.logToUi('ERROR Saving Description', error);
+        }
+    }
+
 
 
     // --- Marketing AI Logic ---
-    async generateDescription() {
+    async generateListingWithPhotos() {
         if (!this.hasAiAccess()) return; // Security check
 
         const propId = this.currentPropertyId();
@@ -632,29 +681,66 @@ export class AngleViewComponent implements OnInit {
         if (!propId || !propName) return;
 
         this.isGenerating.set(true);
+        this.aiAnalysisStatus.set('Analyse des photos et rédaction...');
+
         try {
-            // Get full booklet data as context
+            // Get rich context (same as before)
+            const propData = await this.repository.getPropertyByName(propName);
             const bookletData = await this.repository.getBooklet(propName);
-            let context = `Nom propriété: ${propName}. `;
+
+            let context = `Nom propriété: ${propName}.\n`;
+            if (propData) {
+                context += `Type: ${propData.property_type || 'Non spécifié'}\n`;
+                context += `Adresse: ${propData.address || 'Non spécifiée'}\n`;
+                context += `Description actuelle: ${propData.listing_description || 'Aucune'}\n`;
+                if (propData.property_equipments?.length) {
+                    context += `Équipements: ${propData.property_equipments.map((e: any) => e.name).join(', ')}\n`;
+                }
+            }
             if (bookletData) {
-                // Convert JSON booklet to string context
-                context += JSON.stringify(bookletData);
+                context += `\n--- Détails Livret ---\n${JSON.stringify(bookletData).substring(0, 1500)}`;
             }
 
-            const generated = await this.geminiService.generateMarketingDescription(context);
-            this.marketingText.set(generated);
+            // Prepare Photos
+            const availablePhotos = this.micrositePhotos().map((p: any) => ({ url: p.url, id: p.id || p.url })); // Ensure ID
+
+            if (availablePhotos.length === 0) {
+                // Fallback to text only if no photos
+                const generated = await this.geminiService.generateMarketingDescription(context);
+                this.marketingText.set(generated);
+            } else {
+                // Multimodal Generation
+                const result = await this.geminiService.generateOptimizedListing(
+                    context,
+                    availablePhotos,
+                    this.targetPhotoCount()
+                );
+
+                this.marketingText.set(result.description);
+
+                // Apply Photo Selection
+                if (result.selectedPhotoIds?.length > 0) {
+                    this.micrositePhotos.update(photos => {
+                        return photos.map((p: any) => ({
+                            ...p,
+                            visible: result.selectedPhotoIds.includes(p.id || p.url)
+                        }));
+                    });
+                    this.saveMessage.set(`IA : ${result.selectedPhotoIds.length} photos sélectionnées !`);
+                    setTimeout(() => this.saveMessage.set(null), 4000);
+                }
+            }
+
         } catch (e) {
             console.error(e);
             alert("Erreur lors de la génération.");
         } finally {
             this.isGenerating.set(false);
+            this.aiAnalysisStatus.set('');
         }
     }
 
-    async saveDescription() {
-        // Reuse main save function logic for consistency
-        await this.saveMicrosite();
-    }
+
 
     angleDetails = computed<AngleDetails | null>(() => {
         const viewId = this.view().id;

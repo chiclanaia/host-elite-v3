@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { HostRepository } from '../../../services/host-repository.service';
 import { WidgetService } from '../../../services/widget.service';
+import { TranslationService } from '../../../services/translation.service';
 import { SessionStore } from '../../../state/session.store';
 import { BookletSection, WidgetDisplayData, CONTROL_LABELS, SECTIONS_CONFIG, WIDGET_DEFINITIONS, MicrositeConfig, resolveMicrositeConfig } from './booklet-definitions';
 import { Subscription } from 'rxjs';
@@ -15,6 +16,7 @@ export class WelcomeBookletService implements OnDestroy {
     store = inject(SessionStore);
     fb = inject(FormBuilder);
     sanitizer = inject(DomSanitizer);
+    translationService = inject(TranslationService);
 
     editorForm: FormGroup;
     propertyId = signal<string | null>(null);
@@ -26,7 +28,7 @@ export class WelcomeBookletService implements OnDestroy {
     saveMessage = signal<string | null>(null);
 
     // Data
-    availableCategories = signal<string[]>(['Salon', 'Cuisine', 'Chambre 1', 'Chambre 2', 'Salle de bain', 'Extérieur', 'Piscine', 'Autre']);
+    availableCategories = signal<string[]>(['Living Room', 'Kitchen', 'Bedroom 1', 'Bedroom 2', 'Bathroom', 'Outdoor', 'Pool', 'Other']);
     activeWidgets = signal<Record<string, boolean>>({});
     propertyPhotos = signal<{ url: string, category: string }[]>([]);
     propertyEquipments = signal<string[]>([]);
@@ -109,6 +111,7 @@ export class WelcomeBookletService implements OnDestroy {
             const booklet = await this.repository.getBooklet(name);
 
             if (prop) {
+                console.log('[WelcomeBookletService] Loaded Property Data:', prop);
                 this.propertyId.set(prop.id);
                 if (prop.property_equipments) this.propertyEquipments.set(prop.property_equipments.map((e: any) => e.name));
 
@@ -121,11 +124,16 @@ export class WelcomeBookletService implements OnDestroy {
                 }
 
                 // Init Form basic data
+                // MAPPING: DB (French) -> Form (English)
                 const defaults: any = {
                     address: prop.address || '',
-                    bienvenue: { messageBienvenue: prop.listing_description || '', coordonneesHote: prop.cleaning_contact_info || '', numeroUrgenceHote: prop.emergency_contact_info || '' },
-                    systemes: { wifi: prop.wifi_code ? `Code Wi-Fi : ${prop.wifi_code}` : '' },
-                    regles: { heuresSilence: prop.house_rules_text || '', gestionCles: prop.arrival_instructions || '' }
+                    welcome: {
+                        welcomeMessage: prop.listing_description || '',
+                        hostContact: prop.cleaning_contact_info || '',
+                        emergencyContact: prop.emergency_contact_info || ''
+                    },
+                    systems: { wifi: prop.wifi_code ? `Wi-Fi Code: ${prop.wifi_code}` : '' },
+                    rules: { quietHours: prop.house_rules_text || '', keyManagement: prop.arrival_instructions || '' }
                 };
                 if (prop.cover_image_url) defaults.coverImageUrl = prop.cover_image_url;
                 this.editorForm.patchValue(defaults);
@@ -138,6 +146,16 @@ export class WelcomeBookletService implements OnDestroy {
                 // Parse config but don't set signal yet
                 if (booklet.microsite_config) {
                     savedConfig = typeof booklet.microsite_config === 'string' ? JSON.parse(booklet.microsite_config) : booklet.microsite_config;
+                }
+
+                // MIGRATION: Convert Legacy "bienvenue" to New "welcome"
+                if (booklet.bienvenue && !booklet.welcome) {
+                    booklet.welcome = {
+                        welcomeMessage: booklet.bienvenue.messageBienvenue,
+                        hostContact: booklet.bienvenue.coordonneesHote,
+                        emergencyContact: booklet.bienvenue.numeroUrgenceHote,
+                        // ... map other fields if needed
+                    };
                 }
 
                 this.editorForm.patchValue(this.removeEmpty(booklet));
@@ -168,10 +186,13 @@ export class WelcomeBookletService implements OnDestroy {
                 await this.repository.savePropertyPhotos(this.propertyId()!, photos);
                 this.propertyPhotos.set(photos.filter((p: any) => p.url));
             }
-            this.saveMessage.set("Enregistré !");
+            this.saveMessage.set(this.translationService.translate('COMMON.Saved'));
             setTimeout(() => this.saveMessage.set(null), 3000);
             this.refreshRealWidgetData();
-        } catch (e) { console.error(e); alert("Erreur sauvegarde"); }
+        } catch (e) {
+            console.error(e);
+            alert(this.translationService.translate('COMMON.ErrorSaving') || "Error saving");
+        }
     }
 
     async refreshRealWidgetData() {
@@ -202,9 +223,9 @@ export class WelcomeBookletService implements OnDestroy {
                 const temp = weather.temperature_2m;
                 const desc = this.widgetService.getWeatherDescription(weather.weather_code);
                 updated['weather'] = { value: `${temp}°C ${desc}` };
-                updated['uv-index'] = { value: weather.uv_index ? `${weather.uv_index}` : 'Faible' };
+                updated['uv-index'] = { value: weather.uv_index ? `${weather.uv_index}` : this.translationService.translate('WIDGET.uv_low') };
             } else {
-                updated['weather'] = { value: 'Indisponible' };
+                updated['weather'] = { value: this.translationService.translate('COMMON.Unavailable') };
             }
 
             if (air) {
@@ -219,11 +240,11 @@ export class WelcomeBookletService implements OnDestroy {
                 updated['currency-converter'] = { value: '--' };
             }
 
-            updated['pharmacy'] = { value: 'Pharmacies à proximité', link: `https://www.google.com/maps/search/pharmacie+near+${encodedAddress}` };
-            updated['public-transport'] = { value: 'Transports & Arrêts', link: `https://www.google.com/maps/search/bus+metro+station+near+${encodedAddress}` };
-            updated['local-events'] = { value: 'Agenda & Sorties', link: `https://www.google.com/search?q=evenements+aujourd'hui+near+${encodedAddress}` };
-            updated['tides'] = { value: 'Horaires des Marées', link: `https://www.google.com/search?q=marees+${encodedAddress}` };
-            updated['avalanche-risk'] = { value: 'Bulletin Avalanche', link: `https://www.google.com/search?q=risque+avalanche+${encodedAddress}` };
+            updated['pharmacy'] = { value: this.translationService.translate('WIDGET.pharmacy_nearby'), link: `https://www.google.com/maps/search/pharmacie+near+${encodedAddress}` };
+            updated['public-transport'] = { value: this.translationService.translate('WIDGET.transport_routes'), link: `https://www.google.com/maps/search/bus+metro+station+near+${encodedAddress}` };
+            updated['local-events'] = { value: this.translationService.translate('WIDGET.events_outings'), link: `https://www.google.com/search?q=evenements+aujourd'hui+near+${encodedAddress}` };
+            updated['tides'] = { value: this.translationService.translate('WIDGET.tide_times'), link: `https://www.google.com/search?q=marees+${encodedAddress}` };
+            updated['avalanche-risk'] = { value: this.translationService.translate('WIDGET.avalanche_bulletin'), link: `https://www.google.com/search?q=risque+avalanche+${encodedAddress}` };
 
             return updated;
         });

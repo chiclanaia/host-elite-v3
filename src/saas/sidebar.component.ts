@@ -5,12 +5,15 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UserRole, View, Property } from '../types';
 import { SessionStore } from '../state/session.store';
 
+import { TranslationService } from '../services/translation.service';
+import { TranslatePipe } from '../pipes/translate.pipe';
+
 @Component({
-  selector: 'saas-sidebar',
-  standalone: true,
-  imports: [CommonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
+    selector: 'saas-sidebar',
+    standalone: true,
+    imports: [CommonModule, TranslatePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
     <aside class="w-64 flex-shrink-0 flex flex-col h-full bg-slate-900/80 backdrop-blur-xl border-r border-white/10 shadow-2xl relative z-20 text-white transition-all duration-300">
       <!-- Logo Header -->
       <div class="px-6 h-16 flex items-center border-b border-white/10 flex-shrink-0">
@@ -43,7 +46,7 @@ import { SessionStore } from '../state/session.store';
                     <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors" 
                           [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
                           [innerHTML]="getIcon(view.icon)"></span>
-                    {{ view.title }}
+                    {{ 'NAV.' + view.id | translate }}
                 </div>
                 <!-- Badge -->
                 @if (view.featureId) {
@@ -65,7 +68,7 @@ import { SessionStore } from '../state/session.store';
             <!-- Properties Menu -->
             <div class="pt-6">
                 <div class="px-3 pb-3">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Gestion</span>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ 'SIDEBAR.Management' | translate }}</span>
                 </div>
                 <div class="px-2 space-y-2">
                     @if(properties().length > 0) {
@@ -75,7 +78,7 @@ import { SessionStore } from '../state/session.store';
                                 class="w-full flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-all border border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/20 shadow-lg group">
                             <div class="flex items-center min-w-0">
                                 <span class="w-5 h-5 mr-2 flex items-center justify-center flex-shrink-0 text-[#D4AF37]" [innerHTML]="getIcon('property')"></span>
-                                <span class="truncate">Mes Propriétés</span>
+                                <span class="truncate">{{ 'SIDEBAR.MyProperties' | translate }}</span>
                             </div>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 transition-transform duration-200 flex-shrink-0 text-slate-400 group-hover:text-white" [class.rotate-180]="isPropertyDropdownOpen()">
                                 <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
@@ -97,7 +100,7 @@ import { SessionStore } from '../state/session.store';
                             <div class="bg-slate-900/50">
                                 <a (click)="createProperty()" class="block w-full text-left px-4 py-3 text-xs text-blue-400 hover:bg-white/5 hover:text-blue-300 cursor-pointer font-bold uppercase tracking-wide flex items-center border-t border-white/10">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 mr-2"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>
-                                    Nouvelle propriété
+                                    {{ 'SIDEBAR.NewProperty' | translate }}
                                 </a>
                             </div>
                         </div>
@@ -121,7 +124,7 @@ import { SessionStore } from '../state/session.store';
                                     <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors" 
                                           [class]="activeView().id === subView.id && activeView().propertyName === prop.name ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-slate-400'"
                                           [innerHTML]="getIcon(subView.icon)"></span>
-                                    <span class="truncate">{{ subView.title }}</span>
+                                    <span class="truncate">{{ 'NAV.' + subView.id | translate }}</span>
                                 </div>
                                 <!-- Badge -->
                                 @if (subView.featureId) {
@@ -145,7 +148,7 @@ import { SessionStore } from '../state/session.store';
                         <!-- No property state -->
                         <button (click)="createProperty()" class="w-full flex items-center justify-center px-3 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors bg-[#D4AF37] text-slate-900 hover:bg-yellow-500 shadow-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-2"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>
-                            Créer ma 1ère propriété
+                            {{ 'SIDEBAR.CreateFirst' | translate }}
                         </button>
                     }
                 </div>
@@ -154,7 +157,7 @@ import { SessionStore } from '../state/session.store';
             <!-- Training Menu -->
             <div class="pt-6">
                 <div class="px-3 pb-3">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Académie</span>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ 'SIDEBAR.Academy' | translate }}</span>
                 </div>
                 <div class="space-y-1">
                 @for (view of trainingViews; track view.id) {
@@ -169,7 +172,7 @@ import { SessionStore } from '../state/session.store';
                         <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
                               [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
                               [innerHTML]="getIcon(view.icon)"></span>
-                        {{ view.title }}
+                        {{ 'NAV.' + view.id | translate }}
                     </div>
                     @if (view.featureId) {
                         @let badge = getBadge(view.featureId);
@@ -191,7 +194,7 @@ import { SessionStore } from '../state/session.store';
             <!-- Account & Support -->
             <div class="pt-6">
                 <div class="px-3 pb-3">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Compte</span>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ 'SIDEBAR.Account' | translate }}</span>
                 </div>
                 <div class="space-y-1">
                 @for (view of accountViews; track view.id) {
@@ -203,7 +206,7 @@ import { SessionStore } from '../state/session.store';
                     <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
                           [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
                           [innerHTML]="getIcon(view.icon)"></span>
-                    {{ view.title }}
+                    {{ 'NAV.' + view.id | translate }}
                     </a>
                 }
                 </div>
@@ -251,7 +254,7 @@ import { SessionStore } from '../state/session.store';
         </div>
         <button (click)="onLogout()" class="w-full mt-4 text-left flex items-center px-3 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
             <span class="w-4 h-4 mr-2 flex items-center justify-center" [innerHTML]="getIcon('logout')"></span>
-            Se déconnecter
+            {{ 'SIDEBAR.Logout' | translate }}
         </button>
       </div>
     </aside>
@@ -288,8 +291,8 @@ export class SidebarComponent {
     ];
 
     trainingViews: View[] = [
-      { id: 'wheel', title: 'Ma Roue de l\'Hôte', icon: 'wheel', featureId: 'wheel' },
-      { id: 'training', title: 'Formations', icon: 'training', featureId: 'training' }
+        { id: 'wheel', title: 'Ma Roue de l\'Hôte', icon: 'wheel', featureId: 'wheel' },
+        { id: 'training', title: 'Formations', icon: 'training', featureId: 'training' }
     ];
 
     accountViews: View[] = [
@@ -300,7 +303,7 @@ export class SidebarComponent {
     adminViews: View[] = [
         { id: 'admin-users', title: 'Utilisateurs', icon: 'users' }
     ];
-    
+
     private readonly icons: Record<string, string> = {
         home: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 10.414V18a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7.586a1 1 0 0 1 .293-.707l7-7Z" clip-rule="evenodd" /></svg>`,
         dashboard: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M7 3a1 1 0 0 0-1 1v12a1 1 0 1 0 2 0V4a1 1 0 0 0-1-1ZM13 5a1 1 0 0 0-1 1v10a1 1 0 1 0 2 0V6a1 1 0 0 0-1-1Z" /><path fill-rule="evenodd" d="M3 9a1 1 0 0 1 1-1h.5a.5.5 0 0 0 .5-.5V6a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1.5a.5.5 0 0 0 .5.5H9a1 1 0 1 1 0 2H7.5a.5.5 0 0 0-.5.5V14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1.5a.5.5 0 0 0-.5-.5H3a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Zm12 0a1 1 0 0 1 1-1h.5a.5.5 0 0 0 .5-.5V6a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1.5a.5.5 0 0 0 .5.5H9a1 1 0 1 1 0 2h-1.5a.5.5 0 0 0-.5.5V14a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1.5a.5.5 0 0 0-.5-.5H15a1 1 0 0 1 0-2Z" clip-rule="evenodd" /></svg>`,
@@ -337,7 +340,7 @@ export class SidebarComponent {
     }
 
     getPlanColor = computed(() => {
-        switch(this.userPlan()) {
+        switch (this.userPlan()) {
             case 'Bronze': return 'text-amber-400';
             case 'Silver': return 'text-slate-300';
             case 'Gold': return 'text-yellow-400';
@@ -346,11 +349,11 @@ export class SidebarComponent {
     });
 
     changeView(view: View, propertyName?: string): void {
-      if (propertyName) {
-        this.viewChange.emit({ ...view, propertyName });
-      } else {
-        this.viewChange.emit(view);
-      }
+        if (propertyName) {
+            this.viewChange.emit({ ...view, propertyName });
+        } else {
+            this.viewChange.emit(view);
+        }
     }
 
     onLogout(): void {
@@ -358,9 +361,9 @@ export class SidebarComponent {
     }
 
     togglePropertyDropdown(): void {
-      this.isPropertyDropdownOpen.update(v => !v);
+        this.isPropertyDropdownOpen.update(v => !v);
     }
-    
+
     selectProperty(property: Property): void {
         this.isPropertyDropdownOpen.set(false);
         const manageView = property.subViews.find(v => v.id === 'manage-property') || property.subViews[0];

@@ -22,9 +22,10 @@ export class WelcomeBookletAiService {
 
         try {
             // 1. Basic Info
+            // 1. Basic Info
             const welcomePrompt = `${parts.join(' ')} Rédige un message de bienvenue chaleureux (2-3 phrases) souhaitant un excellent séjour.`;
             const welcome = await this.gemini.generateText(welcomePrompt);
-            if (welcome) form.get('bienvenue.messageBienvenue')?.setValue(this.formatAiResponse(welcome));
+            if (welcome) form.get('welcome.welcomeMessage')?.setValue(this.formatAiResponse(welcome));
 
             // 2. Sections
             for (const section of sections) {
@@ -69,7 +70,7 @@ export class WelcomeBookletAiService {
         // Let's implement that loop.
 
         for (const section of sections) {
-            if (['cuisine', 'buanderie', 'salon'].includes(section.id)) {
+            if (['kitchen', 'laundry', 'livingRoom'].includes(section.id)) {
                 const group = form.get(section.formGroupName);
                 const labels = CONTROL_LABELS[section.formGroupName];
                 if (!group || !labels) continue;
@@ -94,9 +95,9 @@ export class WelcomeBookletAiService {
 
     getAiHint(sectionId: string, key: string): string {
         if (key === 'wifi') return 'Donne un format type : "Réseau : [NOM], Mot de passe : [MDP]".';
-        if (key === 'boulangerie') return 'Suggère une boulangerie réputée dans le quartier si possible, ou explique comment en trouver une.';
-        if (key === 'supermarche') return 'Indique les chaînes de supermarchés habituelles en France.';
-        if (sectionId === 'depart') return 'Donne des instructions standards de départ (poubelles, clés, lumières).';
+        if (key === 'bakery') return 'Suggère une boulangerie réputée dans le quartier si possible, ou explique comment en trouver une.';
+        if (key === 'supermarket') return 'Indique les chaînes de supermarchés habituelles en France.';
+        if (sectionId === 'departure') return 'Donne des instructions standards de départ (poubelles, clés, lumières).';
         return '';
     }
 

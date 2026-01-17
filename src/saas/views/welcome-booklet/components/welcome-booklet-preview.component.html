@@ -9,7 +9,8 @@
                     class="w-full h-full object-cover animate-ken-burns origin-center">
                 <div class="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent"></div>
                 <div class="absolute bottom-4 left-6 text-white">
-                    <p class="font-light text-sm uppercase tracking-widest mb-1">Bienvenue à</p>
+                    <p class="font-light text-sm uppercase tracking-widest mb-1">{{ 'BOOKLET.welcome_to' | translate }}
+                    </p>
                     <h2 class="text-2xl font-bold leading-tight shadow-black drop-shadow-md">{{ propertyName() }}</h2>
                 </div>
             </div>
@@ -20,8 +21,9 @@
 
                     @if (enabledWidgetIds().length > 0) {
                     <div class="mb-6">
-                        <p class="text-center font-semibold text-slate-400 mb-3 text-xs uppercase tracking-wider">INFOS
-                            DIRECTES</p>
+                        <p class="text-center font-semibold text-slate-400 mb-3 text-xs uppercase tracking-wider">
+                            {{ 'BOOKLET.direct_infos' | translate }}
+                        </p>
                         <div class="grid grid-cols-4 gap-2">
                             @for(widgetId of enabledWidgetIds(); track widgetId) {
                             @if (getWidgetLink(widgetId); as link) {
@@ -30,7 +32,7 @@
                                 <span class="text-xl mb-1">{{ getWidgetIcon(widgetId) }}</span>
                                 <span
                                     class="text-[8px] font-bold text-slate-400 uppercase tracking-wide truncate w-full text-center">{{
-                                    getWidgetName(widgetId) }}</span>
+                                    getWidgetName(widgetId) | translate }}</span>
                                 <span class="text-[10px] font-bold text-slate-800 mt-0.5 truncate w-full text-center">{{
                                     getWidgetValue(widgetId) }}</span>
                             </a>
@@ -40,7 +42,7 @@
                                 <span class="text-xl mb-1">{{ getWidgetIcon(widgetId) }}</span>
                                 <span
                                     class="text-[8px] font-bold text-slate-400 uppercase tracking-wide truncate w-full text-center">{{
-                                    getWidgetName(widgetId) }}</span>
+                                    getWidgetName(widgetId) | translate }}</span>
                                 <span class="text-[10px] font-bold text-slate-800 mt-0.5 truncate w-full text-center">{{
                                     getWidgetValue(widgetId) }}</span>
                             </div>
@@ -50,8 +52,9 @@
                     </div>
                     }
 
-                    <p class="text-center font-semibold text-slate-400 mb-4 text-xs uppercase tracking-wider">GUIDE DE
-                        LA MAISON</p>
+                    <p class="text-center font-semibold text-slate-400 mb-4 text-xs uppercase tracking-wider">
+                        {{ 'BOOKLET.house_guide' | translate }}
+                    </p>
                     <div class="grid grid-cols-4 gap-x-2 gap-y-6 text-center">
                         @for(section of activeSections(); track section.id) {
                         <button (click)="showSection(section.id)"
@@ -60,7 +63,8 @@
                                 class="w-16 h-16 flex items-center justify-center border border-slate-200 bg-white rounded-2xl shadow-lg shadow-slate-200 group-hover:shadow-blue-200 group-hover:border-blue-200 transition-all">
                                 <div class="w-7 h-7" [innerHTML]="section.icon"></div>
                             </div>
-                            <span class="text-[10px] font-bold uppercase tracking-tight">{{ section.previewTitle
+                            <span class="text-[10px] font-bold uppercase tracking-tight">{{ section.previewTitle |
+                                translate
                                 }}</span>
                         </button>
                         }
@@ -69,7 +73,8 @@
                     @if(propertyPhotos().length > 0) {
                     <div class="mt-8 mb-4">
                         <p class="text-center font-semibold text-slate-400 mb-4 text-xs uppercase tracking-wider">
-                            GALERIE</p>
+                            {{ 'BOOKLET.gallery' | translate }}
+                        </p>
                         <div class="flex space-x-3 overflow-x-auto pb-2 no-scrollbar">
                             @for(photo of propertyPhotos(); track $index) {
                             <div class="flex-shrink-0 w-28 h-28 rounded-xl overflow-hidden shadow-md">
@@ -108,22 +113,23 @@
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto p-6" [formGroupName]="section.formGroupName">
-                <h2 class="text-3xl font-bold text-blue-900 mb-6">{{ section.previewTitle }}</h2>
+                <h2 class="text-3xl font-bold text-blue-900 mb-6">{{ section.previewTitle | translate }}</h2>
                 @switch(section.id) {
-                @case('depart') {
+                @case('departure') {
                 <div class="space-y-4 text-slate-700">
-                    <h4 class="font-bold">Heure de départ</h4>
-                    <p>Le départ doit se faire au plus tard à <strong>{{
-                            editorForm.get('depart.heureLimiteCheckout')?.value }}</strong>.</p>
-                    @if(isValidContent(editorForm.get('depart.instructionsNettoyage')?.value)) { <h4
-                        class="font-bold mt-4">Avant de partir</h4>
-                    <p class="whitespace-pre-wrap">{{ editorForm.get('depart.instructionsNettoyage')?.value }}</p> }
-                    @if(isValidContent(editorForm.get('depart.gestionLinge')?.value)) { <h4 class="font-bold mt-4">Linge
-                        de maison</h4>
-                    <p class="whitespace-pre-wrap">{{ editorForm.get('depart.gestionLinge')?.value }}</p> }
-                    @if(isValidContent(editorForm.get('depart.remiseCles')?.value)) { <h4 class="font-bold mt-4">Clés
+                    <h4 class="font-bold">{{ 'BOOKLET.departure_heading' | translate }}</h4>
+                    <p>{{ 'BOOKLET.departure_deadline' | translate }} <strong>{{
+                            editorForm.get('departure.checkoutTime')?.value }}</strong>.</p>
+                    @if(isValidContent(editorForm.get('departure.cleaningInstructions')?.value)) { <h4
+                        class="font-bold mt-4">{{ 'BOOKLET.departure_before' | translate }}</h4>
+                    <p class="whitespace-pre-wrap">{{ editorForm.get('departure.cleaningInstructions')?.value }}</p> }
+                    @if(isValidContent(editorForm.get('departure.linenManagement')?.value)) { <h4
+                        class="font-bold mt-4">{{ 'BOOKLET.departure_linen' | translate }}</h4>
+                    <p class="whitespace-pre-wrap">{{ editorForm.get('departure.linenManagement')?.value }}</p> }
+                    @if(isValidContent(editorForm.get('departure.keyReturn')?.value)) { <h4 class="font-bold mt-4">{{
+                        'BOOKLET.departure_keys' | translate }}
                     </h4>
-                    <p class="whitespace-pre-wrap">{{ editorForm.get('depart.remiseCles')?.value }}</p> }
+                    <p class="whitespace-pre-wrap">{{ editorForm.get('departure.keyReturn')?.value }}</p> }
                 </div>
                 }
                 @default {
@@ -131,7 +137,8 @@
                     @for (control of getGroupControls(section.formGroupName); track control) {
                     @if (isValidContent(editorForm.get(section.formGroupName + '.' + control)?.value)) {
                     <div>
-                        <h4 class="font-bold text-slate-800">{{ getLabelForControl(section.id, control) }}</h4>
+                        <h4 class="font-bold text-slate-800">{{ getLabelForControl(section.id, control) | translate }}
+                        </h4>
                         <p class="whitespace-pre-wrap text-sm mt-1">{{ editorForm.get(section.formGroupName + '.' +
                             control)?.value }}</p>
                         @if (editorForm.get(section.formGroupName + '.' + control + '_pdf')?.value) {
@@ -144,13 +151,13 @@
                                     <path fill-rule="evenodd"
                                         d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z"
                                         clip-rule="evenodd" />
-                                </svg>Voir le manuel / Vidéo</a></div>
+                                </svg>{{ 'BOOKLET.see_manual' | translate }}</a></div>
                         }
                     </div>
                     }
                     }
-                    @if (isSectionEmpty(section.formGroupName)) { <p class="italic text-slate-400">Aucune information
-                        renseignée pour cette section.</p> }
+                    @if (isSectionEmpty(section.formGroupName)) { <p class="italic text-slate-400">{{ 'BOOKLET.no_info'
+                        | translate }}</p> }
                 </div>
                 }
                 }

@@ -1,5 +1,23 @@
 @if(angleDetails(); as details) {
 <div class="space-y-8 relative">
+    <!-- Language Switcher -->
+    <div class="absolute top-0 right-0 z-40 flex bg-white/10 backdrop-blur-md rounded-lg p-1 border border-white/10">
+        <button (click)="translationService.setLanguage('en')"
+            [class.bg-white]="translationService.currentLang() === 'en'"
+            [class.text-slate-900]="translationService.currentLang() === 'en'"
+            [class.text-white]="translationService.currentLang() !== 'en'"
+            class="px-3 py-1 text-xs rounded transition-all font-bold hover:bg-white/20">EN</button>
+        <button (click)="translationService.setLanguage('fr')"
+            [class.bg-white]="translationService.currentLang() === 'fr'"
+            [class.text-slate-900]="translationService.currentLang() === 'fr'"
+            [class.text-white]="translationService.currentLang() !== 'fr'"
+            class="px-3 py-1 text-xs rounded transition-all font-bold hover:bg-white/20">FR</button>
+        <button (click)="translationService.setLanguage('es')"
+            [class.bg-white]="translationService.currentLang() === 'es'"
+            [class.text-slate-900]="translationService.currentLang() === 'es'"
+            [class.text-white]="translationService.currentLang() !== 'es'"
+            class="px-3 py-1 text-xs rounded transition-all font-bold hover:bg-white/20">ES</button>
+    </div>
     <!-- Notification -->
     @if (saveMessage()) {
     <div
@@ -12,11 +30,12 @@
     <!-- STANDARD VIEW: List of Tools -->
     <div>
         <!-- Titre Blanc Eclatant -->
-        <h1 class="text-4xl font-extrabold text-white drop-shadow-lg tracking-tight">{{ details.title }}</h1>
+        <h1 class="text-4xl font-extrabold text-white drop-shadow-lg tracking-tight">{{ details.title | translate }}
+        </h1>
         <!-- Description sur fond ultra-léger -->
         <p
             class="mt-3 text-slate-100 font-medium bg-white/10 inline-block px-4 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-sm leading-relaxed">
-            {{ details.description }}
+            {{ details.description | translate }}
         </p>
     </div>
 
@@ -25,18 +44,19 @@
         class="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl p-8 shadow-2xl transition-all duration-300 hover:bg-white/15">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-                <h3 class="text-xl font-bold text-white drop-shadow-md">Onboarding de la Catégorie</h3>
-                <p class="text-slate-200 mt-2 max-w-2xl font-light">Évaluez votre maîtrise de cet angle en répondant à
-                    quelques questions. Cela nous aidera à suivre vos progrès.</p>
+                <h3 class="text-xl font-bold text-white drop-shadow-md">{{ 'ANGLE.CategoryOnboarding' | translate }}
+                </h3>
+                <p class="text-slate-200 mt-2 max-w-2xl font-light">{{ 'ANGLE.AuditDescription' | translate }}</p>
             </div>
             <div class="flex-shrink-0">
                 @if (currentQuestions() && currentQuestions()!.length > 0) {
                 <button (click)="openOnboarding()"
                     class="px-8 py-3 font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-900/30 transition-all hover:scale-105 border border-white/10">
-                    Lancer l'Audit
+                    {{ 'ANGLE.LaunchAudit' | translate }}
                 </button>
                 } @else {
-                <p class="text-sm italic text-slate-400 bg-black/20 px-3 py-1 rounded-lg">Bientôt disponible</p>
+                <p class="text-sm italic text-slate-400 bg-black/20 px-3 py-1 rounded-lg">{{ 'COMMON.Soon' | translate
+                    }}</p>
                 }
             </div>
         </div>
@@ -51,7 +71,7 @@
                     d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
         </span>
-        Outils Associés
+        {{ 'ANGLE.AssociatedTools' | translate }}
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -68,7 +88,7 @@
                 <div class="flex justify-between items-start mb-3">
                     <h3
                         class="text-xl font-bold text-white drop-shadow-sm group-hover:text-[#D4AF37] transition-colors">
-                        {{ tool.name }}
+                        {{ tool.name | translate }}
                     </h3>
                     @if(isToolLocked(tool.requiredPlan)) {
                     <div
@@ -83,7 +103,7 @@
                     }
                 </div>
                 <p class="text-slate-200 text-sm leading-relaxed font-light">
-                    {{ tool.description }}
+                    {{ tool.description | translate }}
                 </p>
             </div>
 
@@ -364,7 +384,7 @@
             </main>
         </div>
     </div>
-    } @else if (view().id === 'ai-prompts' && activeToolId() === 'ai-prompts') {
+    } @else if (activeToolId() === 'ai-prompts') {
     <!-- AI PROMPTS TOOL (Ultra-Clear Glass) -->
     <div
         class="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl p-8 shadow-2xl animate-fade-in relative">
@@ -379,7 +399,7 @@
                 <p class="text-slate-200 mt-1 font-light">Générez une description parfaite pour vos annonces grâce à
                     l'IA.</p>
             </div>
-            <button (click)="generateDescription()" [disabled]="isGenerating() || !hasAiAccess()"
+            <button (click)="generateListingWithPhotos()" [disabled]="isGenerating() || !hasAiAccess()"
                 class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center shadow-lg transition-all border"
                 [class]="hasAiAccess() 
                             ? 'bg-white/20 border-white/30 text-white hover:bg-white hover:text-indigo-900'
@@ -403,20 +423,253 @@
             </button>
         </div>
 
+        <!-- View Toggle & Status -->
+        <div
+            class="flex items-center justify-between mb-6 bg-black/20 p-1.5 rounded-lg border border-white/10 backdrop-blur-sm relative">
+            <div class="flex space-x-2 relative z-10">
+                <button (click)="isPreviewMode.set(false)"
+                    class="px-4 py-1.5 text-sm font-bold rounded-md transition-all duration-300"
+                    [class]="!isPreviewMode() ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'">
+                    ✏️ Édition
+                </button>
+                <button (click)="isPreviewMode.set(true)"
+                    class="px-4 py-1.5 text-sm font-bold rounded-md transition-all duration-300"
+                    [class]="isPreviewMode() ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'">
+                    👁️ Aperçu Réel
+                </button>
+            </div>
+
+            @if(isGenerating() && aiAnalysisStatus()) {
+            <div class="flex items-center space-x-2 px-3">
+                <span class="relative flex h-3 w-3">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                </span>
+                <p class="text-indigo-200 text-xs font-semibold animate-pulse">{{ aiAnalysisStatus() }}</p>
+            </div>
+            }
+        </div>
+
+        @if(!isPreviewMode()) {
+        <!-- EDITOR MODE -->
+        <!-- Photo Count Slider -->
+        <div
+            class="mb-6 bg-indigo-600/90 backdrop-blur-md p-5 rounded-xl border border-indigo-400 shadow-xl flex items-center justify-between gap-6 relative overflow-hidden group">
+            <!-- Decorative Glow -->
+            <div
+                class="absolute -top-10 -right-10 w-24 h-24 bg-white/20 rounded-full blur-2xl group-hover:bg-white/30 transition-all">
+            </div>
+
+            <div class="relative z-10 flex-1">
+                <label for="photoCount" class="block text-base font-bold text-white mb-1 flex items-center">
+                    📸 Nombre de photos
+                    <span
+                        class="ml-2 bg-indigo-800/50 px-2 py-0.5 rounded text-xs text-indigo-200 border border-indigo-500/50">Recommandé
+                        : 5-15</span>
+                </label>
+                <p class="text-xs text-indigo-100 opacity-90">
+                    L'IA sélectionnera automatiquement les <strong
+                        class="text-white decoration-amber-400 underline decoration-2 underline-offset-2">{{
+                        targetPhotoCount() }}</strong> meilleures prises.
+                </p>
+            </div>
+
+            <div class="relative z-10 flex items-center gap-4">
+                <input type="range" id="photoCount" min="3" max="30" step="1" [ngModel]="targetPhotoCount()"
+                    (ngModelChange)="targetPhotoCount.set($event)"
+                    class="w-48 h-2 bg-indigo-900/50 rounded-lg appearance-none cursor-pointer accent-amber-400 hover:accent-amber-300 transition-all shadow-inner">
+
+                <div
+                    class="w-12 h-12 flex items-center justify-center bg-white/10 rounded-full border border-white/20 shadow-lg text-xl font-bold text-white backdrop-blur-sm">
+                    {{ targetPhotoCount() }}
+                </div>
+            </div>
+        </div>
+
         <div class="relative">
             <textarea [ngModel]="marketingText()" (ngModelChange)="marketingText.set($event)" rows="8"
                 class="block w-full rounded-xl border border-white/20 bg-black/20 backdrop-blur-sm text-white placeholder-slate-400 focus:border-indigo-400 focus:ring-indigo-400 sm:text-base p-6 shadow-inner"
                 placeholder="Votre description apparaîtra ici...">
-                    </textarea>
+            </textarea>
+        </div>
+        } @else {
+        <!-- PREVIEW MODE: OTA Style (Airbnb-like) -->
+        <div
+            class="w-full h-[700px] overflow-hidden rounded-xl border border-white/20 shadow-2xl bg-white relative font-sans text-slate-800">
+            <div class="absolute inset-0 overflow-y-auto custom-scrollbar">
+                <div class="max-w-5xl mx-auto p-6 md:p-8">
 
-            <div class="mt-6 flex justify-end">
-                <button (click)="saveDescription()"
-                    class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-900/40 transition-all border border-blue-400/30">
-                    Enregistrer sur le Microsite
-                </button>
+                    <!-- 1. Header & Title -->
+                    <div class="mb-6">
+                        <h2 class="text-3xl font-bold text-slate-900 mb-2">{{ propertyDetails()?.name ||
+                            view().propertyName }}</h2>
+                        <div class="flex items-center text-sm text-slate-600 space-x-2">
+                            <span>★ 4.98 · {{ propertyDetails()?.address || 'Adresse masquée' }}</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. Photo Grid (First 5 photos) -->
+                    @let photos = visiblePhotos();
+                    <div
+                        class="grid grid-cols-4 grid-rows-2 gap-2 h-[350px] rounded-2xl overflow-hidden mb-8 shadow-sm">
+                        <!-- Main Photo (Left) -->
+                        <div class="col-span-2 row-span-2 relative group cursor-pointer">
+                            <img [src]="photos[0]?.url || 'assets/placeholder.jpg'"
+                                class="w-full h-full object-cover group-hover:brightness-90 transition-all">
+                        </div>
+
+                        <!-- Side Photos -->
+                        @for (i of [1, 2, 3, 4]; track i) {
+                        <div class="relative group cursor-pointer col-span-1 row-span-1">
+                            <img [src]="photos[i]?.url || 'assets/placeholder.jpg'"
+                                class="w-full h-full object-cover group-hover:brightness-90 transition-all">
+                            @if(i === 4 && photos.length > 5) {
+                            <div
+                                class="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold text-lg">
+                                +{{ photos.length - 5 }} photos
+                            </div>
+                            }
+                        </div>
+                        }
+                    </div>
+
+                    <!-- 3. Layout: Content (Left) + Sidebar (Right) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+
+                        <!-- Left Column: Description -->
+                        <div class="md:col-span-2 space-y-8">
+                            <!-- Host Info -->
+                            <div class="flex justify-between items-center pb-6 border-b border-gray-200">
+                                <div>
+                                    <h3 class="text-xl font-semibold">Logement entier : hôte, {{
+                                        userEmail().split('@')[0] || 'Un Superhost' }}</h3>
+                                    <p class="text-slate-500 text-sm">2 voyageurs · 1 chambre · 1 lit · 1 salle de bain
+                                    </p>
+                                </div>
+                                <div class="w-12 h-12 bg-slate-200 rounded-full overflow-hidden">
+                                    <!-- Avatar placeholder -->
+                                    <svg class="w-full h-full text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Highlights -->
+                            <div class="space-y-4 pb-6 border-b border-gray-200">
+                                <div class="flex items-start">
+                                    <div class="font-bold text-lg mr-4 w-6">♕</div>
+                                    <div>
+                                        <div class="font-bold text-base">Hôte expérimenté</div>
+                                        <div class="text-sm text-slate-500">Cet hôte a reçu d'excellentes évaluations.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="font-bold text-lg mr-4 w-6">📍</div>
+                                    <div>
+                                        <div class="font-bold text-base">Idéalement situé</div>
+                                        <div class="text-sm text-slate-500">95 % des voyageurs récents ont noté
+                                            l'emplacement 5 étoiles.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- THE AI DESCRIPTION -->
+                            <div class="py-4">
+                                <h3 class="text-xl font-bold mb-4">À propos de ce logement</h3>
+                                <!-- Simple format for markdown-like text -->
+                                <div
+                                    class="prose prose-slate max-w-none text-base leading-relaxed whitespace-pre-line text-slate-700">
+                                    {{ marketingText() }}
+                                </div>
+                            </div>
+
+                            <!-- Amenities -->
+                            <div class="py-6 border-t border-gray-200">
+                                <h3 class="text-xl font-bold mb-4">Ce que propose ce logement</h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="flex items-center space-x-3 text-slate-700"><span
+                                            class="w-6 text-center">📶</span> <span>Wifi rapide</span></div>
+                                    <div class="flex items-center space-x-3 text-slate-700"><span
+                                            class="w-6 text-center">🍳</span> <span>Cuisine équipée</span></div>
+                                    <div class="flex items-center space-x-3 text-slate-700"><span
+                                            class="w-6 text-center">🅿️</span> <span>Parking gratuit</span></div>
+                                    <div class="flex items-center space-x-3 text-slate-700"><span
+                                            class="w-6 text-center">❄️</span> <span>Climatisation</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Contact Host (Independent Style) -->
+                        <div class="hidden md:block">
+                            <div
+                                class="sticky top-6 border border-gray-200 rounded-xl p-8 shadow-xl bg-white text-center">
+                                <h3 class="text-xl font-bold mb-2">Ce logement vous intéresse ?</h3>
+                                <p class="text-slate-500 text-sm mb-6">Les tarifs et disponibilités sont sur demande
+                                    directe.</p>
+
+                                <div class="space-y-4">
+                                    <button
+                                        class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg text-lg transition-colors">
+                                        Contacter l'Hôte
+                                    </button>
+                                    <button
+                                        class="w-full bg-white border-2 border-slate-900 text-slate-900 font-bold py-3 rounded-lg text-lg hover:bg-slate-50 transition-colors">
+                                        Demander un Devis
+                                    </button>
+                                </div>
+
+                                <div class="mt-6 pt-6 border-t border-gray-100">
+                                    <div class="flex items-center justify-center space-x-2 text-sm text-slate-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Réponse garantie sous 24h</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
+        }
+
+        <!-- Footer Actions (Always Visible) -->
+        <div class="mt-6 flex justify-between items-center pt-4 border-t border-white/10">
+            <p class="text-xs text-slate-400 italic">
+                {{ isPreviewMode() ? 'Visualisez le rendu final tel que vos invités le verront.' : 'Modifiez le texte et
+                ajustez les réglages avant de sauvegarder.' }}
+            </p>
+            <button (click)="saveDescription()"
+                class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-900/40 transition-all border border-blue-400/30">
+                Sauvegarder dans le Livret d'Accueil
+            </button>
+        </div>
     </div>
+    <!-- Debug Console Overlay -->
+    @if(debugLogs().length > 0) {
+    <div
+        class="fixed bottom-4 left-4 bg-black/90 text-green-400 font-mono text-xs p-4 rounded-lg border border-green-500/30 w-96 max-h-60 overflow-y-auto z-50 shadow-2xl backdrop-blur-md">
+        <div class="flex justify-between items-center mb-2 border-b border-green-500/30 pb-1">
+            <span class="font-bold text-white">JOURNAL DE DEBUG (Tech)</span>
+            <button (click)="debugLogs.set([])" class="text-slate-400 hover:text-white">&times;</button>
+        </div>
+        <div class="space-y-1">
+            @for(log of debugLogs(); track $index) {
+            <div class="border-l-2 border-green-500 pl-2 opacity-90 hover:opacity-100 transition-opacity">
+                {{ log }}
+            </div>
+            }
+        </div>
+    </div>
+    }
     }
 
     <!-- Onboarding Modal (Ultra-Clear Glass Overlay) -->

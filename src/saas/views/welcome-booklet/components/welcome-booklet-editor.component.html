@@ -1,18 +1,18 @@
 <div class="p-6 max-w-4xl mx-auto space-y-6" [formGroup]="form">
     <!-- General Info -->
     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Informations Générales</h2>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ 'BOOKLET.GeneralInfo' | translate }}</h2>
         <div class="grid grid-cols-1 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Adresse du logement</label>
+                <label class="block text-sm font-medium text-gray-700">{{ 'BOOKLET.Address' | translate }}</label>
                 <input type="text" formControlName="address"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="ex: 12 Rue de la Paix, 75000 Paris">
-                <p class="mt-1 text-xs text-gray-500">Sert à localiser les widgets (météo, transports...).</p>
+                <p class="mt-1 text-xs text-gray-500">{{ 'BOOKLET.AddressHelp' | translate }}</p>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700">Image de couverture (URL)</label>
+                <label class="block text-sm font-medium text-gray-700">{{ 'BOOKLET.CoverImage' | translate }}</label>
                 <input type="text" formControlName="coverImageUrl"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
             </div>
@@ -39,7 +39,7 @@
                                 d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
                         </svg>
                     </span>
-                    Photos de la Propriété
+                    {{ 'BOOKLET.PropertyPhotos' | translate }}
                 </h2>
                 <!-- Simple Progress Indicator -->
                 @let photoProgress = getSectionCompletion('photos');
@@ -63,7 +63,7 @@
                         <path
                             d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
                     </svg>
-                    Gérer catégories
+                    {{ 'BOOKLET.ManageCategories' | translate }}
                 </button>
                 <button type="button" (click)="addPhoto('', '', true)"
                     class="text-sm bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-1 px-3 rounded transition-colors flex items-center shadow-sm">
@@ -73,7 +73,7 @@
                             d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
                             clip-rule="evenodd" />
                     </svg>
-                    Ajouter photo
+                    {{ 'BOOKLET.AddPhoto' | translate }}
                 </button>
                 }
                 <button type="button" (click)="togglePhotosSection()"
@@ -92,13 +92,14 @@
         <!-- Category Manager Panel -->
         @if(showCategoryManager()) {
         <div class="bg-blue-50 px-6 py-4 border-b border-blue-100 animate-fade-in">
-            <h3 class="text-sm font-bold text-blue-800 mb-2">Modifier la liste des catégories</h3>
+            <h3 class="text-sm font-bold text-blue-800 mb-2">{{ 'BOOKLET.EditCategories' | translate }}</h3>
             <div class="flex gap-2 mb-3">
                 <input type="text" [value]="newCategoryName()" (input)="updateNewCategoryName($event)"
-                    (keyup.enter)="addCategory()" placeholder="Nouvelle catégorie (ex: Sauna)"
+                    (keyup.enter)="addCategory()" [placeholder]="'BOOKLET.NewCategory' | translate"
                     class="block w-full rounded-md border-blue-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
                 <button type="button" (click)="addCategory()"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium">Ajouter</button>
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium">{{
+                    'COMMON.Add' | translate }}</button>
             </div>
             <div class="flex flex-wrap gap-2">
                 @for(cat of availableCategories(); track cat) {
@@ -115,8 +116,7 @@
                 </span>
                 }
             </div>
-            <p class="text-xs text-blue-600 mt-2 italic">Ces catégories seront disponibles pour toutes vos photos une
-                fois enregistrées.</p>
+            <p class="text-xs text-blue-600 mt-2 italic">{{ 'BOOKLET.CategoryHelp' | translate }}</p>
         </div>
         }
 
@@ -127,16 +127,18 @@
                 class="flex items-start space-x-3 bg-slate-50 p-3 rounded-md border border-slate-100">
                 <div class="flex-grow grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">URL de la photo</label>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">{{ 'BOOKLET.PhotoURL' | translate
+                            }}</label>
                         <input type="text" formControlName="url"
                             class="block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
                             placeholder="https://...">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Catégorie</label>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">{{ 'BOOKLET.Category' | translate
+                            }}</label>
                         <select formControlName="category"
                             class="block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                            <option value="" disabled selected>-- Choisir --</option>
+                            <option value="" disabled selected>{{ 'BOOKLET.ChooseCategory' | translate }}</option>
                             @for(cat of availableCategories(); track cat) {
                             <option [value]="cat">{{ cat }}</option>
                             }
@@ -166,8 +168,7 @@
             </div>
             }
             @if(photosArray.length === 0) {
-            <p class="text-sm text-slate-400 italic text-center py-2">Aucune photo ajoutée. Cliquez sur "Ajouter photo".
-            </p>
+            <p class="text-sm text-slate-400 italic text-center py-2">{{ 'BOOKLET.NoPhotos' | translate }}</p>
             }
         </div>
         }

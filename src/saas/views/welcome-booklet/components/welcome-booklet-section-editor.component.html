@@ -4,7 +4,7 @@
         (click)="toggle()">
         <div class="flex items-center space-x-3">
             <div class="text-blue-600" [innerHTML]="section.icon"></div>
-            <h3 class="font-medium text-gray-900">{{ section.editorTitle }}</h3>
+            <h3 class="font-medium text-gray-900">{{ section.editorTitle | translate }}</h3>
         </div>
         <div class="flex items-center space-x-2">
             <!-- AI Button -->
@@ -31,12 +31,12 @@
     <div class="p-4 space-y-4" *ngIf="isOpen">
         <div *ngFor="let key of getFields()" class="space-y-1">
             <div class="flex justify-between">
-                <label class="block text-sm font-medium text-gray-700">{{ getLabel(key) }}</label>
+                <label class="block text-sm font-medium text-gray-700">{{ getLabel(key) | translate }}</label>
             </div>
 
             <textarea [formControlName]="key" rows="3"
                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                placeholder="Saisissez les informations ou utilisez l'IA..."></textarea>
+                [placeholder]="'BOOKLET.EnterDetails' | translate"></textarea>
 
             <!-- Manual PDF Link Field (hidden unless filled by AI usually, but let's show it if value exists or just show it?) -->
             <!-- Simplified: show if value exists or always show small? -->

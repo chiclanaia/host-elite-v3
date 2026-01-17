@@ -256,6 +256,99 @@ export class GeminiService {
     }
   }
 
+  async generateOptimizedListing(context: string, photos: { url: string; id: string }[], maxPhotos: number): Promise<{ description: string; selectedPhotoIds: string[] }> {
+    await this.ensureClient();
+
+    // 1. Prepare Images (Limit to 30 max to avoid payload issues, though model can handle more)
+    const photosToAnalyze = photos.slice(0, 30);
+    const imageParts: any[] = [];
+
+    // Helper to fetch and convert to base64
+    const urlToBase64 = async (url: string): Promise<string | null> => {
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = reader.result as string;
+            // Remove data:image/jpeg;base64, prefix
+            resolve(base64data.split(',')[1]);
+          };
+          reader.readAsDataURL(blob);
+        });
+      } catch (e) {
+        console.error("Failed to load image for AI:", url, e);
+        return null; // Skip failed images
+      }
+    };
+
+    // Load images in parallel
+    console.log("Downloading images for AI analysis...");
+    const base64Images = await Promise.all(photosToAnalyze.map(p => urlToBase64(p.url)));
+
+    // Construct parts
+    base64Images.forEach((b64, index) => {
+      if (b64) {
+        imageParts.push({
+          inlineData: {
+            data: b64,
+            mimeType: "image/jpeg" // Assuming JPEG for simplicity, usually fine
+          }
+        });
+      }
+    });
+
+    const prompt = `
+        You are an expert Vacation Rental Copywriter and Photographer.
+        
+        TASK 1: Write an "Irresistible" Listing Description.
+        - Use the "Selling the Experience" methodology.
+        - Structure: 
+          1. **Hook**: Catchy headline/intro.
+          2. **The Tour**: Room-by-room flow highlighting best features visible in photos.
+          3. **Unique Selling Points (USPs)**: Bullet points of what makes it special.
+          4. **Location**: Brief mention of surroundings.
+        - Tone: Warm, professional, inviting.
+        - Language: French.
+
+        TASK 2: Select the Best Photos.
+        - You have received ${imageParts.length} photos of the property.
+        - Select EXACTLY (or up to) ${maxPhotos} photos that best sell the property.
+        - Criteria: Brightness, composition, emotional appeal, and ensuring a complete tour (don't pick 5 photos of the toilet).
+        - The input photos correspond to these IDs in order: ${JSON.stringify(photosToAnalyze.map(p => p.id))}.
+
+        CONTEXT PROPERTY DATA:
+        ${context}
+
+        RESPONSE FORMAT (JSON ONLY):
+        {
+          "description": "Your markdown formatted description...",
+          "selectedPhotoIds": ["id1", "id3", ...]
+        }
+    `;
+
+    try {
+      // Combine text prompt and images
+      const contents = [prompt, ...imageParts];
+
+      const result = await this.genAI!.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: contents as any, // Cast to any to avoid strict typing issues with mixed content
+        config: { responseMimeType: 'application/json' },
+      });
+
+      const parsed = JSON.parse(this.cleanJson(result.text));
+      return {
+        description: parsed.description,
+        selectedPhotoIds: parsed.selectedPhotoIds || []
+      };
+    } catch (error) {
+      console.error('Error generating optimized listing:', error);
+      throw error;
+    }
+  }
+
   async generateText(prompt: string): Promise<string> {
     await this.ensureClient();
     try {

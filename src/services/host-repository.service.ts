@@ -14,11 +14,11 @@ export class HostRepository {
 
     // Static sub-views configuration
     private readonly defaultSubViews: View[] = [
-        { id: 'manage-property', title: 'Gérer', icon: 'settings' },
-        { id: 'property-data', title: 'Détails du bien', icon: 'home' },
-        { id: 'welcome-booklet', title: 'Livret d\'Accueil', icon: 'info', featureId: 'booklet' },
-        { id: 'widget-library', title: 'Bibliothèque Widgets', icon: 'widgets', featureId: 'microsite' },
-        { id: 'vocal-concierge', title: 'Concierge Vocal', icon: 'concierge', featureId: 'vocal-concierge' },
+        { id: 'manage-property', title: 'Manage', icon: 'settings' },
+        { id: 'property-data', title: 'Property Details', icon: 'home' },
+        { id: 'welcome-booklet', title: 'Welcome Booklet', icon: 'info', featureId: 'booklet' },
+        { id: 'widget-library', title: 'Widget Library', icon: 'widgets', featureId: 'microsite' },
+        { id: 'vocal-concierge', title: 'Voice Concierge', icon: 'concierge', featureId: 'vocal-concierge' },
     ];
 
     async hasDiagnostic(userId: string): Promise<boolean> {
@@ -29,7 +29,7 @@ export class HostRepository {
             .eq('user_id', userId);
 
         if (error) {
-            // Si la table n'existe pas, on considère qu'il n'y a pas de diagnostic
+            // If table doesn't exist, assume no diagnostic
             if (error.code === '42P01') return false;
             console.warn("Error checking diagnostic:", error);
             return false;
@@ -114,11 +114,11 @@ export class HostRepository {
 
         if (diagError) {
             console.error('Error saving diagnostic (DB):', diagError);
-            throw new Error(`Erreur Base de Données: ${diagError.message} (Code: ${diagError.code})`);
+            throw new Error(`Database Error: ${diagError.message} (Code: ${diagError.code})`);
         }
 
         if (!diagnostic) {
-            throw new Error("Erreur: Le diagnostic n'a pas pu être créé (pas de données retournées).");
+            throw new Error("Error: Diagnostic could not be created (no data returned).");
         }
 
         // 2. Insert Strengths and Opportunities
@@ -199,7 +199,7 @@ export class HostRepository {
 
         if (error) {
             console.error("Error creating property:", JSON.stringify(error));
-            throw new Error(error.message || "Impossible de créer la propriété");
+            throw new Error(error.message || "Unable to create property");
         }
     }
 
@@ -271,7 +271,7 @@ export class HostRepository {
         }
     }
 
-    // NEW: Recuperer les données du livret
+    // NEW: Get booklet data
     async getBooklet(propertyName: string): Promise<any> {
         if (!this.supabaseService.isConfigured) return null;
 
@@ -495,7 +495,7 @@ export class HostRepository {
         if (error) throw error;
 
         if (!data || data.length === 0) {
-            const err = new Error("Impossible de mettre à jour le plan.");
+            const err = new Error("Unable to update plan.");
             (err as any).code = "RLS_BLOCKED_PLAN"; // Critical for UI handler
             throw err;
         }
@@ -567,7 +567,7 @@ export class HostRepository {
 
         if (!data || data.length === 0) {
             // This usually happens if RLS blocks the update or ID doesn't exist
-            const err = new Error("Mise à jour échouée (RLS ou ID invalide)");
+            const err = new Error("Update failed (RLS or invalid ID)");
             (err as any).code = "RLS_BLOCKED_PROFILE"; // Critical for UI handler
             throw err;
         }
@@ -583,7 +583,7 @@ export class HostRepository {
 
         if (error) {
             console.error('RPC Error:', error);
-            throw new Error(error.message || "Erreur lors de la synchronisation du statut email.");
+            throw new Error(error.message || "Error synchronizing email status.");
         }
     }
 
@@ -601,7 +601,7 @@ export class HostRepository {
 
         if (error) {
             console.error("Error creating profile:", JSON.stringify(error));
-            throw new Error(error.message || "Erreur lors de la création du profil");
+            throw new Error(error.message || "Error creating profile");
         }
     }
 
@@ -636,7 +636,7 @@ export class HostRepository {
         const { error } = await this.supabaseService.sendPasswordResetEmail(email);
         if (error) {
             console.error("Password reset error:", error);
-            throw new Error(error.message || "Impossible d'envoyer l'email de réinitialisation.");
+            throw new Error(error.message || "Could not send password reset email.");
         }
     }
 

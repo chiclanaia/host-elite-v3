@@ -5,11 +5,12 @@ import { signal, computed } from '@angular/core';
 import { WelcomeBookletService } from '../welcome-booklet.service';
 import { WelcomeBookletSectionEditorComponent } from './welcome-booklet-section-editor.component';
 import { CONTROL_LABELS } from '../booklet-definitions';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'app-welcome-booklet-editor',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, WelcomeBookletSectionEditorComponent],
+    imports: [CommonModule, ReactiveFormsModule, WelcomeBookletSectionEditorComponent, TranslatePipe],
     templateUrl: './welcome-booklet-editor.component.html',
 })
 export class WelcomeBookletEditorComponent {

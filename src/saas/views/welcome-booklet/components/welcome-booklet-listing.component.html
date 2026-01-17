@@ -1,5 +1,5 @@
 <div class="bg-white border border-slate-200 rounded-lg p-6 animate-fade-in">
-    <h2 class="text-2xl font-bold text-slate-800 mb-6">Prévisualisation de l'Annonce</h2>
+    <h2 class="text-2xl font-bold text-slate-800 mb-6">{{ 'NAV.Listing' | translate }} - Preview</h2>
     <div class="max-w-4xl mx-auto">
         <img [src]="editorForm.get('coverImageUrl')?.value" alt="Photo principale de la propriété"
             class="w-full h-80 object-cover rounded-lg shadow-lg mb-6">
@@ -10,11 +10,11 @@
                 lits</span><span>·</span><span>1 salle de bain</span>
         </div>
         <div class="mt-6">
-            <h4 class="text-xl font-semibold text-slate-800 mb-2">À propos de ce logement</h4>
-            <p class="text-slate-600 whitespace-pre-wrap">{{ editorForm.get('bienvenue.messageBienvenue')?.value }}</p>
+            <h4 class="text-xl font-semibold text-slate-800 mb-2">{{ 'LISTING.About' | translate }}</h4>
+            <p class="text-slate-600 whitespace-pre-wrap">{{ editorForm.get('welcome.welcomeMessage')?.value }}</p>
         </div>
         <div class="mt-8">
-            <h4 class="text-xl font-semibold text-slate-800 mb-4">Équipements</h4>
+            <h4 class="text-xl font-semibold text-slate-800 mb-4">{{ 'LISTING.Equipments' | translate }}</h4>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-slate-600">
                 @if (propertyEquipments().length > 0) {
                 @for(equip of propertyEquipments(); track equip) {

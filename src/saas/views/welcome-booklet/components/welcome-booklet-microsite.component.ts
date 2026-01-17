@@ -41,6 +41,8 @@ export class WelcomeBookletMicrositeComponent {
     }
 
     get marketingText() {
-        return this.service.editorForm.get('bienvenue.messageBienvenue')?.value || '';
+        const val = this.service.editorForm.get('welcome.welcomeMessage')?.value || '';
+        console.log('[WelcomeBookletMicrosite] Reading marketingText:', val ? val.substring(0, 20) + '...' : 'EMPTY');
+        return val;
     }
 }

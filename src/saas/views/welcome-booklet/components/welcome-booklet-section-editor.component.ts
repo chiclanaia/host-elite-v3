@@ -4,11 +4,12 @@ import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { BookletSection, CONTROL_LABELS } from '../booklet-definitions';
 import { WelcomeBookletAiService } from '../welcome-booklet-ai.service';
 import { WelcomeBookletService } from '../welcome-booklet.service';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'app-welcome-booklet-section-editor',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
     templateUrl: './welcome-booklet-section-editor.component.html',
 })
 export class WelcomeBookletSectionEditorComponent {

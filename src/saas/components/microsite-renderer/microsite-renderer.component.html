@@ -17,12 +17,12 @@
             </button>
         </div>
         <div class="p-6 overflow-y-auto">
-            <p class="text-slate-600 whitespace-pre-wrap leading-relaxed">{{ guideModalState().content || 'Aucune
-                information renseignée pour le moment.' }}</p>
+            <p class="text-slate-600 whitespace-pre-wrap leading-relaxed">{{ guideModalState().content ||
+                ('BOOKLET.no_info' | translate) }}</p>
         </div>
         <div class="p-4 bg-slate-50 border-t border-slate-100 text-center">
-            <button (click)="closeGuideModal()"
-                class="text-sm font-semibold text-blue-600 hover:underline">Fermer</button>
+            <button (click)="closeGuideModal()" class="text-sm font-semibold text-blue-600 hover:underline">{{
+                'BOOKLET.close' | translate }}</button>
         </div>
     </div>
 </div>
@@ -42,7 +42,8 @@
             <!-- Gradient Overlay -->
             <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60"></div>
             } @else {
-            <div class="h-full w-full bg-slate-300 flex items-center justify-center text-slate-500">Pas d'image d'entête
+            <div class="h-full w-full bg-slate-300 flex items-center justify-center text-slate-500">{{
+                'BOOKLET.no_image' | translate }}
             </div>
             }
 
@@ -52,7 +53,7 @@
                     {{ config.headline }}</h1>
                 <button [style.backgroundColor]="config.primaryColor"
                     class="px-8 md:px-10 py-3 md:py-4 rounded-full text-white font-bold text-lg shadow-xl transform transition hover:scale-105 hover:shadow-2xl border-2 border-white/20 backdrop-blur-sm animate-bounce-subtle">
-                    Réserver votre séjour
+                    {{ 'BOOKLET.book_stay' | translate }}
                 </button>
             </div>
         </div>
@@ -62,7 +63,7 @@
         <div class="p-8 md:p-12 max-w-4xl mx-auto text-center">
             <h2 class="text-3xl font-bold mb-8 relative inline-block"
                 [style.color]="config.template === 'luxury' ? '#fbbf24' : config.primaryColor">
-                À propos du lieu
+                {{ 'BOOKLET.about' | translate }}
                 <span
                     class="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-12 h-1 bg-current opacity-50 rounded-full"></span>
             </h2>
@@ -78,7 +79,8 @@
         @if(sectionId === 'gallery') {
         @if(photos.length > 0) {
         <div class="p-8 md:p-12 bg-opacity-5" [style.backgroundColor]="config.primaryColor + '10'">
-            <h3 class="text-2xl font-bold text-center mb-8 opacity-90 tracking-wide uppercase">La Galerie</h3>
+            <h3 class="text-2xl font-bold text-center mb-8 opacity-90 tracking-wide uppercase">{{ 'BOOKLET.gallery' |
+                translate }}</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
                 @for(photo of photos; track $index) {
                 <div
@@ -104,7 +106,8 @@
 
         @if(sectionId === 'amenities') {
         <div class="py-16 px-8 text-center border-t border-white/10">
-            <h3 class="text-2xl font-bold mb-10 opacity-90 tracking-wide uppercase">Équipements & Confort</h3>
+            <h3 class="text-2xl font-bold mb-10 opacity-90 tracking-wide uppercase">{{ 'BOOKLET.amenities' | translate
+                }}</h3>
             @if(propertyDetails?.property_equipments?.length > 0) {
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
                 @for(eq of propertyDetails.property_equipments; track eq.name) {
@@ -118,7 +121,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
                 <!-- Default placeholders hidden in preview if real data exists, but showing simplistic list if empty -->
                 <div class="p-6 bg-white/5 border border-slate-200 rounded-xl">
-                    <span class="opacity-60 italic">Aucun équipement listé.</span>
+                    <span class="opacity-60 italic">{{ 'BOOKLET.no_amenities' | translate }}</span>
                 </div>
             </div>
             }
@@ -128,7 +131,8 @@
         @if(sectionId === 'reviews') {
         <div class="py-16 text-center border-t border-white/10 bg-opacity-5"
             [style.backgroundColor]="config.primaryColor + '05'">
-            <h3 class="text-2xl font-bold mb-10 opacity-90 tracking-wide uppercase">Livre d'Or</h3>
+            <h3 class="text-2xl font-bold mb-10 opacity-90 tracking-wide uppercase">{{ 'BOOKLET.guestbook' | translate
+                }}</h3>
             <div
                 class="max-w-2xl mx-auto bg-white/40 backdrop-blur-sm p-8 rounded-2xl border border-white/50 shadow-sm relative">
                 <div class="text-6xl absolute -top-4 -left-2 opacity-10 font-serif">"</div>
@@ -142,21 +146,23 @@
 
         @if(sectionId === 'rules') {
         <div class="py-16 px-8 border-t border-white/10 text-center">
-            <h3 class="text-2xl font-bold mb-10 opacity-90 tracking-wide uppercase">Règles de la Maison</h3>
+            <h3 class="text-2xl font-bold mb-10 opacity-90 tracking-wide uppercase">{{ 'BOOKLET.rules' | translate }}
+            </h3>
             <div
                 class="max-w-2xl mx-auto bg-slate-50 border border-slate-100 rounded-xl p-8 opacity-90 text-sm space-y-3">
-                <p class="flex items-center justify-center"><span class="mr-2">🕒</span> Arrivée après 15h00, Départ
-                    avant {{ content?.depart?.heureLimiteCheckout || '11h00' }}</p>
-                @if(content?.regles?.politiqueFetes) {
+                <p class="flex items-center justify-center"><span class="mr-2">🕒</span> {{ 'BOOKLET.arrival_after' |
+                    translate }} 15h00, {{ 'BOOKLET.departure_before' | translate }}
+                    {{ content?.departure?.checkoutTime || '11h00' }}</p>
+                @if(content?.rules?.partyPolicy) {
                 <p class="flex items-center justify-center"><span class="mr-2">🎉</span> {{
-                    content.regles.politiqueFetes }}</p>
+                    content.rules.partyPolicy }}</p>
                 }
-                @if(content?.regles?.politiqueNonFumeur) {
+                @if(content?.rules?.nonSmokingPolicy) {
                 <p class="flex items-center justify-center"><span class="mr-2">🚭</span> {{
-                    content.regles.politiqueNonFumeur }}</p>
+                    content.rules.nonSmokingPolicy }}</p>
                 }
-                @if(content?.regles?.heuresSilence) {
-                <p class="flex items-center justify-center"><span class="mr-2">🤝</span> {{ content.regles.heuresSilence
+                @if(content?.rules?.quietHours) {
+                <p class="flex items-center justify-center"><span class="mr-2">🤝</span> {{ content.rules.quietHours
                     }}</p>
                 }
             </div>
@@ -165,48 +171,49 @@
 
         @if(sectionId === 'guide') {
         <div class="py-16 px-8 border-t border-white/10 bg-gradient-to-b from-transparent to-black/5">
-            <h3 class="text-2xl font-bold mb-10 text-center opacity-90 tracking-wide uppercase">Guide Local</h3>
+            <h3 class="text-2xl font-bold mb-10 text-center opacity-90 tracking-wide uppercase">{{ 'BOOKLET.local_guide'
+                | translate }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
 
-                <div (click)="openGuideModal('Restaurants & Gastronomie', content?.guideGastro?.recommandationRestaurants || 'Ask host', '🍝')"
+                <div (click)="openGuideModal('BOOKLET.dining', content?.dining?.recommendedRestaurants || 'BOOKLET.dining_desc', '🍝')"
                     class="bg-white p-6 rounded-xl shadow-md border border-slate-100 hover:-translate-y-1 hover:shadow-lg cursor-pointer transition-all duration-300 flex flex-col group relative">
                     <div
                         class="h-32 bg-slate-100 rounded-lg mb-4 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform">
                         🍝</div>
-                    <h4 class="font-bold text-lg mb-2 text-slate-800">Restaurants</h4>
-                    <p class="text-sm text-slate-600 line-clamp-3">{{ content?.guideGastro?.recommandationRestaurants ||
-                        'Découvrez la cuisine locale...' }}</p>
+                    <h4 class="font-bold text-lg mb-2 text-slate-800">{{ 'BOOKLET.dining' | translate }}</h4>
+                    <p class="text-sm text-slate-600 line-clamp-3">{{ content?.dining?.recommendedRestaurants ||
+                        ('BOOKLET.dining_desc' | translate) }}</p>
                     <div
                         class="mt-4 text-blue-600 text-xs font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        Voir la liste
+                        {{ 'BOOKLET.view_list' | translate }}
                     </div>
                 </div>
 
-                <div (click)="openGuideModal('Activités & Découvertes', content?.guideActivites?.guideActivites || 'Ask host', '🏃')"
+                <div (click)="openGuideModal('BOOKLET.activities', content?.activities?.hiking || 'BOOKLET.activities_desc', '🏃')"
                     class="bg-white p-6 rounded-xl shadow-md border border-slate-100 hover:-translate-y-1 hover:shadow-lg cursor-pointer transition-all duration-300 flex flex-col group relative">
                     <div
                         class="h-32 bg-slate-100 rounded-lg mb-4 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform">
                         🏃</div>
-                    <h4 class="font-bold text-lg mb-2 text-slate-800">Activités</h4>
-                    <p class="text-sm text-slate-600 line-clamp-3">{{ content?.guideActivites?.guideActivites ||
-                        'Randonnées et visites...' }}</p>
+                    <h4 class="font-bold text-lg mb-2 text-slate-800">{{ 'BOOKLET.activities' | translate }}</h4>
+                    <p class="text-sm text-slate-600 line-clamp-3">{{ content?.activities?.hiking ||
+                        ('BOOKLET.activities_desc' | translate) }}</p>
                     <div
                         class="mt-4 text-blue-600 text-xs font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        Voir les activités
+                        {{ 'BOOKLET.view_activities' | translate }}
                     </div>
                 </div>
 
-                <div (click)="openGuideModal('Infos Pratiques & Transports', content?.transports?.taxisLocaux || 'Ask host', '🛒')"
+                <div (click)="openGuideModal('BOOKLET.practical', content?.transport?.localTaxis || 'BOOKLET.practical_desc', '🛒')"
                     class="bg-white p-6 rounded-xl shadow-md border border-slate-100 hover:-translate-y-1 hover:shadow-lg cursor-pointer transition-all duration-300 flex flex-col group relative">
                     <div
                         class="h-32 bg-slate-100 rounded-lg mb-4 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform">
                         🛒</div>
-                    <h4 class="font-bold text-lg mb-2 text-slate-800">Pratique</h4>
-                    <p class="text-sm text-slate-600 line-clamp-3">{{ content?.transports?.taxisLocaux ||
-                        'Supermarchés...' }}</p>
+                    <h4 class="font-bold text-lg mb-2 text-slate-800">{{ 'BOOKLET.practical' | translate }}</h4>
+                    <p class="text-sm text-slate-600 line-clamp-3">{{ content?.transport?.localTaxis ||
+                        ('BOOKLET.practical_desc' | translate) }}</p>
                     <div
                         class="mt-4 text-blue-600 text-xs font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        Voir détails
+                        {{ 'BOOKLET.view_details' | translate }}
                     </div>
                 </div>
             </div>
@@ -218,8 +225,8 @@
         <!-- Contact Section -->
         @if (config.showContact) {
         <div class="py-16 px-8 bg-slate-900 text-white text-center">
-            <h3 class="text-2xl font-bold mb-6">Une question ?</h3>
-            <p class="mb-8 opacity-80 max-w-lg mx-auto">Nous sommes là pour vous aider à préparer votre séjour.</p>
+            <h3 class="text-2xl font-bold mb-6">{{ 'BOOKLET.any_questions' | translate }}</h3>
+            <p class="mb-8 opacity-80 max-w-lg mx-auto">{{ 'BOOKLET.help_prepare' | translate }}</p>
             <a [href]="'mailto:' + userEmail"
                 class="inline-flex items-center bg-white text-slate-900 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-slate-100 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
@@ -228,7 +235,7 @@
                     <path
                         d="M19 8.839l-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" />
                 </svg>
-                Contacter l'Hôte
+                {{ 'BOOKLET.contact_host' | translate }}
             </a>
         </div>
         }
@@ -236,7 +243,7 @@
         <!-- Footer -->
         <div class="py-8 bg-black/5 text-center text-xs opacity-50">
             <p>&copy; 2024 - {{ config.headline }}</p>
-            <p class="mt-1">Localisation approximative : Centre Ville (Adresse exacte fournie après réservation)</p>
+            <p class="mt-1">{{ 'BOOKLET.location_approx' | translate }}</p>
         </div>
     </div>
 </div>

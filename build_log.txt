@@ -1,0 +1,86 @@
+
+> h├┤te-bnb-d'exception:-diagnostic-ia-(jose)@0.0.0 build
+> ng build
+
+[33mΓ¥»[39m Building...
+[32mΓ£ö[39m Building...
+Application bundle generation failed. [5.919 seconds] - 2026-01-17T10:14:04.785Z
+
+X [ERROR] NG8004: No pipe found with name 'translate'. [plugin angular-compiler]
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.html:4:88:
+      4 Γöé ...ld text-gray-900 mb-4">{{ 'BOOKLET.GeneralInfo' | translate }}</h2>
+        Γò╡                                                      ~~~~~~~~~
+
+  Error occurs in the template of component WelcomeBookletEditorComponent.
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.ts:13:17:
+      13 Γöé     templateUrl: './welcome-booklet-editor.component.html',
+         Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8004: No pipe found with name 'translate'. [plugin angular-compiler]
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.html:7:94:
+      7 Γöé ...t-medium text-gray-700">{{ 'BOOKLET.Address' | translate }}</label>
+        Γò╡                                                   ~~~~~~~~~
+
+  Error occurs in the template of component WelcomeBookletEditorComponent.
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.ts:13:17:
+      13 Γöé     templateUrl: './welcome-booklet-editor.component.html',
+         Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8004: No pipe found with name 'translate'. [plugin angular-compiler]
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.html:11:81:
+      11 Γöé ...text-xs text-gray-500">{{ 'BOOKLET.AddressHelp' | translate }}</p>
+         Γò╡                                                      ~~~~~~~~~
+
+  Error occurs in the template of component WelcomeBookletEditorComponent.
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.ts:13:17:
+      13 Γöé     templateUrl: './welcome-booklet-editor.component.html',
+         Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8004: No pipe found with name 'translate'. [plugin angular-compiler]
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.html:15:97:
+      15 Γöé ...dium text-gray-700">{{ 'BOOKLET.CoverImage' | translate }}</label>
+         Γò╡                                                  ~~~~~~~~~
+
+  Error occurs in the template of component WelcomeBookletEditorComponent.
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.ts:13:17:
+      13 Γöé     templateUrl: './welcome-booklet-editor.component.html',
+         Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8004: No pipe found with name 'translate'. [plugin angular-compiler]
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.html:42:50:
+      42 Γöé                     {{ 'BOOKLET.PropertyPhotos' | translate }}
+         Γò╡                                                   ~~~~~~~~~
+
+  Error occurs in the template of component WelcomeBookletEditorComponent.
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-editor.component.ts:13:17:
+      13 Γöé     templateUrl: './welcome-booklet-editor.component.html',
+         Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8004: No pipe found with name 'translate'. [plugin angular-compiler]
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-section-editor.component.html:7:75:
+      7 Γöé ...nt-medium text-gray-900">{{ section.editorTitle | translate }}</h3>
+        Γò╡                                                      ~~~~~~~~~
+
+  Error occurs in the template of component WelcomeBookletSectionEditorComponent.
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-section-editor.component.ts:12:17:
+      12 Γöé     templateUrl: './welcome-booklet-section-editor.component.html',
+         Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+

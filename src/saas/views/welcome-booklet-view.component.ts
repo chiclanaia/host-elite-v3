@@ -5,6 +5,8 @@ import { WelcomeBookletEditorComponent } from './welcome-booklet/components/welc
 import { WelcomeBookletListingComponent } from './welcome-booklet/components/welcome-booklet-listing.component';
 import { WelcomeBookletMicrositeComponent } from './welcome-booklet/components/welcome-booklet-microsite.component';
 import { WelcomeBookletPreviewComponent } from './welcome-booklet/components/welcome-booklet-preview.component';
+import { TranslationService } from '../../services/translation.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
     selector: 'saas-welcome-booklet-view',
@@ -14,24 +16,27 @@ import { WelcomeBookletPreviewComponent } from './welcome-booklet/components/wel
         WelcomeBookletEditorComponent,
         WelcomeBookletListingComponent,
         WelcomeBookletMicrositeComponent,
-        WelcomeBookletPreviewComponent
+        WelcomeBookletPreviewComponent,
+        TranslatePipe
     ],
     templateUrl: './welcome-booklet-view.component.html',
 })
 export class WelcomeBookletViewComponent implements OnInit {
+    translationService = inject(TranslationService);
+    service = inject(WelcomeBookletService);
+
     @Input() set propertyName(value: string) {
         this.service.propertyName.set(value);
     }
-
-    service = inject(WelcomeBookletService);
 
     activeTab = this.service.activeTab;
     isLoading = this.service.isLoading;
     saveMessage = this.service.saveMessage;
 
     ngOnInit() {
-        // Force reload to ensure fresh data even if propertyName hasn't changed (e.g. returning from Marketing view)
-        this.refreshData();
+        // Force reload REMOVED: Service effect already handles loading when propertyName changes.
+        // Calling it here overwrites local state (e.g. from AI tool save) with stale DB data.
+        // this.refreshData(); 
     }
 
     setActiveTab(tab: 'edit' | 'listing' | 'microsite' | 'booklet') {

@@ -27,13 +27,33 @@
                 <a (click)="goToPropertyHome()"
                     class="hover:text-[#D4AF37] cursor-pointer transition-colors flex items-center gap-2"
                     title="Aller à la gestion de la propriété">
-                    <span class="opacity-50 font-light text-sm uppercase tracking-wider">Propriété :</span>
+                    <span class="opacity-50 font-light text-sm uppercase tracking-wider">{{ 'WELCOME.Address' |
+                        translate }} :</span>
                     <span class="text-shadow-sm">{{ activeView().propertyName }}</span>
                 </a>
                 } @else {
                 <span>{{ activeView().title }}</span>
                 }
             </h2>
+
+            <!-- Global Language Switcher -->
+            <div class="flex bg-white/10 backdrop-blur-md rounded-lg p-1 border border-white/10">
+                <button (click)="translationService.setLanguage('en')"
+                    [class.bg-white]="translationService.currentLang() === 'en'"
+                    [class.text-slate-900]="translationService.currentLang() === 'en'"
+                    [class.text-white]="translationService.currentLang() !== 'en'"
+                    class="px-3 py-1 text-xs rounded transition-all font-bold hover:bg-white/20">EN</button>
+                <button (click)="translationService.setLanguage('fr')"
+                    [class.bg-white]="translationService.currentLang() === 'fr'"
+                    [class.text-slate-900]="translationService.currentLang() === 'fr'"
+                    [class.text-white]="translationService.currentLang() !== 'fr'"
+                    class="px-3 py-1 text-xs rounded transition-all font-bold hover:bg-white/20">FR</button>
+                <button (click)="translationService.setLanguage('es')"
+                    [class.bg-white]="translationService.currentLang() === 'es'"
+                    [class.text-slate-900]="translationService.currentLang() === 'es'"
+                    [class.text-white]="translationService.currentLang() !== 'es'"
+                    class="px-3 py-1 text-xs rounded transition-all font-bold hover:bg-white/20">ES</button>
+            </div>
         </header>
 
         <!-- Horizontal Angles Menu (Floating Pill Style) -->

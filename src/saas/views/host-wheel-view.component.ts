@@ -3,14 +3,16 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal, ef
 import { CommonModule } from '@angular/common';
 import { Scores, ReportData, ContextData } from '../../types';
 import { HostRepository } from '../../services/host-repository.service';
+import { TranslationService } from '../../services/translation.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-  selector: 'saas-host-wheel-view',
-  standalone: true,
-  imports: [CommonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './host-wheel-view.component.html',
-  styles: [`
+    selector: 'saas-host-wheel-view',
+    standalone: true,
+    imports: [CommonModule, TranslatePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './host-wheel-view.component.html',
+    styles: [`
     /* Custom Slider Styles */
     input[type=range] {
       -webkit-appearance: none; 
@@ -75,13 +77,13 @@ export class HostWheelViewComponent {
     });
 
     isSaving = signal(false);
-    saveMessage = signal<string|null>(null);
+    saveMessage = signal<string | null>(null);
 
     readonly angleLabels = ['Marketing', 'Expérience', 'Opérations', 'Pricing', 'Logement', 'Légal', 'Mindset'];
     readonly angleKeys: (keyof Scores)[] = ['marketing', 'experience', 'operations', 'pricing', 'accomodation', 'legal', 'mindset'];
-    
+
     // Polar Chart Configuration
-    readonly size = 500; 
+    readonly size = 500;
     readonly center = this.size / 2;
     readonly radius = this.size / 2 - 40; // Padding
 
@@ -113,25 +115,25 @@ export class HostWheelViewComponent {
         const sum = values.reduce((a, b) => a + b, 0);
         return (sum / 7).toFixed(1);
     });
-  
+
     // Polar Area Chart Calculation
     polarSectors = computed(() => {
         const scoresData = this.currentScores();
         const count = this.angleKeys.length;
         const anglePerSlice = (2 * Math.PI) / count;
-        
+
         return this.angleKeys.map((key, i) => {
             const score = scoresData[key];
             const startAngle = i * anglePerSlice - Math.PI / 2; // Rotate -90deg to start at top
             const endAngle = (i + 1) * anglePerSlice - Math.PI / 2;
-            
+
             // Calculate Radius based on Score (1-10)
             // Min radius of 10% to show color even at score 1
             const r = (Math.max(score, 0.5) / 10) * this.radius;
 
             return {
                 id: key,
-                label: this.angleLabels[i],
+                label: 'NAV.' + key,
                 path: this.describeArc(this.center, this.center, r, startAngle, endAngle),
                 color: this.categoryColors[key],
                 score: score,
@@ -170,7 +172,7 @@ export class HostWheelViewComponent {
         const val = this.currentScores()[key];
         const percentage = (val / 10) * 100;
         const color = this.categoryColors[key].from;
-        
+
         // Solid color part + transparent grey part
         return `linear-gradient(to right, ${color} 0%, ${color} ${percentage}%, rgba(255,255,255,0.1) ${percentage}%, rgba(255,255,255,0.1) 100%)`;
     }

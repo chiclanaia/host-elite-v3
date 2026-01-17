@@ -4,11 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { WelcomeBookletService } from '../welcome-booklet.service';
 import { WelcomeBookletAiService } from '../welcome-booklet-ai.service';
 import { BookletSection, WIDGET_DEFINITIONS, CONTROL_LABELS } from '../booklet-definitions';
-
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 @Component({
     selector: 'app-welcome-booklet-preview',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
     templateUrl: './welcome-booklet-preview.component.html',
 })
 export class WelcomeBookletPreviewComponent {
