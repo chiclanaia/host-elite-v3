@@ -15,7 +15,7 @@ export class HostRepository {
     // Static sub-views configuration
     private readonly defaultSubViews: View[] = [
         { id: 'manage-property', title: 'Manage', icon: 'settings' },
-        { id: 'property-data', title: 'Property Details', icon: 'home' },
+
         { id: 'welcome-booklet', title: 'Welcome Booklet', icon: 'info', featureId: 'booklet' },
         { id: 'widget-library', title: 'Widget Library', icon: 'widgets', featureId: 'microsite' },
         { id: 'vocal-concierge', title: 'Voice Concierge', icon: 'concierge', featureId: 'vocal-concierge' },

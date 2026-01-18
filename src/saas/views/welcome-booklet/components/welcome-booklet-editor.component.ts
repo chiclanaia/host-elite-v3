@@ -6,6 +6,7 @@ import { WelcomeBookletService } from '../welcome-booklet.service';
 import { WelcomeBookletSectionEditorComponent } from './welcome-booklet-section-editor.component';
 import { CONTROL_LABELS } from '../booklet-definitions';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { WelcomeBookletAiService } from '../welcome-booklet-ai.service';
 
 @Component({
     selector: 'app-welcome-booklet-editor',
@@ -15,6 +16,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 })
 export class WelcomeBookletEditorComponent {
     service = inject(WelcomeBookletService);
+    aiService = inject(WelcomeBookletAiService);
     form = this.service.editorForm;
     sections = this.service.sections;
 
@@ -26,6 +28,8 @@ export class WelcomeBookletEditorComponent {
     isPhotosOpen = signal(false);
     showCategoryManager = signal(false);
     newCategoryName = signal('');
+    // ... (skip lines)
+
 
     // Helpers
     availableCategories = this.service.availableCategories;
@@ -128,9 +132,16 @@ export class WelcomeBookletEditorComponent {
         console.log('Regenerate', sectionId);
     }
 
-    autoFillAI() {
-        // TODO: Call service
-        console.log('AutoFill AI');
+    async autoFillAI() {
+        const address = this.form.get('address')?.value;
+        if (!address) {
+            // Simple alert for now, could be toast
+            alert("Veuillez entrer une adresse avant de générer.");
+            return;
+        }
+
+        // Call the AI Service
+        await this.aiService.autoFill(this.form, address, this.sections);
     }
 
     // Template helpers

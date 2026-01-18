@@ -340,6 +340,8 @@ export const en = {
     'AI.CountLabel': 'Photos to select',
     'AI.CountHelp': 'AI will choose the best shots.',
     'AI.GenerateBtn': 'Generate with AI',
+    'BOOKLET.GenerateAI': 'Generate with AI',
+    'BOOKLET.GenerateAI_Tooltip': 'Automatically fills empty fields using AI',
 
     // Listing Preview
     'LISTING.About': 'About this place',

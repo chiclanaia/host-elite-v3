@@ -34,9 +34,4 @@ export class WelcomeBookletSectionEditorComponent {
     getLabel(key: string) {
         return CONTROL_LABELS[this.section.formGroupName][key];
     }
-
-    async autoFill() {
-        const address = this.parentForm.get('address')?.value;
-        await this.aiService.autoFill(this.parentForm, address, [this.section]);
-    }
 }

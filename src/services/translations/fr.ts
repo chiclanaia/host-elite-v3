@@ -341,6 +341,8 @@ export const fr = {
     'AI.CountLabel': 'Photos à sélectionner',
     'AI.CountHelp': 'L\'IA choisira les meilleurs clichés.',
     'AI.GenerateBtn': 'Générer avec l\'IA',
+    'BOOKLET.GenerateAI': 'Générer avec l\'IA',
+    'BOOKLET.GenerateAI_Tooltip': 'Remplit automatiquement les champs vides avec l\'IA',
 
     // Listing Preview
     'LISTING.About': 'À propos de ce logement',

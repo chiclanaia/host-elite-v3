@@ -14,7 +14,7 @@ import { GlobalDashboardViewComponent } from './views/global-dashboard-view.comp
 import { TrainingViewComponent } from './views/training-view.component';
 import { HostInfoViewComponent } from './views/host-info-view.component';
 import { PropertyViewComponent } from './views/property-view.component';
-import { PropertyDataViewComponent } from './views/property-data-view.component';
+
 import { AdminUsersViewComponent } from './views/admin-users-view.component';
 import { AdminDebugViewComponent } from './views/admin-debug-view.component';
 import { HostRepository } from '../services/host-repository.service';
@@ -40,7 +40,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
     TrainingViewComponent,
     HostInfoViewComponent,
     PropertyViewComponent,
-    PropertyDataViewComponent,
+
     AdminUsersViewComponent,
     AdminDebugViewComponent,
     TranslatePipe

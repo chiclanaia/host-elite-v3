@@ -108,9 +108,7 @@
                 @case ('manage-property') {
                 <saas-property-view [view]="activeView()"></saas-property-view>
                 }
-                @case ('property-data') {
-                <saas-property-data-view [view]="activeView()"></saas-property-data-view>
-                }
+
                 @case ('welcome-booklet') {
                 <saas-welcome-booklet-view [propertyName]="activeView().propertyName!"></saas-welcome-booklet-view>
                 }

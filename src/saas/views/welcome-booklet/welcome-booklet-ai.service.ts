@@ -12,44 +12,40 @@ export class WelcomeBookletAiService {
         if (!address) { alert('Veuillez entrer une adresse d\'abord.'); return; }
         this.isAiLoading.set(true);
 
-        const parts = [
-            `Je suis l'hôte d'une location saisonnière située à : ${address}.`,
-            `Génère un contenu accueillant, pratique et direct pour le livret d'accueil.`,
-            `Ne met PAS de titre de section. Réponds QUE le texte.`,
-            `Utilise un ton chaleureux, professionnel et rassurant.`,
-            `Pour les champs "Instructions", sois précis (étapes numérotées si besoin).`
-        ];
-
         try {
-            // 1. Basic Info
-            // 1. Basic Info
-            const welcomePrompt = `${parts.join(' ')} Rédige un message de bienvenue chaleureux (2-3 phrases) souhaitant un excellent séjour.`;
-            const welcome = await this.gemini.generateText(welcomePrompt);
-            if (welcome) form.get('welcome.welcomeMessage')?.setValue(this.formatAiResponse(welcome));
+            // 1. Build Skeleton
+            const skeleton: any = {};
 
-            // 2. Sections
+            // Welcome Section
+            skeleton['welcome'] = { welcomeMessage: "Rédige un message de bienvenue chaleureux" };
+
+            // Other Sections
             for (const section of sections) {
                 const group = form.get(section.formGroupName);
                 const labels = CONTROL_LABELS[section.formGroupName];
                 if (!group || !labels) continue;
 
+                // Add section prompt
+                skeleton[section.formGroupName] = {};
+
                 for (const key in labels) {
-                    // Skip existing values to preserve user edits
-                    if (group.get(key)?.value) continue;
-
-                    const label = labels[key];
-                    const hint = this.getAiHint(section.id, key);
-                    const prompt = `${parts.join(' ')} Pour la rubrique "${section.editorTitle}" -> "${label}". ${hint}. Rédige un contenu court et utile (max 2-3 phrases). Si l'info dépend de l'équipement spécifique (ex: code wifi), mets "[A COMPLÉTER]".`;
-
-                    const text = await this.gemini.generateText(prompt);
-                    if (text && this.isValidContent(text)) {
-                        group.get(key)?.setValue(this.formatAiResponse(text));
+                    const currentVal = group.get(key)?.value;
+                    // Only ask to fill if EMPTY
+                    if (!currentVal) {
+                        const label = labels[key];
+                        const hint = this.getAiHint(section.id, key);
+                        skeleton[section.formGroupName][key] = `INSTRUCTION: Remplir pour "${label}". ${hint}`;
                     }
                 }
             }
 
-            // 3. Manuals search
-            await this.findManuals(form, sections, address);
+            // 2. Single Call to Optimized Gemini Method
+            const filledData = await this.gemini.autoFillBooklet(address, skeleton);
+
+            // 3. Patch Form
+            if (filledData) {
+                form.patchValue(filledData);
+            }
 
         } catch (e) {
             console.error("AI Error", e);
