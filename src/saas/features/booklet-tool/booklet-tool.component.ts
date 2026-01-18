@@ -23,7 +23,7 @@ import { HostRepository } from '../../../services/host-repository.service';
 export class BookletToolComponent {
     propertyName = input.required<string>();
 
-    private bookletService = inject(WelcomeBookletService);
+    bookletService = inject(WelcomeBookletService); // Make public for template access
     private geminiService = inject(GeminiService);
     private repository = inject(HostRepository);
 

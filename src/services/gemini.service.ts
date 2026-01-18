@@ -1,6 +1,6 @@
 
 import { Injectable, inject } from '@angular/core';
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { ContextData, ReportData, Scores } from '../types';
 import { SupabaseService } from './supabase.service';
 
@@ -8,7 +8,8 @@ import { SupabaseService } from './supabase.service';
   providedIn: 'root',
 })
 export class GeminiService {
-  private genAI: GoogleGenAI | null = null;
+  private genAI: GoogleGenerativeAI | null = null;
+  private model: GenerativeModel | null = null;
   private supabaseService = inject(SupabaseService);
 
   constructor() {
@@ -27,7 +28,8 @@ export class GeminiService {
         throw new Error("Impossible de récupérer la clé API active depuis le serveur.");
       }
 
-      this.genAI = new GoogleGenAI({ apiKey: data });
+      this.genAI = new GoogleGenerativeAI(data);
+      this.model = this.genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     } catch (e) {
       console.error("Failed to initialize Gemini Client", e);
       throw new Error("Service IA non configuré. Veuillez contacter l'administrateur.");
@@ -41,45 +43,44 @@ export class GeminiService {
   private cleanJson(text: string): string {
     if (!text) return '{}';
 
-    const firstBrace = text.indexOf('{');
-    const lastBrace = text.lastIndexOf('}');
+    // 1. Remove Markdown code blocks (```json ... ```)
+    let clean = text.replace(/```json/g, '').replace(/```/g, '');
+
+    // 2. Find the FIRST '{' or '[' and the LAST '}' or ']'
+    const firstBrace = clean.search(/[{[]/);
+    const lastBrace = Math.max(clean.lastIndexOf('}'), clean.lastIndexOf(']'));
 
     if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-      return text.substring(firstBrace, lastBrace + 1);
+      return clean.substring(firstBrace, lastBrace + 1);
     }
 
-    // Fallback: simple trim if no braces found (unlikely for object expectation)
-    return text.trim();
+    return clean.trim();
   }
 
   async generateReport(context: ContextData, scores: Scores): Promise<ReportData> {
     await this.ensureClient();
 
-    const reportSchema = {
-      type: Type.OBJECT,
-      properties: {
-        strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
-        opportunities: { type: Type.ARRAY, items: { type: Type.STRING } },
-        recommendedPlan: { type: Type.STRING, enum: ["Bronze", "Silver", "Gold"] },
-        planJustification: { type: Type.STRING }
-      },
-      required: ["strengths", "opportunities", "recommendedPlan", "planJustification"],
-    };
-
+    // Strict JSON instructions in prompt instead of Schema object (not supported in current browser SDK version)
     const prompt = `
       You are an expert Airbnb coach. Provide a personalized action plan.
       Context: ${context.situation}, Challenge: ${context.challenge}.
       Scores: ${JSON.stringify(scores)}.
-      Return JSON only.
+      
+      RETURN JSON ONLY with this structure:
+      {
+        "strengths": ["string", "string"],
+        "opportunities": ["string", "string"],
+        "recommendedPlan": "Bronze" | "Silver" | "Gold",
+        "planJustification": "string"
+      }
     `;
 
     try {
-      const result = await this.genAI!.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: { responseMimeType: 'application/json', responseSchema: reportSchema },
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
       });
-      return JSON.parse(this.cleanJson(result.text));
+      const response = await result.response;
+      return JSON.parse(this.cleanJson(response.text()));
     } catch (error) {
       console.error('Error generating report:', error);
       throw error;
@@ -110,11 +111,9 @@ export class GeminiService {
           Question de l'invité : "${question}"
         `;
 
-      const result = await this.genAI!.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-      });
-      return result.text;
+      const result = await this.model!.generateContent(prompt);
+      const response = await result.response;
+      return response.text();
     } catch (error) {
       return "Désolé, je ne peux pas répondre pour le moment (Service IA indisponible).";
     }
@@ -149,12 +148,11 @@ export class GeminiService {
       `;
 
     try {
-      const result = await this.genAI!.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: { responseMimeType: 'application/json' },
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
       });
-      return JSON.parse(this.cleanJson(result.text));
+      const response = await result.response;
+      return JSON.parse(this.cleanJson(response.text()));
     } catch (error) {
       console.error('Error auto-filling booklet:', error);
       throw error;
@@ -171,12 +169,11 @@ export class GeminiService {
       `;
 
     try {
-      const result = await this.genAI!.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: { responseMimeType: 'application/json' },
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
       });
-      return JSON.parse(this.cleanJson(result.text));
+      const response = await result.response;
+      return JSON.parse(this.cleanJson(response.text()));
     } catch (error) {
       console.error('Error finding manuals:', error);
       return {};
@@ -204,11 +201,9 @@ export class GeminiService {
       `;
 
     try {
-      const result = await this.genAI!.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-      });
-      return result.text;
+      const result = await this.model!.generateContent(prompt);
+      const response = await result.response;
+      return response.text();
     } catch (error) {
       console.error('Error generating description:', error);
       return "Erreur lors de la génération de la description.";
@@ -244,12 +239,11 @@ export class GeminiService {
       `;
 
     try {
-      const result = await this.genAI!.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: { responseMimeType: 'application/json' },
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
       });
-      return JSON.parse(this.cleanJson(result.text));
+      const response = await result.response;
+      return JSON.parse(this.cleanJson(response.text()));
     } catch (error) {
       console.error('Error generating design:', error);
       throw error;
@@ -261,7 +255,7 @@ export class GeminiService {
 
     // 1. Prepare Images
     const photosToAnalyze = photos.slice(0, 30);
-    const imageParts: any[] = [];
+    const parts: any[] = [];
 
     // Helper to fetch and convert to base64
     const urlToBase64 = async (url: string): Promise<string | null> => {
@@ -288,18 +282,8 @@ export class GeminiService {
     const base64Images = await Promise.all(photosToAnalyze.map(p => urlToBase64(p.url)));
 
     // Construct parts
-    base64Images.forEach((b64, index) => {
-      if (b64) {
-        imageParts.push({
-          inlineData: {
-            data: b64,
-            mimeType: "image/jpeg"
-          }
-        });
-      }
-    });
-
-    const prompt = `
+    parts.push({
+      text: `
         You are an expert Vacation Rental Copywriter and Photographer.
         
         TASK 1: Write an "Irresistible" Listing Description.
@@ -319,17 +303,26 @@ export class GeminiService {
           "description": "Your markdown formatted description...",
           "selectedPhotoIds": ["id1", "id3", ...]
         }
-    `;
+    `});
+
+    base64Images.forEach((b64, index) => {
+      if (b64) {
+        parts.push({
+          inlineData: {
+            data: b64,
+            mimeType: "image/jpeg"
+          }
+        });
+      }
+    });
 
     try {
-      const contents = [prompt, ...imageParts];
-      const result = await this.genAI!.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: contents as any,
-        config: { responseMimeType: 'application/json' },
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: parts }]
       });
+      const response = await result.response;
 
-      const parsed = JSON.parse(this.cleanJson(result.text));
+      const parsed = JSON.parse(this.cleanJson(response.text()));
       return {
         description: parsed.description,
         selectedPhotoIds: parsed.selectedPhotoIds || []
@@ -388,12 +381,11 @@ export class GeminiService {
             }
             Do not include markdown code blocks. Just the JSON string.`;
 
-      const result = await this.genAI!.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: { responseMimeType: 'application/json' },
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
       });
-      return JSON.parse(this.cleanJson(result.text));
+      const response = await result.response;
+      return JSON.parse(this.cleanJson(response.text()));
     } catch (error) {
       console.error('Gemini Audit Error:', error);
       // Fallback mock
@@ -414,14 +406,142 @@ export class GeminiService {
     }
   }
 
+  async generateFaqList(propertyName: string, propertyContext: string, address: string): Promise<{ question: string, answer: string }[]> {
+    console.log('[GeminiService] generateFaqList called for:', propertyName);
+    console.warn('[GeminiService] GENERATING FAQ FOR ADDRESS:', address); // CORRECT PLACEMENT
+    await this.ensureClient();
+
+    const prompt = `
+        You are an expert Host Assistant for a vacation rental.
+        
+        TASK:
+        1. Identify 10-12 distinct, frequently asked questions (topics: Check-in, Parking, Wifi, Transport, Coffee, etc.) that a guest would likely ask about this specific property or location.
+        2. Answer questions primarily using the PROPERTY CONTEXT.
+        3. For questions about local amenities (Pharmacy, Supermarket, Parking, etc.), use your GENERAL KNOWLEDGE of the address to provide the **NAME and EXACT ADDRESS** of the closest options.
+        4. If the answer is publicly unknown, write "Information non disponible".
+
+        PROPERTY CONTEXT:
+        ${propertyContext}
+        
+        ADDRESS: ${address}
+
+        RESPONSE FORMAT (JSON ONLY):
+        [
+            { "question": "Question text...", "answer": "Answer text..." },
+            ...
+        ]
+        
+        Language: French.
+    `;
+
+    try {
+      console.log('[GeminiService] Sending prompt to AI...');
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+      });
+      const response = await result.response;
+      const text = response.text();
+      console.log('[GeminiService] Raw AI response:', text);
+      const parsed = JSON.parse(this.cleanJson(text));
+      console.log('[GeminiService] Parsed FAQ:', parsed);
+      return parsed;
+    } catch (error: any) {
+      console.error('[GeminiService] Error generating FAQ list:', error);
+      // Smart Offline Fallback WITH DEBUG INFO
+      return this.generateOfflineFaqs(propertyContext, address, error.message || error.toString());
+    }
+  }
+
+  private generateOfflineFaqs(context: string, address: string, debugError?: string): { question: string, answer: string }[] {
+    const faqs: { question: string, answer: string }[] = [];
+    const encodedAddress = encodeURIComponent(address);
+
+    // 1. Extract info from context using simple regex/includes
+    const wifiMatch = context.match(/Wifi: (.+)/i);
+    const wifiInfo = wifiMatch ? wifiMatch[1] : "Le code Wifi sera disponible dans votre livret d'accueil.";
+
+    const checkinMatch = context.match(/check-in: (.+)/i);
+    const checkinTime = checkinMatch ? checkinMatch[1] : "15h00";
+
+    const checkoutMatch = context.match(/check-out: (.+)/i);
+    const checkoutTime = checkoutMatch ? checkoutMatch[1] : "11h00";
+
+    const parkingMatch = context.match(/Parking: (.+)/i);
+    const parkingInfo = parkingMatch ? parkingMatch[1] : "Des places de stationnement publiques sont disponibles dans la rue.";
+
+    // 2. Generate Deterministic FAQs
+    faqs.push({
+      question: "Quelle est l'heure de départ (Check-out) ?",
+      answer: `Le départ doit s'effectuer impérativement avant ${checkoutTime} pour permettre le nettoyage.`
+    });
+
+    faqs.push({
+      question: "Quelle est l'heure d'arrivée (Check-in) ?",
+      answer: `Vous pouvez accéder au logement à partir de ${checkinTime}.`
+    });
+
+    faqs.push({
+      question: "Quel est le code Wifi ?",
+      answer: `Voici les informations de connexion : ${wifiInfo}`
+    });
+
+    faqs.push({
+      question: "Où puis-je me garer ?",
+      answer: parkingInfo + `\n\nVoir les parkings à proximité : https://www.google.com/maps/search/parking+near+${encodedAddress}`
+    });
+
+    faqs.push({
+      question: "Fournissez-vous le linge de maison ?",
+      answer: "Oui, les draps et les serviettes de toilette sont fournis (qualité hôtelière)."
+    });
+
+    faqs.push({
+      question: "Y a-t-il une machine à café ?",
+      answer: "Oui, une machine à café est à votre disposition dans la cuisine."
+    });
+
+    faqs.push({
+      question: "Le ménage est-il inclus ?",
+      answer: "Le ménage de fin de séjour est inclus, mais nous vous demandons de laisser la cuisine propre et de sortir les poubelles."
+    });
+
+    faqs.push({
+      question: "Puis-je fumer dans le logement ?",
+      answer: "Non, le logement est strictement non-fumeur. Merci de fumer à l'extérieur."
+    });
+
+    faqs.push({
+      question: "Acceptez-vous les animaux ?",
+      answer: "Pour des raisons d'allergies et d'hygiène, nos amis les animaux ne sont pas admis."
+    });
+
+    faqs.push({
+      question: "Où se trouve la pharmacie la plus proche ?",
+      answer: `Vous trouverez une pharmacie à quelques minutes à pied.\nVoir sur la carte : https://www.google.com/maps/search/pharmacie+near+${encodedAddress}`
+    });
+
+    faqs.push({
+      question: "Que faire en cas d'urgence ?",
+      answer: "En cas d'urgence vitale, composez le 112. Pour un problème lié au logement, contactez-nous via la messagerie."
+    });
+
+    if (debugError) {
+      faqs.push({
+        question: "⚠️ DEBUG: Why am I seeing this?",
+        answer: `The AI generation failed, so we showed you these offline backup questions instead.\n\nERROR DETAIL: ${debugError}`
+      });
+    }
+
+    return faqs;
+
+  }
+
   async generateText(prompt: string): Promise<string> {
     await this.ensureClient();
     try {
-      const result = await this.genAI!.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-      });
-      return result.text;
+      const result = await this.model!.generateContent(prompt);
+      const response = await result.response;
+      return response.text();
     } catch (error) {
       console.error('Error generating text:', error);
       throw error;

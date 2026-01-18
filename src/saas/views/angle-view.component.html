@@ -211,6 +211,8 @@
     <app-booklet-tool [propertyName]="view().propertyName!"></app-booklet-tool>
 
 
+    } @else if (activeToolId() === 'ai-assistant') {
+    <app-ai-message-assistant [propertyName]="view().propertyName!" (close)="closeTool()"></app-ai-message-assistant>
     } @else {
     <p class="text-white/80 bg-black/20 p-4 rounded-xl backdrop-blur-md inline-block">Section non trouvée: '{{
         activeToolId() }}' ({{ activeToolId()?.length }})</p>

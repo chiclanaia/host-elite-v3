@@ -476,4 +476,13 @@ export const en = {
     'BOOKLET.icon_emoji_tooltip': 'Colorful standard emojis',
     'BOOKLET.icon_minimalist_tooltip': 'Clean SVG lines',
     'BOOKLET.icon_drawn_tooltip': 'Hand-drawn style icons',
+
+    // FAQ
+    'BOOKLET.faq_title': 'Frequently Asked Questions',
+    'BOOKLET.desc.faq': 'FAQ & AI Answers',
+    'BOOKLET.generate_faq': 'Generate FAQ (AI)',
+    'BOOKLET.no_faq': 'No questions yet.',
+    'BOOKLET.faq_helper': 'Generate questions based on your existing info.',
+    'BOOKLET.question': 'Question',
+    'BOOKLET.answer': 'Answer',
 };

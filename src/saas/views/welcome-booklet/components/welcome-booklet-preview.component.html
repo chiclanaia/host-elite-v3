@@ -146,6 +146,22 @@
                     <p class="whitespace-pre-wrap">{{ editorForm.get('departure.keyReturn')?.value }}</p> }
                 </div>
                 }
+                @case('faq') {
+                <div class="space-y-4">
+                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm text-blue-800 mb-4">
+                        <p class="font-medium">{{ 'BOOKLET.faq_helper' | translate }}</p>
+                    </div>
+                    @for (item of validFaqItems(); track $index) {
+                    <div class="border-b border-slate-100 pb-3 last:border-0">
+                        <h4 class="font-bold text-slate-800 mb-1 text-sm">{{ item.question }}</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed">{{ item.answer }}</p>
+                    </div>
+                    }
+                    @if (validFaqItems().length === 0) {
+                    <p class="italic text-slate-400 text-center py-4">{{ 'BOOKLET.no_faq' | translate }}</p>
+                    }
+                </div>
+                }
                 @default {
                 <div class="space-y-6 text-slate-700">
                     @for (control of getGroupControls(section.formGroupName); track control) {

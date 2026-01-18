@@ -5,7 +5,7 @@ import { HostRepository } from '../../../services/host-repository.service';
 import { WidgetService } from '../../../services/widget.service';
 import { TranslationService } from '../../../services/translation.service';
 import { SessionStore } from '../../../state/session.store';
-import { BookletSection, WidgetDisplayData, CONTROL_LABELS, SECTIONS_CONFIG, WIDGET_DEFINITIONS, MicrositeConfig, resolveMicrositeConfig } from './booklet-definitions';
+import { BookletSection, WidgetDisplayData, CONTROL_LABELS, SECTIONS_CONFIG, WIDGET_DEFINITIONS, MicrositeConfig, resolveMicrositeConfig, FaqItem } from './booklet-definitions';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 
@@ -32,6 +32,9 @@ export class WelcomeBookletService implements OnDestroy {
     activeWidgets = signal<Record<string, boolean>>({});
     propertyPhotos = signal<{ url: string, category: string }[]>([]);
     propertyEquipments = signal<string[]>([]);
+
+    // FAQ Signal (derived from form)
+    faqItems = signal<FaqItem[]>([]);
 
     // Initialize with a resolved default config
     micrositeConfig = signal<MicrositeConfig>(resolveMicrositeConfig({}, null));
@@ -81,6 +84,7 @@ export class WelcomeBookletService implements OnDestroy {
             address: [''],
             gpsCoordinates: [''],
             photos: this.fb.array([]),
+            faq: this.fb.array([]), // Init FAQ Array
             toggles: this.fb.group(togglesGroup)
         });
 
@@ -106,6 +110,7 @@ export class WelcomeBookletService implements OnDestroy {
 
     async loadData(name: string) {
         this.isLoading.set(true);
+        let defaults: any = { welcome: {} }; // Init Empty
         try {
             const prop = await this.repository.getPropertyByName(name);
             const booklet = await this.repository.getBooklet(name);
@@ -125,7 +130,7 @@ export class WelcomeBookletService implements OnDestroy {
 
                 // Init Form basic data
                 // MAPPING: DB (French) -> Form (English)
-                const defaults: any = {
+                defaults = {
                     address: prop.address || '',
                     welcome: {
                         welcomeMessage: prop.listing_description || '',
@@ -160,7 +165,24 @@ export class WelcomeBookletService implements OnDestroy {
                     };
                 }
 
+                if (booklet.welcome) {
+                    defaults.welcome = {
+                        welcomeMessage: booklet.welcome.welcomeMessage ?? defaults.welcome.welcomeMessage,
+                        hostContact: booklet.welcome.hostContact,
+                        emergencyContact: booklet.welcome.emergencyContact
+                    };
+                }
+
                 console.log('[WelcomeBookletService] Patching Booklet Data:', booklet.welcome);
+
+                // Load FAQ
+                const faqArray = this.editorForm.get('faq') as FormArray;
+                faqArray.clear();
+                if (booklet.faq) {
+                    booklet.faq.forEach((f: FaqItem) => faqArray.push(this.fb.group(f)));
+                    this.faqItems.set(booklet.faq);
+                }
+
                 this.editorForm.patchValue(this.removeEmpty(booklet));
                 if (booklet.gpsCoordinates) this.editorForm.patchValue({ gpsCoordinates: booklet.gpsCoordinates });
             }
@@ -174,6 +196,54 @@ export class WelcomeBookletService implements OnDestroy {
 
             this.refreshRealWidgetData();
         } catch (e) { console.error(e); } finally { this.isLoading.set(false); }
+    }
+
+    generateFaqsWithAI() {
+        this.isLoading.set(true);
+        setTimeout(() => {
+            const formVal = this.editorForm.value;
+            const address = formVal.address || 'votre location';
+            const wifi = formVal.systems?.wifi || 'Non spécifié';
+            const checkin = formVal.rules?.keyManagement || '15h';
+            const checkout = formVal.departure?.checkoutTime || '11h';
+
+            const newFaqs: FaqItem[] = [
+                {
+                    question: "Quel est le code Wi-Fi ?",
+                    answer: wifi.includes('Code') ? wifi : `Le code Wi-Fi est : ${wifi}`,
+                    visible: true
+                },
+                {
+                    question: "À quelle heure est l'arrivée et le départ ?",
+                    answer: `L'arrivée se fait à partir de ${checkin} et le départ avant ${checkout}.`,
+                    visible: true
+                },
+                {
+                    question: "Où se garer ?",
+                    answer: "Vous pouvez vous garer gratuitement dans la rue ou sur la place indiquée dans le guide.",
+                    visible: true
+                },
+                {
+                    question: "Comment fonctionne la machine à café ?",
+                    answer: "Il y a une machine Nespresso. Des capsules de bienvenue sont fournies.",
+                    visible: true
+                },
+                {
+                    question: "Où sont les poubelles ?",
+                    answer: "Les poubelles de tri se trouvent sous l'évier. Le local poubelle est à l'extérieur.",
+                    visible: true
+                }
+            ];
+
+            const faqArray = this.editorForm.get('faq') as FormArray;
+            faqArray.clear();
+            newFaqs.forEach(f => faqArray.push(this.fb.group(f)));
+            this.faqItems.set(newFaqs);
+
+            this.isLoading.set(false);
+            this.saveMessage.set("FAQ Générée !");
+            setTimeout(() => this.saveMessage.set(null), 3000);
+        }, 1500); // Simulate AI delay
     }
 
     async save() {
@@ -269,4 +339,4 @@ export class WelcomeBookletService implements OnDestroy {
         return newObj;
     }
 }
- // forcing reload
+// forcing reload

@@ -46,6 +46,13 @@ export class WelcomeBookletPreviewComponent {
         return id ? this.sections.find(s => s.id === id) || null : null;
     });
 
+    validFaqItems = computed(() => {
+        this.formValues();
+        const raw = this.editorForm.get('faq')?.value || [];
+        // Only return visible items with content
+        return raw.filter((i: any) => i.visible && i.question && i.answer);
+    });
+
     showSection(id: string) {
         this.currentSectionId.set(id);
         this.previewState.set('section');
@@ -149,7 +156,8 @@ export class WelcomeBookletPreviewComponent {
                 'kitchen': '🍳', 'livingRoom': '🛋️', 'bedrooms': '🛏️', 'laundry': '🧺',
                 'wellness': '🧖', 'parking': '🅿️', 'rules': '📜', 'pets': '🐾',
                 'waste': '♻️', 'dining': '🍽️', 'activities': '🏄', 'localInfo': 'ℹ️',
-                'transport': '🚌', 'administrative': '👮', 'extraServices': '🧹', 'departure': '👋'
+                'transport': '🚌', 'administrative': '👮', 'extraServices': '🧹', 'departure': '👋',
+                'faq': '❓'
             };
             return emojiMap[section.id] || '📁';
         }
