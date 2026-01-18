@@ -7,7 +7,7 @@ import { HostRepository } from '../../services/host-repository.service';
 import { GeminiService } from '../../services/gemini.service';
 import { SessionStore } from '../../state/session.store';
 import { MicrositeConfig, BuilderPhoto, SectionDef, resolveMicrositeConfig } from './welcome-booklet/booklet-definitions';
-import { MicrositeRendererComponent } from '../components/microsite-renderer/microsite-renderer.component';
+import { MicrositeContainerComponent } from '../features/microsite/microsite-container.component';
 import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
@@ -122,7 +122,7 @@ const ONBOARDING_DATA: Record<string, OnboardingQuestion[]> = {
 @Component({
     selector: 'saas-angle-view',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeRendererComponent, TranslatePipe],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeContainerComponent, TranslatePipe],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './angle-view.component.html',
 })
@@ -170,45 +170,9 @@ export class AngleViewComponent implements OnInit {
     userEmail = computed(() => this.store.userProfile()?.email || '');
 
     // Microsite Builder Logic
-    micrositeConfig = signal<MicrositeConfig>({
-        template: 'modern',
-        primaryColor: '#3b82f6',
-        showDescription: true,
-        showContact: true,
-        visibleSections: ['gallery', 'amenities', 'guide'],
-        hiddenPhotoUrls: [],
-        headerPhotoUrl: null,
-        heroLayout: 'full',
-        headline: 'Bienvenue chez vous'
-    });
-    micrositePhotos = signal<BuilderPhoto[]>([]);
+    // Microsite Builder Logic - MOVED TO MicrositeContainerComponent
+    // Keeping only propertyDetails and related logic needed for other tools or shared state loading
 
-    // Computed signal for visible photos to avoid arrow function in template
-    visiblePhotos = computed(() => this.micrositePhotos().filter(p => p.visible));
-
-    // Available sections definition - Moved UP to ensure availability
-    readonly availableSections: SectionDef[] = [
-        { id: 'gallery', label: 'Galerie Photos' },
-        { id: 'amenities', label: 'Équipements' },
-        { id: 'reviews', label: 'Avis' },
-        { id: 'rules', label: 'Règles' },
-        { id: 'guide', label: 'Guide Local' },
-    ];
-
-    // Computed for Ordered Sections
-    orderedSections = computed(() => {
-        const order = this.micrositeConfig().visibleSections;
-        if (!order) return [];
-        return order
-            .map(id => this.availableSections.find(s => s.id === id))
-            .filter((s): s is SectionDef => !!s); // Filter out undefined
-    });
-
-    readonly themeOptions = [
-        { id: 'modern', label: 'Moderne (Épuré & Blanc)' },
-        { id: 'cozy', label: 'Cosy (Chaleureux & Beige)' },
-        { id: 'luxury', label: 'Luxe (Sombre & Doré)' },
-    ];
 
     // AI Access Check
     hasAiAccess = computed(() => {
@@ -324,126 +288,23 @@ export class AngleViewComponent implements OnInit {
                 console.log(`[DEBUG] AngleView Load: ViewProp=${v.propertyName}, ServiceProp=${this.bookletService.propertyName()}, ServiceLoading=${this.bookletService.isLoading()}`);
 
                 if (this.bookletService.propertyName() === v.propertyName && !this.bookletService.isLoading()) {
-                    console.log('[DEBUG] AngleView: Using hot data from WelcomeBookletService');
+                    console.log('[AngleView] Using hot data from WelcomeBookletService');
                     const rawContent = this.bookletService.editorForm.getRawValue();
-                    console.log('[DEBUG] Raw Content Keys:', Object.keys(rawContent));
-                    console.log('[DEBUG] Guide Content:', rawContent?.guideGastro, rawContent?.guideActivites);
-
                     this.bookletContent.set(rawContent);
-
-                    // Sync Marketing Text (Welcome Message)
                     if (rawContent.bienvenue?.messageBienvenue) {
                         this.marketingText.set(rawContent.bienvenue.messageBienvenue);
                     }
-
-                    // Re-evaluate Smart Defaults
-                    let currentConfig = { ...this.bookletService.micrositeConfig() };
-                    console.log('[DEBUG] Service Config Visible Sections (Before):', currentConfig.visibleSections);
-
-                    const smartSections = new Set(currentConfig.visibleSections);
-
-                    // Force enable Guide if content exists
-                    if (rawContent?.guideGastro?.recommandationRestaurants || rawContent?.guideActivites?.guideActivites) {
-                        console.log('[DEBUG] Force enabling Guide');
-                        smartSections.add('guide');
-                    }
-                    if (rawContent?.regles?.politiqueFetes || rawContent?.regles?.politiqueNonFumeur ||
-                        rawContent?.regles?.heuresSilence || rawContent?.depart?.heureLimiteCheckout) {
-                        console.log('[DEBUG] Force enabling Rules');
-                        smartSections.add('rules');
-                    }
-
-                    currentConfig.visibleSections = Array.from(smartSections);
-                    console.log('[DEBUG] Final Config Visible Sections:', currentConfig.visibleSections);
-
-                    this.micrositeConfig.set(currentConfig);
-                    const smartConfig = currentConfig;
-
-                    // Sync Photos from service
-                    const servicePhotos = this.bookletService.propertyPhotos();
-                    console.log('[DEBUG] Service Photos Count:', servicePhotos?.length);
-
-                    if (servicePhotos) {
-                        const photosWithVisibility = servicePhotos.map((p: any) => ({
-                            ...p,
-                            visible: !smartConfig.hiddenPhotoUrls.includes(p.url)
-                        }));
-                        this.micrositePhotos.set(photosWithVisibility);
-                    }
-                    return; // EXIT EARLY - Data Loaded
                 } else {
-                    console.log('[DEBUG] Hot sync skipped. Fallback to DB.');
-                }
-
-                // Load saved configuration for microsite (Fallback to DB)
-                const bookletData = await this.repository.getBooklet(v.propertyName);
-                console.log('[DEBUG] DB Booklet Data:', bookletData ? 'Found' : 'Null');
-                let savedConfig: Partial<MicrositeConfig> | null = null;
-
-                // Ensure basic structure exists for booklet content even if DB is partial
-                const defaultContent = {
-                    guideGastro: { recommandationRestaurants: '' },
-                    guideActivites: { guideActivites: '' },
-                    transports: { taxisLocaux: '' },
-                    depart: { heureLimiteCheckout: '11:00' },
-                    regles: { politiqueFetes: '', politiqueNonFumeur: '', heuresSilence: '' }
-                };
-
-                const mergedBooklet = { ...defaultContent, ...bookletData };
-                // Ensure sub-objects exist
-                if (!mergedBooklet.guideGastro) mergedBooklet.guideGastro = {};
-                if (!mergedBooklet.guideActivites) mergedBooklet.guideActivites = {};
-                if (!mergedBooklet.transports) mergedBooklet.transports = {};
-                if (!mergedBooklet.depart) mergedBooklet.depart = {};
-                if (!mergedBooklet.regles) mergedBooklet.regles = {};
-
-                this.bookletContent.set(mergedBooklet);
-
-                if (bookletData && bookletData.microsite_config) {
-                    try {
-                        savedConfig = typeof bookletData.microsite_config === 'string'
-                            ? JSON.parse(bookletData.microsite_config)
-                            : bookletData.microsite_config;
-                    } catch (e) { console.error("Error parsing microsite config", e); }
-                }
-
-                if (prop) {
-                    // Use shared helper to resolve config (Smart Defaults or Saved)
-                    const resolved = resolveMicrositeConfig(mergedBooklet, savedConfig as any);
-
-                    // Override defaults with property-specific data if needed (e.g. valid backup photo)
-                    if (!resolved.headerPhotoUrl && prop.property_photos?.[0]) {
-                        resolved.headerPhotoUrl = prop.property_photos[0].url;
-                    }
-
-                    // Force Re-evaluate Smart Defaults (Ensure visibility if content exists)
-                    // This fixes the issue where DB config might hide sections that now have content
-                    const smartSections = new Set(resolved.visibleSections);
-                    if (mergedBooklet?.guideGastro?.recommandationRestaurants || mergedBooklet?.guideActivites?.guideActivites) {
-                        smartSections.add('guide');
-                    }
-                    if (mergedBooklet?.regles?.politiqueFetes || mergedBooklet?.regles?.politiqueNonFumeur ||
-                        mergedBooklet?.regles?.heuresSilence || mergedBooklet?.depart?.heureLimiteCheckout) {
-                        smartSections.add('rules');
-                    }
-                    resolved.visibleSections = Array.from(smartSections);
-
-                    this.micrositeConfig.set(resolved);
-
-                    // Init Photos with visibility state based on saved config
-                    if (prop.property_photos) {
-                        const photosWithVisibility = prop.property_photos.map((p: any) => ({
-                            ...p,
-                            visible: !this.micrositeConfig().hiddenPhotoUrls.includes(p.url)
-                        }));
-                        this.micrositePhotos.set(photosWithVisibility);
-
-                        // Set default header if not set
-                        if (!this.micrositeConfig().headerPhotoUrl && photosWithVisibility.length > 0) {
-                            this.updateConfig('headerPhotoUrl', photosWithVisibility[0].url);
-                        }
+                    // Fallback to DB
+                    console.log('[AngleView] Loading booklet from DB');
+                    const bookletData = await this.repository.getBooklet(v.propertyName);
+                    if (bookletData) {
+                        this.bookletContent.set(bookletData);
+                        // We do NOT load microsite config here anymore, strictly content.
                     }
                 }
+
+                console.log('[AngleView] Data load complete.');
             } catch (e) {
                 console.error("Error loading property data:", e);
             }
@@ -459,157 +320,7 @@ export class AngleViewComponent implements OnInit {
         this.activeToolId.set(null);
     }
 
-    // --- Microsite Builder Logic ---
-    updateConfig(key: keyof MicrositeConfig, value: any) {
-        this.micrositeConfig.update(c => ({ ...c, [key]: value }));
-    }
-
-    // Direct content editing method
-    updateBookletText(section: string, field: string, value: any) {
-        this.bookletContent.update(current => {
-            const updated = { ...current };
-            if (!updated[section]) updated[section] = {};
-            updated[section][field] = value;
-            return updated;
-        });
-    }
-
-    toggleContactForm(event: Event) {
-        const isChecked = (event.target as HTMLInputElement).checked;
-        this.micrositeConfig.update(c => ({ ...c, showContact: isChecked }));
-    }
-
-    // Add/Remove section from visible list
-    toggleSectionVisibility(sectionId: string, event: Event) {
-        const isChecked = (event.target as HTMLInputElement).checked;
-        this.micrositeConfig.update(c => {
-            const currentSections = c.visibleSections || [];
-            if (isChecked) {
-                // Add to end if not present
-                if (!currentSections.includes(sectionId)) {
-                    return { ...c, visibleSections: [...currentSections, sectionId] };
-                }
-            } else {
-                // Remove
-                return { ...c, visibleSections: currentSections.filter(id => id !== sectionId) };
-            }
-            return c;
-        });
-    }
-
-    // Reorder sections
-    moveSection(index: number, direction: 'up' | 'down') {
-        this.micrositeConfig.update(c => {
-            const sections = [...c.visibleSections];
-            if (direction === 'up' && index > 0) {
-                [sections[index], sections[index - 1]] = [sections[index - 1], sections[index]];
-            } else if (direction === 'down' && index < sections.length - 1) {
-                [sections[index], sections[index + 1]] = [sections[index + 1], sections[index]];
-            }
-            return { ...c, visibleSections: sections };
-        });
-    }
-
-    toggleDescriptionVisibility(event: Event) {
-        const isChecked = (event.target as HTMLInputElement).checked;
-        this.micrositeConfig.update(c => ({ ...c, showDescription: isChecked }));
-    }
-
-    togglePhotoVisibility(index: number) {
-        this.micrositePhotos.update(photos => {
-            const newPhotos = [...photos];
-            newPhotos[index] = { ...newPhotos[index], visible: !newPhotos[index].visible };
-            return newPhotos;
-        });
-
-        // Sync to config for saving later
-        const hidden = this.micrositePhotos().filter(p => !p.visible).map(p => p.url);
-        this.micrositeConfig.update(c => ({ ...c, hiddenPhotoUrls: hidden }));
-    }
-
-    setCoverPhoto(url: string) {
-        this.updateConfig('headerPhotoUrl', url);
-    }
-
-    movePhoto(index: number, direction: 'up' | 'down') {
-        const photos = [...this.micrositePhotos()];
-        if (direction === 'up' && index > 0) {
-            [photos[index], photos[index - 1]] = [photos[index - 1], photos[index]];
-        } else if (direction === 'down' && index < photos.length - 1) {
-            [photos[index], photos[index + 1]] = [photos[index + 1], photos[index]];
-        }
-        this.micrositePhotos.set(photos);
-    }
-
-    async generateMicrositeWithAI() {
-        if (!this.hasAiAccess()) return;
-        if (!this.view().propertyName) return;
-
-        this.isAiDesigning.set(true);
-        try {
-            // Fetch property context
-            const propName = this.view().propertyName!;
-            const bookletData = await this.repository.getBooklet(propName);
-            const propData = await this.repository.getPropertyByName(propName);
-
-            // Construct context object
-            const context = {
-                name: propName,
-                description: propData.listing_description,
-                address: propData.address,
-                type: 'Vacation Rental',
-                amenities: propData.property_equipments ? propData.property_equipments.map((e: any) => e.name) : [],
-                bookletSummary: bookletData ? JSON.stringify(bookletData).substring(0, 1000) : ''
-            };
-
-            const aiConfig = await this.geminiService.generateMicrositeDesign(context);
-
-            if (aiConfig) {
-                this.micrositeConfig.update(c => ({
-                    ...c,
-                    ...aiConfig,
-                    visibleSections: (aiConfig.visibleSections || []).filter((s: string) =>
-                        this.availableSections.some(avail => avail.id === s)
-                    )
-                }));
-                this.saveMessage.set("Design généré par l'IA !");
-                setTimeout(() => this.saveMessage.set(null), 3000);
-            }
-        } catch (e) {
-            console.error("AI Design Error:", e);
-            alert("Erreur lors de la génération du design.");
-        } finally {
-            this.isAiDesigning.set(false);
-        }
-    }
-
-    async saveMicrosite() {
-        if (!this.view().propertyName) return;
-
-        try {
-            this.saveMessage.set(null);
-
-            // Sync hidden photos before saving config
-            const hidden = this.micrositePhotos().filter(p => !p.visible).map(p => p.url);
-            const configToSave = { ...this.micrositeConfig(), hiddenPhotoUrls: hidden };
-
-            // 1. Save Config to Booklet Table
-            await this.repository.saveBooklet(this.view().propertyName!, {
-                microsite_config: JSON.stringify(configToSave)
-            });
-
-            // 2. Save Photo Order
-            if (this.currentPropertyId()) {
-                await this.repository.savePropertyPhotos(this.currentPropertyId()!, this.micrositePhotos());
-            }
-
-            this.saveMessage.set("Microsite publié et contenu sauvegardé !");
-            setTimeout(() => this.saveMessage.set(null), 3000);
-        } catch (e) {
-            console.error(e);
-            alert("Erreur lors de la publication.");
-        }
-    }
+    // --- Microsite Builder Methods Removed (MOVED TO CONTAINER) ---
 
     // Debug logging state
     debugLogs = signal<string[]>(['Debug System Ready']);
@@ -791,8 +502,9 @@ export class AngleViewComponent implements OnInit {
                 context += `\n--- Détails Livret ---\n${JSON.stringify(bookletData).substring(0, 1500)}`;
             }
 
-            // Prepare Photos
-            const availablePhotos = this.micrositePhotos().map((p: any) => ({ url: p.url, id: p.id || p.url })); // Ensure ID
+            // Prepare Photos (Use Service or Property Data)
+            const sourcePhotos = this.bookletService.propertyPhotos() || [];
+            const availablePhotos = sourcePhotos.map((p: any) => ({ url: p.url, id: p.id || p.url }));
 
             if (availablePhotos.length === 0) {
                 // Fallback to text only if no photos
@@ -808,15 +520,11 @@ export class AngleViewComponent implements OnInit {
 
                 this.marketingText.set(result.description);
 
-                // Apply Photo Selection
+                // Note: We used to update microsite photo visibility here. 
+                // Since this tool is now decoupled, we strictly only update the Description (marketingText).
+                // Photo selection for the microsite should be done IN the Microsite tool.
                 if (result.selectedPhotoIds?.length > 0) {
-                    this.micrositePhotos.update(photos => {
-                        return photos.map((p: any) => ({
-                            ...p,
-                            visible: result.selectedPhotoIds.includes(p.id || p.url)
-                        }));
-                    });
-                    this.saveMessage.set(`IA : ${result.selectedPhotoIds.length} photos sélectionnées !`);
+                    this.saveMessage.set(`IA : Description générée avec ${result.selectedPhotoIds.length} photos analysées !`);
                     setTimeout(() => this.saveMessage.set(null), 4000);
                 }
             }
