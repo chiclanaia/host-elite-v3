@@ -6,8 +6,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angul
 import { HostRepository } from '../../services/host-repository.service';
 import { GeminiService } from '../../services/gemini.service';
 import { SessionStore } from '../../state/session.store';
+
 import { MicrositeConfig, BuilderPhoto, SectionDef, resolveMicrositeConfig } from './welcome-booklet/booklet-definitions';
 import { MicrositeContainerComponent } from '../features/microsite/microsite-container.component';
+import { AiPromptsComponent } from '../features/ai-prompts/ai-prompts.component';
+import { VisibilityAuditComponent } from '../features/visibility-audit/visibility-audit.component';
 import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
@@ -122,7 +125,7 @@ const ONBOARDING_DATA: Record<string, OnboardingQuestion[]> = {
 @Component({
     selector: 'saas-angle-view',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeContainerComponent, TranslatePipe],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeContainerComponent, AiPromptsComponent, VisibilityAuditComponent, TranslatePipe],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './angle-view.component.html',
 })
@@ -146,17 +149,13 @@ export class AngleViewComponent implements OnInit {
     // Tools Logic
     activeToolId = signal<string | null>(null);
 
-    // Marketing Description Logic
-    marketingText = signal<string>('');
-    isGenerating = signal(false);
-    isAiDesigning = signal(false);
+    // Marketing Description Logic - MOVED TO AiPromptsComponent
+    // Keeping common signals that might be shared or needed for other tools
     saveMessage = signal<string | null>(null);
+    isAiDesigning = signal(false);
     currentPropertyId = signal<string | null>(null);
 
-    // AI Listing State
-    targetPhotoCount = signal<number>(15);
-    aiAnalysisStatus = signal<string>(''); // For feedback "Analyzing images..."
-    isPreviewMode = signal(false); // Toggle for AI tool preview
+    // AI Listing State - MOVED TO AiPromptsComponent
 
     // Dynamic Content Signals
     propertyDetails = signal<any>(null);
@@ -281,7 +280,6 @@ export class AngleViewComponent implements OnInit {
                 if (prop) {
                     this.currentPropertyId.set(prop.id);
                     this.propertyDetails.set(prop);
-                    this.marketingText.set(prop.listing_description || '');
                 }
 
                 // Check if WelcomeBookletService has hot data for this property
@@ -292,7 +290,7 @@ export class AngleViewComponent implements OnInit {
                     const rawContent = this.bookletService.editorForm.getRawValue();
                     this.bookletContent.set(rawContent);
                     if (rawContent.bienvenue?.messageBienvenue) {
-                        this.marketingText.set(rawContent.bienvenue.messageBienvenue);
+                        // this.marketingText.set(rawContent.bienvenue.messageBienvenue);
                     }
                 } else {
                     // Fallback to DB
@@ -351,7 +349,7 @@ export class AngleViewComponent implements OnInit {
             console.error("AI Booklet Error:", e);
             alert("Erreur lors de la génération du contenu.");
         } finally {
-            this.isAiDesigning.set(false);
+            this.saveMessage.set(null);
         }
     }
 
@@ -362,181 +360,10 @@ export class AngleViewComponent implements OnInit {
         this.debugLogs.update(logs => [fullMessage, ...logs].slice(0, 10));
     }
 
-    async saveDescription() {
-        if (!this.marketingText()) return;
-
-        // 1. Create Booklet payload
-        const bookletPayload: any = {
-            welcome: { welcomeMessage: this.marketingText() }
-        };
-
-        try {
-            // 2. Save to Repository (DB)
-            if (this.currentPropertyId()) {
-                await this.repository.updatePropertyData(this.currentPropertyId()!, {
-                    marketing: { description: this.marketingText() }
-                });
-
-                // Save Booklet/Microsite Config
-                await this.repository.saveBooklet(this.view().propertyName!, bookletPayload);
-
-                if (this.bookletService.propertyName() !== this.view().propertyName) {
-                    this.logToUi('Switching Service Property to Sync:', this.view().propertyName);
-                    this.bookletService.propertyName.set(this.view().propertyName!);
-                    // Effect will trigger loadData
-                } else {
-                    console.log('[AngleView] Triggering Direct LoadData for:', this.view().propertyName);
-                    this.logToUi('Reloading Service Data to Sync...');
-                    // Force reload since we updated the DB behind the service's back
-                    await this.bookletService.loadData(this.view().propertyName!);
-                }
-            }
-
-            this.saveMessage.set("Microsite publié et contenu sauvegardé !");
-            setTimeout(() => this.saveMessage.set(null), 3000);
-
-        } catch (error) {
-            console.error('Error saving:', error);
-            this.logToUi('ERROR Saving Description', error);
-        }
-    }
-
-
-
-    // --- Marketing AI Logic ---
-
-    // Audit State
-    auditStatus = signal<'idle' | 'searching' | 'analyzing' | 'complete'>('idle');
-    auditProgress = signal<number>(0);
-    auditStep = signal<string>(''); // Current search step text
-    auditResult = signal<any>(null); // The final report
-
-    // Audit Inputs
-    airbnbUrl = signal('');
-    bookingUrl = signal('');
-    otherUrl = signal('');
-
-    async runVisibilityAudit() {
-        if (!this.hasAiAccess()) return;
-        const propName = this.view().propertyName!;
-        const propData = await this.repository.getPropertyByName(propName);
-
-        // 1. Reset State
-        this.auditStatus.set('searching');
-        this.auditProgress.set(0);
-        this.auditResult.set(null);
-
-        // 2. Simulate Deep Search (Visual Effect)
-        const steps = [
-            "Connexion aux serveurs Airbnb...",
-            "Analyse de la zone de recherche...",
-            "Vérification des filtres voyageurs...",
-            "Comparaison avec la concurrence locale...",
-            "Examen des résultats Booking.com...",
-            "Analyse du positionnement Google Maps..."
-        ];
-
-        for (let i = 0; i < steps.length; i++) {
-            this.auditStep.set(steps[i]);
-            // Random delay between 500ms and 1500ms for realism
-            await new Promise(r => setTimeout(r, 500 + Math.random() * 1000));
-            this.auditProgress.set(Math.floor(((i + 1) / steps.length) * 80)); // Go up to 80% during search
-        }
-
-        // 3. AI Analysis Step
-        this.auditStatus.set('analyzing');
-        this.auditStep.set("Génération du rapport d'expert...");
-        this.auditProgress.set(90);
-
-        try {
-            // Construct Context
-            const context = {
-                name: propName,
-                address: propData?.address || 'Non spécifiée',
-                description: propData?.listing_description || 'Non spécifiée',
-                amenities: propData?.property_equipments ? propData.property_equipments.map((e: any) => e.name) : [],
-                urls: {
-                    airbnb: this.airbnbUrl(),
-                    booking: this.bookingUrl(),
-                    other: this.otherUrl()
-                }
-            };
-
-            const report = await this.geminiService.generateVisibilityAudit(context, this.translationService.currentLang());
-            this.auditResult.set(report);
-            this.auditProgress.set(100);
-            this.auditStatus.set('complete');
-
-        } catch (error) {
-            console.error(error);
-            alert("Erreur lors de l'audit.");
-            this.auditStatus.set('idle');
-        }
-    }
-
-    async generateListingWithPhotos() {
-        if (!this.hasAiAccess()) return; // Security check
-
-        const propId = this.currentPropertyId();
-        const propName = this.view().propertyName;
-        if (!propId || !propName) return;
-
-        this.isGenerating.set(true);
-        this.aiAnalysisStatus.set('Analyse des photos et rédaction...');
-
-        try {
-            // Get rich context (same as before)
-            const propData = await this.repository.getPropertyByName(propName);
-            const bookletData = await this.repository.getBooklet(propName);
-
-            let context = `Nom propriété: ${propName}.\n`;
-            if (propData) {
-                context += `Type: ${propData.property_type || 'Non spécifié'}\n`;
-                context += `Adresse: ${propData.address || 'Non spécifiée'}\n`;
-                context += `Description actuelle: ${propData.listing_description || 'Aucune'}\n`;
-                if (propData.property_equipments?.length) {
-                    context += `Équipements: ${propData.property_equipments.map((e: any) => e.name).join(', ')}\n`;
-                }
-            }
-            if (bookletData) {
-                context += `\n--- Détails Livret ---\n${JSON.stringify(bookletData).substring(0, 1500)}`;
-            }
-
-            // Prepare Photos (Use Service or Property Data)
-            const sourcePhotos = this.bookletService.propertyPhotos() || [];
-            const availablePhotos = sourcePhotos.map((p: any) => ({ url: p.url, id: p.id || p.url }));
-
-            if (availablePhotos.length === 0) {
-                // Fallback to text only if no photos
-                const generated = await this.geminiService.generateMarketingDescription(context);
-                this.marketingText.set(generated);
-            } else {
-                // Multimodal Generation
-                const result = await this.geminiService.generateOptimizedListing(
-                    context,
-                    availablePhotos,
-                    this.targetPhotoCount()
-                );
-
-                this.marketingText.set(result.description);
-
-                // Note: We used to update microsite photo visibility here. 
-                // Since this tool is now decoupled, we strictly only update the Description (marketingText).
-                // Photo selection for the microsite should be done IN the Microsite tool.
-                if (result.selectedPhotoIds?.length > 0) {
-                    this.saveMessage.set(`IA : Description générée avec ${result.selectedPhotoIds.length} photos analysées !`);
-                    setTimeout(() => this.saveMessage.set(null), 4000);
-                }
-            }
-
-        } catch (e) {
-            console.error(e);
-            alert("Erreur lors de la génération.");
-        } finally {
-            this.isGenerating.set(false);
-            this.aiAnalysisStatus.set('');
-        }
-    }
+    // --- Marketing AI Logic MOVED TO AiPromptsComponent ---
+    // --- Visibility Audit Logic MOVED TO VisibilityAuditComponent ---
+    // Methods removed: generateListingWithPhotos, saveDescription, runVisibilityAudit
+    // Signals removed: auditStatus, auditProgress, auditStep, auditResult, airbnbUrl, bookingUrl, otherUrl
 
 
 
