@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal, Output, EventEmitter } from '@angular/core';
+import { Component, computed, inject, input, signal, Output, EventEmitter, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
@@ -28,7 +28,7 @@ export class VisibilityAuditComponent {
     private geminiService = inject(GeminiService);
     private repository = inject(HostRepository);
     private store = inject(SessionStore);
-    // private translationService = inject(TranslationService);
+    private injector = inject(Injector);
 
     // Audit State
     auditStatus = signal<'idle' | 'searching' | 'analyzing' | 'complete'>('idle');
@@ -92,7 +92,8 @@ export class VisibilityAuditComponent {
                 }
             };
 
-            const report = await this.geminiService.generateVisibilityAudit(context, 'fr' /* this.translationService.currentLang() */);
+            const translationService = this.injector.get(TranslationService);
+            const report = await this.geminiService.generateVisibilityAudit(context, translationService.currentLang());
             this.auditResult.set(report);
             this.auditProgress.set(100);
             this.auditStatus.set('complete');
