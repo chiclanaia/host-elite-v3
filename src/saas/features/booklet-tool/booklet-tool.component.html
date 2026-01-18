@@ -1,0 +1,195 @@
+<div class="h-[calc(100vh-6rem)] flex flex-col bg-slate-900/50 rounded-2xl overflow-hidden border border-white/10">
+    <!-- Header -->
+    <div class="flex items-center justify-between p-4 border-b border-white/10 bg-white/5 backdrop-blur-md">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <span class="text-2xl">📖</span>
+            {{ 'TOOL.booklet_name' | translate }}
+        </h2>
+
+        <button (click)="save()"
+            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/20 border border-white/10">
+            <span>Sauvegarder</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                    clip-rule="evenodd" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Main Content Area - Split Screen -->
+    <div class="flex-1 overflow-hidden flex flex-col md:flex-row relative">
+
+        <!-- LEFT PANEL: Settings (Scrollable) -->
+        <div class="w-full md:w-1/2 h-full overflow-y-auto custom-scrollbar border-r border-white/10 bg-slate-900/50">
+            <div class="p-6 space-y-8 max-w-2xl mx-auto">
+
+                <!-- 1. Structure (Content) Configuration -->
+                <div class="space-y-4">
+                    <app-booklet-config-panel></app-booklet-config-panel>
+                </div>
+
+                <!-- 2. AI Generator -->
+                <div
+                    class="bg-gradient-to-r from-violet-600/20 to-indigo-600/20 border border-indigo-500/30 rounded-2xl p-6 backdrop-blur-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1">{{ 'BOOKLET.ai_design_title' | translate }}
+                            </h3>
+                            <p class="text-xs text-indigo-200">{{ 'BOOKLET.ai_design_desc' | translate }}</p>
+                        </div>
+                        <button (click)="generateDesignWithAI()" [disabled]="isAiDesigning()"
+                            class="px-4 py-2 bg-white text-indigo-600 hover:bg-indigo-50 text-white rounded-lg font-bold transition-all shadow-lg flex items-center gap-2 disabled:opacity-50 text-sm">
+                            @if (isAiDesigning()) {
+                            <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            } @else { <span class="text-lg">✨</span> }
+                            {{ isAiDesigning() ? ('BOOKLET.generating' | translate) : ('BOOKLET.generate_design' |
+                            translate) }}
+                        </button>
+                    </div>
+                    @if (aiMessage()) {
+                    <div
+                        class="text-center p-2 bg-emerald-500/20 border border-emerald-500/30 rounded text-emerald-200 text-sm font-medium animate-fade-in">
+                        {{ aiMessage() }}
+                    </div>
+                    }
+                </div>
+
+                <!-- 3. Design Configuration -->
+                <div class="space-y-6">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
+                        <span>🎨</span> {{ 'BOOKLET.tab_design' | translate }}
+                    </h3>
+
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- Theme -->
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-5">
+                            <h4 class="text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider">{{
+                                'BOOKLET.theme_label' | translate }}</h4>
+                            <div class="space-y-2">
+                                @for(theme of themes; track theme.id) {
+                                <label
+                                    class="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5 cursor-pointer hover:bg-white/5 transition-all text-sm"
+                                    [class.border-blue-500]="config().template === theme.id"
+                                    [class.bg-blue-500_10]="config().template === theme.id">
+                                    <span class="text-slate-200">{{ theme.label | translate }}</span>
+                                    <input type="radio" name="theme" [value]="theme.id"
+                                        [checked]="config().template === theme.id"
+                                        (change)="updateConfig('template', theme.id)" class="accent-blue-500">
+                                </label>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Colors -->
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-5">
+                            <h4 class="text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider">{{
+                                'BOOKLET.color_label' | translate }}</h4>
+                            <div class="flex flex-wrap gap-2">
+                                @for(color of colorPresets; track color) {
+                                <button (click)="updateConfig('primaryColor', color)"
+                                    class="w-8 h-8 rounded-full border-2 transition-transform hover:scale-110"
+                                    [class.border-white]="config().primaryColor === color"
+                                    [class.border-transparent]="config().primaryColor !== color"
+                                    [style.background-color]="color" [title]="color"></button>
+                                }
+                                <label
+                                    class="w-8 h-8 rounded-full border-2 border-white/20 flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors overflow-hidden relative">
+                                    <span class="text-xs text-white/50">+</span>
+                                    <input type="color" [value]="config().primaryColor"
+                                        (input)="updateConfig('primaryColor', $any($event.target).value)"
+                                        class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Icon Style -->
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-5">
+                            <h4 class="text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider">{{
+                                'BOOKLET.icon_style_label' | translate }}</h4>
+                            <div class="space-y-2">
+                                @for(style of iconStyles; track style.id) {
+                                <label
+                                    class="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5 cursor-pointer hover:bg-white/5 transition-all text-sm"
+                                    [class.border-blue-500]="config().iconStyle === style.id">
+                                    <span class="text-slate-200">{{ style.label | translate }}</span>
+                                    <input type="radio" name="iconStyle" [value]="style.id"
+                                        [checked]="(config().iconStyle || 'emoji') === style.id"
+                                        (change)="updateConfig('iconStyle', style.id)" class="accent-blue-500">
+                                </label>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Fonts -->
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-5">
+                            <h4 class="text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider">{{
+                                'BOOKLET.font_label' | translate }}</h4>
+                            <div class="space-y-2">
+                                @for(font of fonts; track font.id) {
+                                <label
+                                    class="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5 cursor-pointer hover:bg-white/5 transition-all text-sm"
+                                    [class.border-blue-500]="config().font === font.id">
+                                    <span class="text-slate-200"
+                                        [ngClass]="{'font-sans': font.id === 'inter', 'font-serif': font.id === 'serif', 'font-mono': font.id === 'mono'}">
+                                        {{ font.label | translate }}
+                                    </span>
+                                    <input type="radio" name="font" [value]="font.id"
+                                        [checked]="config().font === font.id" (change)="updateConfig('font', font.id)"
+                                        class="accent-blue-500">
+                                </label>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Button Style -->
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-5">
+                            <h4 class="text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider">{{
+                                'BOOKLET.button_style_label' | translate }}</h4>
+                            <div class="flex gap-2">
+                                @for(style of buttonStyles; track style.id) {
+                                <button (click)="updateConfig('buttonStyle', style.id)"
+                                    class="flex-1 p-2 border text-xs font-medium transition-all"
+                                    [class]="config().buttonStyle === style.id ? 'bg-blue-600 border-blue-400 text-white' : 'bg-black/20 border-white/10 text-slate-400 hover:bg-white/5'"
+                                    [ngClass]="{'rounded-md': style.id === 'rounded', 'rounded-none': style.id === 'sharp', 'rounded-full': style.id === 'pill'}">
+                                    {{ style.label | translate }}
+                                </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Preview (Sticky/Fixed) -->
+        <div
+            class="w-full md:w-1/2 h-full bg-black/80 flex flex-col items-center justify-center p-8 border-l border-white/10 relative overflow-hidden">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-10 pointer-events-none"
+                style="background-image: radial-gradient(#4b5563 1px, transparent 1px); background-size: 20px 20px;">
+            </div>
+
+            <div
+                class="w-full h-full max-w-[380px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[8px] border-slate-800 relative z-10">
+                <!-- Fake Phone Notch -->
+                <div
+                    class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-800 rounded-b-xl z-50 pointer-events-none">
+                </div>
+
+                <div class="w-full h-full overflow-y-auto bg-white custom-scrollbar relative">
+                    <app-welcome-booklet-preview class="block min-h-full"></app-welcome-booklet-preview>
+                </div>
+            </div>
+
+            <p class="absolute bottom-4 text-slate-500 text-xs font-mono">Live Preview</p>
+        </div>
+
+    </div>
+</div>

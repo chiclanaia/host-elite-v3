@@ -1,5 +1,6 @@
 @if(angleDetails(); as details) {
 <div class="space-y-8 relative">
+    <!-- DEBUG: ViewID: {{view().id}}, ActiveTool: {{activeToolId()}} -->
     <!-- Language Switcher -->
     <div class="absolute top-0 right-0 z-40 flex bg-white/10 backdrop-blur-md rounded-lg p-1 border border-white/10">
         <button (click)="translationService.setLanguage('en')"
@@ -206,11 +207,13 @@
     <!-- <div class="p-4 text-white">Debugging: Ai Prompts Disabled</div> -->
     } @else if (activeToolId() === 'visibility-audit') {
     <app-visibility-audit [propertyName]="view().propertyName!" (close)="closeTool()"></app-visibility-audit>
-    <!-- <div class="p-4 text-white">Debugging: Visibility Audit Disabled</div> -->
+    } @else if (activeToolId() === 'booklet') {
+    <app-booklet-tool [propertyName]="view().propertyName!"></app-booklet-tool>
 
 
     } @else {
-    <p class="text-white/80 bg-black/20 p-4 rounded-xl backdrop-blur-md inline-block">Section non trouvée.</p>
+    <p class="text-white/80 bg-black/20 p-4 rounded-xl backdrop-blur-md inline-block">Section non trouvée: '{{
+        activeToolId() }}' ({{ activeToolId()?.length }})</p>
     }
 </div>
 }

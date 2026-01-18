@@ -269,3 +269,4 @@ export class WelcomeBookletService implements OnDestroy {
         return newObj;
     }
 }
+ // forcing reload
