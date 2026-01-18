@@ -366,6 +366,14 @@ export const en = {
     'ANGLE.AssociatedTools': 'Associated Tools',
     'ANGLE.SaveToBooklet': 'Save to Welcome Booklet',
 
+    // Maturity Levels
+    'MATURITY.Low': 'Low Maturity',
+    'MATURITY.Medium': 'Intermediate Maturity',
+    'MATURITY.High': 'Excellent Maturity',
+    'MATURITY.LowDesc': 'Focus on basics (Bronze questions) to improve.',
+    'MATURITY.MediumDesc': 'Basics mastered. Aim for intermediate goals (Silver questions).',
+    'MATURITY.HighDesc': 'Excellent mastery. Keep optimizing with advanced goals (Gold questions).',
+
     // Tools
     'TOOL.microsite_name': 'Microsite Configuration',
     'TOOL.microsite_desc': 'Create and customize a showcase site for direct booking (WYSIWYG).',

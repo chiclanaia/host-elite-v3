@@ -130,4 +130,43 @@ export class OnboardingService {
         const answeredCount = questions.filter(q => answers.has(q.id) && answers.get(q.id)?.answer === true).length;
         return Math.round((answeredCount / questions.length) * 100);
     }
+
+    /**
+     * Get maturity level for an angle based on tiers
+     */
+    async getMaturityLevel(propertyId: string, angle: string): Promise<{ level: 'Low' | 'Medium' | 'High', color: string, description: string }> {
+        const questions = await this.getQuestionsByAngle(angle);
+        const answers = await this.getAnswers(propertyId, angle);
+
+        if (questions.length === 0) {
+            return { level: 'Low', color: 'bg-rose-500', description: 'MATURITY.LowDesc' };
+        }
+
+        const bronzeQuestions = questions.filter(q => q.level === 'Bronze');
+        const silverQuestions = questions.filter(q => q.level === 'Silver');
+        const goldQuestions = questions.filter(q => q.level === 'Gold');
+
+        const getCompletion = (qs: OnboardingQuestion[]) => {
+            if (qs.length === 0) return 100;
+            const answered = qs.filter(q => answers.has(q.id) && answers.get(q.id)?.answer === true).length;
+            return (answered / qs.length) * 100;
+        };
+
+        const bronzeComp = getCompletion(bronzeQuestions);
+        const silverComp = getCompletion(silverQuestions);
+        const goldComp = getCompletion(goldQuestions);
+
+        // Logic:
+        // High: Bronze >= 70% AND Silver >= 70% AND Gold >= 50%
+        // Medium: Bronze >= 70% AND Silver < 70%
+        // Low: Bronze < 70%
+
+        if (bronzeComp >= 70 && silverComp >= 70 && goldComp >= 50) {
+            return { level: 'High', color: 'bg-emerald-500', description: 'MATURITY.HighDesc' };
+        } else if (bronzeComp >= 70) {
+            return { level: 'Medium', color: 'bg-amber-500', description: 'MATURITY.MediumDesc' };
+        } else {
+            return { level: 'Low', color: 'bg-rose-500', description: 'MATURITY.LowDesc' };
+        }
+    }
 }

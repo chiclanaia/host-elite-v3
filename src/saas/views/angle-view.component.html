@@ -1,24 +1,7 @@
 @if(angleDetails(); as details) {
 <div class="space-y-8 relative">
     <!-- DEBUG: ViewID: {{view().id}}, ActiveTool: {{activeToolId()}} -->
-    <!-- Language Switcher -->
-    <div class="absolute top-0 right-0 z-40 flex bg-white/10 backdrop-blur-md rounded-lg p-1 border border-white/10">
-        <button (click)="translationService.setLanguage('en')"
-            [class.bg-white]="translationService.currentLang() === 'en'"
-            [class.text-slate-900]="translationService.currentLang() === 'en'"
-            [class.text-white]="translationService.currentLang() !== 'en'"
-            class="px-3 py-1 text-xs rounded transition-all font-bold hover:bg-white/20">EN</button>
-        <button (click)="translationService.setLanguage('fr')"
-            [class.bg-white]="translationService.currentLang() === 'fr'"
-            [class.text-slate-900]="translationService.currentLang() === 'fr'"
-            [class.text-white]="translationService.currentLang() !== 'fr'"
-            class="px-3 py-1 text-xs rounded transition-all font-bold hover:bg-white/20">FR</button>
-        <button (click)="translationService.setLanguage('es')"
-            [class.bg-white]="translationService.currentLang() === 'es'"
-            [class.text-slate-900]="translationService.currentLang() === 'es'"
-            [class.text-white]="translationService.currentLang() !== 'es'"
-            class="px-3 py-1 text-xs rounded transition-all font-bold hover:bg-white/20">ES</button>
-    </div>
+
     <!-- Notification -->
     @if (saveMessage()) {
     <div
@@ -40,51 +23,34 @@
             </div>
             <div class="p-8 flex-1 overflow-y-auto">
                 <form [formGroup]="form">
-                    @if(questionsByLevel(); as groupedQuestions) {
-                    @for (level of ['Bronze', 'Silver', 'Gold']; track level) {
-                    @if(groupedQuestions[level].length > 0) {
-                    <div class="mb-8 last:mb-0">
-                        <h3 class="text-lg font-bold mb-4 border-b border-white/10 pb-2 flex items-center" [class]="level === 'Bronze' ? 'text-amber-400' : 
-                                                         level === 'Silver' ? 'text-slate-300' : 
-                                                         'text-yellow-400'">
-                            <span class="mr-2 text-xl">
-                                @if(level==='Bronze') { 🥉 } @else if(level==='Silver') { 🥈 } @else { 🥇 }
-                            </span>
-                            Niveau {{ level }}
-                        </h3>
-                        <div class="space-y-5">
-                            @for(question of groupedQuestions[level]; track question.id) {
-                            <div>
-                                <div class="relative flex items-start">
-                                    <div class="flex h-6 items-center">
-                                        <input [id]="question.id" [formControlName]="question.id" type="checkbox"
-                                            class="h-5 w-5 rounded border-slate-500 bg-white/10 text-blue-500 focus:ring-blue-500 cursor-pointer">
-                                    </div>
-                                    <div class="ml-3 text-sm leading-6">
-                                        <label [for]="question.id"
-                                            class="font-medium text-slate-200 cursor-pointer hover:text-white transition-colors">{{
-                                            question.question_key | translate }}</label>
-                                    </div>
+                    <div class="space-y-5">
+                        @for(question of currentQuestions(); track question.id) {
+                        <div>
+                            <div class="relative flex items-start">
+                                <div class="flex h-6 items-center">
+                                    <input [id]="question.id" [formControlName]="question.id" type="checkbox"
+                                        class="h-5 w-5 rounded border-slate-500 bg-white/10 text-blue-500 focus:ring-blue-500 cursor-pointer">
                                 </div>
-                                @if (question.sub_question_config && form.get(question.id)?.value) {
-                                <div class="pl-8 mt-3 animate-fade-in">
-                                    <label [for]="question.sub_question_config.id"
-                                        class="block text-xs font-bold text-indigo-300 mb-1 uppercase tracking-wide">{{
-                                        question.sub_question_config.label_key | translate }}</label>
-                                    <input [type]="question.sub_question_config.type"
-                                        [id]="question.sub_question_config.id"
-                                        [formControlName]="question.sub_question_config.id"
-                                        [placeholder]="question.sub_question_config.placeholder || ''"
-                                        class="block w-full text-sm rounded-lg border-white/20 bg-black/30 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-indigo-500 p-2.5 shadow-inner">
+                                <div class="ml-3 text-sm leading-6">
+                                    <label [for]="question.id"
+                                        class="font-medium text-slate-200 cursor-pointer hover:text-white transition-colors">{{
+                                        question.question_key | translate }}</label>
                                 </div>
-                                }
+                            </div>
+                            @if (question.sub_question_config && form.get(question.id)?.value) {
+                            <div class="pl-8 mt-3 animate-fade-in">
+                                <label [for]="question.sub_question_config.id"
+                                    class="block text-xs font-bold text-indigo-300 mb-1 uppercase tracking-wide">{{
+                                    question.sub_question_config.label_key | translate }}</label>
+                                <input [type]="question.sub_question_config.type" [id]="question.sub_question_config.id"
+                                    [formControlName]="question.sub_question_config.id"
+                                    [placeholder]="question.sub_question_config.placeholder || ''"
+                                    class="block w-full text-sm rounded-lg border-white/20 bg-black/30 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-indigo-500 p-2.5 shadow-inner">
                             </div>
                             }
                         </div>
+                        }
                     </div>
-                    }
-                    }
-                    }
                 </form>
             </div>
             <div class="p-6 border-t border-white/10 flex justify-end space-x-4 flex-shrink-0 bg-black/20">
@@ -102,8 +68,20 @@
     <!-- STANDARD VIEW: List of Tools -->
     <div>
         <!-- Titre Blanc Eclatant -->
-        <h1 class="text-4xl font-extrabold text-white drop-shadow-lg tracking-tight">{{ details.title | translate }}
-        </h1>
+        <div class="flex items-center justify-between">
+            <h1 class="text-4xl font-extrabold text-white drop-shadow-lg tracking-tight">{{ details.title | translate }}
+            </h1>
+            <!-- Maturity Badge -->
+            @if(maturityInfo(); as info) {
+            <div class="flex items-center space-x-2 px-4 py-2 rounded-full border border-white/20 backdrop-blur-md shadow-lg"
+                [class.bg-rose-500/20]="info.level === 'Low'" [class.bg-amber-500/20]="info.level === 'Medium'"
+                [class.bg-emerald-500/20]="info.level === 'High'">
+                <div class="w-2.5 h-2.5 rounded-full animate-pulse" [class]="info.color"></div>
+                <span class="text-xs font-bold text-white uppercase tracking-widest">{{ 'MATURITY.' + info.level |
+                    translate }}</span>
+            </div>
+            }
+        </div>
         <!-- Description sur fond ultra-léger -->
         <p
             class="mt-3 text-slate-100 font-medium bg-white/10 inline-block px-4 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-sm leading-relaxed">

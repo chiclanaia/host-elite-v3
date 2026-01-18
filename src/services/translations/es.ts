@@ -365,7 +365,15 @@ export const es = {
     'ANGLE.AuditDescription': 'Evalúe su dominio de este ángulo respondiendo a algunas preguntas.',
     'ANGLE.LaunchAudit': 'Lanzar Auditoría',
     'ANGLE.AssociatedTools': 'Herramientas Asociadas',
-    'ANGLE.SaveToBooklet': 'Guardar en el Folleto',
+    'ANGLE.SaveToBooklet': 'Guardar en la Guía de Bienvenida',
+
+    // Maturity Levels
+    'MATURITY.Low': 'Madurez Baja',
+    'MATURITY.Medium': 'Madurez Intermedia',
+    'MATURITY.High': 'Nivel Excelente',
+    'MATURITY.LowDesc': 'Concéntrese en lo básico (preguntas Bronze) para mejorar.',
+    'MATURITY.MediumDesc': 'Conceptos básicos dominados. Apunte a metas intermedias (preguntas Silver).',
+    'MATURITY.HighDesc': 'Excelente dominio. Siga optimizando con metas avanzadas (preguntas Gold).',
 
     // Tools
     'TOOL.microsite_name': 'Configuración de Microsite',

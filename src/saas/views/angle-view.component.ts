@@ -92,6 +92,7 @@ export class AngleViewComponent implements OnInit {
     // Dynamic Content Signals
     propertyDetails = signal<any>(null);
     bookletContent = signal<any>(null);
+    maturityInfo = signal<{ level: 'Low' | 'Medium' | 'High', color: string, description: string } | null>(null);
 
     // Guide Modal State
     // Guide Modal State - Handled by renderer now
@@ -235,6 +236,7 @@ export class AngleViewComponent implements OnInit {
                 }
 
                 console.log('[AngleView] Data load complete.');
+                this.loadMaturityLevel();
             } catch (e) {
                 console.error("Error loading property data:", e);
             }
@@ -313,21 +315,6 @@ export class AngleViewComponent implements OnInit {
 
     currentQuestions = signal<OnboardingQuestion[]>([]);
 
-    questionsByLevel = computed(() => {
-        const questions = this.currentQuestions();
-        if (!questions) return null;
-
-        const grouped = questions.reduce((acc, q) => {
-            (acc[q.level] = acc[q.level] || []).push(q);
-            return acc;
-        }, {} as Record<QuestionLevel, OnboardingQuestion[]>);
-
-        return {
-            Bronze: grouped.Bronze || [],
-            Silver: grouped.Silver || [],
-            Gold: grouped.Gold || [],
-        };
-    });
 
     async openOnboarding(): Promise<void> {
         try {
@@ -394,6 +381,7 @@ export class AngleViewComponent implements OnInit {
                 });
 
                 await this.onboardingService.saveAnswers(propertyId, answersToSave);
+                await this.loadMaturityLevel(); // Refresh maturity
 
                 this.saveMessage.set("Audit enregistré avec succès !");
                 setTimeout(() => this.saveMessage.set(null), 3000);
@@ -402,6 +390,15 @@ export class AngleViewComponent implements OnInit {
                 console.error('Error saving onboarding:', error);
                 alert("Erreur lors de l'enregistrement de l'audit.");
             }
+        }
+    }
+
+    async loadMaturityLevel() {
+        const propertyId = this.currentPropertyId();
+        const angle = this.view().id;
+        if (propertyId) {
+            const info = await this.onboardingService.getMaturityLevel(propertyId, angle);
+            this.maturityInfo.set(info);
         }
     }
 }

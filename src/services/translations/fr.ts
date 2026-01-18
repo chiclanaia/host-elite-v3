@@ -365,7 +365,15 @@ export const fr = {
     'ANGLE.AuditDescription': 'Évaluez votre maîtrise de cet angle en répondant à quelques questions.',
     'ANGLE.LaunchAudit': 'Lancer l\'Audit',
     'ANGLE.AssociatedTools': 'Outils Associés',
-    'ANGLE.SaveToBooklet': 'Sauvegarder dans le Livret d\'Accueil',
+    'ANGLE.SaveToBooklet': 'Enregistrer dans le Livret d’accueil',
+
+    // Maturity Levels
+    'MATURITY.Low': 'Maturité Faible',
+    'MATURITY.Medium': 'Maturité Intermédiaire',
+    'MATURITY.High': 'Excellent Niveau',
+    'MATURITY.LowDesc': 'Concentrez-vous sur les bases (questions Bronze) pour progresser.',
+    'MATURITY.MediumDesc': 'Les bases sont acquises. Visez les objectifs intermédiaires (questions Silver).',
+    'MATURITY.HighDesc': 'Excellente maîtrise. Continuez à optimiser avec les objectifs avancés (questions Gold).',
 
     // Tools
     'TOOL.microsite_name': 'Configuration de Microsite',
