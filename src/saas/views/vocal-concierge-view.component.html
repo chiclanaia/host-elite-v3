@@ -1,112 +1,134 @@
-
 <div class="space-y-2">
-  <h1 class="text-3xl font-bold text-slate-800">Concierge Vocal 6 Étoiles</h1>
-  <p class="text-slate-500">Posez vos questions à notre assistant IA en temps réel pour {{ propertyName() }}.</p>
+    <h1 class="text-3xl font-bold text-white">Concierge Vocal 6 Étoiles</h1>
+    <p class="text-slate-200">Posez vos questions à notre assistant IA en temps réel pour {{ propertyName() }}.</p>
 </div>
 
 @if (hasAccess()) {
-    <div class="mt-8 bg-white border border-slate-200 rounded-lg p-6 flex flex-col h-[70vh] max-h-[800px] animate-fade-in">
-        <!-- Conversation Area -->
-        <div class="flex-1 overflow-y-auto pr-4 space-y-4">
-            @if(conversation().length === 0) {
-                <div class="flex flex-col items-center justify-center h-full text-center">
-                    <div class="w-24 h-24 flex items-center justify-center rounded-full bg-slate-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 text-slate-500">
-                        <path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
-                        <path d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.75 6.75 0 1 1-13.5 0v-1.5A.75.75 0 0 1 6 10.5Z" />
-                        </svg>
-                    </div>
-                    <p class="mt-6 text-slate-500 max-w-sm">
-                        Je connais tous les détails de votre propriété (Wi-Fi, machines, règles...). 
-                        Cliquez sur le micro pour me tester.
-                    </p>
-                </div>
-            } @else {
-                @for(message of conversation(); track $index) {
-                    <div class="flex" [class.justify-end]="message.author === 'user'" [class.justify-start]="message.author === 'ai'">
-                        @if(message.author === 'ai') {
-                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center mr-3 flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-slate-500"><path d="M10 3a.75.75 0 0 1 .75.75v.51a4.493 4.493 0 0 1 2.368 3.535 2.5 2.5 0 1 1-.5-4.95A.75.75 0 0 1 13.25 3Z" /><path d="M15.5 4.002a2.5 2.5 0 0 1 2.25 2.25c0 1.503-1.03 2.72-2.388 2.943a.75.75 0 0 1-.862-.613A4.493 4.493 0 0 1 10.75 4.26v-.51a.75.75 0 0 1 .75-.75 4.5 4.5 0 0 1 4.5 4.5v.25a.75.75 0 0 1-1.5 0V8.5a3 3 0 0 0-3-3V5.25a.75.75 0 0 1 .75-.75 2.5 2.5 0 0 1 2.5 2.5c0 .393-.09.764-.248 1.09a.75.75 0 0 1-1.252-.823 1 1 0 0 0-.9-1.417h-.001a1 1 0 0 0-.998.908.75.75 0 0 1-1.49.184A2.5 2.5 0 0 1 7.5 8.5v.25a.75.75 0 0 1-1.5 0V8.5a4.5 4.5 0 0 1 4.5-4.5Z" /></svg>
-                            </div>
-                        }
-                        <div 
-                            class="max-w-md p-3 rounded-lg"
-                            [class.bg-blue-600]="message.author === 'user'"
-                            [class.text-white]="message.author === 'user'"
-                            [class.bg-slate-100]="message.author === 'ai'"
-                            [class.text-slate-800]="message.author === 'ai'">
-                            <p class="text-sm whitespace-pre-wrap">{{ message.text }}</p>
-                        </div>
-                    </div>
-                }
-            }
-        </div>
-
-        <!-- Control Area -->
-        <div class="pt-6 border-t border-slate-200 flex flex-col items-center justify-center">
-            @if (error()) {
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded-md mb-4 text-sm w-full" role="alert">
-                    <p class="font-bold">Erreur</p>
-                    <p>{{ error() }}</p>
-                </div>
-            }
-
-            <button (click)="toggleSession()" class="relative w-20 h-20 rounded-full flex items-center justify-center transition-colors duration-300"
-                [disabled]="status() === 'processing'"
-                [class.bg-blue-600]="status() === 'idle'"
-                [class.hover:bg-blue-700]="status() === 'idle'"
-                [class.bg-red-600]="status() === 'listening'"
-                [class.hover:bg-red-700]="status() === 'listening'"
-                [class.bg-slate-300]="status() === 'processing'"
-                [class.cursor-not-allowed]="status() === 'processing'"
-            >
-                @if(status() === 'listening') {
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                }
-                
-                @if(status() === 'processing') {
-                    <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                } @else {
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-9 h-9 text-white">
+<div
+    class="mt-8 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl p-6 flex flex-col h-[70vh] max-h-[800px] animate-fade-in shadow-2xl">
+    <!-- Conversation Area -->
+    <div class="flex-1 overflow-y-auto pr-4 space-y-4">
+        @if(conversation().length === 0) {
+        <div class="flex flex-col items-center justify-center h-full text-center">
+            <div class="w-24 h-24 flex items-center justify-center rounded-full bg-slate-100">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                    class="w-12 h-12 text-slate-500">
                     <path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
-                    <path d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.75 6.75 0 1 1-13.5 0v-1.5A.75.75 0 0 1 6 10.5Z" />
-                    </svg>
-                }
-            </button>
-
-            <p class="mt-4 text-sm font-semibold text-slate-500">
-                @switch (status()) {
-                    @case ('idle') { <span>Cliquez sur le micro pour parler</span> }
-                    @case ('listening') { <span>Je vous écoute...</span> }
-                    @case ('processing') { <span>Analyse en cours...</span> }
-                    @case ('error') { <span class="text-red-500">Une erreur est survenue</span> }
-                }
+                    <path
+                        d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.75 6.75 0 1 1-13.5 0v-1.5A.75.75 0 0 1 6 10.5Z" />
+                </svg>
+            </div>
+            <p class="mt-6 text-slate-200 max-w-sm">
+                Je connais tous les détails de votre propriété (Wi-Fi, machines, règles...).
+                Cliquez sur le micro pour me tester.
             </p>
         </div>
-    </div>
-} @else {
-    <!-- Locked State for Bronze/Freemium -->
-    <div class="mt-8 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl p-10 flex flex-col items-center justify-center text-center animate-fade-in">
-        <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mb-4 text-slate-400">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clip-rule="evenodd" /></svg>
+        } @else {
+        @for(message of conversation(); track $index) {
+        <div class="flex" [class.justify-end]="message.author === 'user'"
+            [class.justify-start]="message.author === 'ai'">
+            @if(message.author === 'ai') {
+            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center mr-3 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                    class="w-5 h-5 text-slate-500">
+                    <path
+                        d="M10 3a.75.75 0 0 1 .75.75v.51a4.493 4.493 0 0 1 2.368 3.535 2.5 2.5 0 1 1-.5-4.95A.75.75 0 0 1 13.25 3Z" />
+                    <path
+                        d="M15.5 4.002a2.5 2.5 0 0 1 2.25 2.25c0 1.503-1.03 2.72-2.388 2.943a.75.75 0 0 1-.862-.613A4.493 4.493 0 0 1 10.75 4.26v-.51a.75.75 0 0 1 .75-.75 4.5 4.5 0 0 1 4.5 4.5v.25a.75.75 0 0 1-1.5 0V8.5a3 3 0 0 0-3-3V5.25a.75.75 0 0 1 .75-.75 2.5 2.5 0 0 1 2.5 2.5c0 .393-.09.764-.248 1.09a.75.75 0 0 1-1.252-.823 1 1 0 0 0-.9-1.417h-.001a1 1 0 0 0-.998.908.75.75 0 0 1-1.49.184A2.5 2.5 0 0 1 7.5 8.5v.25a.75.75 0 0 1-1.5 0V8.5a4.5 4.5 0 0 1 4.5-4.5Z" />
+                </svg>
+            </div>
+            }
+            <div class="max-w-md p-3 rounded-lg" [class.bg-blue-600]="message.author === 'user'"
+                [class.text-white]="message.author === 'user'" [class.bg-slate-100]="message.author === 'ai'"
+                [class.text-slate-800]="message.author === 'ai'">
+                <p class="text-sm whitespace-pre-wrap">{{ message.text }}</p>
+            </div>
         </div>
-        <h3 class="text-xl font-bold text-slate-800 mb-2">Fonctionnalité Premium</h3>
-        <p class="text-slate-600 max-w-md mb-6">Le Concierge Vocal est une IA avancée capable de répondre aux questions de vos invités en temps réel. Cette fonctionnalité est réservée aux membres Silver et Gold.</p>
-        <button disabled class="bg-slate-300 text-slate-600 px-6 py-3 rounded-lg font-bold cursor-not-allowed flex items-center">
-            Disponible avec le Plan Silver
-        </button>
+        }
+        }
     </div>
+
+    <!-- Control Area -->
+    <div class="pt-6 border-t border-white/20 flex flex-col items-center justify-center">
+        @if (error()) {
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded-md mb-4 text-sm w-full" role="alert">
+            <p class="font-bold">Erreur</p>
+            <p>{{ error() }}</p>
+        </div>
+        }
+
+        <button (click)="toggleSession()"
+            class="relative w-20 h-20 rounded-full flex items-center justify-center transition-colors duration-300"
+            [disabled]="status() === 'processing'" [class.bg-blue-600]="status() === 'idle'"
+            [class.hover:bg-blue-700]="status() === 'idle'" [class.bg-red-600]="status() === 'listening'"
+            [class.hover:bg-red-700]="status() === 'listening'" [class.bg-slate-300]="status() === 'processing'"
+            [class.cursor-not-allowed]="status() === 'processing'">
+            @if(status() === 'listening') {
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            }
+
+            @if(status() === 'processing') {
+            <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+            } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-9 h-9 text-white">
+                <path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
+                <path
+                    d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.75 6.75 0 1 1-13.5 0v-1.5A.75.75 0 0 1 6 10.5Z" />
+            </svg>
+            }
+        </button>
+
+        <p class="mt-4 text-sm font-semibold text-slate-200">
+            @switch (status()) {
+            @case ('idle') { <span>Cliquez sur le micro pour parler</span> }
+            @case ('listening') { <span>Je vous écoute...</span> }
+            @case ('processing') { <span>Analyse en cours...</span> }
+            @case ('error') { <span class="text-red-500">Une erreur est survenue</span> }
+            }
+        </p>
+    </div>
+</div>
+} @else {
+<!-- Locked State for Bronze/Freemium -->
+<div
+    class="mt-8 bg-white/10 backdrop-blur-2xl border-2 border-dashed border-white/30 rounded-2xl p-10 flex flex-col items-center justify-center text-center animate-fade-in shadow-2xl">
+    <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mb-4 text-slate-400">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8">
+            <path fill-rule="evenodd"
+                d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z"
+                clip-rule="evenodd" />
+        </svg>
+    </div>
+    <h3 class="text-xl font-bold text-white mb-2">Fonctionnalité Premium</h3>
+    <p class="text-slate-200 max-w-md mb-6">Le Concierge Vocal est une IA avancée capable de répondre aux questions de
+        vos invités en temps réel. Cette fonctionnalité est réservée aux membres Silver et Gold.</p>
+    <button disabled
+        class="bg-slate-300 text-slate-600 px-6 py-3 rounded-lg font-bold cursor-not-allowed flex items-center">
+        Disponible avec le Plan Silver
+    </button>
+</div>
 }
 
 <style>
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-in-out forwards;
-}
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-in-out forwards;
+    }
 </style>

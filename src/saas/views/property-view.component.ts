@@ -12,8 +12,8 @@ import { PropertyDashboardViewComponent } from './property-dashboard-view.compon
   template: `
     <div class="space-y-6">
       <div>
-        <h1 class="text-3xl font-bold text-slate-800">Gestion : {{ view().title }}</h1>
-        <p class="mt-2 text-slate-500">Suivez les performances et indicateurs clés de votre propriété.</p>
+        <h1 class="text-3xl font-bold text-white">Gestion : {{ view().title }}</h1>
+        <p class="mt-2 text-slate-200">Suivez les performances et indicateurs clés de votre propriété.</p>
       </div>
 
       <!-- Content -->

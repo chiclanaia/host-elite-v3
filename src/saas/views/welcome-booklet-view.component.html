@@ -1,9 +1,9 @@
-<div class="flex h-full flex-col bg-white">
+<div class="flex h-full flex-col bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl">
     <!-- Header / Tabs -->
-    <div class="flex items-center justify-between border-b px-6 py-3 bg-gray-50/50">
+    <div class="flex items-center justify-between border-b border-white/20 px-6 py-3 bg-transparent">
         <div class="flex space-x-6">
             <button (click)="setActiveTab('edit')"
-                [class]="activeTab() === 'edit' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                [class]="activeTab() === 'edit' ? 'border-blue-400 text-blue-400' : 'border-transparent text-white/70 hover:text-white hover:border-white/30'"
                 class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
                 <span class="flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
@@ -18,7 +18,7 @@
 
             <!-- Annonce -->
             <button (click)="setActiveTab('listing')"
-                [class]="activeTab() === 'listing' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                [class]="activeTab() === 'listing' ? 'border-blue-400 text-blue-400' : 'border-transparent text-white/70 hover:text-white hover:border-white/30'"
                 class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
                 <span class="flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
@@ -31,7 +31,7 @@
 
             <!-- Welcome Book -->
             <button (click)="setActiveTab('booklet')"
-                [class]="activeTab() === 'booklet' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                [class]="activeTab() === 'booklet' ? 'border-blue-400 text-blue-400' : 'border-transparent text-white/70 hover:text-white hover:border-white/30'"
                 class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
                 <span class="flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
@@ -43,7 +43,7 @@
             </button>
 
             <button (click)="setActiveTab('microsite')"
-                [class]="activeTab() === 'microsite' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                [class]="activeTab() === 'microsite' ? 'border-blue-400 text-blue-400' : 'border-transparent text-white/70 hover:text-white hover:border-white/30'"
                 class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
                 <span class="flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
