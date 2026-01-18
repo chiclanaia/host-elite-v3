@@ -614,6 +614,36 @@ export class AngleViewComponent implements OnInit {
     // Debug logging state
     debugLogs = signal<string[]>(['Debug System Ready']);
 
+
+
+    async generateBookletContentWithAI() {
+        if (!this.hasAiAccess() || !this.view().propertyName) return;
+
+        this.isAiDesigning.set(true);
+        try {
+            const propName = this.view().propertyName!;
+            const propData = await this.repository.getPropertyByName(propName);
+            const address = propData?.address || 'France'; // Use address for local context
+
+            // Pass current structure to fill (only empty fields or update all?)
+            // We pass the current structure so AI knows the schema, but we might want to prioritize filling empty ones.
+            // geminiService.autoFillBooklet expects an empty structure to fill.
+
+            const filledContent = await this.geminiService.autoFillBooklet(address, this.bookletContent());
+
+            if (filledContent) {
+                this.bookletContent.set(filledContent);
+                this.saveMessage.set("Contenu généré par l'IA !");
+                setTimeout(() => this.saveMessage.set(null), 3000);
+            }
+        } catch (e) {
+            console.error("AI Booklet Error:", e);
+            alert("Erreur lors de la génération du contenu.");
+        } finally {
+            this.isAiDesigning.set(false);
+        }
+    }
+
     private logToUi(message: string, data?: any) {
         const timestamp = new Date().toLocaleTimeString();
         const fullMessage = `[${timestamp}] ${message} ${data ? JSON.stringify(data) : ''}`;
