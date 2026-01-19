@@ -194,6 +194,8 @@
     } @else if (activeToolId() === 'delegation-sim') {
     <app-delegation-simulator [userPlan]="userPlan()" [propertyDetails]="propertyDetails()"
         (close)="closeTool()"></app-delegation-simulator>
+    } @else if (activeToolId() === 'calendar-sync') {
+    <app-calendar-tool [propertyDetails]="propertyDetails()" (close)="closeTool()"></app-calendar-tool>
     } @else {
     <p class="text-white/80 bg-black/20 p-4 rounded-xl backdrop-blur-md inline-block">{{ 'COMMON.SectionNotFound' |
         translate }}: '{{

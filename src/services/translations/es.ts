@@ -452,6 +452,15 @@ export const es = {
     'DELEGATION.ConciergeFee': 'Comisión Conserje',
     'DELEGATION.CleaningCost': 'Costo Limpieza',
 
+    // CALENDAR TOOL
+    'TOOL.calendar_name': 'Sincronización de Calendarios',
+    'TOOL.calendar_desc': 'Centralice sus calendarios de todas las plataformas.',
+    'CALENDAR.Sources': 'Calendarios (Directo & OTA)',
+    'CALENDAR.NoSources': 'Ningún calendario añadido.',
+    'CALENDAR.AddSource': 'Añadir Fuente (iCal)',
+    'CALENDAR.SourceNamePlaceholder': 'Nombre (ej: Airbnb)',
+    'CALENDAR.AddButton': 'Añadir Calendario',
+
     'DELEGATION.Clauses.Title': 'Cláusulas Contractuales Esenciales',
     'DELEGATION.Clauses.Intro': 'Añada estos artículos a su contrato para protegerse.',
 

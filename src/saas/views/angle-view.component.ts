@@ -15,7 +15,9 @@ import { BookletToolComponent } from '../features/booklet-tool/booklet-tool.comp
 import { AiMessageAssistantComponent } from '../features/ai-message-assistant/ai-message-assistant.component';
 import { ChecklistsToolComponent } from '../features/checklists/checklists-tool.component';
 import { DelegationSimulatorComponent } from '../features/delegation/delegation-simulator.component';
+import { CalendarToolComponent } from '../features/calendar-tool/components/calendar-tool.component';
 import { TranslationService } from '../../services/translation.service';
+
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
 import { OnboardingService } from '../../services/onboarding.service';
@@ -67,7 +69,9 @@ interface OnboardingQuestion {
         AiMessageAssistantComponent,
         ChecklistsToolComponent,
         MicrositeContainerComponent,
-        DelegationSimulatorComponent
+        MicrositeContainerComponent,
+        DelegationSimulatorComponent,
+        CalendarToolComponent
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './angle-view.component.html',
