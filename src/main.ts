@@ -11,4 +11,4 @@ bootstrapApplication(AppComponent, {
     provideHttpClient()
   ],
 }).catch(err => console.error(err));
- // rebuild
+// Force rebuild trigger

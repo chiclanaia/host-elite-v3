@@ -1,0 +1,255 @@
+<div class="h-full flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+
+    <!-- Header -->
+    <div class="shrink-0 flex items-center justify-between p-6 border-b border-white/10 no-print">
+        <div>
+            <h2 class="text-2xl font-bold flex items-center gap-3">
+                <span class="text-3xl">📋</span>
+                {{ 'TOOL.checklists_name' | translate }}
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">{{ 'TOOL.checklists_desc' | translate }}</p>
+        </div>
+        <button (click)="close.emit()" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="flex-1 flex items-center justify-center">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37] mx-auto mb-4"></div>
+            <p class="text-slate-400">{{ 'CHECKLIST.Loading' | translate }}</p>
+        </div>
+    </div>
+    } @else {
+    <!-- Main Content -->
+    <div class="flex-1 min-h-0 flex gap-6 p-6">
+
+        <!-- Left: Checklist Selection -->
+        <div
+            class="w-80 shrink-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col no-print">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4">{{ 'CHECKLIST.Choose' | translate }}
+            </h3>
+
+            <div class="flex-1 overflow-y-auto custom-scrollbar space-y-2">
+                @for (checklist of filteredChecklists(); track checklist.id) {
+                <button (click)="selectChecklist(checklist)"
+                    class="w-full text-left p-4 rounded-xl border transition-all group relative overflow-hidden"
+                    [class]="selectedChecklist()?.id === checklist.id
+                                    ? 'bg-white/10 border-[#D4AF37]/50 shadow-lg'
+                                    : 'border-white/5 hover:bg-white/5 hover:border-white/10'"
+                    [class.opacity-50]="!isTierAllowed(checklist.tier)">
+
+                    @if (!isTierAllowed(checklist.tier)) {
+                    <div class="absolute top-2 right-2 z-10">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    }
+
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="w-10 h-10 shrink-0 bg-white/10 rounded-lg flex items-center justify-center border border-white/10 group-hover:border-[#D4AF37]/30 transition-colors">
+                            <svg class="w-6 h-6 text-slate-300 group-hover:text-[#D4AF37] transition-colors" fill="none"
+                                stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                                [innerHTML]="getChecklistIcon(checklist.icon)">
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider mb-1">
+                                {{ 'CHECKLIST.Level' | translate }} {{ getTierLevelLabel(checklist.tier) }}
+                            </h4>
+                            <h4 class="text-sm font-semibold text-white mb-1 truncate">
+                                {{ checklist.name_key | translate }}
+                            </h4>
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="text-[10px] px-2 py-0.5 rounded border {{ getTierBadgeClass(checklist.tier) }}">
+                                    {{ 'COMMON.Tier.' + checklist.tier | translate }}
+                                </span>
+                                <span class="text-[10px] text-slate-500">
+                                    {{ getItemCount(checklist) }} {{ 'CHECKLIST.Tasks' | translate }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </button>
+                }
+            </div>
+        </div>
+
+        <!-- Right: Checklist Display -->
+        <div
+            class="flex-1 min-w-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col overflow-hidden">
+            @if (selectedChecklist(); as checklist) {
+            <!-- Checklist Header -->
+            <div class="shrink-0 p-6 border-b border-white/10 no-print">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="w-20 h-20 bg-[#D4AF37]/10 rounded-2xl flex items-center justify-center border border-[#D4AF37]/20 shadow-inner">
+                            <svg class="w-12 h-12 text-[#D4AF37]" fill="none" stroke="currentColor" stroke-width="1"
+                                viewBox="0 0 24 24" [innerHTML]="getChecklistIcon(checklist.icon)">
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-2">
+                                {{ checklist.name_key | translate }}
+                            </h3>
+                            <p class="text-slate-400 mb-3">
+                                {{ checklist.description_key | translate }}
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <span
+                                    class="text-xs px-3 py-1 rounded-full border {{ getTierBadgeClass(checklist.tier) }}">
+                                    {{ 'COMMON.Tier.' + checklist.tier | translate }}
+                                </span>
+                                <span class="text-xs text-slate-400">
+                                    {{ getItemCount(checklist) }} {{ 'CHECKLIST.Tasks' | translate }}
+                                </span>
+                                <span class="text-xs text-slate-400">
+                                    ⏱️ {{ getTotalTime(checklist) }} {{ 'CHECKLIST.Minutes' | translate }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-2">
+                        <button (click)="printChecklist()"
+                            class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all flex items-center gap-2 text-sm font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                                </path>
+                            </svg>
+                            {{ 'CHECKLIST.Print' | translate }}
+                        </button>
+                        <button (click)="downloadPDF()"
+                            class="px-4 py-2 bg-[#D4AF37] hover:bg-[#F39C12] text-slate-900 rounded-lg transition-all flex items-center gap-2 text-sm font-bold">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                            {{ 'CHECKLIST.DownloadPDF' | translate }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Print Header (only visible when printing) -->
+            <div class="hidden print-only p-8 border-b-2 border-slate-200 mb-8">
+                <div class="flex items-center gap-6 mb-4">
+                    <div
+                        class="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200">
+                        <svg class="w-10 h-10 text-slate-800" fill="none" stroke="currentColor" stroke-width="1.5"
+                            viewBox="0 0 24 24" [innerHTML]="getChecklistIcon(checklist.icon)">
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-serif font-bold text-slate-900 leading-tight">
+                            {{ checklist.name_key | translate }}
+                        </h1>
+                        <p class="text-slate-500 italic mt-1">{{ checklist.description_key | translate }}</p>
+                    </div>
+                </div>
+                <div
+                    class="flex gap-6 pt-4 border-t border-slate-100 text-sm text-slate-600 font-medium uppercase tracking-widest">
+                    <span>{{ getItemCount(checklist) }} {{ 'CHECKLIST.Tasks' | translate }}</span>
+                    <span>⏱️ {{ getTotalTime(checklist) }} {{ 'CHECKLIST.Minutes' | translate }}</span>
+                    <span class="ml-auto text-slate-400 font-light">HÔTE D'EXCEPTION - CHECKLIST DE QUALITÉ</span>
+                </div>
+            </div>
+
+            <!-- Checklist Content (With Lock Overlay) -->
+            <div class="flex-1 min-h-0 relative flex flex-col">
+                @if (!isTierAllowed(checklist.tier)) {
+                <div
+                    class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-sm p-8 text-center no-print">
+                    <div
+                        class="w-20 h-20 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mb-6 border border-[#D4AF37]/20">
+                        <svg class="w-10 h-10 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-2">{{ 'CHECKLIST.PremiumLevel' | translate }}</h4>
+                    <p class="text-slate-400 max-w-sm mb-6">{{ 'CHECKLIST.UpgradeToUnlock' | translate }}</p>
+                    <button (click)="close.emit()"
+                        class="px-6 py-2 bg-[#D4AF37] text-slate-900 font-bold rounded-lg hover:bg-amber-400 transition-all">
+                        {{ 'COMMON.Unlock' | translate }}
+                    </button>
+                </div>
+                }
+
+                <!-- Items Container (Disabled UI if locked) -->
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-6"
+                    [class.pointer-events-none]="!isTierAllowed(checklist.tier)">
+                    @for (section of getSections(checklist); track section) {
+                    <div class="mb-6 last:mb-0">
+                        <h4
+                            class="text-xs font-bold text-[#D4AF37] uppercase tracking-[0.2em] mb-4 flex items-center gap-3 opacity-80">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                [innerHTML]="getSectionIcon(section)">
+                            </svg>
+                            {{ 'CHECKLIST.Section.' + section.toUpperCase() | translate }}
+                        </h4>
+
+                        <div class="space-y-2">
+                            @for (item of getItemsForSection(checklist, section); track item.id) {
+                            <div
+                                class="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all group print:bg-white print:border print:border-gray-300">
+                                <!-- Checkbox -->
+                                <div class="shrink-0 mt-0.5">
+                                    <div
+                                        class="w-5 h-5 rounded border-2 border-white/30 group-hover:border-[#D4AF37] transition-colors print:border-gray-400">
+                                    </div>
+                                </div>
+
+                                <!-- Item Content -->
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-white font-medium print:text-gray-900"
+                                        [class.text-[#D4AF37]]="item.is_critical">
+                                        {{ item.item_text_key | translate }}
+                                        @if (item.is_critical) {
+                                        <span class="text-xs text-red-400 ml-2 print:text-red-600">⚠️ {{
+                                            'CHECKLIST.Critical' | translate }}</span>
+                                        }
+                                    </p>
+                                    @if (item.estimated_minutes) {
+                                    <p class="text-xs text-slate-500 mt-1 print:text-gray-600">
+                                        ⏱️ {{ item.estimated_minutes }} {{ 'CHECKLIST.MinutesShort' | translate }}
+                                    </p>
+                                    }
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            } @else {
+            <div class="flex-1 flex items-center justify-center">
+                <div class="text-center p-12 bg-white/5 rounded-3xl border border-white/5 border-dashed">
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" stroke-width="1"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                    <p class="text-slate-400 font-medium">{{ 'CHECKLIST.SelectToStart' | translate }}</p>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+</div>

@@ -17,7 +17,8 @@
         <div class="bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col border border-white/20"
             (click)="$event.stopPropagation()">
             <div class="p-6 border-b border-white/10 flex justify-between items-center flex-shrink-0">
-                <h2 class="text-xl font-bold text-white">Évaluation : {{ details.title }}</h2>
+                <h2 class="text-xl font-bold text-white">{{ 'COMMON.Evaluation' | translate }} : {{ details.title |
+                    translate }}</h2>
                 <button (click)="closeOnboarding()"
                     class="text-3xl font-light text-slate-400 hover:text-white transition-colors">&times;</button>
             </div>
@@ -55,10 +56,11 @@
             </div>
             <div class="p-6 border-t border-white/10 flex justify-end space-x-4 flex-shrink-0 bg-black/20">
                 <button (click)="closeOnboarding()"
-                    class="px-6 py-2.5 text-sm font-bold text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent">Annuler</button>
-                <button (click)="saveOnboarding()"
-                    class="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-500 shadow-lg shadow-blue-900/50 transition-all border border-blue-400/50">Enregistrer
-                    les progrès</button>
+                    class="px-6 py-2.5 text-sm font-bold text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent">{{
+                    'COMMON.Cancel' | translate }}</button>
+                <button (click)="saveOnboarding()" class="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-500 shadow-lg
+                shadow-blue-900/50 transition-all border border-blue-400/50">{{ 'COMMON.SaveProgress' | translate
+                    }}</button>
             </div>
         </div>
     </div>
@@ -159,9 +161,9 @@
                                 ? 'bg-white/5 text-slate-400 border-white/10 cursor-not-allowed hover:bg-white/5' 
                                 : 'bg-white/20 text-white border-white/30 hover:bg-white hover:text-slate-900 hover:border-white'">
                 @if (isToolLocked(tool.requiredPlan)) {
-                <span>Débloquer</span>
+                <span>{{ 'COMMON.Unlock' | translate }}</span>
                 } @else {
-                <span>Ouvrir l'outil</span>
+                <span>{{ 'COMMON.OpenTool' | translate }}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
                     <path fill-rule="evenodd"
                         d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
@@ -187,8 +189,11 @@
 
     } @else if (activeToolId() === 'ai-assistant') {
     <app-ai-message-assistant [propertyName]="view().propertyName!" (close)="closeTool()"></app-ai-message-assistant>
+    } @else if (activeToolId() === 'checklists') {
+    <app-checklists-tool (close)="closeTool()"></app-checklists-tool>
     } @else {
-    <p class="text-white/80 bg-black/20 p-4 rounded-xl backdrop-blur-md inline-block">Section non trouvée: '{{
+    <p class="text-white/80 bg-black/20 p-4 rounded-xl backdrop-blur-md inline-block">{{ 'COMMON.SectionNotFound' |
+        translate }}: '{{
         activeToolId() }}' ({{ activeToolId()?.length }})</p>
     }
 </div>

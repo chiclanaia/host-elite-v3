@@ -13,6 +13,7 @@ import { AiPromptsComponent } from '../features/ai-prompts/ai-prompts.component'
 import { BookletToolComponent } from '../features/booklet-tool/booklet-tool.component';
 import { VisibilityAuditComponent } from '../features/visibility-audit/visibility-audit.component';
 import { AiMessageAssistantComponent } from '../features/ai-message-assistant/ai-message-assistant.component';
+import { ChecklistsToolComponent } from '../features/checklists/checklists-tool.component';
 import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
@@ -56,7 +57,7 @@ interface OnboardingQuestion {
 @Component({
     selector: 'saas-angle-view',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeContainerComponent, AiPromptsComponent, VisibilityAuditComponent, BookletToolComponent, AiMessageAssistantComponent, TranslatePipe],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeContainerComponent, AiPromptsComponent, VisibilityAuditComponent, BookletToolComponent, AiMessageAssistantComponent, ChecklistsToolComponent, TranslatePipe],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './angle-view.component.html',
 })
