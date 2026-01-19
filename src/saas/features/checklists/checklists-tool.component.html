@@ -1,7 +1,9 @@
-<div class="h-full flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+<div
+    class="h-full flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white print:bg-white print:text-black print:h-auto print:block">
 
-    <!-- Header -->
-    <div class="shrink-0 flex items-center justify-between p-6 border-b border-white/10 no-print">
+    <!-- Header (Hidden on Print) -->
+    <div id="checklist-header"
+        class="shrink-0 flex items-center justify-between p-6 border-b border-white/10 print:hidden">
         <div>
             <h2 class="text-2xl font-bold flex items-center gap-3">
                 <span class="text-3xl">📋</span>
@@ -18,19 +20,20 @@
 
     <!-- Loading State -->
     @if (isLoading()) {
-    <div class="flex-1 flex items-center justify-center">
+    <div class="flex-1 flex items-center justify-center print:hidden">
         <div class="text-center">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37] mx-auto mb-4"></div>
             <p class="text-slate-400">{{ 'CHECKLIST.Loading' | translate }}</p>
         </div>
     </div>
     } @else {
-    <!-- Main Content -->
-    <div class="flex-1 min-h-0 flex gap-6 p-6">
+    <!-- Main Content (Interactive UI - Hidden on Print) -->
+    <!-- WE USE ID 'screen-layout-container' TO FORCE HIDE IN CSS -->
+    <div id="screen-layout-container" class="flex-1 min-h-0 flex gap-6 p-6 print:hidden">
 
         <!-- Left: Checklist Selection -->
-        <div
-            class="w-80 shrink-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col no-print">
+        <div id="checklist-sidebar"
+            class="w-80 shrink-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col print:hidden">
             <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4">{{ 'CHECKLIST.Choose' | translate }}
             </h3>
 
@@ -83,7 +86,7 @@
             </div>
         </div>
 
-        <!-- Right: Checklist Display -->
+        <!-- Right: Checklist Display (Interactive) -->
         <div
             class="flex-1 min-w-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col overflow-hidden">
             @if (selectedChecklist(); as checklist) {
@@ -143,29 +146,6 @@
                 </div>
             </div>
 
-            <!-- Print Header (only visible when printing) -->
-            <div class="hidden print-only p-8 border-b-2 border-slate-200 mb-8">
-                <div class="flex items-center gap-6 mb-4">
-                    <div
-                        class="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200">
-                        <svg class="w-10 h-10 text-slate-800" fill="none" stroke="currentColor" stroke-width="1.5"
-                            viewBox="0 0 24 24" [innerHTML]="getChecklistIcon(checklist.icon)">
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-3xl font-serif font-bold text-slate-900 leading-tight">
-                            {{ checklist.name_key | translate }}
-                        </h1>
-                        <p class="text-slate-500 italic mt-1">{{ checklist.description_key | translate }}</p>
-                    </div>
-                </div>
-                <div
-                    class="flex gap-6 pt-4 border-t border-slate-100 text-sm text-slate-600 font-medium uppercase tracking-widest">
-                    <span>{{ getItemCount(checklist) }} {{ 'CHECKLIST.Tasks' | translate }}</span>
-                    <span>⏱️ {{ getTotalTime(checklist) }} {{ 'CHECKLIST.Minutes' | translate }}</span>
-                    <span class="ml-auto text-slate-400 font-light">HÔTE D'EXCEPTION - CHECKLIST DE QUALITÉ</span>
-                </div>
-            </div>
 
             <!-- Checklist Content (With Lock Overlay) -->
             <div class="flex-1 min-h-0 relative flex flex-col">
@@ -188,7 +168,7 @@
                 </div>
                 }
 
-                <!-- Items Container (Disabled UI if locked) -->
+                <!-- Items Container (Interactive) -->
                 <div class="flex-1 overflow-y-auto custom-scrollbar p-6"
                     [class.pointer-events-none]="!isTierAllowed(checklist.tier)">
                     @for (section of getSections(checklist); track section) {
@@ -204,26 +184,25 @@
                         <div class="space-y-2">
                             @for (item of getItemsForSection(checklist, section); track item.id) {
                             <div
-                                class="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all group print:bg-white print:border print:border-gray-300">
+                                class="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all group">
                                 <!-- Checkbox -->
                                 <div class="shrink-0 mt-0.5">
                                     <div
-                                        class="w-5 h-5 rounded border-2 border-white/30 group-hover:border-[#D4AF37] transition-colors print:border-gray-400">
+                                        class="w-5 h-5 rounded border-2 border-white/30 group-hover:border-[#D4AF37] transition-colors">
                                     </div>
                                 </div>
 
                                 <!-- Item Content -->
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm text-white font-medium print:text-gray-900"
-                                        [class.text-[#D4AF37]]="item.is_critical">
+                                    <p class="text-sm text-white font-medium" [class.text-[#D4AF37]]="item.is_critical">
                                         {{ item.item_text_key | translate }}
                                         @if (item.is_critical) {
-                                        <span class="text-xs text-red-400 ml-2 print:text-red-600">⚠️ {{
-                                            'CHECKLIST.Critical' | translate }}</span>
+                                        <span class="text-xs text-red-400 ml-2">⚠️ {{ 'CHECKLIST.Critical' | translate
+                                            }}</span>
                                         }
                                     </p>
                                     @if (item.estimated_minutes) {
-                                    <p class="text-xs text-slate-500 mt-1 print:text-gray-600">
+                                    <p class="text-xs text-slate-500 mt-1">
                                         ⏱️ {{ item.estimated_minutes }} {{ 'CHECKLIST.MinutesShort' | translate }}
                                     </p>
                                     }
@@ -251,5 +230,58 @@
             }
         </div>
     </div>
+
+    <!-- PROFESSIONAL PRINT TEMPLATE (Hidden on Screen) -->
+    <!-- Mimics the user requested minimalist design: Cursive title, centered, simple list -->
+    @if (selectedChecklist(); as checklist) {
+    <!-- WE USE ID 'print-layout-container' TO FORCE SHOW IN CSS -->
+    <div id="print-layout-container" class="hidden print:block p-8 bg-white text-black h-auto">
+        <!-- Elegant Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-6xl text-slate-800"
+                style="font-family: 'Great Vibes', 'Brush Script MT', cursive; font-weight: 400;">
+                <!-- Updated to use Property Name if available -->
+                {{ propertyName() || (checklist.name_key | translate) }}
+            </h1>
+            <p class="text-sm uppercase tracking-[0.3em] text-slate-500 mt-4 font-sans font-light">
+                CHECK LIST
+            </p>
+            <div class="w-24 h-px bg-slate-300 mx-auto mt-6"></div>
+        </div>
+
+        <!-- Clean Columns Layout -->
+        <div class="max-w-3xl mx-auto">
+            @for (section of getSections(checklist); track section) {
+            <div class="mb-8 break-inside-avoid">
+                <!-- Optional Section Header if sections exist -->
+                @if (getSections(checklist).length > 1) {
+                <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 border-b pb-2">
+                    {{ 'CHECKLIST.Section.' + section.toUpperCase() | translate }}
+                </h3>
+                }
+
+                <ul class="space-y-4">
+                    @for (item of getItemsForSection(checklist, section); track item.id) {
+                    <li class="flex items-center gap-4 group">
+                        <!-- Square Checkbox (Vertically Centered) -->
+                        <div class="shrink-0 w-5 h-5 border border-slate-800 bg-white"></div>
+
+                        <!-- Item Text -->
+                        <span class="text-slate-800 text-base font-normal font-sans leading-relaxed flex-1">
+                            {{ item.item_text_key | translate }}
+                        </span>
+                    </li>
+                    }
+                </ul>
+            </div>
+            }
+        </div>
+
+        <!-- Cleaner Footer -->
+        <div class="text-center mt-16 pt-8 border-t border-slate-100 text-xs text-slate-400 uppercase tracking-widest">
+            Hôte d'Exception
+        </div>
+    </div>
+    }
     }
 </div>

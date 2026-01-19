@@ -25,6 +25,8 @@ import { SessionStore } from '../../../state/session.store';
 })
 export class ChecklistsToolComponent implements OnInit {
     @Output() close = new EventEmitter<void>();
+    propertyName = input<string>(); // Input for passing the property name for print
+
 
     private checklistService = inject(ChecklistService);
     private store = inject(SessionStore);
