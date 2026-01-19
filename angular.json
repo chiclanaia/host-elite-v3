@@ -21,7 +21,19 @@
             ],
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "tsConfig": "tsconfig.json"
+            "tsConfig": "tsconfig.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/training",
+                "output": "/training/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/training/pdfs",
+                "output": "/assets/training/pdfs"
+              }
+            ]
           },
           "configurations": {
             "production": {

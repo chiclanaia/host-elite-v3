@@ -51,6 +51,24 @@ export class OnboardingService {
     }
 
     /**
+     * Get all questions (not filtered by angle)
+     */
+    async getAllQuestions(): Promise<OnboardingQuestion[]> {
+        const { data, error } = await this.supabase.supabase
+            .from('onboarding_questions')
+            .select('*')
+            .order('angle', { ascending: true })
+            .order('order_index', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching all questions:', error);
+            throw error;
+        }
+
+        return data || [];
+    }
+
+    /**
      * Get user answers for a specific property and angle
      */
     async getAnswers(propertyId: string, angle: string): Promise<Map<string, OnboardingAnswer>> {

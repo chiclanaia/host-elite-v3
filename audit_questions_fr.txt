@@ -1,0 +1,100 @@
+QUESTIONS D'AUDIT - FRANÇAIS
+
+--- MARKETING ---
+1. Votre annonce est-elle publiée sur au moins une plateforme (ex: Airbnb, Booking) ?
+   (Sub: URL de votre annonce principale)
+2. Vos photos de propriété sont-elles lumineuses, bien cadrées et réalisées par un professionnel (ou de qualité professionnelle) ?
+3. Votre titre d'annonce est-il accrocheur et met-il en avant votre atout principal (ex: "Vue Mer", "Plein Centre") ?
+   (Sub: Quel est votre titre d'annonce actuel ?)
+4. Votre description textuelle est-elle complète, engageante et raconte-t-elle une "histoire" qui donne envie de réserver ?
+5. Avez-vous clairement identifié votre "clientèle cible" (ex: familles, couples, digital nomads) pour ce bien ?
+   (Sub: Décrivez votre clientèle cible)
+6. Demandez-vous activement des avis et avez-vous maintenu une note supérieure à 4.8 étoiles sur 5 ?
+   (Sub: Quelle est votre note moyenne actuelle ?)
+7. Utilisez-vous les réseaux sociaux (ex: Instagram, Pinterest) pour promouvoir spécifiquement ce logement ?
+   (Sub: Lien vers votre page (ex: Instagram))
+8. Proposez-vous une "visite virtuelle" 3D ou une vidéo professionnelle de votre logement ?
+   (Sub: Lien vers la visite virtuelle ou vidéo)
+9. Avez-vous un site web personnel pour générer des réservations directes (hors plateforme) pour ce bien ?
+   (Sub: URL de votre site de réservation directe)
+10. Collectez-vous (légalement) les e-mails de vos Invités pour des actions de fidélisation (ex: promo -10% pour un futur séjour) ?
+
+--- EXPÉRIENCE ---
+1. Le logement est-il impeccablement propre (qualité hôtelière) avant chaque arrivée ?
+2. Le processus d'arrivée (check-in) est-il simple, clair, et 100% fiable (ex: boîte à clés fonctionnelle, serrure connectée) ?
+   (Sub: Quelle est votre méthode de check-in ?)
+3. Fournissez-vous un livret d'accueil (numérique ou physique) avec au moins les informations vitales (Wi-Fi, règles, contacts) ?
+   (Sub: Lien vers votre livret d'accueil numérique (si applicable))
+4. Répondez-vous aux messages des Invités en moins d'une heure (pendant les heures de journée) ?
+5. Votre livret d'accueil est-il complet (guides d'appareils, urgences, recommandations locales) au-delà des bases ?
+6. Fournissez-vous un "panier de bienvenue" attentionné (ex: café, thé, snacks, une bouteille d'eau ou de vin) ?
+   (Sub: Que contient votre panier de bienvenue ?)
+7. Utilisez-vous des messages automatisés (confirmation, J-1, mi-séjour, départ) pour une communication fluide ?
+   (Sub: Quel outil de messagerie automatisée utilisez-vous ?)
+8. Personnalisez-vous l'accueil (ex: un mot de bienvenue nominatif, une attention pour un anniversaire) ?
+9. Avez-vous mis en place des partenariats (chef à domicile, VTC, baby-sitting) que vous proposez activement à vos Invités ?
+   (Sub: Exemple de partenaire)
+10. Anticipez-vous les besoins "non-dits" (ex: parapluie à disposition, chargeurs universels, jeux de société) ?
+
+--- OPÉRATIONS ---
+1. Avez-vous une solution de nettoyage (vous-même ou une équipe) qui est 100% fiable ?
+   (Sub: Nom de votre prestataire de nettoyage (si externe))
+2. Disposez-vous d'au moins deux (idéalement trois) jeux complets de linge de lit et de serviettes par lit/personne ?
+   (Sub: Combien de jeux de linge complets possédez-vous ?)
+3. Avez-vous une checklist de nettoyage détaillée (écrite ou visuelle) que votre équipe (ou vous) suit à la lettre ?
+4. Gérez-vous activement le stock des consommables (savon, papier toilette, café, éponges...) pour ne jamais être en rupture ?
+5. Avez-vous un prestataire de maintenance (plombier, électricien) joignable en cas d'urgence le week-end ?
+   (Sub: Nom de votre prestataire de maintenance)
+6. Avez-vous une solution professionnelle pour la buanderie (service externe ou machine/sèche-linge sur place efficace) ?
+7. Utilisez-vous un logiciel (Channel Manager ou PMS) pour synchroniser vos calendriers si vous êtes sur plusieurs plateformes ?
+   (Sub: Quel logiciel utilisez-vous ?)
+8. Avez-vous un système de "contrôle qualité" (ex: l'équipe de nettoyage vous envoie des photos) après chaque nettoyage ?
+9. Avez-vous des procédures écrites (SOPs) pour les tâches courantes (check-in, check-out, gestion d'une panne) ?
+10. Estimez-vous que votre gestion (ménage, communication, maintenance) est automatisée ou déléguée à plus de 80% ?
+
+--- PRICING ---
+1. Avez-vous défini un prix de base "plancher" pour votre nuitée (basé sur vos coûts) ?
+   (Sub: Quel est votre prix plancher par nuit (€) ?)
+2. Avez-vous défini des frais de ménage séparés qui couvrent exactement le coût réel du nettoyage ?
+   (Sub: Quel est le montant de vos frais de ménage (€) ?)
+3. Différenciez-vous activement vos prix entre la haute saison et la basse saison ?
+4. Avez-vous des prix différents pour les jours de semaine (lun-jeu) et les week-ends (ven-dim) ?
+5. Analysez-vous (au moins 1x/mois) les prix de vos 5 concurrents directs ?
+6. Ajustez-vous manuellement vos prix à la hausse pour les événements locaux (concerts, salons, vacances scolaires) ?
+7. Avez-vous défini des règles de séjour minimum dynamiques (ex: 2 nuits le WE, 7 nuits en été) pour optimiser votre calendrier ?
+8. Utilisez-vous un outil de tarification dynamique externe (ex: PriceLabs, Wheelhouse) pour automatiser vos prix ?
+   (Sub: Quel outil de tarification utilisez-vous ?)
+9. Proposez-vous des tarifs dégressifs (ex: -10% semaine, -25% mois) pour attirer les séjours longs ?
+10. Connaissez-vous et suivez-vous votre "RevPAR" (Revenu Par Chambre Disponible) ?
+    (Sub: Quel est votre RevPAR moyen (€) ?)
+
+--- LOGEMENT ---
+1. Le logement est-il 100% conforme aux normes de sécurité (détecteurs de fumée, CO, extincteur) ?
+2. Le Wi-Fi est-il rapide (fibre/haut débit), fiable et couvre-t-il 100% du logement (pas de "zone morte") ?
+   (Sub: Quel est le débit descendant (en Mbit/s) ?)
+3. La cuisine est-elle équipée de tous les ustensiles essentiels et de qualité pour qu'un Invité puisse vraiment cuisiner ?
+4. La literie (matelas, oreillers, couette) est-elle de qualité hôtelière et confortable (et non "premier prix") ?
+5. La décoration est-elle soignée, moderne (ou thématique) et "dépersonnalisée" (pas de photos de famille) ?
+6. Fournissez-vous des équipements "expérientiels" (ex: Netflix, enceinte Bluetooth, machine Nespresso avec capsules) ?
+   (Sub: Exemple d'équipement expérientiel fourni)
+7. Avez-vous un espace de travail dédié (vrai bureau, bonne chaise, bonne lumière) pour les télétravailleurs ?
+8. Votre logement est-il optimisé pour votre clientèle cible (ex: lit bébé et chaise haute si vous visez les familles) ?
+9. Avez-vous investi dans un atout "Whaou" ou "Instagrammable" (ex: Jacuzzi, vue exceptionnelle, balançoire, mur végétal) ?
+   (Sub: Décrivez votre atout "Whaou")
+10. Planifiez-vous un budget annuel de "rafraîchissement" (peinture, remplacement du linge usé, coussins) ?
+
+--- LÉGAL & FINANCE ---
+1. Avez-vous vérifié que votre règlement de copropriété (si applicable) autorise explicitement la location courte durée ?
+2. Avez-vous déclaré votre activité en mairie et obtenu un numéro d'enregistrement (si requis dans votre ville) ?
+   (Sub: Quel est votre numéro d'enregistrement ?)
+3. Collectez-vous et reversez-vous la taxe de séjour (si elle n'est pas gérée automatiquement par la plateforme) ?
+4. Déclarez-vous 100% de vos revenus de location aux impôts ?
+5. Avez-vous souscrit une assurance spécifique (Responsabilité Civile Pro / PNO) en plus de la garantie Airbnb/Booking ?
+   (Sub: Nom de votre compagnie d'assurance)
+6. Avez-vous un règlement intérieur clair et affiché, que les Invités acceptent légalement lors de la réservation ?
+7. Avez-vous choisi un statut fiscal optimisé (ex: LMNP au réel) pour votre activité ?
+   (Sub: Quel est votre statut fiscal ?)
+8. Tenez-vous une comptabilité analytique (un "P&L") qui suit précisément tous vos coûts (ménage, produits, électricité, commissions...) ?
+9. Travaillez-vous avec un expert-comptable spécialisé dans l'immobilier ou la location meublée ?
+   (Sub: Nom de l'expert-comptable ou du cabinet)
+10. Calculez-vous (au moins 1x/trimestre) votre rentabilité nette (Bénéfice Net) et votre ROI (Retour sur Investissement) ?
