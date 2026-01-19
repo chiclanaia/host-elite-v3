@@ -179,14 +179,17 @@ export class CalendarService {
                     return {
                         id: e.id,
                         title: e.title,
-                        start: e.start_date,
-                        end: e.end_date,
+                        start: e.start,
+                        end: e.end,
                         description: e.description,
                         backgroundColor: source?.color || '#10b981',
                         borderColor: source?.color || '#10b981',
                         sourceId: e.source_id,
                         isManual: true,
-                        extendedProps: { isManual: true }
+                        extendedProps: {
+                            isManual: true,
+                            description: e.description
+                        }
                     };
                 }));
             }
@@ -265,5 +268,24 @@ export class CalendarService {
             .single();
         if (error) throw error;
         return data;
+    }
+
+    async updateManualEvent(id: string, updates: any) {
+        const { data, error } = await this.supabase.supabase
+            .from('calendar_events')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    }
+
+    async deleteManualEvent(id: string) {
+        const { error } = await this.supabase.supabase
+            .from('calendar_events')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
     }
 }

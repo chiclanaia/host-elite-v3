@@ -10,6 +10,15 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
     imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
     template: `
     <div class="p-4">
+        <!-- New Event Button (Primary Action) -->
+        <button (click)="addEventClicked.emit()" 
+            class="w-full mb-6 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg active:scale-95 group">
+            <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Nouvel événement</span>
+        </button>
+
         <h3 class="text-white font-medium mb-4 uppercase text-xs tracking-wider opacity-60">
             {{ 'CALENDAR.Sources' | translate }}
         </h3>
@@ -132,9 +141,12 @@ export class CalendarSidebarComponent implements OnInit {
     propertyId = input.required<string>();
     propertyName = input<string>('');
     sourceChanged = output<void>();
+    addEventClicked = output<void>();
 
     private calendarService = inject(CalendarService);
     private fb = inject(FormBuilder);
+
+    typeExternalLabel = 'iCal (Airbnb, Booking...)';
 
     sources = this.calendarService.sources;
     isSubmitting = signal(false);
