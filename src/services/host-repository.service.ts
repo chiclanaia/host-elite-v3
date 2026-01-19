@@ -190,16 +190,36 @@ export class HostRepository {
     async createProperty(ownerId: string, name: string): Promise<void> {
         if (!this.supabaseService.isConfigured) throw new Error("Database not configured");
 
-        const { error } = await this.supabase.from('properties').insert({
-            owner_id: ownerId,
-            name: name,
-            listing_title: name,
-            address: 'Adresse à compléter'
-        });
+        const { data, error } = await this.supabase
+            .from('properties')
+            .insert({
+                owner_id: ownerId,
+                name: name,
+                listing_title: name,
+                address: 'Adresse à compléter'
+            })
+            .select()
+            .single();
 
         if (error) {
             console.error("Error creating property:", JSON.stringify(error));
             throw new Error(error.message || "Unable to create property");
+        }
+
+        // Automatically create a default internal calendar source
+        if (data && data.id) {
+            const { error: calError } = await this.supabase
+                .from('calendar_sources')
+                .insert({
+                    name: `Calendrier ${data.name}`,
+                    color: '#10b981', // Default green
+                    type: 'internal',
+                    property_id: data.id
+                });
+
+            if (calError) {
+                console.warn("Could not create default calendar source, but property was created:", calError);
+            }
         }
     }
 

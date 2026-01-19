@@ -16,7 +16,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
         <div>
           <h2 class="text-2xl font-bold text-white flex items-center gap-3">
             <span class="text-3xl">🗓️</span>
-            {{ 'TOOL.calendar_name' | translate }}
+            {{ 'TOOL.calendar_name' | translate }} <span class="text-white/40 font-light ml-2 border-l border-white/20 pl-4">{{ propertyName() }}</span>
           </h2>
           <p class="text-sm text-slate-400 mt-1">{{ 'TOOL.calendar_desc' | translate }}</p>
         </div>
@@ -33,6 +33,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
         <div class="w-80 border-r border-white/10 bg-slate-800/30 overflow-y-auto custom-scrollbar">
           <app-calendar-sidebar 
             [propertyId]="propertyId()" 
+            [propertyName]="propertyName()"
             (sourceChanged)="onSourcesChanged()">
           </app-calendar-sidebar>
         </div>
@@ -50,7 +51,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                     </div>
                 </div>
             }
-            <app-calendar-view 
+            <app-calendar-view
                 [propertyId]="propertyId()"
                 [events]="filteredEvents()"
                 (eventCreated)="onEventCreated()">
@@ -73,6 +74,9 @@ export class CalendarToolComponent implements OnInit {
     const details = this.propertyDetails();
     return details?.id || details?.propertyId || '';
   });
+
+  // Extract property Name for auto-creation logic
+  propertyName = computed(() => this.propertyDetails()?.name || '');
 
   // Filter events based on source visibility
   filteredEvents = computed(() => {
@@ -106,7 +110,8 @@ export class CalendarToolComponent implements OnInit {
     if (!id) {
       return;
     }
-    this.calendarService.getAllEvents(id)
+    const name = this.propertyDetails()?.name;
+    this.calendarService.getAllEvents(id, name)
       .then(evts => {
         this.events.set(evts);
       })

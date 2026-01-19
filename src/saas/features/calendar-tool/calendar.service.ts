@@ -41,7 +41,11 @@ export class CalendarService {
 
     // --- SOURCES MANAGEMENT ---
 
-    async loadSources(propertyId: string) {
+    private isAutoCreating = false;
+
+    async loadSources(propertyId: string, propertyName?: string) {
+        if (this.isAutoCreating) return;
+
         const { data, error } = await this.supabase.supabase
             .from('calendar_sources')
             .select('*')
@@ -49,8 +53,63 @@ export class CalendarService {
 
         if (error) throw error;
 
-        // Initialize visibility
-        const sourcesWithVisibility = (data || []).map(s => ({ ...s, visible: true }));
+        const sources = data || [];
+        const internalSources = sources.filter(s => s.type === 'internal');
+
+        // Requirement: Only ONE internal calendar shall be displayed that is the property one
+        // If 0, create it. If > 1, cleanup.
+        if (internalSources.length !== 1) {
+            this.isAutoCreating = true;
+            try {
+                if (internalSources.length > 1) {
+                    console.log(`[CalendarService] Multiple internal sources found for ${propertyId}, cleaning up...`);
+                    // Keep the first one, delete others
+                    for (let i = 1; i < internalSources.length; i++) {
+                        await this.deleteSource(internalSources[i].id);
+                    }
+                } else if (internalSources.length === 0) {
+                    const name = propertyName || 'Calendrier';
+                    console.log(`[CalendarService] No internal source found for ${propertyId}, creating '${name}'...`);
+                    await this.addSource({
+                        name: name,
+                        type: 'internal',
+                        color: '#10b981',
+                        property_id: propertyId
+                    });
+                }
+            } finally {
+                this.isAutoCreating = false;
+            }
+            // Re-fetch to get correct state
+            return this.loadSources(propertyId, propertyName);
+        }
+
+        // Exactly one internal calendar exists
+        const internal = internalSources[0];
+        const primaryColor = '#10b981'; // Fixed green for property calendar
+
+        // Ensure name corresponds to property name AND color is correct
+        if (propertyName && (internal.name !== propertyName || internal.color !== primaryColor)) {
+            await this.supabase.supabase
+                .from('calendar_sources')
+                .update({ name: propertyName, color: primaryColor })
+                .eq('id', internal.id);
+            internal.name = propertyName;
+            internal.color = primaryColor;
+        }
+
+        // Sort: internal first, then others by name
+        const sortedSources = [...sources].sort((a, b) => {
+            if (a.type === 'internal') return -1;
+            if (b.type === 'internal') return 1;
+            return a.name.localeCompare(b.name);
+        });
+
+        // Initialize visibility (internal is ALWAYS visible)
+        const sourcesWithVisibility = sortedSources.map(s => ({
+            ...s,
+            visible: true
+        }));
         this.sources.set(sourcesWithVisibility);
     }
 
@@ -61,6 +120,15 @@ export class CalendarService {
     }
 
     async addSource(source: Omit<CalendarSource, 'id'>) {
+        // Prevent adding multiple internal sources
+        if (source.type === 'internal') {
+            const hasInternal = this.sources().some(s => s.type === 'internal');
+            if (hasInternal) {
+                console.warn('[CalendarService] Internal calendar already exists, skipping duplicate.');
+                return this.sources().find(s => s.type === 'internal');
+            }
+        }
+
         const { data, error } = await this.supabase.supabase
             .from('calendar_sources')
             .insert(source)
@@ -87,13 +155,13 @@ export class CalendarService {
     /**
      * Fetches all events: Manual internal events + Parsed external iCals
      */
-    async getAllEvents(propertyId: string): Promise<CalendarEvent[]> {
+    async getAllEvents(propertyId: string, propertyName?: string): Promise<CalendarEvent[]> {
         this.isLoading.set(true);
         try {
             const currentSources = this.sources();
             if (currentSources.length === 0) {
                 // Try loading if empty (might be first run)
-                await this.loadSources(propertyId).catch(() => { });
+                await this.loadSources(propertyId, propertyName).catch(() => { });
             }
 
             const sourcesToFetch = this.sources();
@@ -106,17 +174,21 @@ export class CalendarService {
                 .eq('property_id', propertyId);
 
             if (manualEvents) {
-                allEvents.push(...manualEvents.map(e => ({
-                    id: e.id,
-                    title: e.title,
-                    start: e.start_date,
-                    end: e.end_date,
-                    description: e.description,
-                    backgroundColor: '#10b981', // Green for manual
-                    borderColor: '#059669',
-                    isManual: true,
-                    extendedProps: { isManual: true }
-                })));
+                allEvents.push(...manualEvents.map(e => {
+                    const source = currentSources.find(s => s.id === e.source_id);
+                    return {
+                        id: e.id,
+                        title: e.title,
+                        start: e.start_date,
+                        end: e.end_date,
+                        description: e.description,
+                        backgroundColor: source?.color || '#10b981',
+                        borderColor: source?.color || '#10b981',
+                        sourceId: e.source_id,
+                        isManual: true,
+                        extendedProps: { isManual: true }
+                    };
+                }));
             }
 
             // 2. Fetch External iCals via Edge Function
@@ -175,6 +247,17 @@ export class CalendarService {
     // --- MANUAL EVENT MANAGEMENT ---
 
     async addManualEvent(event: any) {
+        // Automatically find the internal source if not provided
+        if (!event.source_id) {
+            const internalSource = this.sources().find(s => s.type === 'internal');
+            if (internalSource) {
+                event.source_id = internalSource.id;
+            } else {
+                console.warn('[CalendarService] No internal source found for manual event');
+                // We'll let it fail at DB level if truly null, but loadSources should have created one
+            }
+        }
+
         const { data, error } = await this.supabase.supabase
             .from('calendar_events')
             .insert(event)

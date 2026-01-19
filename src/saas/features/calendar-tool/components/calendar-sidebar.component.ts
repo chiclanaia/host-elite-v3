@@ -23,34 +23,42 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                         <div class="w-3 h-3 rounded-full shrink-0" [style.backgroundColor]="source.color"></div>
                         <div class="flex flex-col min-w-0">
                             <span class="text-sm text-white truncate font-medium">{{ source.name }}</span>
-                            <span class="text-xs text-white/40 truncate">{{ source.type }}</span>
+                            <span class="text-xs text-white/40 truncate">{{ source.type === 'internal' ? 'Calendrier Principal' : 'iCal' }}</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <!-- Toggle Visibility -->
-                        <button (click)="toggleVisibility(source)" class="p-1.5 transition-colors"
-                            [class.text-white/60]="source.visible !== false"
-                            [class.text-white/20]="source.visible === false"
-                            [title]="source.visible === false ? 'Show' : 'Hide'">
-                            @if (source.visible !== false) {
+                    
+                    @if (source.type !== 'internal') {
+                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <!-- Toggle Visibility -->
+                            <button (click)="toggleVisibility(source)" class="p-1.5 transition-colors"
+                                [class.text-white/60]="source.visible !== false"
+                                [class.text-white/20]="source.visible === false"
+                                [title]="source.visible === false ? 'Show' : 'Hide'">
+                                @if (source.visible !== false) {
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                } @else {
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 1.274 0 2.457.224 3.553.633M19.713 14.123A7.944 7.944 0 0121.542 12c-1.274-4.057-5.064-7-9.542-7-1.274 0-2.457.224-3.553.633M14.121 14.121L19 19m-4.879-4.879a3 3 0 11-4.243-4.243 3 3 0 014.243 4.243z" />
+                                    </svg>
+                                }
+                            </button>
+                            
+                            <!-- Delete Source -->
+                            <button (click)="removeSource(source.id)" class="p-1.5 text-red-400 hover:text-red-300 transition-colors">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
-                            } @else {
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 1.274 0 2.457.224 3.553.633M19.713 14.123A7.944 7.944 0 0121.542 12c-1.274-4.057-5.064-7-9.542-7-1.274 0-2.457.224-3.553.633M14.121 14.121L19 19m-4.879-4.879a3 3 0 11-4.243-4.243 3 3 0 014.243 4.243z" />
-                                </svg>
-                            }
-                        </button>
-                        
-                        <!-- Delete Source -->
-                        <button (click)="removeSource(source.id)" class="p-1.5 text-red-400 hover:text-red-300 transition-colors">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </button>
-                    </div>
+                            </button>
+                        </div>
+                    } @else {
+                        <!-- Locked indicator -->
+                        <div class="px-2 py-1 text-[10px] font-bold text-white/20 uppercase tracking-tight">
+                            Fixe
+                        </div>
+                    }
                 </div>
             }
             @if (sources().length === 0) {
@@ -77,9 +85,8 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                     <select formControlName="type"
                         class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
                         <option value="external">{{ typeExternalLabel }}</option>
-                        <option value="internal">{{ typeInternalLabel }}</option>
                     </select>
-                    <p class="text-[10px] text-white/30 mt-1 pl-1">{{ typeHintLabel }}</p>
+                    <p class="text-[10px] text-white/30 mt-1 pl-1">Synchronisez un calendrier iCal (Airbnb, Booking...) en lecture seule.</p>
                 </div>
 
                 <!-- URL (only for external) -->
@@ -123,6 +130,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 })
 export class CalendarSidebarComponent implements OnInit {
     propertyId = input.required<string>();
+    propertyName = input<string>('');
     sourceChanged = output<void>();
 
     private calendarService = inject(CalendarService);
@@ -131,12 +139,7 @@ export class CalendarSidebarComponent implements OnInit {
     sources = this.calendarService.sources;
     isSubmitting = signal(false);
 
-    presetColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
-
-    // Simple labels for type selector (hardcoded French for now)
-    typeExternalLabel = 'Externe (iCal)';
-    typeInternalLabel = 'Interne (Manuel)';
-    typeHintLabel = 'Externe : synchronise un calendrier iCal. Interne : créez des événements manuellement.';
+    presetColors = ['#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#64748b'];
 
     addForm = this.fb.group({
         name: ['', Validators.required],
@@ -162,7 +165,7 @@ export class CalendarSidebarComponent implements OnInit {
 
     async load() {
         try {
-            await this.calendarService.loadSources(this.propertyId());
+            await this.calendarService.loadSources(this.propertyId(), this.propertyName());
         } catch (e) {
             console.error(e);
         }
