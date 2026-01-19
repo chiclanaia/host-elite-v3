@@ -403,6 +403,78 @@ export const es = {
     'TOOL.ical_name': 'Sincronización iCal',
     'TOOL.ical_desc': 'Centralice sus calendarios de todas las plataformas.',
     'TOOL.delegation_name': 'Simulador de Delegación IA',
+
+    // DELEGATION SECTION
+    'DELEGATION.Advantages.Title': 'Ventajas (Apalancamiento)',
+    'DELEGATION.Advantages.Yield.Title': 'Optimización de Ingresos',
+    'DELEGATION.Advantages.Yield.Desc': 'Una conserjería profesional ajusta precios diariamente. La gestión directa suele ser demasiado barata.',
+    'DELEGATION.Advantages.Superhost.Title': 'Estatus Superhost Inmediato',
+    'DELEGATION.Advantages.Superhost.Desc': 'Benefíciese del historial y la visibilidad del algoritmo de la cuenta de conserjería.',
+    'DELEGATION.Advantages.Passivity.Title': 'Pasividad Real',
+    'DELEGATION.Advantages.Passivity.Desc': 'Convierta el trabajo en inversión. Posea 5 propiedades sin cambiar su horario.',
+    'DELEGATION.Advantages.Cleaning.Title': 'Profesionalismo',
+    'DELEGATION.Advantages.Cleaning.Desc': 'Acceso a equipos especializados y ropa de cama de calidad hotelera.',
+
+    'DELEGATION.Risks.Title': 'Riesgos (Puntos de Vigilancia)',
+    'DELEGATION.Risks.Disconnect.Title': 'Desconexión de la Realidad',
+    'DELEGATION.Risks.Disconnect.Desc': 'Ya no ves el desgaste real. Una pequeña fuga puede convertirse en un desastre.',
+    'DELEGATION.Risks.Uniformity.Title': 'Uniformidad',
+    'DELEGATION.Risks.Uniformity.Desc': 'Algunas conserjerías industriales pierden el toque cálido, bajando la calificación de bienvenida.',
+    'DELEGATION.Risks.Dependency.Title': 'Riesgo de Dependencia',
+    'DELEGATION.Risks.Dependency.Desc': 'Si la calidad baja, recuperar la gestión (llaves, cuentas, procesos) puede ser brutal.',
+    'DELEGATION.Risks.HiddenFees.Title': 'Tarifas Ocultas',
+    'DELEGATION.Risks.HiddenFees.Desc': 'Cuidado con la facturación abusiva por "mantenimiento menor" (bombillas, etc.).',
+
+    'DELEGATION.Supplier.Title': 'Interacción con Proveedores (Silver+)',
+    'DELEGATION.Supplier.TrapQuestions.Title': 'Las 5 Preguntas Trampa',
+
+    'DELEGATION.Q1.Question': '¿En qué cuenta de Airbnb se publican los anuncios?',
+    'DELEGATION.Q1.Answer': 'Idealmente en la tuya (ellos como coanfitriones) para conservar tus reseñas si te separas.',
+
+    'DELEGATION.Q2.Question': '¿Cómo gestionan los precios los martes y miércoles en temporada baja?',
+    'DELEGATION.Q2.Answer': 'Deben hablar de software de "Precios Dinámicos" (PriceLabs, Wheelhouse), no de precio fijo.',
+
+    'DELEGATION.Q3.Question': '¿Cuál es el procedimiento exacto ante daños detectados por limpieza?',
+    'DELEGATION.Q3.Answer': 'Fotos inmediatas, reporte en 24h vía plataforma y reclamación a la fianza.',
+
+    'DELEGATION.Q4.Question': '¿Pueden mostrarme un informe mensual de rendimiento tipo?',
+    'DELEGATION.Q4.Answer': 'Un documento claro separando ingresos brutos, comisiones, limpieza y tu neto.',
+
+    'DELEGATION.Q5.Question': '¿Quién interviene si se funde una bombilla a las 21h?',
+    'DELEGATION.Q5.Answer': 'Deben tener un equipo de "mantenimiento" incluido o una tarifa plana transparente.',
+
+    'DELEGATION.AI.Title': 'Asistente de Delegación IA',
+    'DELEGATION.AI.Desc': 'La IA analiza el mercado local para calibrar automáticamente este simulador con datos reales.',
+    'DELEGATION.AI.Button': 'Ejecutar Auto-Análisis',
+    'DELEGATION.AI.ResultsTitle': 'Análisis de Mercado Detectado',
+    'DELEGATION.NightlyRate': 'Precio Noche Est.',
+    'DELEGATION.Occupancy': 'Tasa de Ocupación',
+    'DELEGATION.ConciergeFee': 'Comisión Conserje',
+    'DELEGATION.CleaningCost': 'Costo Limpieza',
+
+    'DELEGATION.Clauses.Title': 'Cláusulas Contractuales Esenciales',
+    'DELEGATION.Clauses.Intro': 'Añada estos artículos a su contrato para protegerse.',
+
+    'DELEGATION.Clauses.Maintenance.Title': 'Artículo: Mantenimiento y Cuidado',
+    'DELEGATION.Clauses.Maintenance.P1.Title': 'Deber de Cuidado:',
+    'DELEGATION.Clauses.Maintenance.P1.Text': 'El Proveedor se compromete a mantener la propiedad en perfecto estado. Se debe realizar una inspección fotográfica después de cada limpieza.',
+    'DELEGATION.Clauses.Maintenance.P2.Title': 'Reparaciones Menores:',
+    'DELEGATION.Clauses.Maintenance.P2.Text': 'Las pequeñas tareas (bombillas, pilas, ajustes) son responsabilidad del Proveedor y están cubiertas por la tarifa de gestión.',
+    'DELEGATION.Clauses.Maintenance.P3.Title': 'Reporte de Daños:',
+    'DELEGATION.Clauses.Maintenance.P3.Text': 'Cualquier daño causado por un huésped debe ser reportado al Propietario en 24h tras la salida, con fotos para el seguro.',
+    'DELEGATION.Clauses.Maintenance.P4.Title': 'Umbral de Emergencia:',
+    'DELEGATION.Clauses.Maintenance.P4.Text': 'El Proveedor está autorizado para reparaciones de emergencia hasta 150€. Para montos superiores, se requiere aprobación escrita.',
+
+    'DELEGATION.Clauses.Termination.Title': 'Artículo: Rescisión por Calidad Insuficiente',
+    'DELEGATION.Clauses.Termination.P1.Title': 'Estándar de Calidad:',
+    'DELEGATION.Clauses.Termination.P1.Text': 'El Proveedor se compromete a mantener una valoración media superior a 4.5/5 en las plataformas.',
+    'DELEGATION.Clauses.Termination.P2.Title': 'Alerta de Rendimiento:',
+    'DELEGATION.Clauses.Termination.P2.Text': 'Si la valoración cae por debajo de este umbral durante 3 meses, o hay 3 reseñas negativas sobre limpieza/comunicación, se emitirá una advertencia formal.',
+    'DELEGATION.Clauses.Termination.P3.Title': 'Derecho a Rescindir:',
+    'DELEGATION.Clauses.Termination.P3.Text': 'Si no hay mejora en 30 días, el Propietario puede rescindir el contrato inmediatamente sin penalización.',
+    'DELEGATION.Clauses.Termination.P4.Title': 'Devolución de Acceso:',
+    'DELEGATION.Clauses.Termination.P4.Text': 'Tras la rescisión, el Proveedor debe devolver todos los accesos digitales y llaves físicas en 48 horas.',
+
     'TOOL.delegation_desc': 'Estime los costes y el impacto de la externalización.',
     'TOOL.profit_name': 'Plantillas de Cálculo de Rentabilidad',
     'TOOL.profit_desc': 'Calcule sus márgenes y fije sus precios base.',

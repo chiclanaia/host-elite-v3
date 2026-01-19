@@ -536,6 +536,54 @@ export class GeminiService {
 
   }
 
+  async getMarketAnalysis(address: string): Promise<{
+    estimatedNightlyRate: number;
+    estimatedOccupancy: number;
+    conciergeCommission: number;
+    cleaningFees: number;
+    summary: string;
+  }> {
+    await this.ensureClient();
+
+    const prompt = `
+        You are an expert Real Estate Analyst.
+        Target Location: "${address}"
+
+        TASK: Estimate the following average market metrics for a typical Airbnb rental in this area.
+        1. Average Nightly Rate (EUR).
+        2. Average Occupancy Rate (%).
+        3. Typical Concierge Commission (%).
+        4. Average Cleaning Fee (EUR, per stay).
+        5. A short 1-sentence summary of the rental market potential.
+
+        RESPONSE FORMAT (JSON ONLY):
+        {
+            "estimatedNightlyRate": 120,
+            "estimatedOccupancy": 70,
+            "conciergeCommission": 20,
+            "cleaningFees": 60,
+            "summary": "High demand area with strong seasonal peaks."
+        }
+    `;
+
+    try {
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+      });
+      const response = await result.response;
+      return JSON.parse(this.cleanJson(response.text()));
+    } catch (error) {
+      console.error('Error getting market analysis:', error);
+      return {
+        estimatedNightlyRate: 100,
+        estimatedOccupancy: 65,
+        conciergeCommission: 20,
+        cleaningFees: 50,
+        summary: "Analysis unavailable (Service Error)."
+      };
+    }
+  }
+
   async generateText(prompt: string): Promise<string> {
     await this.ensureClient();
     try {

@@ -403,6 +403,78 @@ export const fr = {
     'TOOL.ical_name': 'Synchronisation iCal',
     'TOOL.ical_desc': 'Centralisez vos calendriers depuis toutes les plateformes.',
     'TOOL.delegation_name': 'Simulateur IA de Délégation',
+
+    // DELEGATION SECTION
+    'DELEGATION.Advantages.Title': 'Les Leviers (Avantages)',
+    'DELEGATION.Advantages.Yield.Title': 'Optimisation du Revenu',
+    'DELEGATION.Advantages.Yield.Desc': 'Une conciergerie pro ajuste les prix quotidiennement. En direct, on garde souvent un prix fixe trop bas.',
+    'DELEGATION.Advantages.Superhost.Title': 'Statut Superhost Immédiat',
+    'DELEGATION.Advantages.Superhost.Desc': 'Bénéficiez de l\'historique et de la visibilité de l\'algorithme de la conciergerie.',
+    'DELEGATION.Advantages.Passivity.Title': 'Passivité Réelle',
+    'DELEGATION.Advantages.Passivity.Desc': 'Transformez un travail en investissement. Possédez 5 biens sans changer votre emploi du temps.',
+    'DELEGATION.Advantages.Cleaning.Title': 'Professionnalisme',
+    'DELEGATION.Advantages.Cleaning.Desc': 'Accès à des équipes spécialisées et du linge de qualité hôtelière.',
+
+    'DELEGATION.Risks.Title': 'Points de Vigilance (Risques)',
+    'DELEGATION.Risks.Disconnect.Title': 'Déconnexion du Terrain',
+    'DELEGATION.Risks.Disconnect.Desc': 'Vous ne voyez plus l\'usure réelle. Une fuite non signalée peut devenir un sinistre.',
+    'DELEGATION.Risks.Uniformity.Title': 'Uniformisation',
+    'DELEGATION.Risks.Uniformity.Desc': 'Certaines conciergeries industrielles perdent le côté chaleureux, baissant la note d\'accueil.',
+    'DELEGATION.Risks.Dependency.Title': 'Risque de Dépendance',
+    'DELEGATION.Risks.Dependency.Desc': 'Si la qualité baisse, récupérer la gestion (clés, comptes, process) peut être brutal.',
+    'DELEGATION.Risks.HiddenFees.Title': 'Frais Cachés',
+    'DELEGATION.Risks.HiddenFees.Desc': 'Attention aux facturations abusives pour de la "maintenance mineure" (ampoules, etc.).',
+
+    'DELEGATION.Supplier.Title': 'Interagir avec les Fournisseurs (Silver+)',
+    'DELEGATION.Supplier.TrapQuestions.Title': 'Les 5 Questions Pièges',
+
+    'DELEGATION.Q1.Question': 'Sur quel compte Airbnb les annonces sont-elles publiées ?',
+    'DELEGATION.Q1.Answer': 'Idéalement sur le vôtre (dont ils sont co-hôtes) pour que vous gardiez vos commentaires si vous vous séparez d\'eux.',
+
+    'DELEGATION.Q2.Question': 'Comment gérez-vous la tarification les mardis et mercredis en basse saison ?',
+    'DELEGATION.Q2.Answer': 'Ils doivent vous parler de logiciels de "Dynamic Pricing" (PriceLabs, Wheelhouse) et non d\'un prix fixe.',
+
+    'DELEGATION.Q3.Question': 'Quelle est votre procédure exacte en cas de dommage constaté par le personnel de ménage ?',
+    'DELEGATION.Q3.Answer': 'Photos immédiates, signalement sous 24h via la plateforme, et retenue sur caution.',
+
+    'DELEGATION.Q4.Question': 'Pouvez-vous me montrer un rapport de performance mensuel type ?',
+    'DELEGATION.Q4.Answer': 'Un document clair séparant le CA brut, les commissions, les frais de ménage et votre net.',
+
+    'DELEGATION.Q5.Question': 'Qui intervient si une ampoule grille ou si une pile de télécommande est morte à 21h ?',
+    'DELEGATION.Q5.Answer': 'Ils doivent avoir une équipe de "maintenance légère" incluse ou un forfait transparent.',
+
+    'DELEGATION.AI.Title': 'Assistant IA de Délégation',
+    'DELEGATION.AI.Desc': 'L\'IA analyse votre propriété et le marché local pour calibrer automatiquement ce simulateur avec des données réelles.',
+    'DELEGATION.AI.Button': 'Lancer l\'Analyse Auto',
+    'DELEGATION.AI.ResultsTitle': 'Analyse de Marché Détectée',
+    'DELEGATION.NightlyRate': 'Prix Nuitée Est.',
+    'DELEGATION.Occupancy': 'Taux d\'Occupation',
+    'DELEGATION.ConciergeFee': 'Com. Conciergerie',
+    'DELEGATION.CleaningCost': 'Frais Ménage',
+
+    'DELEGATION.Clauses.Title': 'Clauses Contractuelles Indispensables',
+    'DELEGATION.Clauses.Intro': 'Ajoutez ces articles à votre contrat pour vous protéger.',
+
+    'DELEGATION.Clauses.Maintenance.Title': 'Article : Maintenance & Devoir de Diligence',
+    'DELEGATION.Clauses.Maintenance.P1.Title': 'Devoir de Diligence :',
+    'DELEGATION.Clauses.Maintenance.P1.Text': 'Le Prestataire s\'engage à maintenir le bien dans un état irréprochable. Une inspection photographique doit être effectuée après chaque nettoyage.',
+    'DELEGATION.Clauses.Maintenance.P2.Title': 'Maintenance Mineure :',
+    'DELEGATION.Clauses.Maintenance.P2.Text': 'Les petites tâches (ampoules, piles, poignées) sont à la charge du Prestataire et incluses dans les frais de gestion.',
+    'DELEGATION.Clauses.Maintenance.P3.Title': 'Signalement des Dommages :',
+    'DELEGATION.Clauses.Maintenance.P3.Text': 'Tout dommage causé par un voyageur doit être signalé au Propriétaire sous 24h après le départ, avec preuves photos pour les assurances.',
+    'DELEGATION.Clauses.Maintenance.P4.Title': 'Seuil d\'Urgence :',
+    'DELEGATION.Clauses.Maintenance.P4.Text': 'Le Prestataire peut effectuer des réparations d\'urgence jusqu\'à 150€. Au-delà, une approbation écrite du Propriétaire est requise.',
+
+    'DELEGATION.Clauses.Termination.Title': 'Article : Résiliation pour Qualité Insuffisante',
+    'DELEGATION.Clauses.Termination.P1.Title': 'Standard de Qualité :',
+    'DELEGATION.Clauses.Termination.P1.Text': 'Le Prestataire s\'engage à maintenir une note moyenne supérieure à 4.5/5 sur les plateformes.',
+    'DELEGATION.Clauses.Termination.P2.Title': 'Alerte Performance :',
+    'DELEGATION.Clauses.Termination.P2.Text': 'Si la note chute sous ce seuil pendant 3 mois consécutifs, ou en cas de 3 avis négatifs sur la propreté/communication, un avertissement formel sera émis.',
+    'DELEGATION.Clauses.Termination.P3.Title': 'Droit de Résiliation :',
+    'DELEGATION.Clauses.Termination.P3.Text': 'Sans amélioration sous 30 jours, le Propriétaire peut résilier le contrat immédiatement et sans pénalités.',
+    'DELEGATION.Clauses.Termination.P4.Title': 'Restitution des Accès :',
+    'DELEGATION.Clauses.Termination.P4.Text': 'À la résiliation, tous les accès numériques et les clés doivent être restitués sous 48h.',
+
     'TOOL.delegation_desc': 'Estimez les coûts et l\'impact de l\'externalisation.',
     'TOOL.profit_name': 'Templates de Calcul de Rentabilité',
     'TOOL.profit_desc': 'Calculez vos marges et fixez vos prix de base.',

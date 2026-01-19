@@ -23,3 +23,4 @@ bootstrapApplication(AppComponent, {
 // force print rebuild 9
 // force print rebuild 10
 // force print rebuild 11
+// force rebuild 12

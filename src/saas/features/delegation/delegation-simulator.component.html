@@ -1,0 +1,717 @@
+<div class="h-full flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    <!-- Header -->
+    <div class="shrink-0 flex items-center justify-between p-6 border-b border-white/10">
+        <div>
+            <h2 class="text-2xl font-bold flex items-center gap-3">
+                <span class="text-3xl">🤝</span>
+                {{ 'TOOL.delegation_name' | translate }}
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">Simulateur de Rentabilité : Direct vs Conciergerie</p>
+        </div>
+        <button (click)="close.emit()" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar p-6">
+
+        <!-- AI ASSISTANT (Gold Only) -->
+        @if (isGold()) {
+        <div
+            class="mb-8 p-6 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/30 rounded-2xl relative overflow-hidden transition-all hover:border-yellow-500/50">
+            <!-- Shine Effect -->
+            <div
+                class="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-400/5 to-transparent skew-x-12 translate-x-[-100%] animate-shine">
+            </div>
+
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span
+                            class="px-2 py-0.5 text-xs font-bold bg-gradient-to-r from-yellow-400 to-amber-600 text-black rounded uppercase tracking-wider">GOLD</span>
+                        <h3 class="text-xl font-medium text-yellow-100 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            {{ 'DELEGATION.AI.Title' | translate }}
+                        </h3>
+                    </div>
+                    <p class="text-yellow-100/70 max-w-2xl">{{ 'DELEGATION.AI.Desc' | translate }}</p>
+                </div>
+
+                <button (click)="runAiAnalysis()" [disabled]="isAnalyzing()"
+                    class="group relative px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl font-medium text-black shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-wait">
+                    <span class="flex items-center gap-2">
+                        @if (isAnalyzing()) {
+                        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        {{ 'COMMON.Analyzing' | translate }}...
+                        } @else {
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        {{ 'DELEGATION.AI.Button' | translate }}
+                        }
+                    </span>
+                </button>
+            </div>
+
+            <!-- AI RESULTS CARD -->
+            @if (aiSummary()) {
+            <div class="mt-6 bg-black/40 rounded-xl p-5 border border-yellow-500/20 animate-fade-in-up">
+                <h4 class="text-white font-medium mb-3 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                    {{ 'DELEGATION.AI.ResultsTitle' | translate }}
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    <div class="bg-white/5 p-3 rounded-lg border border-white/10">
+                        <div class="text-xs text-white/50 mb-1">{{ 'DELEGATION.NightlyRate' | translate }}</div>
+                        <div class="text-lg font-bold text-white">{{ aiSummary()?.nightlyRate }}€</div>
+                    </div>
+                    <div class="bg-white/5 p-3 rounded-lg border border-white/10">
+                        <div class="text-xs text-white/50 mb-1">{{ 'DELEGATION.Occupancy' | translate }}</div>
+                        <div class="text-lg font-bold text-white">{{ aiSummary()?.occupancy }}%</div>
+                    </div>
+                    <div class="bg-white/5 p-3 rounded-lg border border-white/10">
+                        <div class="text-xs text-white/50 mb-1">{{ 'DELEGATION.ConciergeFee' | translate }}</div>
+                        <div class="text-lg font-bold text-white">{{ aiSummary()?.commission }}%</div>
+                    </div>
+                    <div class="bg-white/5 p-3 rounded-lg border border-white/10">
+                        <div class="text-xs text-white/50 mb-1">{{ 'DELEGATION.CleaningCost' | translate }}</div>
+                        <div class="text-lg font-bold text-white">{{ aiSummary()?.cleaning }}€</div>
+                    </div>
+                </div>
+                <p class="text-base text-gray-300 italic border-l-2 border-yellow-500/50 pl-4 py-1">
+                    "{{ aiSummary()?.message }}"
+                </p>
+            </div>
+            }
+        </div>
+        }
+
+        <!-- INTRO SECTION: Advantages vs Risks -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto mb-12">
+
+            <!-- ADVANTAGES -->
+            <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                <h3 class="text-green-400 font-bold uppercase text-sm tracking-wider mb-6 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    {{ 'DELEGATION.Advantages.Title' | translate }}
+                </h3>
+                <div class="space-y-6">
+                    <!-- Item 1 -->
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0 border border-green-500/30">
+                            1</div>
+                        <div>
+                            <h4 class="text-white font-bold mb-1">{{ 'DELEGATION.Advantages.Yield.Title' | translate }}
+                            </h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">{{ 'DELEGATION.Advantages.Yield.Desc' |
+                                translate }}</p>
+                        </div>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0 border border-green-500/30">
+                            2</div>
+                        <div>
+                            <h4 class="text-white font-bold mb-1">{{ 'DELEGATION.Advantages.Superhost.Title' | translate
+                                }}</h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">{{ 'DELEGATION.Advantages.Superhost.Desc'
+                                | translate }}</p>
+                        </div>
+                    </div>
+                    <!-- Item 3 -->
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0 border border-green-500/30">
+                            3</div>
+                        <div>
+                            <h4 class="text-white font-bold mb-1">{{ 'DELEGATION.Advantages.Passivity.Title' | translate
+                                }}</h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">{{ 'DELEGATION.Advantages.Passivity.Desc'
+                                | translate }}</p>
+                        </div>
+                    </div>
+                    <!-- Item 4 -->
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0 border border-green-500/30">
+                            4</div>
+                        <div>
+                            <h4 class="text-white font-bold mb-1">{{ 'DELEGATION.Advantages.Cleaning.Title' | translate
+                                }}</h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">{{ 'DELEGATION.Advantages.Cleaning.Desc' |
+                                translate }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RISKS -->
+            <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                <h3 class="text-orange-400 font-bold uppercase text-sm tracking-wider mb-6 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                        </path>
+                    </svg>
+                    {{ 'DELEGATION.Risks.Title' | translate }}
+                </h3>
+                <div class="space-y-6">
+                    <!-- Item 1 -->
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0 border border-orange-500/30">
+                            !</div>
+                        <div>
+                            <h4 class="text-white font-bold mb-1">{{ 'DELEGATION.Risks.Disconnect.Title' | translate }}
+                            </h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">{{ 'DELEGATION.Risks.Disconnect.Desc' |
+                                translate }}</p>
+                        </div>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0 border border-orange-500/30">
+                            !</div>
+                        <div>
+                            <h4 class="text-white font-bold mb-1">{{ 'DELEGATION.Risks.Uniformity.Title' | translate }}
+                            </h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">{{ 'DELEGATION.Risks.Uniformity.Desc' |
+                                translate }}</p>
+                        </div>
+                    </div>
+                    <!-- Item 3 -->
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0 border border-orange-500/30">
+                            !</div>
+                        <div>
+                            <h4 class="text-white font-bold mb-1">{{ 'DELEGATION.Risks.Dependency.Title' | translate }}
+                            </h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">{{ 'DELEGATION.Risks.Dependency.Desc' |
+                                translate }}</p>
+                        </div>
+                    </div>
+                    <!-- Item 4 -->
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0 border border-orange-500/30">
+                            !</div>
+                        <div>
+                            <h4 class="text-white font-bold mb-1">{{ 'DELEGATION.Risks.HiddenFees.Title' | translate }}
+                            </h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">{{ 'DELEGATION.Risks.HiddenFees.Desc' |
+                                translate }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+
+            <!-- CONTROLS COLUMN -->
+            <div class="lg:col-span-1 space-y-8">
+
+                <!-- Section 1: Revenue -->
+                <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                    <h3 class="text-[#D4AF37] font-bold uppercase text-xs tracking-wider mb-6 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                        Potentiel Revenus
+                    </h3>
+
+                    <!-- Nightly Rate -->
+                    <div class="mb-6">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-slate-300">Prix Nuitée Moyen</span>
+                            <span class="font-bold text-white">{{ nightlyRate() }} €</span>
+                        </div>
+                        <input type="range" min="50" max="500" step="5" [ngModel]="nightlyRate()"
+                            (ngModelChange)="nightlyRate.set($event)"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]">
+                    </div>
+
+                    <!-- Occupancy Direct -->
+                    <div class="mb-6">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-slate-300">Occupation (Gestion Directe)</span>
+                            <span class="font-bold text-white">{{ occupancyDirect() }}%</span>
+                        </div>
+                        <input type="range" min="30" max="100" step="5" [ngModel]="occupancyDirect()"
+                            (ngModelChange)="occupancyDirect.set($event)"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400">
+                    </div>
+
+                    <!-- Occupancy Concierge -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-slate-300">Occupation (Conciergerie)</span>
+                            <span class="font-bold text-[#D4AF37]">{{ occupancyConcierge() }}%</span>
+                        </div>
+                        <input type="range" min="30" max="100" step="5" [ngModel]="occupancyConcierge()"
+                            (ngModelChange)="occupancyConcierge.set($event)"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]">
+                        <p class="text-[10px] text-slate-500 mt-1">*Les pros optimisent souvent mieux les
+                            prix/calendriers.</p>
+                    </div>
+                </div>
+
+                <!-- Section 2: Costs -->
+                <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                    <h3 class="text-[#D4AF37] font-bold uppercase text-xs tracking-wider mb-6 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                        Commissions
+                    </h3>
+
+                    <!-- Platform Commission -->
+                    <div class="mb-6">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-slate-300">Plateforme (Airbnb/Booking)</span>
+                            <span class="font-bold text-white">{{ commissionPlatform() }}%</span>
+                        </div>
+                        <input type="range" min="15" max="25" step="1" [ngModel]="commissionPlatform()"
+                            (ngModelChange)="commissionPlatform.set($event)"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400">
+                    </div>
+
+                    <!-- Concierge Commission -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-slate-300">Conciergerie</span>
+                            <span class="font-bold text-[#D4AF37]">{{ commissionConcierge() }}%</span>
+                        </div>
+                        <input type="range" min="15" max="35" step="1" [ngModel]="commissionConcierge()"
+                            (ngModelChange)="commissionConcierge.set($event)"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]">
+                    </div>
+                </div>
+
+                <!-- Section 3: Time Value -->
+                <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                    <h3 class="text-[#D4AF37] font-bold uppercase text-xs tracking-wider mb-6 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Valorisation du Temps
+                    </h3>
+
+                    <!-- Hours per Stay -->
+                    <div class="mb-6">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-slate-300">Heures / Séjour (Ménage, Check-in...)</span>
+                            <span class="font-bold text-white">{{ hoursPerStay() }} h</span>
+                        </div>
+                        <input type="range" min="1" max="10" step="0.5" [ngModel]="hoursPerStay()"
+                            (ngModelChange)="hoursPerStay.set($event)"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400">
+                    </div>
+
+                    <!-- Hourly Rate -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-slate-300">Votre Taux Horaire Estimé</span>
+                            <span class="font-bold text-white">{{ ownerHourlyRate() }} €</span>
+                        </div>
+                        <input type="range" min="10" max="100" step="5" [ngModel]="ownerHourlyRate()"
+                            (ngModelChange)="ownerHourlyRate.set($event)"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- RESULTS COLUMN -->
+            <div class="lg:col-span-2 flex flex-col space-y-6">
+
+                <!-- SUMMARY CARDS -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Direct Management Card -->
+                    <div
+                        class="bg-white/5 rounded-2xl p-6 border border-white/10 flex flex-col justify-between relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-slate-400 font-bold uppercase tracking-wider text-xs mb-2">Gestion Directe
+                            </h4>
+                            <div class="text-3xl font-bold text-white mb-1">{{ netRevenueDirect() | number:'1.0-0' }} €
+                            </div>
+                            <div class="text-xs text-slate-400">Net annuel estimé</div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-white/10">
+                            <div class="flex justify-between items-center text-red-300">
+                                <span class="text-xs font-semibold">Temps passé</span>
+                                <span class="font-mono font-bold">{{ annualHoursSpent() | number:'1.0-0' }} h/an</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Concierge Card -->
+                    <div
+                        class="bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 rounded-2xl p-6 border border-[#D4AF37]/30 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <svg class="w-24 h-24 text-[#D4AF37]" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L1 21h22M12 2l7 19H5M12 4l-4 15h8"></path>
+                            </svg> <!-- Placeholder icon -->
+                        </div>
+                        <div>
+                            <h4 class="text-[#D4AF37] font-bold uppercase tracking-wider text-xs mb-2">Gestion
+                                Conciergerie</h4>
+                            <div class="text-3xl font-bold text-white mb-1">{{ netRevenueConcierge() | number:'1.0-0' }}
+                                €</div>
+                            <div class="text-xs text-[#D4AF37]/80">Net annuel estimé</div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-[#D4AF37]/20">
+                            <div class="flex justify-between items-center text-green-300">
+                                <span class="text-xs font-semibold">Temps gagné</span>
+                                <span class="font-mono font-bold">{{ annualHoursSpent() | number:'1.0-0' }} h/an</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMPARISON CHART BAR -->
+                <div class="bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-white font-bold mb-8">Analyse Comparative</h3>
+
+                    <!-- Bar 1: Direct -->
+                    <div class="mb-6 relative">
+                        <div
+                            class="flex justify-between text-xs text-slate-400 mb-2 font-medium uppercase tracking-wide">
+                            <span>Gestion Directe (Revenu Net)</span>
+                            <span>{{ netRevenueDirect() | number:'1.0-0' }} €</span>
+                        </div>
+                        <div class="h-4 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-slate-400 rounded-full transition-all duration-500 ease-out"
+                                [style.width]="getBarWidth(netRevenueDirect())"></div>
+                        </div>
+                    </div>
+
+                    <!-- Bar 2: Direct Adjusted -->
+                    <div class="mb-6 relative opacity-75">
+                        <div class="flex justify-between text-xs text-red-300 mb-2 font-medium uppercase tracking-wide">
+                            <span>Gestion Directe (Après coût vore temps)</span>
+                            <span>{{ totalValueDirectReal() | number:'1.0-0' }} €</span>
+                        </div>
+                        <div class="h-4 bg-white/10 rounded-full overflow-hidden flex">
+                            <div class="h-full bg-red-400/80 rounded-l-full transition-all duration-500 ease-out"
+                                [style.width]="getBarWidth(totalValueDirectReal())"></div>
+                            <!-- Ghost part showing lost time value -->
+                            <div class="h-full bg-red-900/30 rounded-r-full border-l border-white/10 transition-all duration-500 ease-out"
+                                [style.width]="getBarWidth(timeCostValue())"></div>
+                        </div>
+                        <div class="text-[10px] text-red-400 mt-1 text-right">
+                            - {{ timeCostValue() | number:'1.0-0' }}€ ({{ annualHoursSpent() | number:'1.0-0' }}h x {{
+                            ownerHourlyRate() }}€)
+                        </div>
+                    </div>
+
+                    <!-- Bar 3: Concierge -->
+                    <div class="relative">
+                        <div
+                            class="flex justify-between text-xs text-[#D4AF37] mb-2 font-medium uppercase tracking-wide">
+                            <span>Conciergerie (Net)</span>
+                            <span>{{ netRevenueConcierge() | number:'1.0-0' }} €</span>
+                        </div>
+                        <div class="h-4 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-[#D4AF37] to-amber-300 rounded-full transition-all duration-500 ease-out shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                                [style.width]="getBarWidth(netRevenueConcierge())"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- EXPERT ADVICE (Dynamic) -->
+                <div class="rounded-2xl p-6 border backdrop-blur-md transition-colors"
+                    [class.bg-green-500/10]="expertAdvice().type === 'success'"
+                    [class.border-green-500/30]="expertAdvice().type === 'success'"
+                    [class.bg-blue-500/10]="expertAdvice().type === 'info'"
+                    [class.border-blue-500/30]="expertAdvice().type === 'info'"
+                    [class.bg-orange-500/10]="expertAdvice().type === 'warning'"
+                    [class.border-orange-500/30]="expertAdvice().type === 'warning'">
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 border"
+                            [class.bg-green-500/20]="expertAdvice().type === 'success'"
+                            [class.border-green-500/50]="expertAdvice().type === 'success'"
+                            [class.text-green-400]="expertAdvice().type === 'success'"
+                            [class.bg-blue-500/20]="expertAdvice().type === 'info'"
+                            [class.border-blue-500/50]="expertAdvice().type === 'info'"
+                            [class.text-blue-400]="expertAdvice().type === 'info'"
+                            [class.bg-orange-500/20]="expertAdvice().type === 'warning'"
+                            [class.border-orange-500/50]="expertAdvice().type === 'warning'"
+                            [class.text-orange-400]="expertAdvice().type === 'warning'">
+
+                            @if(expertAdvice().type === 'success') { 💡 }
+                            @else if(expertAdvice().type === 'info') { ⚖️ }
+                            @else { ⚠️ }
+                        </div>
+                        <div>
+                            <h4 class="font-bold uppercase tracking-wider text-sm mb-1"
+                                [class.text-green-400]="expertAdvice().type === 'success'"
+                                [class.text-blue-400]="expertAdvice().type === 'info'"
+                                [class.text-orange-400]="expertAdvice().type === 'warning'">
+                                Conseil de l'expert
+                            </h4>
+                            <p class="text-white font-medium leading-relaxed">
+                                {{ expertAdvice().message }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: SUPPLIER INTERACTION (Silver+) -->
+    <div class="max-w-7xl mx-auto mt-12 mb-12 relative">
+
+        <!-- Accordion Container -->
+        <div class="bg-white/5 rounded-2xl border border-white/10 overflow-hidden relative transition-all duration-300">
+
+            <!-- HEADER (Clickable Toggle) -->
+            <button (click)="isSupplierSectionOpen.set(!isSupplierSectionOpen())"
+                class="w-full flex items-center justify-between p-8 text-left hover:bg-white/5 transition-colors group">
+
+                <h3 class="text-purple-400 font-bold uppercase text-sm tracking-wider flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    {{ 'DELEGATION.Supplier.Title' | translate }}
+                </h3>
+
+                <div class="flex items-center gap-3">
+                    @if(!canViewSupplierSection()) {
+                    <span
+                        class="text-xs font-bold px-2 py-1 bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">Silver</span>
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                        </path>
+                    </svg>
+                    }
+                    <svg class="w-6 h-6 text-slate-400 transform transition-transform duration-300"
+                        [class.rotate-180]="isSupplierSectionOpen()" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </button>
+
+            <!-- COLLAPSIBLE CONTENT -->
+            @if(isSupplierSectionOpen()) {
+            <div class="p-8 pt-0 border-t border-white/5 relative">
+
+                <!-- LOCK OVERLAY (If not Silver/Gold) -->
+                @if (!canViewSupplierSection()) {
+                <div
+                    class="absolute inset-0 z-20 backdrop-blur-md bg-slate-900/60 flex flex-col items-center justify-center text-center p-6 animate-fadeIn">
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">{{ 'DELEGATION.Supplier.Title' | translate }}</h3>
+                    <p class="text-slate-300 max-w-lg mb-6">Faites la différence entre les amateurs et les pros. Obtenez
+                        la liste des 5 questions pièges à poser avant de signer.</p>
+                    <button
+                        class="px-6 py-3 bg-gradient-to-r from-slate-200 to-white text-slate-900 font-bold rounded-xl hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all transform hover:scale-105">
+                        Débloquer avec le Plan Silver
+                    </button>
+                </div>
+                }
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10 mt-8"
+                    [class.opacity-20]="!canViewSupplierSection()">
+                    <!-- Intro Text -->
+                    <div class="md:col-span-2 mb-4">
+                        <h4 class="text-xl font-bold text-white mb-2">{{ 'DELEGATION.Supplier.TrapQuestions.Title' |
+                            translate }}</h4>
+                        <p class="text-slate-400">Avant de signer, posez ces questions pour débusquer les amateurs.</p>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div
+                        class="bg-white/5 p-5 rounded-xl border border-white/5 hover:border-purple-500/30 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <span class="text-purple-400 font-bold text-lg">1.</span>
+                            <div>
+                                <h5 class="text-white font-bold text-sm mb-2">{{ 'DELEGATION.Q1.Question' | translate }}
+                                </h5>
+                                <div
+                                    class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
+                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    {{ 'DELEGATION.Q1.Answer' | translate }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div
+                        class="bg-white/5 p-5 rounded-xl border border-white/5 hover:border-purple-500/30 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <span class="text-purple-400 font-bold text-lg">2.</span>
+                            <div>
+                                <h5 class="text-white font-bold text-sm mb-2">{{ 'DELEGATION.Q2.Question' | translate }}
+                                </h5>
+                                <div
+                                    class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
+                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    {{ 'DELEGATION.Q2.Answer' | translate }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div
+                        class="bg-white/5 p-5 rounded-xl border border-white/5 hover:border-purple-500/30 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <span class="text-purple-400 font-bold text-lg">3.</span>
+                            <div>
+                                <h5 class="text-white font-bold text-sm mb-2">{{ 'DELEGATION.Q3.Question' | translate }}
+                                </h5>
+                                <div
+                                    class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
+                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    {{ 'DELEGATION.Q3.Answer' | translate }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div
+                        class="bg-white/5 p-5 rounded-xl border border-white/5 hover:border-purple-500/30 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <span class="text-purple-400 font-bold text-lg">4.</span>
+                            <div>
+                                <h5 class="text-white font-bold text-sm mb-2">{{ 'DELEGATION.Q4.Question' | translate }}
+                                </h5>
+                                <div
+                                    class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
+                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    {{ 'DELEGATION.Q4.Answer' | translate }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 (Full Width) -->
+                    <div
+                        class="md:col-span-2 bg-white/5 p-5 rounded-xl border border-white/5 hover:border-purple-500/30 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <span class="text-purple-400 font-bold text-lg">5.</span>
+                            <div>
+                                <h5 class="text-white font-bold text-sm mb-2">{{ 'DELEGATION.Q5.Question' | translate }}
+                                </h5>
+                                <div
+                                    class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
+                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    {{ 'DELEGATION.Q5.Answer' | translate }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- --- NEW SUBSECTION: Contract Clauses --- -->
+                    <div class="md:col-span-2 pt-8 mt-8 border-t border-white/10">
+                        <h4 class="text-xl font-bold text-white mb-2">{{ 'DELEGATION.Clauses.Title' | translate }}</h4>
+                        <p class="text-slate-400 mb-6">{{ 'DELEGATION.Clauses.Intro' | translate }}</p>
+
+                        <div class="space-y-6">
+                            <!-- Article 1 -->
+                            <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700/50">
+                                <h5
+                                    class="text-purple-300 font-bold mb-4 uppercase text-xs tracking-wider border-b border-purple-500/20 pb-2">
+                                    {{ 'DELEGATION.Clauses.Maintenance.Title' | translate }}
+                                </h5>
+                                <ul class="space-y-4 text-sm text-slate-300">
+                                    <li><strong class="text-white block mb-1">{{
+                                            'DELEGATION.Clauses.Maintenance.P1.Title' | translate }}</strong> {{
+                                        'DELEGATION.Clauses.Maintenance.P1.Text' | translate }}</li>
+                                    <li><strong class="text-white block mb-1">{{
+                                            'DELEGATION.Clauses.Maintenance.P2.Title' | translate }}</strong> {{
+                                        'DELEGATION.Clauses.Maintenance.P2.Text' | translate }}</li>
+                                    <li><strong class="text-white block mb-1">{{
+                                            'DELEGATION.Clauses.Maintenance.P3.Title' | translate }}</strong> {{
+                                        'DELEGATION.Clauses.Maintenance.P3.Text' | translate }}</li>
+                                    <li><strong class="text-white block mb-1">{{
+                                            'DELEGATION.Clauses.Maintenance.P4.Title' | translate }}</strong> {{
+                                        'DELEGATION.Clauses.Maintenance.P4.Text' | translate }}</li>
+                                </ul>
+                            </div>
+
+                            <!-- Article 2 -->
+                            <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700/50">
+                                <h5
+                                    class="text-purple-300 font-bold mb-4 uppercase text-xs tracking-wider border-b border-purple-500/20 pb-2">
+                                    {{ 'DELEGATION.Clauses.Termination.Title' | translate }}
+                                </h5>
+                                <ul class="space-y-4 text-sm text-slate-300">
+                                    <li><strong class="text-white block mb-1">{{
+                                            'DELEGATION.Clauses.Termination.P1.Title' | translate }}</strong> {{
+                                        'DELEGATION.Clauses.Termination.P1.Text' | translate }}</li>
+                                    <li><strong class="text-white block mb-1">{{
+                                            'DELEGATION.Clauses.Termination.P2.Title' | translate }}</strong> {{
+                                        'DELEGATION.Clauses.Termination.P2.Text' | translate }}</li>
+                                    <li><strong class="text-white block mb-1">{{
+                                            'DELEGATION.Clauses.Termination.P3.Title' | translate }}</strong> {{
+                                        'DELEGATION.Clauses.Termination.P3.Text' | translate }}</li>
+                                    <li><strong class="text-white block mb-1">{{
+                                            'DELEGATION.Clauses.Termination.P4.Title' | translate }}</strong> {{
+                                        'DELEGATION.Clauses.Termination.P4.Text' | translate }}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

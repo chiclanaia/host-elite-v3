@@ -402,6 +402,79 @@ export const en = {
     'TOOL.ical_name': 'iCal Synchronization',
     'TOOL.ical_desc': 'Centralize your calendars from all platforms.',
     'TOOL.delegation_name': 'AI Delegation Simulator',
+
+    // DELEGATION SECTION
+    'DELEGATION.Advantages.Title': 'Advantages (Leverage)',
+    'DELEGATION.Advantages.Yield.Title': 'Revenue Optimization',
+    'DELEGATION.Advantages.Yield.Desc': 'A pro concierge adjusts prices daily. Direct management often keeps prices too low.',
+    'DELEGATION.Advantages.Superhost.Title': 'Immediate Superhost Status',
+    'DELEGATION.Advantages.Superhost.Desc': 'Benefit from the history and algorithm visibility of the concierge account.',
+    'DELEGATION.Advantages.Passivity.Title': 'True Passivity',
+    'DELEGATION.Advantages.Passivity.Desc': 'Turn work into an investment. Own 5 properties without changing your schedule.',
+    'DELEGATION.Advantages.Cleaning.Title': 'Professionalism',
+    'DELEGATION.Advantages.Cleaning.Desc': 'Access to specialized teams and hotel-quality linens.',
+
+    'DELEGATION.Risks.Title': 'Risks (Points of Vigilance)',
+    'DELEGATION.Risks.Disconnect.Title': 'Disconnection from Reality',
+    'DELEGATION.Risks.Disconnect.Desc': 'You no longer see real wear and tear. A small leak can become a major disaster.',
+    'DELEGATION.Risks.Uniformity.Title': 'Uniformity',
+    'DELEGATION.Risks.Uniformity.Desc': 'Some industrial concierges lose the warm touch, lowering the welcome rating.',
+    'DELEGATION.Risks.Dependency.Title': 'Dependency Risk',
+    'DELEGATION.Risks.Dependency.Desc': 'If quality drops, taking back management (keys, accounts, processes) can be brutal.',
+    'DELEGATION.Risks.HiddenFees.Title': 'Hidden Fees',
+    'DELEGATION.Risks.HiddenFees.Desc': 'Beware of abusive billing for "minor maintenance" (light bulbs, etc.).',
+
+    'DELEGATION.Supplier.Title': 'Supplier Interaction (Silver+)',
+    'DELEGATION.Supplier.TrapQuestions.Title': 'The 5 Trap Questions',
+
+    'DELEGATION.Q1.Question': 'Which Airbnb account are the listings published on?',
+    'DELEGATION.Q1.Answer': 'Ideally yours (they should be co-hosts) so you keep your reviews if you split.',
+
+    'DELEGATION.Q2.Question': 'How do you handle pricing on Tuesdays and Wednesdays in low season?',
+    'DELEGATION.Q2.Answer': 'They should talk about "Dynamic Pricing" software (PriceLabs, Wheelhouse), not a fixed price.',
+
+    'DELEGATION.Q3.Question': 'What is your exact procedure for damages found by cleaning staff?',
+    'DELEGATION.Q3.Answer': 'Immediate photos, report within 24h via platform, and claim on deposit.',
+
+    'DELEGATION.Q4.Question': 'Can you show me a typical monthly performance report?',
+    'DELEGATION.Q4.Answer': 'A clear document separating gross revenue, commissions, cleaning fees, and your net.',
+
+    'DELEGATION.Q5.Question': 'Who intervenes if a bulb burns out or a remote battery dies at 9 PM?',
+    'DELEGATION.Q5.Answer': 'They must have a "maintenance" team included or a transparent flat fee.',
+
+    'DELEGATION.AI.Title': 'AI Delegation Assistant',
+    'DELEGATION.AI.Desc': 'AI analyzes local market data to auto-calibrate this simulator with real-time insights.',
+    'DELEGATION.AI.Button': 'Run Auto-Analysis',
+    'DELEGATION.AI.ResultsTitle': 'Market Analysis Detected',
+    'DELEGATION.NightlyRate': 'Est. Nightly Rate',
+    'DELEGATION.Occupancy': 'Occupancy Rate',
+    'DELEGATION.ConciergeFee': 'Concierge Fee',
+    'DELEGATION.CleaningCost': 'Cleaning Cost',
+
+    'DELEGATION.Clauses.Title': 'Essential Contract Clauses',
+    'DELEGATION.Clauses.Intro': 'Add these articles to your contract to protect yourself.',
+
+    'DELEGATION.Clauses.Maintenance.Title': 'Article: Maintenance and Duty of Care',
+    'DELEGATION.Clauses.Maintenance.P1.Title': 'Duty of Care:',
+    'DELEGATION.Clauses.Maintenance.P1.Text': 'The Service Provider commits to keeping the property in pristine condition. A photographic inspection must be conducted after every cleaning session.',
+    'DELEGATION.Clauses.Maintenance.P2.Title': 'Minor Repairs:',
+    'DELEGATION.Clauses.Maintenance.P2.Text': 'Small maintenance tasks (replacing light bulbs, batteries, tightening handles) are the Responsibility of the Service Provider and covered by the management fee.',
+    'DELEGATION.Clauses.Maintenance.P3.Title': 'Damage Reporting:',
+    'DELEGATION.Clauses.Maintenance.P3.Text': 'Any damage caused by a guest must be reported to the Owner within 24 hours of check-out, with photographic evidence to trigger insurance claims.',
+    'DELEGATION.Clauses.Maintenance.P4.Title': 'Emergency Threshold:',
+    'DELEGATION.Clauses.Maintenance.P4.Text': 'The Service Provider is authorized to carry out emergency repairs up to €150. For any amount exceeding this, written approval from the Owner is required.',
+
+    'DELEGATION.Clauses.Termination.Title': 'Article: Termination for Substandard Quality',
+    'DELEGATION.Clauses.Termination.P1.Title': 'Quality Benchmark:',
+    'DELEGATION.Clauses.Termination.P1.Text': 'The Service Provider commits to maintaining an average rating above 4.5/5 on booking platforms.',
+    'DELEGATION.Clauses.Termination.P2.Title': 'Performance Alert:',
+    'DELEGATION.Clauses.Termination.P2.Text': 'If the average rating falls below this threshold over a period of 3 consecutive months, or if three negative reviews explicitly mentioning cleanliness/communication are published, the Owner will issue a formal warning.',
+    'DELEGATION.Clauses.Termination.P3.Title': 'Right to Terminate:',
+    'DELEGATION.Clauses.Termination.P3.Text': 'If no improvement is observed within 30 days following this warning, the Owner may terminate the contract immediately and without any termination penalties.',
+    'DELEGATION.Clauses.Termination.P4.Title': 'Handover of Access:',
+    'DELEGATION.Clauses.Termination.P4.Text': 'Upon termination, the Service Provider must return all digital access and physical keys within 48 hours.',
+
+
     'TOOL.delegation_desc': 'Estimate the costs and impact of outsourcing.',
     'TOOL.profit_name': 'Profitability Calculation Templates',
     'TOOL.profit_desc': 'Calculate your margins and set your base prices.',

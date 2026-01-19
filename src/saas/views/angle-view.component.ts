@@ -10,10 +10,11 @@ import { SessionStore } from '../../state/session.store';
 import { MicrositeConfig, BuilderPhoto, SectionDef, resolveMicrositeConfig } from './welcome-booklet/booklet-definitions';
 import { MicrositeContainerComponent } from '../features/microsite/microsite-container.component';
 import { AiPromptsComponent } from '../features/ai-prompts/ai-prompts.component';
-import { BookletToolComponent } from '../features/booklet-tool/booklet-tool.component';
 import { VisibilityAuditComponent } from '../features/visibility-audit/visibility-audit.component';
+import { BookletToolComponent } from '../features/booklet-tool/booklet-tool.component';
 import { AiMessageAssistantComponent } from '../features/ai-message-assistant/ai-message-assistant.component';
 import { ChecklistsToolComponent } from '../features/checklists/checklists-tool.component';
+import { DelegationSimulatorComponent } from '../features/delegation/delegation-simulator.component';
 import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
@@ -57,7 +58,17 @@ interface OnboardingQuestion {
 @Component({
     selector: 'saas-angle-view',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, MicrositeContainerComponent, AiPromptsComponent, VisibilityAuditComponent, BookletToolComponent, AiMessageAssistantComponent, ChecklistsToolComponent, TranslatePipe],
+    imports: [
+        CommonModule,
+        TranslatePipe,
+        AiPromptsComponent,
+        VisibilityAuditComponent,
+        BookletToolComponent,
+        AiMessageAssistantComponent,
+        ChecklistsToolComponent,
+        MicrositeContainerComponent,
+        DelegationSimulatorComponent
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './angle-view.component.html',
 })
@@ -143,9 +154,9 @@ export class AngleViewComponent implements OnInit {
             title: 'NAV.operations',
             description: 'ANGLE.operations_desc',
             tools: [
-                { id: 'checklists', name: 'TOOL.checklists_name', description: 'TOOL.checklists_desc', requiredPlan: 'Bronze' },
-                { id: 'ical-sync', name: 'TOOL.ical_name', description: 'TOOL.ical_desc', requiredPlan: 'Silver' },
-                { id: 'delegation-sim', name: 'TOOL.delegation_name', description: 'TOOL.delegation_desc', requiredPlan: 'Gold' },
+                { id: 'checklists', name: 'TOOL.checklists_name', description: 'TOOL.checklists_desc', requiredPlan: 'Freemium' }, // Checklists is standard
+                { id: 'calendar-sync', name: 'TOOL.calendar_name', description: 'TOOL.calendar_desc', requiredPlan: 'Silver' },
+                { id: 'delegation-sim', name: 'TOOL.delegation_name', description: 'TOOL.delegation_desc', requiredPlan: 'Freemium' },
             ]
         },
         'pricing': {
