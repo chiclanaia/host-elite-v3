@@ -36,6 +36,7 @@ export class SessionStore {
 
     // Global Config Signals
     readonly showPlanBadges = signal<boolean>(false);
+    readonly showLanguageSwitcher = signal<boolean>(false);
     readonly allPlans = signal<PlanConfig[]>([]);
 
     // Computed

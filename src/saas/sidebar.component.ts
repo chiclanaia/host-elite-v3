@@ -14,8 +14,6 @@ import { TranslatePipe } from '../pipes/translate.pipe';
     imports: [CommonModule, TranslatePipe],
     template: `
     <aside class="w-64 flex-shrink-0 flex flex-col h-full bg-slate-900 border-r border-white/10 text-white transition-all duration-300 relative z-20">
-      <!-- Version Indicator for Debugging -->
-      <div class="absolute top-0 right-0 p-1 text-[10px] text-green-500 font-mono opacity-50 select-none pointer-events-none z-50">v1.3</div>
       <!-- Logo Header -->
       <div class="px-6 h-16 flex items-center border-b border-white/10 flex-shrink-0">
         <h1 class="text-lg font-bold flex items-center space-x-3 leading-tight tracking-wide">

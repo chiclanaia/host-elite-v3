@@ -64,7 +64,7 @@ export class SaaSAppComponent implements OnInit {
 
   // Data Layer Injection
   private repository = inject(HostRepository);
-  private store = inject(SessionStore);
+  protected store = inject(SessionStore);
   private fb: FormBuilder = inject(FormBuilder);
   translationService = inject(TranslationService);
   notifService = inject(NotificationService);

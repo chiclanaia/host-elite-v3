@@ -100,6 +100,22 @@ import { NotificationService } from '../../services/notification.service';
                 </button>
             </div>
             
+            <!-- Toggle Language Switcher -->
+            <div class="flex items-center justify-between p-4 bg-slate-900/50 rounded-lg border border-white/5 hover:border-white/10 transition-colors mt-4">
+                <div>
+                    <h3 class="font-bold text-white">Sélecteur de Langue</h3>
+                    <p class="text-xs text-slate-400 mt-1">Afficher le sélecteur de langue en haut à droite.</p>
+                </div>
+                <button (click)="toggleLanguageSwitcher()" 
+                        class="w-14 h-7 rounded-full p-1 transition-colors duration-200 relative focus:outline-none"
+                        [class.bg-blue-500]="store.showLanguageSwitcher()"
+                        [class.bg-slate-700]="!store.showLanguageSwitcher()">
+                    <div class="w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200"
+                         [class.translate-x-7]="store.showLanguageSwitcher()"
+                         [class.translate-x-0]="!store.showLanguageSwitcher()"></div>
+                </button>
+            </div>
+            
         </section>
 
         <!-- SECTION 3: Notification Sender -->
@@ -293,6 +309,7 @@ import { NotificationService } from '../../services/notification.service';
   `
 })
 export class AdminDebugViewComponent {
+    public store = inject(SessionStore);
     store = inject(SessionStore);
     ts = inject(TranslationService);
     repository = inject(HostRepository);
@@ -524,5 +541,9 @@ export class AdminDebugViewComponent {
 
     toggleNotifDebug() {
         this.notifService.showDebugTestButton.update(v => !v);
+    }
+
+    toggleLanguageSwitcher() {
+        this.store.showLanguageSwitcher.update(v => !v);
     }
 }
