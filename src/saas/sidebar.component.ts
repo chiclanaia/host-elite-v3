@@ -12,9 +12,10 @@ import { TranslatePipe } from '../pipes/translate.pipe';
     selector: 'saas-sidebar',
     standalone: true,
     imports: [CommonModule, TranslatePipe],
-    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-    <aside class="w-64 flex-shrink-0 flex flex-col h-full bg-slate-900/80 backdrop-blur-xl border-r border-white/10 shadow-2xl relative z-20 text-white transition-all duration-300">
+    <aside class="w-64 flex-shrink-0 flex flex-col h-full bg-slate-900 border-r border-white/10 text-white transition-all duration-300 relative z-20">
+      <!-- Version Indicator for Debugging -->
+      <div class="absolute top-0 right-0 p-1 text-[10px] text-green-500 font-mono opacity-50 select-none pointer-events-none z-50">v1.3</div>
       <!-- Logo Header -->
       <div class="px-6 h-16 flex items-center border-b border-white/10 flex-shrink-0">
         <h1 class="text-lg font-bold flex items-center space-x-3 leading-tight tracking-wide">
@@ -184,33 +185,38 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                     }
                     <!-- Lock Icon -->
                     @if (isLocked(view)) {
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600 ml-2"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-slate-600 ml-2"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
                     }
                     </a>
                 }
                 </div>
             </div>
-            
-            <!-- Account & Support -->
+
+            <!-- Support -->
             <div class="pt-6">
                 <div class="px-3 pb-3">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ 'SIDEBAR.Account' | translate }}</span>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ 'NAV.support' | translate }}</span>
                 </div>
                 <div class="space-y-1">
-                @for (view of accountViews; track view.id) {
-                    <a (click)="changeView(view)"
-                    class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-colors border border-transparent"
+                @for (view of supportViews; track view.id) {
+                    <a (click)="isLocked(view) ? null : changeView(view)"
+                    class="group flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-all duration-200 border border-transparent"
                     [class]="activeView().id === view.id 
-                        ? 'bg-white/10 text-[#D4AF37] border-white/5' 
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'">
-                    <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
-                          [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
-                          [innerHTML]="getIcon(view.icon)"></span>
-                    {{ 'NAV.' + view.id | translate }}
+                        ? 'bg-white/10 text-[#D4AF37] border-l-2 border-[#D4AF37] shadow-inner' 
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'"
+                    [class.opacity-50]="isLocked(view)"
+                    [class.cursor-not-allowed]="isLocked(view)">
+                    <div class="flex items-center">
+                        <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
+                              [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
+                              [innerHTML]="getIcon(view.icon)"></span>
+                        {{ 'NAV.' + view.id | translate }}
+                    </div>
                     </a>
                 }
                 </div>
             </div>
+            
         }
 
         <!-- Administration (Visible only for Admins) -->
@@ -237,19 +243,28 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 
       <!-- Footer User Profile -->
       <div class="px-4 py-4 border-t border-white/10 flex-shrink-0 bg-black/20 backdrop-blur-sm">
-        <div class="flex items-center">
-            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center font-bold mr-3 shadow-md border border-white/10"
+        <div class="flex items-center cursor-pointer group/profile" (click)="onOpenSettings()">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center font-bold mr-3 shadow-md border border-white/10 overflow-hidden"
                  [class.from-purple-900.to-purple-700]="userRole() === 'admin'">
-                {{ userName().charAt(0) }}
+                @if (userAvatar()) {
+                    <img [src]="userAvatar()" class="w-full h-full object-cover" />
+                } @else {
+                    {{ userName().charAt(0) }}
+                }
             </div>
-            <div class="overflow-hidden">
-                <p class="text-sm font-bold text-slate-200 truncate">{{ userName() }}</p>
+            <div class="overflow-hidden flex-1">
+                <p class="text-sm font-bold text-slate-200 truncate group-hover/profile:text-[#D4AF37] transition-colors">{{ userName() }}</p>
                 <div class="flex items-center text-xs">
                     <span class="font-semibold mr-1" [class]="getPlanColor()">{{ userPlan() }}</span>
                     @if(userRole() === 'admin') {
                         <span class="bg-purple-900/50 text-purple-300 border border-purple-500/30 text-[9px] px-1.5 py-0.5 rounded-full ml-1">ADMIN</span>
                     }
                 </div>
+            </div>
+            <div class="opacity-0 group-hover/profile:opacity-100 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-[#D4AF37]">
+                    <path fill-rule="evenodd" d="M7.84 4.51a.75.75 0 0 1 .2 1.04l-3.26 4.7a.75.75 0 0 1-1.23-.01L1.03 6.94a.75.75 0 0 1 1.13-.98l1.79 2.05L6.8 4.31a.75.75 0 0 1 1.04-.2ZM10.75 4a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-1.5 0V4.75A.75.75 0 0 1 10.75 4ZM15.25 4a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-1.5 0V4.75A.75.75 0 0 1 15.25 4Z" clip-rule="evenodd" />
+                </svg>
             </div>
         </div>
         <button (click)="onLogout()" class="w-full mt-4 text-left flex items-center px-3 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
@@ -265,9 +280,11 @@ export class SidebarComponent {
     userPlan = input.required<string>();
     userName = input.required<string>();
     userRole = input.required<UserRole>();
+    userAvatar = input<string | undefined>();
     properties = input.required<Property[]>();
     viewChange = output<View>();
     logout = output<void>();
+    openSettings = output<void>();
 
     private sanitizer: DomSanitizer = inject(DomSanitizer);
     private store = inject(SessionStore); // Injected to resolve badges
@@ -295,8 +312,7 @@ export class SidebarComponent {
         { id: 'training', title: 'Formations', icon: 'training', featureId: 'training' }
     ];
 
-    accountViews: View[] = [
-        { id: 'account', title: 'Mon Compte', icon: 'account' },
+    supportViews: View[] = [
         { id: 'support', title: 'Support', icon: 'support' },
     ];
 
@@ -310,7 +326,6 @@ export class SidebarComponent {
         dashboard: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M7 3a1 1 0 0 0-1 1v12a1 1 0 1 0 2 0V4a1 1 0 0 0-1-1ZM13 5a1 1 0 0 0-1 1v10a1 1 0 1 0 2 0V6a1 1 0 0 0-1-1Z" /><path fill-rule="evenodd" d="M3 9a1 1 0 0 1 1-1h.5a.5.5 0 0 0 .5-.5V6a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1.5a.5.5 0 0 0 .5.5H9a1 1 0 1 1 0 2H7.5a.5.5 0 0 0-.5.5V14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1.5a.5.5 0 0 0-.5-.5H3a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Zm12 0a1 1 0 0 1 1-1h.5a.5.5 0 0 0 .5-.5V6a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1.5a.5.5 0 0 0 .5.5H9a1 1 0 1 1 0 2h-1.5a.5.5 0 0 0-.5.5V14a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1.5a.5.5 0 0 0-.5-.5H15a1 1 0 0 1 0-2Z" clip-rule="evenodd" /></svg>`,
         wheel: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M16.313 5.422a7.5 7.5 0 0 1 0 9.156 1 1 0 0 0-1.24 1.562 9.5 9.5 0 0 0 0-12.28 1 1 0 0 0 1.24 1.562ZM18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM5.5 10a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Z" /><path d="M10 6.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z" /></svg>`,
         logout: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.75a.75.75 0 0 0 0 1.5h9.5a.75.75 0 0 0 .75-.75Z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M15.28 6.22a.75.75 0 0 0-1.06 1.06L16.44 9.5H8.75a.75.75 0 0 0 0 1.5h7.69l-2.22 2.22a.75.75 0 1 0 1.06 1.06l3.5-3.5a.75.75 0 0 0 0-1.06l-3.5-3.5Z" clip-rule="evenodd" /></svg>`,
-        account: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z M10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z" clip-rule="evenodd" /></svg>`,
         support: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8.5-2.5a.75.75 0 0 1 1.5 0v.5c0 .534.213.984.57 1.332l.716.67c.5.471.814 1.12.814 1.849a3.5 3.5 0 0 1-7 0c0-.73.314-1.378.814-1.849l.716-.67A1.99 1.99 0 0 0 9.5 8v-.5a.75.75 0 0 1 .75-.75Z M10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>`,
         property: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M5.5 10.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z" /><path fill-rule="evenodd" d="m.842 6.417 5.694 2.135a.75.75 0 0 0 .868-.14l5.695-4.272a.75.75 0 0 1 .983-.026l5.043 3.782a.75.75 0 0 1 .16.945l-2.424 4.31a.75.75 0 0 1-1.012.316l-5.74-2.152a.75.75 0 0 0-.868.14l-5.695 4.272a.75.75 0 0 1-.983.026L.99 11.62a.75.75 0 0 1-.148-.945L3.266 6.36a.75.75 0 0 1 1.012-.316l5.74 2.153a.75.75 0 0 0 .868-.14l5.695-4.272a.75.75 0 0 1 .983.026L19.01 7.38a.75.75 0 0 1 .148.945l-2.424 4.31a.75.75 0 0 1-1.012.316l-5.74-2.153a.75.75 0 0 0-.868.14l-5.695 4.272a.75.75 0 0 1-.983.026L.99 13.62a.75.75 0 0 1-.148-.945l2.424-4.31a.75.75 0 0 1 1.012-.316l.011.004Z" clip-rule="evenodd" /></svg>`,
         widgets: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M3 4.75A.75.75 0 0 1 3.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 3 4.75ZM3 9.75A.75.75 0 0 1 3.75 9h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 3 9.75ZM3 14.75A.75.75 0 0 1 3.75 14h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 3 14.75ZM9.75 4a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM9.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM9.75 14a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z" /></svg>`,
@@ -364,6 +379,11 @@ export class SidebarComponent {
 
     togglePropertyDropdown(): void {
         this.isPropertyDropdownOpen.update(v => !v);
+    }
+
+    onOpenSettings(): void {
+        console.log('[Sidebar] onOpenSettings clicked');
+        this.openSettings.emit();
     }
 
     selectProperty(property: Property): void {

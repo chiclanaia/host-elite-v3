@@ -4,6 +4,7 @@ import { ContextData, ReportData, Scores, UserProfile, AppPlan, PlanConfig } fro
 import { GeminiService } from '../services/gemini.service';
 import { HostRepository } from '../services/host-repository.service';
 import { SupabaseService } from '../services/supabase.service';
+import { TranslationService } from '../services/translation.service';
 
 export type AppStep = 'landing' | 'onboarding_context' | 'evaluation' | 'loading' | 'results' | 'dashboard';
 
@@ -15,8 +16,10 @@ export class SessionStore {
     private geminiService = inject(GeminiService);
     private repository = inject(HostRepository);
     private supabaseService = inject(SupabaseService);
+    private translationService = inject(TranslationService); // NEW
 
-    // State Signals
+    // ... (rest of store)
+
     readonly currentStep = signal<AppStep>('landing');
     readonly contextData = signal<ContextData | null>(null);
     readonly scores = signal<Scores | null>(null);
@@ -232,6 +235,7 @@ export class SessionStore {
         }
 
         this.setUserFromSupabase(user, profile);
+        console.log('[SessionStore] User processed. Profile:', profile);
 
         // 4. Force Diagnostic Logic (non-admin)
         const role = profile?.role || user.app_metadata?.role || 'user';
@@ -263,6 +267,7 @@ export class SessionStore {
 
     private setUserFromSupabase(user: any, profile: UserProfile | null = null) {
         const role = profile?.role || user.app_metadata?.role || 'user';
+        const lang = profile?.language || 'fr'; // Default to FR
 
         this.userProfile.set({
             id: user.id,
@@ -271,8 +276,16 @@ export class SessionStore {
             role: role,
             plan: profile?.plan || 'Freemium',
             subscription_status: profile?.subscription_status || 'active',
-            email_confirmed: profile?.email_confirmed || false
+            email_confirmed: profile?.email_confirmed || false,
+            language: lang,
+            avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || undefined,
+            stripe_customer_id: profile?.stripe_customer_id
         });
+
+        // Set App Language
+        if (lang) {
+            this.translationService.setLanguage(lang as any);
+        }
 
         // Default placeholder data if fetch fails later
         if (!this.contextData()) {
@@ -383,6 +396,24 @@ export class SessionStore {
         if (debugPlan && this.userProfile()) {
             console.log("Applying Debug Plan Override:", debugPlan);
             await this.setPlan(debugPlan); // Reuse logic (will re-save to localstorage but that's fine)
+        }
+    }
+
+    async updateProfile(data: Partial<UserProfile>): Promise<void> {
+        const profile = this.userProfile();
+        if (!profile) return;
+
+        this.isLoading.set(true);
+        try {
+            await this.repository.updateUserProfile(profile.id, data);
+
+            // Update local state
+            this.userProfile.update(u => u ? { ...u, ...data } : null);
+        } catch (e) {
+            console.error("Failed to update profile:", e);
+            throw e;
+        } finally {
+            this.isLoading.set(false);
         }
     }
 }

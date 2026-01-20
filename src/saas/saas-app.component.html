@@ -12,8 +12,8 @@
 
     <!-- Sidebar (Verticale fixe à gauche) -->
     <saas-sidebar class="flex-shrink-0 h-full" [activeView]="activeView()" [userPlan]="userPlan()"
-        [userName]="userName()" [userRole]="userRole()" [properties]="properties()" (viewChange)="onViewChange($event)"
-        (logout)="onLogout()">
+        [userName]="userName()" [userRole]="userRole()" [userAvatar]="userAvatar()" [properties]="properties()"
+        (viewChange)="onViewChange($event)" (openSettings)="openProfileModal()" (logout)="onLogout()">
     </saas-sidebar>
 
     <!-- Main Content Area -->
@@ -154,4 +154,8 @@
 @if (notifService.isModalOpen()) {
 <saas-notification-center class="relative z-[9999]"
     (close)="notifService.isModalOpen.set(false)"></saas-notification-center>
+}
+
+@if (isProfileModalOpen()) {
+<saas-profile-modal></saas-profile-modal>
 }

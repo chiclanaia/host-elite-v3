@@ -536,7 +536,10 @@ export class HostRepository {
             role: data.role,
             plan: data.plan,
             subscription_status: data.subscription_status,
-            email_confirmed: data.email_confirmed ?? false
+            email_confirmed: data.email_confirmed ?? false,
+            language: data.language,
+            avatar_url: data.avatar_url,
+            stripe_customer_id: data.stripe_customer_id
         };
     }
 
@@ -572,6 +575,9 @@ export class HostRepository {
         if ('full_name' in updates) payload.full_name = updates.full_name;
         if ('email' in updates) payload.email = updates.email;
         if ('email_confirmed' in updates) payload.email_confirmed = updates.email_confirmed;
+        if ('stripe_customer_id' in updates) payload.stripe_customer_id = updates.stripe_customer_id;
+        if ('language' in updates) payload.language = updates.language;
+        if ('avatar_url' in updates) payload.avatar_url = updates.avatar_url;
 
         // Use select() to ensure the row was actually found and updated
         const { data, error } = await this.supabase

@@ -21,10 +21,17 @@ export class TranslationService {
         this.currentLang.set(lang);
     }
 
-    translate(key: string): string {
+    translate(key: string, params?: Record<string, string | number>): string {
         const lang = this.currentLang();
         const dict = this.dictionaries[lang] || this.dictionaries['en'];
-        return dict[key] || key;
+        let translation = dict[key] || key;
+
+        if (params && translation) {
+            Object.entries(params).forEach(([paramKey, paramValue]) => {
+                translation = translation.replace(new RegExp(`{{${paramKey}}}`, 'g'), String(paramValue));
+            });
+        }
+        return translation;
     }
 
     // Debug Support

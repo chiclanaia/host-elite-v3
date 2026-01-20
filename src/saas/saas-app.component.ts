@@ -25,6 +25,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 import { NotificationBellComponent } from './components/notification-bell.component';
 import { NotificationCenterComponent } from './components/notification-center.component';
 import { NotificationService } from '../services/notification.service';
+import { ProfileModalComponent } from './components/profile-settings-modal.component';
 
 @Component({
   selector: 'saas-app',
@@ -48,7 +49,8 @@ import { NotificationService } from '../services/notification.service';
     AdminDebugViewComponent,
     TranslatePipe,
     NotificationBellComponent,
-    NotificationCenterComponent
+    NotificationCenterComponent,
+    ProfileModalComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './saas-app.component.html',
@@ -76,6 +78,7 @@ export class SaaSAppComponent implements OnInit {
   userRole = computed<UserRole>(() => this.store.userProfile()?.role || 'user');
   userName = computed<string>(() => this.store.userProfile()?.full_name || 'Hôte');
   userPlan = computed<string>(() => this.store.userProfile()?.plan || this.reportData().recommendedPlan);
+  userAvatar = computed<string | undefined>(() => this.store.userProfile()?.avatar_url);
 
   private readonly angleIds = ['marketing', 'experience', 'operations', 'pricing', 'accomodation', 'legal', 'mindset'];
   isAngleView = computed(() => this.angleIds.includes(this.activeView().id));
@@ -83,11 +86,22 @@ export class SaaSAppComponent implements OnInit {
   // Create Property Form
   createPropertyForm: FormGroup;
   isCreatingProperty = signal(false);
+  isProfileModalOpen = signal(false);
 
   constructor() {
     this.createPropertyForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]]
     });
+
+    // Global helper for the modal to close itself
+    (window as any).closeProfileModal = () => {
+      this.isProfileModalOpen.set(false);
+    };
+  }
+
+  openProfileModal() {
+    console.log('[SaaSApp] openProfileModal called');
+    this.isProfileModalOpen.set(true);
   }
 
   async ngOnInit() {

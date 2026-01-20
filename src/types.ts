@@ -34,6 +34,7 @@ export interface UserProfile {
   stripe_customer_id?: string;
   subscription_status?: string;
   email_confirmed?: boolean;
+  language?: string;
 }
 
 export interface ApiKey {
@@ -50,7 +51,7 @@ export interface PlanConfig {
 }
 
 export interface AppSettings {
-    show_plan_badges: boolean;
+  show_plan_badges: boolean;
 }
 
 // Moved from SidebarComponent to prevent circular dependencies

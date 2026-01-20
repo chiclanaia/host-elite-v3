@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { ContextData, ReportData, Scores } from '../types';
 import { SupabaseService } from './supabase.service';
+import { TranslationService } from './translation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +12,14 @@ export class GeminiService {
   private genAI: GoogleGenerativeAI | null = null;
   private model: GenerativeModel | null = null;
   private supabaseService = inject(SupabaseService);
+  private translationService = inject(TranslationService);
 
   constructor() {
     // Initialisation paresseuse (lazy load) lors de la première requête
   }
+
+  // ... (existing code omitted for brevity)
+
 
   private async ensureClient(): Promise<void> {
     if (this.genAI) return;
@@ -57,21 +62,32 @@ export class GeminiService {
     return clean.trim();
   }
 
-  async generateReport(context: ContextData, scores: Scores): Promise<ReportData> {
-    await this.ensureClient();
 
-    // Strict JSON instructions in prompt instead of Schema object (not supported in current browser SDK version)
+  async generateReport(context: ContextData, scores: Scores): Promise<any> {
+    await this.ensureClient();
+    const lang = this.translationService.currentLang();
+
     const prompt = `
-      You are an expert Airbnb coach. Provide a personalized action plan.
-      Context: ${context.situation}, Challenge: ${context.challenge}.
-      Scores: ${JSON.stringify(scores)}.
+      Act as an expert Airbnb consultant. Analyze the following property context and evaluation scores to generate a detailed diagnostic report.
+
+      PROPERTY CONTEXT:
+      ${JSON.stringify(context, null, 2)}
+
+      EVALUATION SCORES:
+      ${JSON.stringify(scores, null, 2)}
+
+      TASK:
+      Generate a comprehensive diagnostic report strictly in language "${lang}".
       
-      RETURN JSON ONLY with this structure:
+      REQUIRED JSON OUTPUT FORMAT:
       {
-        "strengths": ["string", "string"],
-        "opportunities": ["string", "string"],
-        "recommendedPlan": "Bronze" | "Silver" | "Gold",
-        "planJustification": "string"
+        "summary": "Executive summary of the property potential...",
+        "strengths": ["List of key strengths..."],
+        "weaknesses": ["List of areas for improvement..."],
+        "recommendations": ["Specific actionable advice..."],
+        "marketingAdvice": "Advice on pricing and positioning...",
+        "recommendedPlan": "Essential" | "Gold" | "Premium" (Choose one based on potential: Premium for high luxury/revenue, Gold for solid properties, Essential for starters),
+        "estimatedRevenue": "Estimated monthly revenue range..."
       }
     `;
 
@@ -90,6 +106,7 @@ export class GeminiService {
   async getConciergeResponse(propertyName: string, context: string, question: string): Promise<string> {
     try {
       await this.ensureClient();
+      const lang = this.translationService.currentLang();
 
       // Strict prompt engineering to restrict knowledge to the provided context
       const prompt = `
@@ -106,7 +123,7 @@ export class GeminiService {
           2. Si la réponse ne se trouve pas explicitement dans les informations fournies, tu dois répondre : "Je suis désolé, je n'ai pas cette information spécifique concernant le logement. Veuillez contacter l'hôte directement."
           3. Ne pas inventer d'informations (codes wifi, emplacement des clés, etc.) si elles ne sont pas dans le texte.
           4. Sois courtois, bref et serviable, comme un concierge de luxe.
-          5. Réponds toujours en Français.
+          5. Réponds toujours en langue : "${lang}".
 
           Question de l'invité : "${question}"
         `;
@@ -121,6 +138,7 @@ export class GeminiService {
 
   async autoFillBooklet(address: string, emptyDataStructure: any): Promise<any> {
     await this.ensureClient();
+    const lang = this.translationService.currentLang();
 
     const prompt = `
         You are a helpful assistant for an Airbnb host located at: "${address}".
@@ -139,7 +157,7 @@ export class GeminiService {
         - **DO NOT INVENT** specific codes or keys.
 
         **RESPONSE FORMAT:**
-        1. Respond in French.
+        1. Respond in Language: "${lang}".
         2. Return ONLY the JSON object.
         3. **PRESERVE THE EXACT JSON KEYS** provided below.
         
@@ -182,6 +200,7 @@ export class GeminiService {
 
   async generateMarketingDescription(propertyContext: string): Promise<string> {
     await this.ensureClient();
+    const lang = this.translationService.currentLang();
 
     const prompt = `
         Tu es un copywriter expert en immobilier de luxe et location saisonnière.
@@ -197,7 +216,7 @@ export class GeminiService {
         4. Utilise des émojis avec parcimonie pour structurer le texte.
         5. Structure le texte avec une accroche, un corps de texte et un appel à l'action subtil.
         6. Ne mets PAS de titre "Description :", commence directement le texte.
-        7. Réponds en Français.
+        7. Réponds en Langue : "${lang}".
       `;
 
     try {
@@ -289,7 +308,7 @@ export class GeminiService {
         TASK 1: Write an "Irresistible" Listing Description.
         - Use the "Selling the Experience" methodology.
         - Tone: Warm, professional, inviting.
-        - Language: French.
+        - Language: ${this.translationService.currentLang()}.
 
         TASK 2: Select the Best Photos.
         - Select EXACTLY (or up to) ${maxPhotos} photos that best sell the property.
@@ -431,7 +450,7 @@ export class GeminiService {
             ...
         ]
         
-        Language: French.
+        Language: ${this.translationService.currentLang()}.
     `;
 
     try {
