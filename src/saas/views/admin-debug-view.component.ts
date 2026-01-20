@@ -310,7 +310,6 @@ import { NotificationService } from '../../services/notification.service';
 })
 export class AdminDebugViewComponent {
     public store = inject(SessionStore);
-    store = inject(SessionStore);
     ts = inject(TranslationService);
     repository = inject(HostRepository);
     supabaseService = inject(SupabaseService);
