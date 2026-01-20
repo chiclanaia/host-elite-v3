@@ -26,6 +26,7 @@ import { NotificationBellComponent } from './components/notification-bell.compon
 import { NotificationCenterComponent } from './components/notification-center.component';
 import { NotificationService } from '../services/notification.service';
 import { ProfileModalComponent } from './components/profile-settings-modal.component';
+import { CalendarToolComponent } from './features/calendar-tool/components/calendar-tool.component';
 
 @Component({
   selector: 'saas-app',
@@ -50,7 +51,8 @@ import { ProfileModalComponent } from './components/profile-settings-modal.compo
     TranslatePipe,
     NotificationBellComponent,
     NotificationCenterComponent,
-    ProfileModalComponent
+    ProfileModalComponent,
+    CalendarToolComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './saas-app.component.html',
@@ -82,6 +84,17 @@ export class SaaSAppComponent implements OnInit {
 
   private readonly angleIds = ['marketing', 'experience', 'operations', 'pricing', 'accomodation', 'legal', 'mindset'];
   isAngleView = computed(() => this.angleIds.includes(this.activeView().id));
+
+  selectedPropertyDetails = computed(() => {
+    const propName = this.activeView().propertyName;
+    const props = this.properties();
+    if (!props || props.length === 0) return null;
+
+    if (!propName) {
+      return props[0];
+    }
+    return props.find(p => p.name === propName) || props[0];
+  });
 
   // Create Property Form
   createPropertyForm: FormGroup;

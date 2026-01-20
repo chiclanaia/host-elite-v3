@@ -122,6 +122,7 @@ export const tools = {
 
     // CALENDAR TOOL
     'CALENDAR.Sources': 'Calendars (Direct & OTA)',
+    'CALENDAR.InternalSources': 'Internal Calendar',
     'CALENDAR.NoSources': 'No calendars added.',
     'CALENDAR.AddSource': 'Add Source (iCal)',
     'CALENDAR.SourceNamePlaceholder': 'Source name (e.g., Airbnb)',

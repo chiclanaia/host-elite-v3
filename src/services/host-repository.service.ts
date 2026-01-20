@@ -16,9 +16,10 @@ export class HostRepository {
     private readonly defaultSubViews: View[] = [
         { id: 'manage-property', title: 'Manage', icon: 'settings' },
 
-        { id: 'welcome-booklet', title: 'Welcome Booklet', icon: 'info', featureId: 'booklet' },
-        { id: 'widget-library', title: 'Widget Library', icon: 'widgets', featureId: 'microsite' },
-        { id: 'vocal-concierge', title: 'Voice Concierge', icon: 'concierge', featureId: 'vocal-concierge' },
+        { id: 'welcome-booklet', title: 'NAV.welcome-booklet', icon: 'info', featureId: 'booklet' },
+        { id: 'property-calendar', title: 'NAV.property-calendar', icon: 'calendar' },
+        { id: 'widget-library', title: 'NAV.widget-library', icon: 'widgets', featureId: 'microsite' },
+        { id: 'vocal-concierge', title: 'NAV.vocal-concierge', icon: 'concierge', featureId: 'vocal-concierge' },
     ];
 
     async hasDiagnostic(userId: string): Promise<boolean> {

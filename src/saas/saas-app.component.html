@@ -116,6 +116,14 @@
                 @case ('manage-property') {
                 <saas-property-view [view]="activeView()"></saas-property-view>
                 }
+                @case ('property-calendar') {
+                <app-calendar-tool [propertyDetails]="selectedPropertyDetails()"
+                    [filterToInternal]="true"></app-calendar-tool>
+                }
+                @case ('my-calendars') {
+                <app-calendar-tool [propertyDetails]="selectedPropertyDetails()" [filterToInternal]="true"
+                    [isGlobal]="true"></app-calendar-tool>
+                }
 
                 @case ('welcome-booklet') {
                 <saas-welcome-booklet-view [propertyName]="activeView().propertyName!"></saas-welcome-booklet-view>

@@ -40,77 +40,101 @@ export class CalendarService {
     constructor() { }
 
     // --- SOURCES MANAGEMENT ---
+    private propertyPalette = [
+        '#10b981', // Emerald
+        '#3b82f6', // Blue
+        '#f59e0b', // Amber
+        '#ef4444', // Red
+        '#8b5cf6', // Violet
+        '#ec4899', // Pink
+        '#06b6d4', // Cyan
+        '#f97316', // Orange
+        '#84cc16', // Lime
+        '#6366f1'  // Indigo
+    ];
 
-    private isAutoCreating = false;
+    private getPropertyColor(propertyId: string): string {
+        if (!propertyId) return this.propertyPalette[0];
+        let hash = 0;
+        for (let i = 0; i < propertyId.length; i++) {
+            hash = propertyId.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const index = Math.abs(hash) % this.propertyPalette.length;
+        return this.propertyPalette[index];
+    }
+
+    private loadingProps = new Set<string>();
 
     async loadSources(propertyId: string, propertyName?: string) {
-        if (this.isAutoCreating) return;
+        if (!propertyId || this.loadingProps.has(propertyId)) return;
 
-        const { data, error } = await this.supabase.supabase
-            .from('calendar_sources')
-            .select('*')
-            .eq('property_id', propertyId);
+        this.loadingProps.add(propertyId);
+        try {
+            // First pass: Fetch existing sources
+            let { data: sources, error } = await this.supabase.supabase
+                .from('calendar_sources')
+                .select('*')
+                .eq('property_id', propertyId);
 
-        if (error) throw error;
+            if (error) throw error;
+            let currentSources = sources || [];
 
-        const sources = data || [];
-        const internalSources = sources.filter(s => s.type === 'internal');
+            // Check internal sources
+            const internalSources = currentSources.filter(s => s.type === 'internal');
 
-        // Requirement: Only ONE internal calendar shall be displayed that is the property one
-        // If 0, create it. If > 1, cleanup.
-        if (internalSources.length !== 1) {
-            this.isAutoCreating = true;
-            try {
+            // 1. Creation/Cleanup if needed
+            if (internalSources.length !== 1) {
                 if (internalSources.length > 1) {
-                    console.log(`[CalendarService] Multiple internal sources found for ${propertyId}, cleaning up...`);
-                    // Keep the first one, delete others
+                    console.log(`[CalendarService] Multiple internal sources for ${propertyId}, cleaning up...`);
                     for (let i = 1; i < internalSources.length; i++) {
                         await this.deleteSource(internalSources[i].id);
                     }
                 } else if (internalSources.length === 0) {
                     const name = propertyName || 'Calendrier';
-                    console.log(`[CalendarService] No internal source found for ${propertyId}, creating '${name}'...`);
+                    const color = this.getPropertyColor(propertyId);
+                    console.log(`[CalendarService] No internal source for ${propertyId}, creating '${name}' with color ${color}...`);
                     await this.addSource({
                         name: name,
                         type: 'internal',
-                        color: '#10b981',
+                        color: color,
                         property_id: propertyId
                     });
                 }
-            } finally {
-                this.isAutoCreating = false;
+
+                // Final pass: Re-fetch after creation/cleanup
+                const { data: refreshedData, error: refreshError } = await this.supabase.supabase
+                    .from('calendar_sources')
+                    .select('*')
+                    .eq('property_id', propertyId);
+
+                if (refreshError) throw refreshError;
+                currentSources = refreshedData || [];
             }
-            // Re-fetch to get correct state
-            return this.loadSources(propertyId, propertyName);
+
+            // Exactly one internal calendar exists now or we've updated it
+            const internal = currentSources.find(s => s.type === 'internal');
+            const primaryColor = this.getPropertyColor(propertyId);
+
+            if (internal && propertyName && (internal.name !== propertyName || internal.color !== primaryColor)) {
+                await this.supabase.supabase
+                    .from('calendar_sources')
+                    .update({ name: propertyName, color: primaryColor })
+                    .eq('id', internal.id);
+                internal.name = propertyName;
+                internal.color = primaryColor;
+            }
+
+            // Sort and set signal
+            const sortedSources = [...currentSources].sort((a, b) => {
+                if (a.type === 'internal') return -1;
+                if (b.type === 'internal') return 1;
+                return a.name.localeCompare(b.name);
+            });
+
+            this.sources.set(sortedSources.map(s => ({ ...s, visible: true })));
+        } finally {
+            this.loadingProps.delete(propertyId);
         }
-
-        // Exactly one internal calendar exists
-        const internal = internalSources[0];
-        const primaryColor = '#10b981'; // Fixed green for property calendar
-
-        // Ensure name corresponds to property name AND color is correct
-        if (propertyName && (internal.name !== propertyName || internal.color !== primaryColor)) {
-            await this.supabase.supabase
-                .from('calendar_sources')
-                .update({ name: propertyName, color: primaryColor })
-                .eq('id', internal.id);
-            internal.name = propertyName;
-            internal.color = primaryColor;
-        }
-
-        // Sort: internal first, then others by name
-        const sortedSources = [...sources].sort((a, b) => {
-            if (a.type === 'internal') return -1;
-            if (b.type === 'internal') return 1;
-            return a.name.localeCompare(b.name);
-        });
-
-        // Initialize visibility (internal is ALWAYS visible)
-        const sourcesWithVisibility = sortedSources.map(s => ({
-            ...s,
-            visible: true
-        }));
-        this.sources.set(sourcesWithVisibility);
     }
 
     toggleVisibility(id: string) {
@@ -159,12 +183,18 @@ export class CalendarService {
         this.isLoading.set(true);
         try {
             const currentSources = this.sources();
-            if (currentSources.length === 0) {
-                // Try loading if empty (might be first run)
-                await this.loadSources(propertyId, propertyName).catch(() => { });
+            // ALWAYS reload sources if the propertyId has changed or if it's empty
+            // This ensures context isolation and auto-creation for legacy properties
+            const needsReload = currentSources.length === 0 || currentSources.some(s => s.property_id !== propertyId);
+
+            if (needsReload) {
+                console.log(`[CalendarService] Context switch or empty sources detected for ${propertyId}, reloading...`);
+                await this.loadSources(propertyId, propertyName).catch((err) => {
+                    console.error('[CalendarService] Error loading sources:', err);
+                });
             }
 
-            const sourcesToFetch = this.sources();
+            const finalSources = this.sources();
             const allEvents: CalendarEvent[] = [];
 
             // 1. Fetch Internal Manual Events
@@ -175,7 +205,7 @@ export class CalendarService {
 
             if (manualEvents) {
                 allEvents.push(...manualEvents.map(e => {
-                    const source = currentSources.find(s => s.id === e.source_id);
+                    const source = finalSources.find(s => s.id === e.source_id);
                     return {
                         id: e.id,
                         title: e.title,
@@ -195,22 +225,25 @@ export class CalendarService {
             }
 
             // 2. Fetch External iCals via Edge Function
-            const externalPromises = sourcesToFetch
+            const externalPromises = finalSources
                 .filter(s => s.type === 'external' && s.url)
                 .map(async (source) => {
                     try {
                         console.log(`[CalendarService] Calling Edge Function for: ${source.name}`);
-                        console.log(`[CalendarService] URL to fetch: ${source.url}`);
 
-                        const { data, error } = await this.supabase.supabase.functions.invoke('fetch-ical', {
+                        // Add a timeout of 10s to Edge Function call
+                        const timeoutPromise = new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('Timeout')), 10000)
+                        );
+
+                        const invokePromise = this.supabase.supabase.functions.invoke('fetch-ical', {
                             body: { url: source.url }
                         });
 
-                        console.log(`[CalendarService] Response for ${source.name}:`, { data, error });
+                        const { data, error } = await Promise.race([invokePromise, timeoutPromise]) as any;
 
                         if (error) {
                             console.error(`[CalendarService] Edge Function error for ${source.name}:`, error);
-                            console.error(`[CalendarService] Error details:`, JSON.stringify(error, null, 2));
                             return [];
                         }
 
@@ -233,7 +266,7 @@ export class CalendarService {
                             isManual: false
                         }));
                     } catch (err) {
-                        console.error(`[CalendarService] Exception processing source ${source.name}:`, err);
+                        console.error(`[CalendarService] Exception or Timeout processing source ${source.name}:`, err);
                         return [];
                     }
                 });
@@ -242,6 +275,77 @@ export class CalendarService {
             externalResults.forEach(events => allEvents.push(...events));
 
             return allEvents;
+        } finally {
+            this.isLoading.set(false);
+        }
+    }
+
+    async getGlobalEvents(): Promise<CalendarEvent[]> {
+        this.isLoading.set(true);
+        try {
+            const { user } = await this.supabase.getUser();
+            if (!user) return [];
+
+            // 1. Fetch all properties to get their IDs and Names
+            const { data: properties } = await this.supabase.supabase
+                .from('properties')
+                .select('id, name')
+                .eq('owner_id', user.id);
+
+            if (!properties || properties.length === 0) return [];
+
+            const propertyIds = properties.map(p => p.id);
+
+            // 2. Fetch all internal calendar sources for these properties
+            const { data: sources } = await this.supabase.supabase
+                .from('calendar_sources')
+                .select('*')
+                .in('property_id', propertyIds)
+                .eq('type', 'internal');
+
+            const internalSources = sources || [];
+            this.sources.set(internalSources.map(s => ({
+                ...s,
+                visible: true,
+                color: this.getPropertyColor(s.property_id)
+            })));
+
+            // 3. Fetch all internal events for these properties
+            const { data: manualEvents } = await this.supabase.supabase
+                .from('calendar_events')
+                .select('*')
+                .in('property_id', propertyIds);
+
+            const allEvents: CalendarEvent[] = [];
+            if (manualEvents) {
+                allEvents.push(...manualEvents.map(e => {
+                    const source = internalSources.find(s => s.id === e.source_id);
+                    const prop = properties.find(p => p.id === e.property_id);
+                    const propColor = e.property_id ? this.getPropertyColor(e.property_id) : '#10b981';
+
+                    return {
+                        id: e.id,
+                        title: prop ? `[${prop.name}] ${e.title}` : e.title,
+                        start: e.start,
+                        end: e.end,
+                        description: e.description,
+                        backgroundColor: propColor,
+                        borderColor: propColor,
+                        sourceId: e.source_id,
+                        isManual: true,
+                        extendedProps: {
+                            isManual: true,
+                            description: e.description,
+                            propertyName: prop?.name
+                        }
+                    };
+                }));
+            }
+
+            return allEvents;
+        } catch (err) {
+            console.error('[CalendarService] Error in getGlobalEvents:', err);
+            return [];
         } finally {
             this.isLoading.set(false);
         }

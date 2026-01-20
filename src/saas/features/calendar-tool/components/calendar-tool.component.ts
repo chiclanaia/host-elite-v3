@@ -1,9 +1,10 @@
-import { Component, inject, signal, input, output, OnInit, computed } from '@angular/core';
+import { Component, inject, signal, input, output, OnInit, computed, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalendarSidebarComponent } from './calendar-sidebar.component';
 import { CalendarViewComponent } from './calendar-view.component';
 import { CalendarService } from '../calendar.service';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { effect } from '@angular/core';
 
 @Component({
   selector: 'app-calendar-tool',
@@ -16,19 +17,23 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
         <div>
           <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-3 min-w-0">
             <span class="text-3xl shrink-0">🗓️</span>
-            <span class="truncate">{{ 'TOOL.calendar_name' | translate }}</span>
-            <span class="hidden sm:block text-white/40 font-light ml-2 border-l border-white/20 pl-4 truncate">{{ propertyName() }}</span>
+            <span class="truncate">{{ (isGlobal() ? 'NAV.my-calendars' : 'TOOL.calendar_name') | translate }}</span>
+            @if (!isGlobal()) {
+              <span class="hidden sm:block text-white/40 font-light ml-2 border-l border-white/20 pl-4 truncate">{{ propertyName() }}</span>
+            }
           </h2>
-          <p class="text-xs text-slate-400 mt-1 truncate">{{ 'TOOL.calendar_desc' | translate }}</p>
+          <p class="text-xs text-slate-400 mt-1 truncate">{{ (isGlobal() ? 'SIDEBAR.Management' : 'TOOL.calendar_desc') | translate }}</p>
         </div>
         <div class="flex items-center gap-3">
-          <button (click)="view.openCreateModal()" 
-            class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg active:scale-95">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>Nouvel événement</span>
-          </button>
+          @if (!isGlobal()) {
+            <button (click)="view.openCreateModal()" 
+              class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg active:scale-95">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Nouvel événement</span>
+            </button>
+          }
           
           <button (click)="close.emit()" class="p-2 hover:bg-white/10 rounded-lg text-white transition-colors">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -45,8 +50,10 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
           <app-calendar-sidebar 
             [propertyId]="propertyId()" 
             [propertyName]="propertyName()"
+            [filterToInternal]="filterToInternal()"
+            [isReadOnly]="isGlobal()"
             (sourceChanged)="onSourcesChanged()"
-            (addEventClicked)="view.openCreateModal()">
+            (addEventClicked)="onSidebarAddEvent()">
           </app-calendar-sidebar>
         </div>
 
@@ -66,6 +73,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
             <app-calendar-view #view
                 [propertyId]="propertyId()"
                 [events]="filteredEvents()"
+                [isReadOnly]="isGlobal()"
                 (eventCreated)="onEventCreated()">
             </app-calendar-view>
         </div>
@@ -75,11 +83,15 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 })
 export class CalendarToolComponent implements OnInit {
   propertyDetails = input.required<any>();
+  filterToInternal = input<boolean>(false);
+  isGlobal = input<boolean>(false);
   close = output<void>();
 
   calendarService = inject(CalendarService);
   isLoading = this.calendarService.isLoading;
   events = signal<any[]>([]);
+
+  @ViewChild('view') view!: CalendarViewComponent;
 
   // Extract property ID from propertyDetails
   propertyId = computed(() => {
@@ -90,12 +102,18 @@ export class CalendarToolComponent implements OnInit {
   // Extract property Name for auto-creation logic
   propertyName = computed(() => this.propertyDetails()?.name || '');
 
-  // Filter events based on source visibility
+  // Filter events based on source visibility and optional internal-only filter
   filteredEvents = computed(() => {
     const allEvents = this.events();
     const sources = this.calendarService.sources();
+
+    // If filterToInternal is true, only show internal sources
+    const relevantSources = this.filterToInternal()
+      ? sources.filter(s => s.type === 'internal')
+      : sources;
+
     const visibleSourceIds = new Set(
-      sources.filter(s => s.visible !== false).map(s => s.id)
+      relevantSources.filter(s => s.visible !== false).map(s => s.id)
     );
 
     return allEvents.filter(event => {
@@ -105,12 +123,23 @@ export class CalendarToolComponent implements OnInit {
     });
   });
 
+  constructor() {
+    // Reactive refresh when inputs change
+    effect(() => {
+      this.refreshEvents();
+    });
+  }
+
   ngOnInit() {
-    this.refreshEvents();
   }
 
   onSourcesChanged() {
     this.refreshEvents();
+  }
+
+  onSidebarAddEvent() {
+    if (this.isGlobal()) return;
+    this.view.openCreateModal();
   }
 
   onEventCreated() {
@@ -118,6 +147,15 @@ export class CalendarToolComponent implements OnInit {
   }
 
   refreshEvents() {
+    if (this.isGlobal()) {
+      this.calendarService.getGlobalEvents()
+        .then(evts => {
+          this.events.set(evts);
+        })
+        .catch(err => { });
+      return;
+    }
+
     const id = this.propertyId();
     if (!id) {
       return;

@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal, OnInit } from '@angular/core';
+import { Component, inject, input, output, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CalendarService, CalendarSource } from '../calendar.service';
@@ -11,21 +11,23 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
     template: `
     <div class="p-4">
         <!-- New Event Button (Primary Action) -->
-        <button (click)="addEventClicked.emit()" 
-            class="w-full mb-6 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg active:scale-95 group">
-            <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>Nouvel événement</span>
-        </button>
+        @if (!filterToInternal() && !isReadOnly()) {
+            <button (click)="addEventClicked.emit()" 
+                class="w-full mb-6 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg active:scale-95 group">
+                <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Nouvel événement</span>
+            </button>
+        }
 
         <h3 class="text-white font-medium mb-4 uppercase text-xs tracking-wider opacity-60">
-            {{ 'CALENDAR.Sources' | translate }}
+            {{ (filterToInternal() ? 'CALENDAR.InternalSources' : 'CALENDAR.Sources') | translate }}
         </h3>
 
         <!-- Source List -->
         <div class="space-y-3 mb-6">
-            @for (source of sources(); track source.id) {
+            @for (source of displaySources(); track source.id) {
                 <div class="group flex items-center justify-between p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all"
                     [class.opacity-50]="source.visible === false">
                     <div class="flex items-center gap-3 overflow-hidden">
@@ -77,69 +79,73 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
             }
         </div>
 
-        <!-- Add Source Form -->
-        <div class="border-t border-white/10 pt-4">
-            <h4 class="text-white/80 text-sm font-medium mb-3">{{ 'CALENDAR.AddSource' | translate }}</h4>
-            <form [formGroup]="addForm" (ngSubmit)="onSubmit()" class="space-y-3">
-                
-                <!-- Name -->
-                <div>
-                    <input type="text" formControlName="name" 
-                        [placeholder]="'CALENDAR.SourceNamePlaceholder' | translate"
-                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder-white/20">
-                </div>
-
-                <!-- Type Selector -->
-                <div>
-                    <select formControlName="type"
-                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
-                        <option value="external">{{ typeExternalLabel }}</option>
-                    </select>
-                    <p class="text-[10px] text-white/30 mt-1 pl-1">Synchronisez un calendrier iCal (Airbnb, Booking...) en lecture seule.</p>
-                </div>
-
-                <!-- URL (only for external) -->
-                @if (addForm.get('type')?.value === 'external') {
+        @if (!filterToInternal() && !isReadOnly()) {
+            <!-- Add Source Form -->
+            <div class="border-t border-white/10 pt-4">
+                <h4 class="text-white/80 text-sm font-medium mb-3">{{ 'CALENDAR.AddSource' | translate }}</h4>
+                <form [formGroup]="addForm" (ngSubmit)="onSubmit()" class="space-y-3">
+                    
+                    <!-- Name -->
                     <div>
-                        <input type="text" formControlName="url" 
-                            placeholder="https://airbnb.com/calendar/..."
+                        <input type="text" formControlName="name" 
+                            [placeholder]="'CALENDAR.SourceNamePlaceholder' | translate"
                             class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder-white/20">
-                        <p class="text-[10px] text-white/30 mt-1 pl-1">Ex: Airbnb iCal, Booking.com iCal...</p>
                     </div>
-                }
 
-                <!-- Color Picker (Simple) -->
-                <div class="flex gap-2">
-                    @for (color of presetColors; track color) {
-                        <button type="button" 
-                            (click)="selectColor(color)"
-                            class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none"
-                            [style.backgroundColor]="color"
-                            [class.border-white]="addForm.get('color')?.value === color"
-                            [class.border-transparent]="addForm.get('color')?.value !== color">
-                        </button>
-                    }
-                </div>
+                    <!-- Type Selector -->
+                    <div>
+                        <select formControlName="type"
+                            class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <option value="external">{{ typeExternalLabel }}</option>
+                        </select>
+                        <p class="text-[10px] text-white/30 mt-1 pl-1">Synchronisez un calendrier iCal (Airbnb, Booking...) en lecture seule.</p>
+                    </div>
 
-                <button type="submit" 
-                    [disabled]="addForm.invalid || isSubmitting()"
-                    class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center">
-                    @if (isSubmitting()) {
-                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+                    <!-- URL (only for external) -->
+                    @if (addForm.get('type')?.value === 'external') {
+                        <div>
+                            <input type="text" formControlName="url" 
+                                placeholder="https://airbnb.com/calendar/..."
+                                class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder-white/20">
+                            <p class="text-[10px] text-white/30 mt-1 pl-1">Ex: Airbnb iCal, Booking.com iCal...</p>
+                        </div>
                     }
-                    {{ 'CALENDAR.AddButton' | translate }}
-                </button>
-            </form>
-        </div>
+
+                    <!-- Color Picker (Simple) -->
+                    <div class="flex gap-2">
+                        @for (color of presetColors; track color) {
+                            <button type="button" 
+                                (click)="selectColor(color)"
+                                class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none"
+                                [style.backgroundColor]="color"
+                                [class.border-white]="addForm.get('color')?.value === color"
+                                [class.border-transparent]="addForm.get('color')?.value !== color">
+                            </button>
+                        }
+                    </div>
+
+                    <button type="submit" 
+                        [disabled]="addForm.invalid || isSubmitting()"
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center">
+                        @if (isSubmitting()) {
+                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        }
+                        {{ 'CALENDAR.AddButton' | translate }}
+                    </button>
+                </form>
+            </div>
+        }
     </div>
   `
 })
 export class CalendarSidebarComponent implements OnInit {
     propertyId = input.required<string>();
     propertyName = input<string>('');
+    filterToInternal = input<boolean>(false);
+    isReadOnly = input<boolean>(false);
     sourceChanged = output<void>();
     addEventClicked = output<void>();
 
@@ -149,6 +155,13 @@ export class CalendarSidebarComponent implements OnInit {
     typeExternalLabel = 'iCal (Airbnb, Booking...)';
 
     sources = this.calendarService.sources;
+    displaySources = computed(() => {
+        const s = this.sources();
+        if (this.filterToInternal()) {
+            return s.filter(src => src.type === 'internal');
+        }
+        return s;
+    });
     isSubmitting = signal(false);
 
     presetColors = ['#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#64748b'];

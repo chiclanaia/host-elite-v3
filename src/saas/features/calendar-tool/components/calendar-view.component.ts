@@ -188,6 +188,7 @@ import { CalendarService, CalendarEvent } from '../calendar.service';
 export class CalendarViewComponent {
     propertyId = input.required<string>();
     events = input<CalendarEvent[]>([]);
+    isReadOnly = input<boolean>(false);
     eventCreated = output<void>();
 
     calendarService = inject(CalendarService);
@@ -235,6 +236,7 @@ export class CalendarViewComponent {
     }
 
     openCreateModal() {
+        if (this.isReadOnly()) return;
         // Default to midnight today and midnight tomorrow
         const start = new Date();
         start.setHours(0, 0, 0, 0);
@@ -256,6 +258,8 @@ export class CalendarViewComponent {
     handleDateSelect(selectInfo: DateSelectArg) {
         const calendarApi = selectInfo.view.calendar;
         calendarApi.unselect();
+
+        if (this.isReadOnly()) return;
 
         // Ensure times are at midnight
         const start = new Date(selectInfo.start);
