@@ -198,6 +198,96 @@ import { NotificationService } from '../../services/notification.service';
             </div>
         </section>
 
+        <!-- SECTION 4: Housekeeping -->
+        <section class="bg-slate-800/50 rounded-xl p-6 border border-white/5">
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                <span class="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center mr-3 font-mono">04</span>
+                Maintenance & Nettoyage
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Calendar Housekeeping -->
+                <div class="p-6 bg-slate-900/50 rounded-lg space-y-4 border border-white/5">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2 bg-teal-500/10 rounded-lg">
+                            <svg class="w-5 h-5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-white text-lg">Calendrier</h3>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400 uppercase">Seuil d'ancienneté (Mois)</label>
+                        <div class="flex gap-4 items-center">
+                            <input type="number" [(ngModel)]="calendarMonthThreshold" 
+                                   class="w-24 bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-teal-500 transition-colors"
+                                   min="1" max="24">
+                            <span class="text-sm text-slate-500">Nettoyer les événements plus vieux que {{ calendarMonthThreshold() }} mois.</span>
+                        </div>
+                    </div>
+
+                    <button (click)="cleanupCalendar()" 
+                            [disabled]="isCleaningCalendar()"
+                            class="w-full py-3 bg-teal-600/20 hover:bg-teal-600/30 text-teal-400 border border-teal-500/30 hover:border-teal-500/50 font-bold rounded-lg transition-all flex items-center justify-center gap-2">
+                        <span *ngIf="!isCleaningCalendar()">Nettoyer le Calendrier</span>
+                        <span *ngIf="isCleaningCalendar()">Nettoyage en cours...</span>
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                    
+                    @if (calendarFeedback()) {
+                        <p class="text-[10px] text-center font-bold"
+                           [class.text-teal-400]="!calendarFeedback()?.includes('Erreur')"
+                           [class.text-red-400]="calendarFeedback()?.includes('Erreur')">
+                            {{ calendarFeedback() }}
+                        </p>
+                    }
+                </div>
+
+                <!-- Notifications Housekeeping -->
+                <div class="p-6 bg-slate-900/50 rounded-lg space-y-4 border border-white/5">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2 bg-orange-500/10 rounded-lg">
+                            <svg class="w-5 h-5 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-white text-lg">Notifications</h3>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400 uppercase">Seuil d'ancienneté (Jours)</label>
+                        <div class="flex gap-4 items-center">
+                            <input type="number" [(ngModel)]="notificationDayThreshold" 
+                                   class="w-24 bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500 transition-colors"
+                                   min="1" max="365">
+                            <span class="text-sm text-slate-500">Nettoyer les notifications plus vieilles que {{ notificationDayThreshold() }} jours.</span>
+                        </div>
+                    </div>
+
+                    <button (click)="cleanupNotifications()" 
+                            [disabled]="isCleaningNotifications()"
+                            class="w-full py-3 bg-orange-600/20 hover:bg-orange-600/30 text-orange-400 border border-orange-500/30 hover:border-orange-500/50 font-bold rounded-lg transition-all flex items-center justify-center gap-2">
+                        <span *ngIf="!isCleaningNotifications()">Nettoyer les Notifications</span>
+                        <span *ngIf="isCleaningNotifications()">Nettoyage en cours...</span>
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+
+                    @if (notifCleanupFeedback()) {
+                        <p class="text-[10px] text-center font-bold"
+                           [class.text-orange-400]="!notifCleanupFeedback()?.includes('Erreur')"
+                           [class.text-red-400]="notifCleanupFeedback()?.includes('Erreur')">
+                            {{ notifCleanupFeedback() }}
+                        </p>
+                    }
+                </div>
+            </div>
+        </section>
+
       </div>
     </div>
   `
@@ -216,6 +306,14 @@ export class AdminDebugViewComponent {
     isSendingNotif = signal(false);
     notifFeedback = signal<string | null>(null);
     notifTypes: any[] = ['info', 'success', 'warning', 'event'];
+
+    // Housekeeping
+    calendarMonthThreshold = signal(1);
+    notificationDayThreshold = signal(30);
+    isCleaningCalendar = signal(false);
+    isCleaningNotifications = signal(false);
+    calendarFeedback = signal<string | null>(null);
+    notifCleanupFeedback = signal<string | null>(null);
 
     notifForm = {
         userId: '',
@@ -322,6 +420,62 @@ export class AdminDebugViewComponent {
                 payload: propertyName ? { property_name: propertyName, property_id: data.propertyId } : {}
             });
         if (error) throw error;
+    }
+
+    // --- HOUSEKEEPING METHODS ---
+
+    async cleanupCalendar() {
+        try {
+            this.isCleaningCalendar.set(true);
+            this.calendarFeedback.set(null);
+
+            const thresholdDate = new Date();
+            thresholdDate.setMonth(thresholdDate.getMonth() - this.calendarMonthThreshold());
+
+            console.log(`[Housekeeping] Deleting calendar events older than ${thresholdDate.toISOString()}...`);
+
+            const { count, error } = await this.supabaseService.supabase
+                .from('calendar_events')
+                .delete({ count: 'exact' })
+                .lt('start', thresholdDate.toISOString());
+
+            if (error) throw error;
+
+            this.calendarFeedback.set(`${count || 0} événements supprimés.`);
+            setTimeout(() => this.calendarFeedback.set(null), 5000);
+        } catch (e: any) {
+            console.error('[Housekeeping] Calendar error:', e);
+            this.calendarFeedback.set(`Erreur: ${e.message}`);
+        } finally {
+            this.isCleaningCalendar.set(false);
+        }
+    }
+
+    async cleanupNotifications() {
+        try {
+            this.isCleaningNotifications.set(true);
+            this.notifCleanupFeedback.set(null);
+
+            const thresholdDate = new Date();
+            thresholdDate.setDate(thresholdDate.getDate() - this.notificationDayThreshold());
+
+            console.log(`[Housekeeping] Deleting notifications older than ${thresholdDate.toISOString()}...`);
+
+            const { count, error } = await this.supabaseService.supabase
+                .from('notifications')
+                .delete({ count: 'exact' })
+                .lt('created_at', thresholdDate.toISOString());
+
+            if (error) throw error;
+
+            this.notifCleanupFeedback.set(`${count || 0} notifications supprimées.`);
+            setTimeout(() => this.notifCleanupFeedback.set(null), 5000);
+        } catch (e: any) {
+            console.error('[Housekeeping] Notification error:', e);
+            this.notifCleanupFeedback.set(`Erreur: ${e.message}`);
+        } finally {
+            this.isCleaningNotifications.set(false);
+        }
     }
 
     currentPlan = this.store.userProfile()?.plan ? () => this.store.userProfile()!.plan : () => 'Freemium';
