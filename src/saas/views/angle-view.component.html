@@ -30,6 +30,7 @@
                             <div class="relative flex items-start">
                                 <div class="flex h-6 items-center">
                                     <input [id]="question.id" [formControlName]="question.id" type="checkbox"
+                                        title="Question"
                                         class="h-5 w-5 rounded border-slate-500 bg-white/10 text-blue-500 focus:ring-blue-500 cursor-pointer">
                                 </div>
                                 <div class="ml-3 text-sm leading-6">
@@ -44,8 +45,8 @@
                                     class="block text-xs font-bold text-indigo-300 mb-1 uppercase tracking-wide">{{
                                     question.sub_question_config.label_key | translate }}</label>
                                 <input [type]="question.sub_question_config.type" [id]="question.sub_question_config.id"
-                                    [formControlName]="question.sub_question_config.id"
-                                    [placeholder]="question.sub_question_config.placeholder || ''"
+                                    [formControlName]="question.sub_question_config.id" placeholder="Details"
+                                    title="Details"
                                     class="block w-full text-sm rounded-lg border-white/20 bg-black/30 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-indigo-500 p-2.5 shadow-inner">
                             </div>
                             }
@@ -196,6 +197,22 @@
         (close)="closeTool()"></app-delegation-simulator>
     } @else if (activeToolId() === 'calendar-sync') {
     <app-calendar-tool [propertyDetails]="propertyDetails()" (close)="closeTool()"></app-calendar-tool>
+    } @else if (activeToolId() === 'profitability') {
+    <div class="h-full relative z-10 p-6 flex flex-col">
+        <button (click)="closeTool()" class="mb-4 self-start text-sm text-slate-400 hover:text-white flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            {{ 'COMMON.Back' | translate }}
+        </button>
+        <div class="flex-1 min-h-0">
+            <saas-profitability-calculator></saas-profitability-calculator>
+        </div>
+    </div>
+    } @else if (activeToolId() === 'market-alerts') {
+    <app-market-alerts [propertyDetails]="propertyDetails()" [userPlan]="userPlan()" (close)="closeTool()">
+    </app-market-alerts>
     } @else {
     <p class="text-white/80 bg-black/20 p-4 rounded-xl backdrop-blur-md inline-block">{{ 'COMMON.SectionNotFound' |
         translate }}: '{{

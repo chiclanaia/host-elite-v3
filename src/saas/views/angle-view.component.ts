@@ -16,6 +16,8 @@ import { AiMessageAssistantComponent } from '../features/ai-message-assistant/ai
 import { ChecklistsToolComponent } from '../features/checklists/checklists-tool.component';
 import { DelegationSimulatorComponent } from '../features/delegation/delegation-simulator.component';
 import { CalendarToolComponent } from '../features/calendar-tool/components/calendar-tool.component';
+import { ProfitabilityCalculatorComponent } from '../features/profitability/profitability-calculator.component';
+import { MarketAlertsComponent } from '../features/market-alerts/market-alerts.component';
 import { TranslationService } from '../../services/translation.service';
 
 import { TranslatePipe } from '../../pipes/translate.pipe';
@@ -71,7 +73,9 @@ interface OnboardingQuestion {
         MicrositeContainerComponent,
         MicrositeContainerComponent,
         DelegationSimulatorComponent,
-        CalendarToolComponent
+        CalendarToolComponent,
+        ProfitabilityCalculatorComponent,
+        MarketAlertsComponent
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './angle-view.component.html',

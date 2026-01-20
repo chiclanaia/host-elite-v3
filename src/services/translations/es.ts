@@ -4,6 +4,8 @@ import { tools } from './es/tools';
 import { audit } from './es/audit';
 import { training } from './es/training';
 import { checklists } from './es/checklists';
+import { profitability } from './es/profitability';
+import events from './es/events';
 
 export const es = {
     ...ui,
@@ -11,5 +13,7 @@ export const es = {
     ...tools,
     ...audit,
     ...training,
-    ...checklists
+    ...checklists,
+    ...profitability,
+    ...events
 };

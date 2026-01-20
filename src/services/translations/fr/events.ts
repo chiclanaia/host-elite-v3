@@ -1,0 +1,17 @@
+export default {
+    'EVENTS.Title': 'Événements Locaux',
+    'EVENTS.Subtitle': 'Découvrez les événements à proximité de votre propriété',
+    'EVENTS.SearchRadius': 'Rayon de recherche',
+    'EVENTS.Search': 'Rechercher',
+    'EVENTS.GenerateAI': 'Générer avec IA',
+    'EVENTS.Generating': 'Génération en cours...',
+    'EVENTS.NoEvents': 'Aucun événement trouvé dans cette zone',
+    'EVENTS.AddToCalendar': 'Ajouter au calendrier',
+    'EVENTS.AlreadyAdded': '✓ Ajouté',
+    'EVENTS.Details': 'En savoir plus',
+    'EVENTS.FromProperty': 'de votre propriété',
+    'EVENTS.SourceLink': 'Voir la source',
+    'EVENTS.Distance': 'Distance',
+    'EVENTS.UpgradePrompt': 'Passez à Gold pour ajouter au calendrier',
+    'EVENTS.Added': 'Événement ajouté au calendrier !',
+}
