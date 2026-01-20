@@ -20,6 +20,13 @@ export const fr = {
     'COMMON.Unlock': 'Débloquer',
     'COMMON.OpenTool': 'Ouvrir l\'outil',
     'COMMON.SectionNotFound': 'Section non trouvée',
+    'NOTIF.Title': 'Notifications',
+    'NOTIF.Empty': 'Aucune notification pour le moment.',
+    'NOTIF.MarkAllRead': 'Tout marquer comme lu',
+    'NOTIF.Close': 'Fermer le panneau',
+    'NOTIF.FilterAll': 'Toutes',
+    'NOTIF.FilterRead': 'Lues',
+    'NOTIF.FilterUnread': 'Non lues',
 
     'COMMON.Tier.Bronze': 'Bronze',
     'COMMON.Tier.Silver': 'Silver',

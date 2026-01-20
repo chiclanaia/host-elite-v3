@@ -22,6 +22,9 @@ import { SessionStore } from '../state/session.store';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslationService } from '../services/translation.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
+import { NotificationBellComponent } from './components/notification-bell.component';
+import { NotificationCenterComponent } from './components/notification-center.component';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'saas-app',
@@ -43,7 +46,9 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 
     AdminUsersViewComponent,
     AdminDebugViewComponent,
-    TranslatePipe
+    TranslatePipe,
+    NotificationBellComponent,
+    NotificationCenterComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './saas-app.component.html',
@@ -60,6 +65,7 @@ export class SaaSAppComponent implements OnInit {
   private store = inject(SessionStore);
   private fb: FormBuilder = inject(FormBuilder);
   translationService = inject(TranslationService);
+  notifService = inject(NotificationService);
 
   // Local State
   initialView: View = { id: 'dashboard', title: 'Bienvenue', icon: 'home' };

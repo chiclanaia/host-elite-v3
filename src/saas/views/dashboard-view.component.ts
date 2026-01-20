@@ -1,9 +1,11 @@
 
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReportData } from '../../types';
 import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'saas-dashboard-view',
@@ -22,9 +24,11 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
                 {{ 'DASHBOARD.Subtitle' | translate }}
             </p>
         </div>
-        <!-- Date or Status Widget could go here -->
-        <div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 text-slate-200 text-sm font-medium">
-            {{ 'DASHBOARD.IADashboard' | translate }}
+        <!-- Date or Status Widget -->
+        <div class="flex items-center gap-4">
+            <div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 text-slate-200 text-sm font-medium">
+                {{ 'DASHBOARD.IADashboard' | translate }}
+            </div>
         </div>
       </div>
       
@@ -117,4 +121,22 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 export class DashboardViewComponent {
   userName = input.required<string>();
   reportData = input.required<ReportData>();
+  private notifService = inject(NotificationService);
+  testStatus = signal<string | null>(null);
+
+  async testNotification() {
+    try {
+      this.testStatus.set('Envoi...');
+      await this.notifService.postNotification({
+        title: 'Action IA confirmée',
+        message: 'Votre description marketing a été optimisée avec succès.',
+        type: 'success'
+      });
+      this.testStatus.set('Succès !');
+      setTimeout(() => this.testStatus.set(null), 3000);
+    } catch (e) {
+      this.testStatus.set('Erreur (Vérifiez la DB)');
+      setTimeout(() => this.testStatus.set(null), 5000);
+    }
+  }
 }

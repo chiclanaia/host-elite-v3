@@ -20,6 +20,13 @@ export const en = {
     'COMMON.Unlock': 'Unlock',
     'COMMON.OpenTool': 'Open tool',
     'COMMON.SectionNotFound': 'Section not found',
+    'NOTIF.Title': 'Notifications',
+    'NOTIF.Empty': 'No notifications for now.',
+    'NOTIF.MarkAllRead': 'Mark all as read',
+    'NOTIF.Close': 'Close panel',
+    'NOTIF.FilterAll': 'All',
+    'NOTIF.FilterRead': 'Read',
+    'NOTIF.FilterUnread': 'Unread',
 
     'COMMON.Tier.Bronze': 'Bronze',
     'COMMON.Tier.Silver': 'Silver',
