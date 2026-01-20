@@ -65,45 +65,52 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
                 </div>
 
                 <!-- List -->
-                <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                    <div class="space-y-4">
+                <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                    <div class="space-y-2">
                         @for (notif of filteredNotifications(); track notif.id) {
                             <div [class.bg-white/5]="!notif.read_status" 
-                                 [class.border-blue-500/30]="!notif.read_status"
-                                 class="p-8 border border-white/5 rounded-[2rem] hover:bg-white/[0.08] transition-all group relative cursor-pointer shadow-lg"
+                                 [class.border-blue-500/20]="!notif.read_status"
+                                 class="p-4 border border-white/5 rounded-2xl hover:bg-white/[0.08] transition-all group relative cursor-pointer shadow-sm"
                                  (click)="onNotificationClick(notif)">
                                 
-                                <div class="flex gap-8">
+                                <div class="flex gap-4 items-start">
                                     <!-- Icon/Type Indicator -->
                                     <div class="shrink-0">
-                                        <div [ngClass]="getTypeClass(notif.type)" class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg">
+                                        <div [ngClass]="getTypeClass(notif.type)" class="w-10 h-10 rounded-xl flex items-center justify-center shadow-md">
                                             @switch (notif.type) {
                                                 @case ('event') {
-                                                    <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                                 }
                                                 @case ('success') {
-                                                    <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                                 }
                                                 @case ('warning') {
-                                                    <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                                 }
                                                 @default {
-                                                    <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                 }
                                             }
                                         </div>
                                     </div>
 
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <h4 class="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
-                                                {{ notif.title }}
-                                            </h4>
-                                            <span class="text-sm text-slate-500 font-medium">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="flex items-center gap-2 overflow-hidden">
+                                                @if (notif.payload?.property_name) {
+                                                    <span class="shrink-0 text-[10px] font-black uppercase tracking-wider text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
+                                                        {{ notif.payload.property_name }}
+                                                    </span>
+                                                }
+                                                <h4 class="text-base font-bold text-white group-hover:text-blue-400 transition-colors truncate">
+                                                    {{ notif.title }}
+                                                </h4>
+                                            </div>
+                                            <span class="shrink-0 text-xs text-slate-500 font-medium ml-2">
                                                 {{ notif.created_at | date:'dd MMM, HH:mm' }}
                                             </span>
                                         </div>
-                                        <p class="text-slate-300 text-lg leading-relaxed">
+                                        <p class="text-slate-400 text-sm leading-relaxed line-clamp-2">
                                             {{ notif.message }}
                                         </p>
                                     </div>
@@ -111,18 +118,18 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 
                                 <!-- Read indicator -->
                                 @if (!notif.read_status) {
-                                    <div class="absolute right-8 top-8 w-4 h-4 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]"></div>
+                                    <div class="absolute right-4 top-4 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
                                 }
                             </div>
                         } @empty {
-                            <div class="py-24 flex flex-col items-center justify-center text-center px-12">
-                                <div class="w-24 h-24 bg-white/5 rounded-[2rem] flex items-center justify-center mb-8 text-slate-600 border border-white/10">
-                                    <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div class="py-12 flex flex-col items-center justify-center text-center px-12">
+                                <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-slate-600 border border-white/10">
+                                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                     </svg>
                                 </div>
-                                <h4 class="text-2xl font-bold text-white mb-3">{{ 'NOTIF.Empty' | translate }}</h4>
-                                <p class="text-lg text-slate-400 max-w-md mx-auto">
+                                <h4 class="text-xl font-bold text-white mb-2">{{ 'NOTIF.Empty' | translate }}</h4>
+                                <p class="text-sm text-slate-400 max-w-sm mx-auto">
                                     @switch (activeFilter()) {
                                         @case ('read') { Vous n'avez aucune notification lue. }
                                         @case ('unread') { Vous n'avez aucune notification non lue. Félicitations ! }

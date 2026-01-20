@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SessionStore } from '../../state/session.store';
 import { TranslationService } from '../../services/translation.service';
 import { HostRepository } from '../../services/host-repository.service';
+import { SupabaseService } from '../../services/supabase.service';
 import { AppPlan, UserProfile } from '../../types';
 import { NotificationService } from '../../services/notification.service';
 
@@ -109,31 +110,51 @@ import { NotificationService } from '../../services/notification.service';
             </h2>
             
             <div class="p-6 bg-slate-900/50 rounded-lg space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- User Dropdown -->
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-400 uppercase">Destinataire</label>
                         <select [(ngModel)]="notifForm.userId" 
+                                (ngModelChange)="onUserChange()"
                                 class="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500 transition-colors">
                             <option value="">Sélectionner un utilisateur...</option>
-                            <option *ngFor="let u of allUsers()" [value]="u.id">
-                                {{ u.full_name || u.email }} ({{ u.role }})
-                            </option>
+                            @for (u of allUsers(); track u.id) {
+                                <option [value]="u.id">
+                                    {{ u.full_name || u.email }} ({{ u.role }})
+                                </option>
+                            }
                         </select>
+                    </div>
+
+                    <!-- Property Dropdown -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400 uppercase">Propriété (Optionnel)</label>
+                        <select [(ngModel)]="notifForm.propertyId" 
+                                [disabled]="!notifForm.userId"
+                                class="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500 transition-colors disabled:opacity-50">
+                            <option value="">Toutes / Aucune spécifique</option>
+                            @for (p of userProperties(); track p.id) {
+                                <option [value]="p.id">{{ p.name }}</option>
+                            }
+                        </select>
+                        @if (isLoadingProperties()) {
+                            <p class="text-[10px] text-orange-400 animate-pulse mt-1">Chargement des données...</p>
+                        }
                     </div>
 
                     <!-- Type Selector -->
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-400 uppercase">Type</label>
                         <div class="flex gap-2">
-                            <button *ngFor="let t of notifTypes" 
-                                    (click)="notifForm.type = t"
-                                    class="flex-1 py-2 text-xs font-bold rounded-lg border transition-all"
-                                    [class]="notifForm.type === t 
-                                        ? 'bg-orange-500 border-orange-500 text-slate-900' 
-                                        : 'bg-slate-800 border-white/10 text-slate-400 hover:border-white/20'">
-                                {{ t | uppercase }}
-                            </button>
+                            @for (t of notifTypes; track t) {
+                                <button (click)="notifForm.type = t"
+                                        class="flex-1 py-1 text-[10px] font-bold rounded-lg border transition-all"
+                                        [class]="notifForm.type === t 
+                                            ? 'bg-orange-500 border-orange-500 text-slate-900' 
+                                            : 'bg-slate-800 border-white/10 text-slate-400 hover:border-white/20'">
+                                    {{ t | uppercase }}
+                                </button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -185,16 +206,20 @@ export class AdminDebugViewComponent {
     store = inject(SessionStore);
     ts = inject(TranslationService);
     repository = inject(HostRepository);
+    supabaseService = inject(SupabaseService);
     notifService = inject(NotificationService);
 
     plans: AppPlan[] = ['Freemium', 'Bronze', 'Silver', 'Gold'];
     allUsers = signal<UserProfile[]>([]);
+    userProperties = signal<any[]>([]);
+    isLoadingProperties = signal(false);
     isSendingNotif = signal(false);
     notifFeedback = signal<string | null>(null);
     notifTypes: any[] = ['info', 'success', 'warning', 'event'];
 
     notifForm = {
         userId: '',
+        propertyId: '',
         title: '',
         message: '',
         type: 'info' as any
@@ -209,6 +234,50 @@ export class AdminDebugViewComponent {
         this.allUsers.set(users);
     }
 
+    async onUserChange(loadAll: boolean = false) {
+        this.notifForm.propertyId = '';
+        this.userProperties.set([]);
+
+        if (this.notifForm.userId || loadAll) {
+            try {
+                this.isLoadingProperties.set(true);
+                this.notifFeedback.set(null);
+
+                console.log('[AdminDebug] Fetching properties...', loadAll ? '(All)' : `(User: ${this.notifForm.userId})`);
+
+                // We fetch all properties visible to the user to debug if it's a data mismatch or RLS
+                let query = this.supabaseService.supabase
+                    .from('properties')
+                    .select('id, name, owner_id');
+
+                if (!loadAll) {
+                    query = query.eq('owner_id', this.notifForm.userId);
+                }
+
+                const { data, error } = await query;
+
+                if (error) {
+                    console.error('[AdminDebug] Supabase error:', error);
+                    this.notifFeedback.set(`Erreur DB [${error.code}]: ${error.message}`);
+                    return;
+                }
+
+                if (data) {
+                    console.log('[AdminDebug] Raw data length:', data.length);
+                    if (data.length === 0) {
+                        console.warn('[AdminDebug] No properties returned. This usually means RLS is blocking access (even for admins) or the table is empty.');
+                    }
+                    this.userProperties.set(data);
+                }
+            } catch (err: any) {
+                console.error('[AdminDebug] Catch:', err);
+                this.notifFeedback.set(`Erreur: ${err.message}`);
+            } finally {
+                this.isLoadingProperties.set(false);
+            }
+        }
+    }
+
     async sendCustomNotif() {
         if (!this.notifForm.userId || !this.notifForm.title || !this.notifForm.message) return;
 
@@ -217,7 +286,6 @@ export class AdminDebugViewComponent {
             this.notifFeedback.set(null);
 
             // Directly push to DB via notification service logic
-            // We need a slight modification to notification service to allow target userId
             await this.postManualNotification(this.notifForm);
 
             this.notifFeedback.set('Succès !');
@@ -235,13 +303,23 @@ export class AdminDebugViewComponent {
 
     // Direct insert to public.notifications for target user
     private async postManualNotification(data: any) {
-        const { error } = await (this.repository as any).supabase
+        let propertyName = '';
+
+        if (data.propertyId) {
+            const prop = this.userProperties().find(p => p.id === data.propertyId);
+            if (prop) {
+                propertyName = prop.name;
+            }
+        }
+
+        const { error } = await this.supabaseService.supabase
             .from('notifications')
             .insert({
                 user_id: data.userId,
                 title: data.title,
                 message: data.message,
-                type: data.type || 'info'
+                type: data.type || 'info',
+                payload: propertyName ? { property_name: propertyName, property_id: data.propertyId } : {}
             });
         if (error) throw error;
     }

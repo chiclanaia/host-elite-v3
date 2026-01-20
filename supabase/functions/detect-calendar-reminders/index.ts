@@ -17,10 +17,9 @@ Deno.serve(async (req) => {
         console.log(`Checking events between ${targetStart.toISOString()} and ${targetEnd.toISOString()}`);
 
         // 1. Fetch upcoming events
-        // Assuming properties table has owner_id
         const { data: events, error: eventError } = await supabase
             .from('calendar_events')
-            .select('*, properties(owner_id)')
+            .select('*, properties(owner_id, name)')
             .gte('start', targetStart.toISOString())
             .lte('start', targetEnd.toISOString());
 
@@ -46,6 +45,8 @@ Deno.serve(async (req) => {
                 .maybeSingle();
 
             if (!existing) {
+                const propertyName = event.properties?.name || 'Ma propriété';
+
                 // Create notification
                 const { error: insertError } = await supabase
                     .from('notifications')
@@ -54,7 +55,11 @@ Deno.serve(async (req) => {
                         title: `Rappel : ${event.title}`,
                         message: `L'événement "${event.title}" commence demain à ${new Date(event.start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}.`,
                         type: 'event',
-                        payload: { event_id: event.id, property_id: event.property_id }
+                        payload: {
+                            event_id: event.id,
+                            property_id: event.property_id,
+                            property_name: propertyName
+                        }
                     });
 
                 if (insertError) {
