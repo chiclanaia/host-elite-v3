@@ -1,80 +1,776 @@
 -- Seed data for onboarding_questions
 -- This script populates the questions from the hardcoded ONBOARDING_DATA
-
 -- Marketing Questions (10)
-INSERT INTO public.onboarding_questions (angle, question_key, level, order_index, has_sub_question, sub_question_config) VALUES
-('marketing', 'AUDIT.marketing_q1', 'Bronze', 1, true, '{"id": "m_q1_url", "label_key": "AUDIT.marketing_q1_sub", "type": "url", "placeholder": "https://airbnb.com/h/mon-logement"}'),
-('marketing', 'AUDIT.marketing_q2', 'Silver', 2, false, null),
-('marketing', 'AUDIT.marketing_q3', 'Silver', 3, true, '{"id": "m_q3_title", "label_key": "AUDIT.marketing_q3_sub", "type": "text", "placeholder": "Ex: Studio cosy vue Tour Eiffel"}'),
-('marketing', 'AUDIT.marketing_q4', 'Silver', 4, false, null),
-('marketing', 'AUDIT.marketing_q5', 'Gold', 5, true, '{"id": "m_q5_target", "label_key": "AUDIT.marketing_q5_sub", "type": "text", "placeholder": "Ex: Familles avec jeunes enfants"}'),
-('marketing', 'AUDIT.marketing_q6', 'Gold', 6, true, '{"id": "m_q6_rating", "label_key": "AUDIT.marketing_q6_sub", "type": "number", "placeholder": "Ex: 4.92"}'),
-('marketing', 'AUDIT.marketing_q7', 'Gold', 7, true, '{"id": "m_q7_social", "label_key": "AUDIT.marketing_q7_sub", "type": "url", "placeholder": "https://instagram.com/monlogement"}'),
-('marketing', 'AUDIT.marketing_q8', 'Gold', 8, true, '{"id": "m_q8_tour", "label_key": "AUDIT.marketing_q8_sub", "type": "url", "placeholder": "https://..."}'),
-('marketing', 'AUDIT.marketing_q9', 'Gold', 9, true, '{"id": "m_q9_url", "label_key": "AUDIT.marketing_q9_sub", "type": "url", "placeholder": "https://mon-site.com"}'),
-('marketing', 'AUDIT.marketing_q10', 'Gold', 10, false, null);
-
+INSERT INTO public.onboarding_questions (
+        angle,
+        question_key,
+        level,
+        order_index,
+        has_sub_question,
+        sub_question_config
+    )
+VALUES (
+        'marketing',
+        'AUDIT.marketing_q1',
+        'Bronze',
+        1,
+        true,
+        '{"id": "m_q1_url", "label_key": "AUDIT.marketing_q1_sub", "type": "url", "placeholder": "https://airbnb.com/h/mon-logement"}'
+    ),
+    (
+        'marketing',
+        'AUDIT.marketing_q2',
+        'Silver',
+        2,
+        false,
+        null
+    ),
+    (
+        'marketing',
+        'AUDIT.marketing_q3',
+        'Silver',
+        3,
+        true,
+        '{"id": "m_q3_title", "label_key": "AUDIT.marketing_q3_sub", "type": "text", "placeholder": "Ex: Studio cosy vue Tour Eiffel"}'
+    ),
+    (
+        'marketing',
+        'AUDIT.marketing_q4',
+        'Silver',
+        4,
+        false,
+        null
+    ),
+    (
+        'marketing',
+        'AUDIT.marketing_q5',
+        'Gold',
+        5,
+        true,
+        '{"id": "m_q5_target", "label_key": "AUDIT.marketing_q5_sub", "type": "text", "placeholder": "Ex: Familles avec jeunes enfants"}'
+    ),
+    (
+        'marketing',
+        'AUDIT.marketing_q6',
+        'Gold',
+        6,
+        true,
+        '{"id": "m_q6_rating", "label_key": "AUDIT.marketing_q6_sub", "type": "number", "placeholder": "Ex: 4.92"}'
+    ),
+    (
+        'marketing',
+        'AUDIT.marketing_q7',
+        'Gold',
+        7,
+        true,
+        '{"id": "m_q7_social", "label_key": "AUDIT.marketing_q7_sub", "type": "url", "placeholder": "https://instagram.com/monlogement"}'
+    ),
+    (
+        'marketing',
+        'AUDIT.marketing_q8',
+        'Gold',
+        8,
+        true,
+        '{"id": "m_q8_tour", "label_key": "AUDIT.marketing_q8_sub", "type": "url", "placeholder": "https://..."}'
+    ),
+    (
+        'marketing',
+        'AUDIT.marketing_q9',
+        'Gold',
+        9,
+        true,
+        '{"id": "m_q9_url", "label_key": "AUDIT.marketing_q9_sub", "type": "url", "placeholder": "https://mon-site.com"}'
+    ),
+    (
+        'marketing',
+        'AUDIT.marketing_q10',
+        'Gold',
+        10,
+        false,
+        null
+    );
 -- Experience Questions (10)
-INSERT INTO public.onboarding_questions (angle, question_key, level, order_index, has_sub_question, sub_question_config) VALUES
-('experience', 'AUDIT.experience_q1', 'Bronze', 1, false, null),
-('experience', 'AUDIT.experience_q2', 'Silver', 2, true, '{"id": "e_q2_method", "label_key": "AUDIT.experience_q2_sub", "type": "text", "placeholder": "Ex: Boîte à clés, accueil en personne..."}'),
-('experience', 'AUDIT.experience_q3', 'Silver', 3, true, '{"id": "e_q3_link", "label_key": "AUDIT.experience_q3_sub", "type": "url", "placeholder": "https://example.com/livret"}'),
-('experience', 'AUDIT.experience_q4', 'Silver', 4, false, null),
-('experience', 'AUDIT.experience_q5', 'Gold', 5, false, null),
-('experience', 'AUDIT.experience_q6', 'Gold', 6, true, '{"id": "e_q6_basket", "label_key": "AUDIT.experience_q6_sub", "type": "text", "placeholder": "Ex: Café, thé, gâteaux locaux"}'),
-('experience', 'AUDIT.experience_q7', 'Gold', 7, true, '{"id": "e_q7_tool", "label_key": "AUDIT.experience_q7_sub", "type": "text", "placeholder": "Ex: Airbnb, Smoobu, etc."}'),
-('experience', 'AUDIT.experience_q8', 'Gold', 8, false, null),
-('experience', 'AUDIT.experience_q9', 'Gold', 9, true, '{"id": "e_q9_partner", "label_key": "AUDIT.experience_q9_sub", "type": "text", "placeholder": "Ex: Chef \\"Le Bon Goût\\""}'),
-('experience', 'AUDIT.experience_q10', 'Gold', 10, false, null);
-
+INSERT INTO public.onboarding_questions (
+        angle,
+        question_key,
+        level,
+        order_index,
+        has_sub_question,
+        sub_question_config
+    )
+VALUES (
+        'experience',
+        'AUDIT.experience_q1',
+        'Bronze',
+        1,
+        false,
+        null
+    ),
+    (
+        'experience',
+        'AUDIT.experience_q2',
+        'Silver',
+        2,
+        true,
+        '{"id": "e_q2_method", "label_key": "AUDIT.experience_q2_sub", "type": "text", "placeholder": "Ex: Boîte à clés, accueil en personne..."}'
+    ),
+    (
+        'experience',
+        'AUDIT.experience_q3',
+        'Silver',
+        3,
+        true,
+        '{"id": "e_q3_link", "label_key": "AUDIT.experience_q3_sub", "type": "url", "placeholder": "https://example.com/livret"}'
+    ),
+    (
+        'experience',
+        'AUDIT.experience_q4',
+        'Silver',
+        4,
+        false,
+        null
+    ),
+    (
+        'experience',
+        'AUDIT.experience_q5',
+        'Gold',
+        5,
+        false,
+        null
+    ),
+    (
+        'experience',
+        'AUDIT.experience_q6',
+        'Gold',
+        6,
+        true,
+        '{"id": "e_q6_basket", "label_key": "AUDIT.experience_q6_sub", "type": "text", "placeholder": "Ex: Café, thé, gâteaux locaux"}'
+    ),
+    (
+        'experience',
+        'AUDIT.experience_q7',
+        'Gold',
+        7,
+        true,
+        '{"id": "e_q7_tool", "label_key": "AUDIT.experience_q7_sub", "type": "text", "placeholder": "Ex: Airbnb, Smoobu, etc."}'
+    ),
+    (
+        'experience',
+        'AUDIT.experience_q8',
+        'Gold',
+        8,
+        false,
+        null
+    ),
+    (
+        'experience',
+        'AUDIT.experience_q9',
+        'Gold',
+        9,
+        true,
+        '{"id": "e_q9_partner", "label_key": "AUDIT.experience_q9_sub", "type": "text", "placeholder": "Ex: Chef \\"Le Bon Goût\\""}'
+    ),
+    (
+        'experience',
+        'AUDIT.experience_q10',
+        'Gold',
+        10,
+        false,
+        null
+    );
 -- Operations Questions (10)
-INSERT INTO public.onboarding_questions (angle, question_key, level, order_index, has_sub_question, sub_question_config) VALUES
-('operations', 'AUDIT.operations_q1', 'Bronze', 1, true, '{"id": "o_q1_cleaner", "label_key": "AUDIT.operations_q1_sub", "type": "text", "placeholder": "Ex: NettoyagePro"}'),
-('operations', 'AUDIT.operations_q2', 'Silver', 2, true, '{"id": "o_q2_sets", "label_key": "AUDIT.operations_q2_sub", "type": "number", "placeholder": "3"}'),
-('operations', 'AUDIT.operations_q3', 'Silver', 3, false, null),
-('operations', 'AUDIT.operations_q4', 'Silver', 4, false, null),
-('operations', 'AUDIT.operations_q5', 'Gold', 5, true, '{"id": "o_q5_maintenance", "label_key": "AUDIT.operations_q5_sub", "type": "text", "placeholder": "Ex: Plomberie Express"}'),
-('operations', 'AUDIT.operations_q6', 'Gold', 6, false, null),
-('operations', 'AUDIT.operations_q7', 'Gold', 7, true, '{"id": "o_q7_software", "label_key": "AUDIT.operations_q7_sub", "type": "text", "placeholder": "Ex: Smoobu, Hostaway..."}'),
-('operations', 'AUDIT.operations_q8', 'Gold', 8, false, null),
-('operations', 'AUDIT.operations_q9', 'Gold', 9, false, null),
-('operations', 'AUDIT.operations_q10', 'Gold', 10, false, null);
-
+INSERT INTO public.onboarding_questions (
+        angle,
+        question_key,
+        level,
+        order_index,
+        has_sub_question,
+        sub_question_config
+    )
+VALUES (
+        'operations',
+        'AUDIT.operations_q1',
+        'Bronze',
+        1,
+        true,
+        '{"id": "o_q1_cleaner", "label_key": "AUDIT.operations_q1_sub", "type": "text", "placeholder": "Ex: NettoyagePro"}'
+    ),
+    (
+        'operations',
+        'AUDIT.operations_q2',
+        'Silver',
+        2,
+        true,
+        '{"id": "o_q2_sets", "label_key": "AUDIT.operations_q2_sub", "type": "number", "placeholder": "3"}'
+    ),
+    (
+        'operations',
+        'AUDIT.operations_q3',
+        'Silver',
+        3,
+        false,
+        null
+    ),
+    (
+        'operations',
+        'AUDIT.operations_q4',
+        'Silver',
+        4,
+        false,
+        null
+    ),
+    (
+        'operations',
+        'AUDIT.operations_q5',
+        'Gold',
+        5,
+        true,
+        '{"id": "o_q5_maintenance", "label_key": "AUDIT.operations_q5_sub", "type": "text", "placeholder": "Ex: Plomberie Express"}'
+    ),
+    (
+        'operations',
+        'AUDIT.operations_q6',
+        'Gold',
+        6,
+        false,
+        null
+    ),
+    (
+        'operations',
+        'AUDIT.operations_q7',
+        'Gold',
+        7,
+        true,
+        '{"id": "o_q7_software", "label_key": "AUDIT.operations_q7_sub", "type": "text", "placeholder": "Ex: Smoobu, Hostaway..."}'
+    ),
+    (
+        'operations',
+        'AUDIT.operations_q8',
+        'Gold',
+        8,
+        false,
+        null
+    ),
+    (
+        'operations',
+        'AUDIT.operations_q9',
+        'Gold',
+        9,
+        false,
+        null
+    ),
+    (
+        'operations',
+        'AUDIT.operations_q10',
+        'Gold',
+        10,
+        false,
+        null
+    );
 -- Pricing Questions (10)
-INSERT INTO public.onboarding_questions (angle, question_key, level, order_index, has_sub_question, sub_question_config) VALUES
-('pricing', 'AUDIT.pricing_q1', 'Bronze', 1, true, '{"id": "p_q1_price", "label_key": "AUDIT.pricing_q1_sub", "type": "number", "placeholder": "Ex: 50"}'),
-('pricing', 'AUDIT.pricing_q2', 'Silver', 2, true, '{"id": "p_q2_fee", "label_key": "AUDIT.pricing_q2_sub", "type": "number", "placeholder": "Ex: 25"}'),
-('pricing', 'AUDIT.pricing_q3', 'Silver', 3, false, null),
-('pricing', 'AUDIT.pricing_q4', 'Silver', 4, false, null),
-('pricing', 'AUDIT.pricing_q5', 'Gold', 5, false, null),
-('pricing', 'AUDIT.pricing_q6', 'Gold', 6, false, null),
-('pricing', 'AUDIT.pricing_q7', 'Gold', 7, false, null),
-('pricing', 'AUDIT.pricing_q8', 'Gold', 8, true, '{"id": "p_q8_tool", "label_key": "AUDIT.pricing_q8_sub", "type": "text", "placeholder": "Ex: PriceLabs, Wheelhouse..."}'),
-('pricing', 'AUDIT.pricing_q9', 'Gold', 9, false, null),
-('pricing', 'AUDIT.pricing_q10', 'Gold', 10, true, '{"id": "p_q10_revpar", "label_key": "AUDIT.pricing_q10_sub", "type": "number", "placeholder": "Ex: 85"}');
-
--- Accommodation Questions (10)
-INSERT INTO public.onboarding_questions (angle, question_key, level, order_index, has_sub_question, sub_question_config) VALUES
-('accomodation', 'AUDIT.accomodation_q1', 'Bronze', 1, false, null),
-('accomodation', 'AUDIT.accomodation_q2', 'Silver', 2, true, '{"id": "a_q2_speed", "label_key": "AUDIT.accomodation_q2_sub", "type": "number", "placeholder": "Ex: 100"}'),
-('accomodation', 'AUDIT.accomodation_q3', 'Silver', 3, false, null),
-('accomodation', 'AUDIT.accomodation_q4', 'Silver', 4, false, null),
-('accomodation', 'AUDIT.accomodation_q5', 'Gold', 5, false, null),
-('accomodation', 'AUDIT.accomodation_q6', 'Gold', 6, true, '{"id": "a_q6_example", "label_key": "AUDIT.accomodation_q6_sub", "type": "text", "placeholder": "Ex: Abonnement Netflix, enceinte Bose"}'),
-('accomodation', 'AUDIT.accomodation_q7', 'Gold', 7, false, null),
-('accomodation', 'AUDIT.accomodation_q8', 'Gold', 8, false, null),
-('accomodation', 'AUDIT.accomodation_q9', 'Gold', 9, true, '{"id": "a_q9_asset", "label_key": "AUDIT.accomodation_q9_sub", "type": "text", "placeholder": "Ex: Jacuzzi sur la terrasse"}'),
-('accomodation', 'AUDIT.accomodation_q10', 'Gold', 10, false, null);
-
+INSERT INTO public.onboarding_questions (
+        angle,
+        question_key,
+        level,
+        order_index,
+        has_sub_question,
+        sub_question_config
+    )
+VALUES (
+        'pricing',
+        'AUDIT.pricing_q1',
+        'Bronze',
+        1,
+        true,
+        '{"id": "p_q1_price", "label_key": "AUDIT.pricing_q1_sub", "type": "number", "placeholder": "Ex: 50"}'
+    ),
+    (
+        'pricing',
+        'AUDIT.pricing_q2',
+        'Silver',
+        2,
+        true,
+        '{"id": "p_q2_fee", "label_key": "AUDIT.pricing_q2_sub", "type": "number", "placeholder": "Ex: 25"}'
+    ),
+    (
+        'pricing',
+        'AUDIT.pricing_q3',
+        'Silver',
+        3,
+        false,
+        null
+    ),
+    (
+        'pricing',
+        'AUDIT.pricing_q4',
+        'Silver',
+        4,
+        false,
+        null
+    ),
+    (
+        'pricing',
+        'AUDIT.pricing_q5',
+        'Gold',
+        5,
+        false,
+        null
+    ),
+    (
+        'pricing',
+        'AUDIT.pricing_q6',
+        'Gold',
+        6,
+        false,
+        null
+    ),
+    (
+        'pricing',
+        'AUDIT.pricing_q7',
+        'Gold',
+        7,
+        false,
+        null
+    ),
+    (
+        'pricing',
+        'AUDIT.pricing_q8',
+        'Gold',
+        8,
+        true,
+        '{"id": "p_q8_tool", "label_key": "AUDIT.pricing_q8_sub", "type": "text", "placeholder": "Ex: PriceLabs, Wheelhouse..."}'
+    ),
+    (
+        'pricing',
+        'AUDIT.pricing_q9',
+        'Gold',
+        9,
+        false,
+        null
+    ),
+    (
+        'pricing',
+        'AUDIT.pricing_q10',
+        'Gold',
+        10,
+        true,
+        '{"id": "p_q10_revpar", "label_key": "AUDIT.pricing_q10_sub", "type": "number", "placeholder": "Ex: 85"}'
+    );
+-- Accommodation Questions (40)
+INSERT INTO public.onboarding_questions (
+        angle,
+        question_key,
+        level,
+        order_index,
+        has_sub_question,
+        sub_question_config
+    )
+VALUES (
+        'accomodation',
+        'AUDIT.accomodation_q1',
+        'Bronze',
+        1,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q2',
+        'Bronze',
+        2,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q3',
+        'Bronze',
+        3,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q4',
+        'Bronze',
+        4,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q5',
+        'Bronze',
+        5,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q6',
+        'Bronze',
+        6,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q7',
+        'Bronze',
+        7,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q8',
+        'Bronze',
+        8,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q9',
+        'Bronze',
+        9,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q10',
+        'Bronze',
+        10,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q11',
+        'Silver',
+        11,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q12',
+        'Silver',
+        12,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q13',
+        'Silver',
+        13,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q14',
+        'Silver',
+        14,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q15',
+        'Silver',
+        15,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q16',
+        'Silver',
+        16,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q17',
+        'Silver',
+        17,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q18',
+        'Silver',
+        18,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q19',
+        'Silver',
+        19,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q20',
+        'Silver',
+        20,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q21',
+        'Silver',
+        21,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q22',
+        'Silver',
+        22,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q23',
+        'Silver',
+        23,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q24',
+        'Silver',
+        24,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q25',
+        'Silver',
+        25,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q26',
+        'Silver',
+        26,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q27',
+        'Silver',
+        27,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q28',
+        'Silver',
+        28,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q29',
+        'Silver',
+        29,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q30',
+        'Silver',
+        30,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q31',
+        'Gold',
+        31,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q32',
+        'Gold',
+        32,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q33',
+        'Gold',
+        33,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q34',
+        'Gold',
+        34,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q35',
+        'Gold',
+        35,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q36',
+        'Gold',
+        36,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q37',
+        'Gold',
+        37,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q38',
+        'Gold',
+        38,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q39',
+        'Gold',
+        39,
+        false,
+        null
+    ),
+    (
+        'accomodation',
+        'AUDIT.accomodation_q40',
+        'Gold',
+        40,
+        false,
+        null
+    );
 -- Legal Questions (10)
-INSERT INTO public.onboarding_questions (angle, question_key, level, order_index, has_sub_question, sub_question_config) VALUES
-('legal', 'AUDIT.legal_q1', 'Silver', 1, false, null),
-('legal', 'AUDIT.legal_q2', 'Silver', 2, true, '{"id": "l_q2_number", "label_key": "AUDIT.legal_q2_sub", "type": "text", "placeholder": "Ex: 7510101234567"}'),
-('legal', 'AUDIT.legal_q3', 'Silver', 3, false, null),
-('legal', 'AUDIT.legal_q4', 'Silver', 4, false, null),
-('legal', 'AUDIT.legal_q5', 'Gold', 5, true, '{"id": "l_q5_insurance", "label_key": "AUDIT.legal_q5_sub", "type": "text", "placeholder": "Ex: AXA, Allianz..."}'),
-('legal', 'AUDIT.legal_q6', 'Gold', 6, false, null),
-('legal', 'AUDIT.legal_q7', 'Gold', 7, true, '{"id": "l_q7_status", "label_key": "AUDIT.legal_q7_sub", "type": "text", "placeholder": "Ex: LMNP au réel"}'),
-('legal', 'AUDIT.legal_q8', 'Gold', 8, false, null),
-('legal', 'AUDIT.legal_q9', 'Gold', 9, true, '{"id": "l_q9_firm", "label_key": "AUDIT.legal_q9_sub", "type": "text", "placeholder": "Ex: Cabinet Dupont"}'),
-('legal', 'AUDIT.legal_q10', 'Gold', 10, false, null);
+INSERT INTO public.onboarding_questions (
+        angle,
+        question_key,
+        level,
+        order_index,
+        has_sub_question,
+        sub_question_config
+    )
+VALUES (
+        'legal',
+        'AUDIT.legal_q1',
+        'Silver',
+        1,
+        false,
+        null
+    ),
+    (
+        'legal',
+        'AUDIT.legal_q2',
+        'Silver',
+        2,
+        true,
+        '{"id": "l_q2_number", "label_key": "AUDIT.legal_q2_sub", "type": "text", "placeholder": "Ex: 7510101234567"}'
+    ),
+    (
+        'legal',
+        'AUDIT.legal_q3',
+        'Silver',
+        3,
+        false,
+        null
+    ),
+    (
+        'legal',
+        'AUDIT.legal_q4',
+        'Silver',
+        4,
+        false,
+        null
+    ),
+    (
+        'legal',
+        'AUDIT.legal_q5',
+        'Gold',
+        5,
+        true,
+        '{"id": "l_q5_insurance", "label_key": "AUDIT.legal_q5_sub", "type": "text", "placeholder": "Ex: AXA, Allianz..."}'
+    ),
+    (
+        'legal',
+        'AUDIT.legal_q6',
+        'Gold',
+        6,
+        false,
+        null
+    ),
+    (
+        'legal',
+        'AUDIT.legal_q7',
+        'Gold',
+        7,
+        true,
+        '{"id": "l_q7_status", "label_key": "AUDIT.legal_q7_sub", "type": "text", "placeholder": "Ex: LMNP au réel"}'
+    ),
+    (
+        'legal',
+        'AUDIT.legal_q8',
+        'Gold',
+        8,
+        false,
+        null
+    ),
+    (
+        'legal',
+        'AUDIT.legal_q9',
+        'Gold',
+        9,
+        true,
+        '{"id": "l_q9_firm", "label_key": "AUDIT.legal_q9_sub", "type": "text", "placeholder": "Ex: Cabinet Dupont"}'
+    ),
+    (
+        'legal',
+        'AUDIT.legal_q10',
+        'Gold',
+        10,
+        false,
+        null
+    );

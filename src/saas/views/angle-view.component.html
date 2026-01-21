@@ -216,6 +216,9 @@
     } @else if (activeToolId() === 'market-alerts') {
     <app-market-alerts [propertyDetails]="propertyDetails()" [userPlan]="userPlan()" (close)="closeTool()">
     </app-market-alerts>
+    } @else if (activeToolId() === 'airbnb-ready') {
+    <app-property-audit [propertyName]="view().propertyName!" [propertyId]="currentPropertyId()!" (close)="closeTool()">
+    </app-property-audit>
     } @else {
     <p class="text-white/80 bg-black/20 p-4 rounded-xl backdrop-blur-md inline-block">{{ 'COMMON.SectionNotFound' |
         translate }}: '{{

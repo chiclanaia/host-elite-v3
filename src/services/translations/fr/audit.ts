@@ -67,20 +67,54 @@ export const audit = {
     'AUDIT.pricing_q10': 'Connaissez-vous et suivez-vous votre "RevPAR" (Revenu Par Chambre Disponible) ?',
     'AUDIT.pricing_q10_sub': 'Quel est votre RevPAR moyen (€) ?',
 
-    // Audit Questions - Accommodation
-    'AUDIT.accomodation_q1': 'Le logement est-il 100% conforme aux normes de sécurité (détecteurs de fumée, CO, extincteur) ?',
-    'AUDIT.accomodation_q2': 'Le Wi-Fi est-il rapide (fibre/haut débit), fiable et couvre-t-il 100% du logement (pas de "zone morte") ?',
-    'AUDIT.accomodation_q2_sub': 'Quel est le débit descendant (en Mbit/s) ?',
-    'AUDIT.accomodation_q3': 'La cuisine est-elle équipée de tous les ustensiles essentiels et de qualité pour qu\'un Invité puisse vraiment cuisiner ?',
-    'AUDIT.accomodation_q4': 'La literie (matelas, oreillers, couette) est-elle de qualité hôtelière et confortable (et non "premier prix") ?',
-    'AUDIT.accomodation_q5': 'La décoration est-elle soignée, moderne (ou thématique) et "dépersonnalisée" (pas de photos de famille) ?',
-    'AUDIT.accomodation_q6': 'Fournissez-vous des équipements "expérientiels" (ex: Netflix, enceinte Bluetooth, machine Nespresso avec capsules) ?',
-    'AUDIT.accomodation_q6_sub': 'Exemple d\'équipement expérientiel fourni',
-    'AUDIT.accomodation_q7': 'Avez-vous un espace de travail dédié (vrai bureau, bonne chaise, bonne lumière) pour les télétravailleurs ?',
-    'AUDIT.accomodation_q8': 'Votre logement est-il optimisé pour votre clientèle cible (ex: lit bébé et chaise haute si vous visez les familles) ?',
-    'AUDIT.accomodation_q9': 'Avez-vous investi dans un atout "Whaou" ou "Instagrammable" (ex: Jacuzzi, vue exceptionnelle, balançoire, mur végétal) ?',
-    'AUDIT.accomodation_q9_sub': 'Décrivez votre atout "Whaou"',
-    'AUDIT.accomodation_q10': 'Planifiez-vous un budget annuel de "rafraîchissement" (peinture, remplacement du linge usé, coussins) ?',
+    // Audit Questions - Accommodation (4 levels path to Excellence)
+    // 1-10: Indispensables (Essentiel)
+    'AUDIT.accomodation_q1': 'Le logement est-il 100% conforme aux normes de sécurité (détecteurs fumée, CO, extincteur, trousse secours) ?',
+    'AUDIT.accomodation_q2': 'Le Wi-Fi est-il rapide (fibre/haut débit) et fiable avec une couverture de 100% (pas de zone morte) ?',
+    'AUDIT.accomodation_q3': 'La literie (matelas, oreillers, couette) est-elle de qualité hôtelière professionnelle et confortable ?',
+    'AUDIT.accomodation_q4': 'Y a-t-il un système d\'entrée sécurisé et fiable (serrure connectée, boîte à clés fonctionnelle, ou accueil physique) ?',
+    'AUDIT.accomodation_q5': 'Fournissez-vous les produits de toilette essentiels (savon, papier toilette, serviettes invités) ?',
+    'AUDIT.accomodation_q6': 'Toutes les fenêtres et portes sont-elles équipées de mécanismes de verrouillage fonctionnels et sécurisés ?',
+    'AUDIT.accomodation_q7': 'Y a-t-il des prises électriques suffisantes et facilement accessibles dans chaque pièce ?',
+    'AUDIT.accomodation_q8': 'Fournissez-vous un kit de nettoyage de base à l\'usage des Invités (balai, aspirateur, éponges) ?',
+    'AUDIT.accomodation_q9': 'Les numéros d\'urgence (Pompiers, SAMU, Police) sont-ils clairement affichés en plusieurs langues ?',
+    'AUDIT.accomodation_q10': 'Des poubelles sont-elles fournies avec des instructions claires pour le tri sélectif ?',
+
+    // 11-20: Standards (Confort)
+    'AUDIT.accomodation_q11': 'La cuisine est-elle équipée de tous les ustensiles essentiels pour cuisiner (poêles, casseroles, couteaux de qualité) ?',
+    'AUDIT.accomodation_q12': 'Des rideaux occultants ou des volets sont-ils présents dans chaque chambre pour une obscurité totale ?',
+    'AUDIT.accomodation_q13': 'Y a-t-il suffisamment de rangement pour les vêtements avec au moins 4-6 cintres par invité ?',
+    'AUDIT.accomodation_q14': 'Y a-t-il un sèche-cheveux haute performance et un fer/planche à repasser fonctionnels ?',
+    'AUDIT.accomodation_q15': 'Fournissez-vous un livret d\'accueil complet (numérique ou physique) avec des infos locales ?',
+    'AUDIT.accomodation_q16': 'Les appareils essentiels (Micro-ondes, Grille-pain, Bouilloire) sont-ils présents et en bon état ?',
+    'AUDIT.accomodation_q17': 'Y a-t-il un ensemble complet de verres et de couverts assortis pour la capacité maximale d\'invités ?',
+    'AUDIT.accomodation_q18': 'Y a-t-il au moins un miroir en pied en dehors de la salle de bain (ex: hall ou chambre) ?',
+    'AUDIT.accomodation_q19': 'Des tapis antidérapants ou des surfaces de sécurité sont-ils prévus dans les douches et baignoires ?',
+    'AUDIT.accomodation_q20': 'L\'éclairage de l\'entrée et du couloir est-il suffisant pour une circulation nocturne sécurisée ?',
+
+    // 21-30: Premium (Avancé)
+    'AUDIT.accomodation_q21': 'Y a-t-il un espace de travail dédié et ergonomique (vrai bureau, chaise confortable, bonne lumière) ?',
+    'AUDIT.accomodation_q22': 'Y a-t-il une Smart TV avec des abonnements actifs aux services de streaming (Netflix, Disney+, etc.) ?',
+    'AUDIT.accomodation_q23': 'Fournissez-vous une enceinte Bluetooth de haute qualité (Sonos, Bose, Marshall) ?',
+    'AUDIT.accomodation_q24': 'Y a-t-il un contrôle climatique efficace (Clim ou chauffage haut de gamme) dans toutes les pièces principales ?',
+    'AUDIT.accomodation_q25': 'Fournissez-vous une machine à café premium (Nespresso, Delonghi) avec une réserve initiale de capsules ?',
+    'AUDIT.accomodation_q26': 'Y a-t-il un lave-vaisselle avec des tablettes de lavage fournies au départ ?',
+    'AUDIT.accomodation_q27': 'Les Invités ont-ils accès à une buanderie sur place (Lave-linge/Sèche-linge) ou à un service professionnel ?',
+    'AUDIT.accomodation_q28': 'Des adaptateurs universels ou des ports USB/USB-C intégrés sont-ils disponibles dans tout le logement ?',
+    'AUDIT.accomodation_q29': 'L\'éclairage du salon est-il modulable (variateurs, lampes d\'ambiance, liseuses) ?',
+    'AUDIT.accomodation_q30': 'Fournissez-vous un "Panier de départ" (Lait, Pain, Beurre, Spécialité locale) ?',
+
+    // 31-40: Excellence (Excellence)
+    'AUDIT.accomodation_q31': 'Le logement dispose-t-il d\'un atout "Whaou" (Jacuzzi, Piscine privée, Sauna, ou Vue panoramique) ?',
+    'AUDIT.accomodation_q32': 'Offrez-vous un cadeau de bienvenue de luxe (Champagne frais, Vin local, ou Fleurs fraîches) ?',
+    'AUDIT.accomodation_q33': 'Le linge est-il premium (coton égyptien, 400+ fils) avec peignoirs et chaussons de luxe ?',
+    'AUDIT.accomodation_q34': 'Proposez-vous l\'accès à des services partenaires premium (Chef privé, Massage à domicile, Transfert VIP) ?',
+    'AUDIT.accomodation_q35': 'Avez-vous investi dans une photographie HDR professionnelle et une visite virtuelle 3D immersive ?',
+    'AUDIT.accomodation_q36': 'Disposez-vous d\'un budget annuel dédié au rafraîchissement de la déco, de l\'art et des équipements ?',
+    'AUDIT.accomodation_q37': 'Des fonctions Smart Home sont-elles implémentées (Contrôle vocal, éclairage/stores auto, thermostat intelligent) ?',
+    'AUDIT.accomodation_q38': 'La décoration est-elle signée avec des pièces d\'art uniques ou du mobilier artisanal local ?',
+    'AUDIT.accomodation_q39': 'Le logement a-t-il bénéficié d\'un traitement acoustique professionnel pour une insonorisation supérieure ?',
+    'AUDIT.accomodation_q40': 'L\'espace extérieur (Terrasse privée ou Jardin) est-il paysagé professionnellement et entièrement meublé ?',
 
     // Audit Questions - Legal
     'AUDIT.legal_q1': 'Avez-vous vérifié que votre règlement de copropriété (si applicable) autorise explicitement la location courte durée ?',

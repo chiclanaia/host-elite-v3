@@ -18,6 +18,7 @@ import { DelegationSimulatorComponent } from '../features/delegation/delegation-
 import { CalendarToolComponent } from '../features/calendar-tool/components/calendar-tool.component';
 import { ProfitabilityCalculatorComponent } from '../features/profitability/profitability-calculator.component';
 import { MarketAlertsComponent } from '../features/market-alerts/market-alerts.component';
+import { PropertyAuditComponent } from '../features/property-audit/property-audit.component';
 import { TranslationService } from '../../services/translation.service';
 
 import { TranslatePipe } from '../../pipes/translate.pipe';
@@ -75,7 +76,8 @@ interface OnboardingQuestion {
         DelegationSimulatorComponent,
         CalendarToolComponent,
         ProfitabilityCalculatorComponent,
-        MarketAlertsComponent
+        MarketAlertsComponent,
+        PropertyAuditComponent
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './angle-view.component.html',
@@ -347,7 +349,26 @@ export class AngleViewComponent implements OnInit {
             }
 
             // Load questions from database for this angle
-            const questions = await this.onboardingService.getQuestionsByAngle(angle);
+            let questions = await this.onboardingService.getQuestionsByAngle(angle);
+
+            // HYBRID LOGIC: Force expansion to 40 items for 'accomodation' (Logement)
+            if (angle === 'accomodation' && questions.length < 40) {
+                const existingKeys = new Set(questions.map(q => q.question_key));
+                for (let i = 1; i <= 40; i++) {
+                    const key = `AUDIT.accomodation_q${i}`;
+                    if (!existingKeys.has(key)) {
+                        questions.push({
+                            id: `synthetic_${i}`,
+                            angle: 'accomodation',
+                            question_key: key,
+                            level: i <= 10 ? 'Bronze' : (i <= 20 ? 'Silver' : 'Gold'),
+                            order_index: i,
+                            has_sub_question: false
+                        } as any);
+                    }
+                }
+                questions.sort((a, b) => a.order_index - b.order_index);
+            }
 
             if (!questions || questions.length === 0) {
                 console.warn('No questions found for angle:', angle);
