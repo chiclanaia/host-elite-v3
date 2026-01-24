@@ -38,21 +38,24 @@
                     <label class="text-slate-400 text-xs font-bold uppercase ml-1">{{ 'VISIBILITY.LienAirbnb' |
                         translate }}</label>
                     <input type="text" [ngModel]="airbnbUrl()" (ngModelChange)="airbnbUrl.set($event)"
-                        placeholder="https://www.airbnb.fr/rooms/..." title="Airbnb URL"
+                        [placeholder]="'VISIBILITY.PlaceholderAirbnb' | translate"
+                        [title]="'VISIBILITY.UrlTitle' | translate"
                         class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                 </div>
                 <div>
                     <label class="text-slate-400 text-xs font-bold uppercase ml-1">{{ 'VISIBILITY.LienBooking' |
                         translate }}</label>
                     <input type="text" [ngModel]="bookingUrl()" (ngModelChange)="bookingUrl.set($event)"
-                        placeholder="https://www.booking.com/hotel/..." title="Booking.com URL"
+                        [placeholder]="'VISIBILITY.PlaceholderBooking' | translate"
+                        [title]="'VISIBILITY.UrlTitle' | translate"
                         class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                 </div>
                 <div>
                     <label class="text-slate-400 text-xs font-bold uppercase ml-1">{{ 'VISIBILITY.LienOther' | translate
                         }}</label>
                     <input type="text" [ngModel]="otherUrl()" (ngModelChange)="otherUrl.set($event)"
-                        placeholder="https://mon-site-direct.com" title="Other URL"
+                        [placeholder]="'VISIBILITY.PlaceholderOther' | translate"
+                        [title]="'VISIBILITY.UrlTitle' | translate"
                         class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                 </div>
             </div>

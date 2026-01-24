@@ -102,7 +102,8 @@
     </div>
 
     <div class="relative">
-        <textarea [ngModel]="marketingText()" (ngModelChange)="marketingText.set($event)" rows="8" title="Description"
+        <textarea [ngModel]="marketingText()" (ngModelChange)="marketingText.set($event)" rows="8"
+            [title]="'LISTING.DescriptionTitle' | translate"
             class="block w-full rounded-xl border border-white/20 bg-black/20 backdrop-blur-sm text-white placeholder-slate-400 focus:border-indigo-400 focus:ring-indigo-400 sm:text-base p-6 shadow-inner"
             [placeholder]="'LISTING.Placeholder' | translate">
         </textarea>
@@ -191,7 +192,7 @@
 
                         <!-- THE AI DESCRIPTION -->
                         <div class="py-4">
-                            <h3 class="text-xl font-bold mb-4">{{ 'LISTING.AboutTitle' | translate }}</h3>
+                            <h3 class="text-xl font-bold mb-4">{{ 'LISTING.DescriptionTitle' | translate }}</h3>
                             <!-- Simple format for markdown-like text -->
                             <div
                                 class="prose prose-slate max-w-none text-base leading-relaxed whitespace-pre-line text-slate-700">

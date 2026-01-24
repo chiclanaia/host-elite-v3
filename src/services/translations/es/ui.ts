@@ -16,6 +16,7 @@ export const ui = {
     'COMMON.ErrorSaving': 'Error al guardar.',
     'COMMON.Evaluation': 'Evaluación',
     'COMMON.Cancel': 'Cancelar',
+    'COMMON.Close': 'Cerrar',
     'COMMON.SaveProgress': 'Guardar progreso',
     'COMMON.Unlock': 'Desbloquear',
     'COMMON.OpenTool': 'Abrir herramienta',

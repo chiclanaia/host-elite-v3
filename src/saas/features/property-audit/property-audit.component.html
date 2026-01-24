@@ -80,7 +80,7 @@
                                 <div class="flex items-center p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-all cursor-pointer group"
                                     (click)="qInput.click()">
                                     <input #qInput type="checkbox" [formControlName]="q.id"
-                                        (click)="$event.stopPropagation()" title="Cocher cette option"
+                                        (click)="$event.stopPropagation()" [title]="'COMMON.CheckOption' | translate"
                                         class="w-5 h-5 rounded border-slate-600 bg-slate-800 text-blue-500 focus:ring-blue-500">
                                     <label
                                         class="ml-4 text-slate-200 group-hover:text-white transition-colors cursor-pointer flex-1">

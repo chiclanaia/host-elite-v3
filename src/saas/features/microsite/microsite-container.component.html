@@ -56,7 +56,7 @@
                 <p class="text-xs text-indigo-200 mb-3 font-light">{{ 'MICROSITE.AssistantDesc' | translate }}
                 </p>
                 <button (click)="generateMicrositeWithAI()" [disabled]="isAiDesigning() || !hasAiAccess()"
-                    title="Generate with AI" aria-label="Generate with AI"
+                    [title]="'MICROSITE.AutoDesign' | translate" [attr.aria-label]="'MICROSITE.AutoDesign' | translate"
                     class="w-full py-2 rounded-lg text-sm font-semibold flex items-center justify-center transition-all shadow-sm border"
                     [class]="hasAiAccess() ? 'bg-indigo-600 border-indigo-400 hover:bg-indigo-500 text-white' : 'bg-white/5 border-white/10 text-slate-400 cursor-not-allowed'">
                     {{ isAiDesigning() ? ('MICROSITE.Creating' | translate) : ('MICROSITE.AutoDesign' | translate) }}
@@ -71,7 +71,7 @@
                 <div>
                     <label class="text-xs text-slate-300 block mb-1">{{ 'MICROSITE.VisualTheme' | translate }}</label>
                     <select [id]="'theme-select'" [ngModel]="micrositeConfig().template"
-                        (ngModelChange)="updateConfig('template', $event)" title="Select Theme"
+                        (ngModelChange)="updateConfig('template', $event)" [title]="'MICROSITE.ThemeSelect' | translate"
                         class="w-full rounded-lg border-white/20 text-sm bg-white/10 text-white focus:bg-slate-800 focus:border-indigo-500 focus:ring-indigo-500">
                         @for(theme of themeOptions; track theme.id) {
                         <option [value]="theme.id" class="text-slate-900">{{ theme.label | translate }}</option>
@@ -85,7 +85,8 @@
                         @for(color of ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#1e293b']; track
                         color) {
                         <button (click)="updateConfig('primaryColor', color)" [style.backgroundColor]="color"
-                            title="Pick color" [class.ring-2]="micrositeConfig().primaryColor === color"
+                            [title]="'MICROSITE.ColorPick' | translate"
+                            [class.ring-2]="micrositeConfig().primaryColor === color"
                             class="w-6 h-6 rounded-full border border-white/50 ring-offset-1 ring-offset-transparent ring-white shadow-sm hover:scale-110 transition-transform"></button>
                         }
                     </div>
@@ -99,7 +100,8 @@
 
                 <div>
                     <label class="text-xs text-slate-300 block mb-1">{{ 'MICROSITE.Headline' | translate }}</label>
-                    <input type="text" [ngModel]="micrositeConfig().headline" title="Headline"
+                    <input type="text" [ngModel]="micrositeConfig().headline"
+                        [title]="'MICROSITE.HeadlineLabel' | translate"
                         (ngModelChange)="updateConfig('headline', $event)"
                         class="w-full rounded-lg border-white/20 text-sm bg-white/10 text-white placeholder-slate-400 focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
@@ -150,7 +152,8 @@
                     <div class="space-y-1 mb-4">
                         @for(section of availableSections; track section.id) {
                         <div class="flex items-center">
-                            <input type="checkbox" [id]="'sec-' + section.id" title="Toggle section"
+                            <input type="checkbox" [id]="'sec-' + section.id"
+                                [title]="'MICROSITE.ToggleSection' | translate"
                                 [checked]="micrositeConfig().visibleSections.includes(section.id)"
                                 (change)="toggleSectionVisibility(section.id, $event)"
                                 class="h-4 w-4 rounded border-slate-500 bg-white/10 text-indigo-500 focus:ring-indigo-500">
@@ -196,7 +199,7 @@
                             <label class="block text-xs font-medium text-slate-400 mb-1">{{ 'MICROSITE.Restaurants' |
                                 translate }}</label>
                             <textarea rows="3" [ngModel]="content?.guideGastro?.recommandationRestaurants"
-                                title="Restaurants recommendation"
+                                [title]="'MICROSITE.Restaurants' | translate"
                                 (ngModelChange)="updateBookletText('guideGastro', 'recommandationRestaurants', $event)"
                                 class="w-full text-xs rounded border-white/20 bg-white/10 text-white placeholder-slate-500"></textarea>
                         </div>

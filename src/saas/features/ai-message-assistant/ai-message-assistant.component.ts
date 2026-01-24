@@ -50,13 +50,13 @@ interface FaqItem {
                         </span>
                         <span class="text-[10px] text-blue-300 pl-6 opacity-75 flex items-center gap-2">
                             {{ 'ASSISTANT.AddressUsed' | translate }}
-                            <input [(ngModel)]="propertyAddress" title="Address" class="bg-black/20 border border-white/10 rounded px-2 py-0.5 text-white text-xs w-64 focus:outline-none focus:border-blue-400 dashed-border">
+                            <input [(ngModel)]="propertyAddress" [title]="'ASSISTANT.AddressTitle' | translate" class="bg-black/20 border border-white/10 rounded px-2 py-0.5 text-white text-xs w-64 focus:outline-none focus:border-blue-400 dashed-border">
                         </span>
                     </div>
                     <button class="text-blue-400 hover:text-white underline ml-4 whitespace-nowrap" [title]="'ASSISTANT.Reset' | translate" (click)="loadPropertyData()">{{ 'ASSISTANT.Reset' | translate }}</button>
                 </div>
             }
-
+ 
             <!-- Action Button -->
             @if (generatedFaqs().length === 0) {
                 <div class="text-center py-12">
@@ -95,17 +95,17 @@ interface FaqItem {
                         {{ 'ASSISTANT.Regenerate' | translate }}
                     </button>
                 </div>
-
+ 
                 <div class="space-y-4">
                     @for (item of generatedFaqs(); track $index) {
                         <div class="bg-black/30 border border-white/10 rounded-xl p-4 animate-fade-in-up" [style.animation-delay]="$index * 100 + 'ms'">
                             <div class="mb-3">
                                 <label class="block text-xs font-bold text-blue-400 mb-1">{{ 'ASSISTANT.QuestionLabel' | translate }}</label>
-                                <input [(ngModel)]="item.question" title="Question Edit" class="w-full bg-transparent border-b border-white/10 focus:border-blue-400 text-white font-semibold py-1 focus:outline-none transition-colors">
+                                <input [(ngModel)]="item.question" [title]="'ASSISTANT.QuestionEdit' | translate" class="w-full bg-transparent border-b border-white/10 focus:border-blue-400 text-white font-semibold py-1 focus:outline-none transition-colors">
                             </div>
                             <div class="mb-3">
                                 <label class="block text-xs font-bold text-emerald-400 mb-1">{{ 'ASSISTANT.AnswerLabel' | translate }}</label>
-                                <textarea [(ngModel)]="item.answer" rows="3" title="Answer Edit" class="w-full bg-white/5 rounded-lg p-2 text-sm text-slate-200 focus:bg-white/10 focus:outline-none transition-colors resize-none"></textarea>
+                                <textarea [(ngModel)]="item.answer" rows="3" [title]="'ASSISTANT.AnswerEdit' | translate" class="w-full bg-white/5 rounded-lg p-2 text-sm text-slate-200 focus:bg-white/10 focus:outline-none transition-colors resize-none"></textarea>
                             </div>
                             <div class="flex justify-end gap-3 pt-2 border-t border-white/5">
                                 <button (click)="deleteItem($index)" [title]="'ASSISTANT.Delete' | translate" class="text-xs text-red-400 hover:text-red-300">{{ 'ASSISTANT.Delete' | translate }}</button>

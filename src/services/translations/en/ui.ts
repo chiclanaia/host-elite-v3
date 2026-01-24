@@ -16,6 +16,7 @@ export const ui = {
     'COMMON.ErrorSaving': 'Error saving.',
     'COMMON.Evaluation': 'Evaluation',
     'COMMON.Cancel': 'Cancel',
+    'COMMON.Close': 'Close',
     'COMMON.SaveProgress': 'Save progress',
     'COMMON.Unlock': 'Unlock',
     'COMMON.OpenTool': 'Open tool',

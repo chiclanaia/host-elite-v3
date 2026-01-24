@@ -91,11 +91,13 @@
                                 <div class="flex-1 space-y-2">
                                     <input type="text" formControlName="question"
                                         class="w-full bg-transparent border-none text-white font-medium placeholder-white/30 focus:ring-0 p-0 text-sm"
-                                        placeholder="Question" title="Question"
+                                        [placeholder]="'BOOKLET.question' | translate"
+                                        [title]="'BOOKLET.QuestionTitle' | translate"
                                         [attr.aria-label]="'BOOKLET.question' | translate">
                                     <textarea formControlName="answer" rows="2"
                                         class="w-full bg-white/5 rounded border border-white/10 text-slate-300 text-xs p-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 block"
-                                        placeholder="Reponse" title="Reponse"
+                                        [placeholder]="'BOOKLET.answer' | translate"
+                                        [title]="'BOOKLET.AnswerTitle' | translate"
                                         [attr.aria-label]="'BOOKLET.answer' | translate"></textarea>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer mt-1">

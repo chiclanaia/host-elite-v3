@@ -254,7 +254,7 @@ export const booklet = {
     'BOOKLET.ai_design_title': 'Diseño Inteligente (IA)',
     'BOOKLET.ai_design_desc': 'Deja que la IA analice tu propiedad para crear el estilo perfecto.',
     'BOOKLET.ai_generate_tooltip': 'Generar un diseño basado en las fotos y descripción de tu propiedad',
-    'BOOKLET.generate_design': 'Generar Diseño',
+    'BOOKLET.generate_design': 'Diseño Inteligente 🔮',
     'BOOKLET.generating': 'Generando...',
     'BOOKLET.theme_label': 'Tema Global',
     'BOOKLET.theme_tooltip': 'Selecciona el ambiente general',
@@ -318,11 +318,13 @@ export const booklet = {
     // FAQ
     'BOOKLET.faq_title': 'Preguntas Frecuentes',
     'BOOKLET.desc.faq': 'FAQ y Respuestas IA',
-    'BOOKLET.generate_faq': 'Generar FAQ (IA)',
+    'BOOKLET.generate_faq': 'Generar FAQs con IA 🛠️',
     'BOOKLET.no_faq': 'No hay preguntas todavía.',
     'BOOKLET.faq_helper': 'Genere preguntas basadas en su información existente.',
     'BOOKLET.question': 'Pregunta',
+    'BOOKLET.QuestionTitle': 'Editar Pregunta',
     'BOOKLET.answer': 'Respuesta',
+    'BOOKLET.AnswerTitle': 'Editar Respuesta',
 
     // Widgets
     'WIDGET.weather': 'Tiempo',
