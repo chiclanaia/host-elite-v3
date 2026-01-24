@@ -31,7 +31,7 @@ interface Tool {
     id: string; // Added ID for easier selection
     name: string;
     description: string;
-    requiredPlan: Plan;
+    requiredPlan: View['requiredTier']; // Use View's requiredTier type for consistency
 }
 
 interface AngleDetails {
@@ -298,12 +298,12 @@ export class AngleViewComponent implements OnInit {
 
             if (filledContent) {
                 this.bookletContent.set(filledContent);
-                this.saveMessage.set("Contenu généré par l'IA !");
+                this.saveMessage.set(this.translationService.translate('COMMON.AiGenerated'));
                 setTimeout(() => this.saveMessage.set(null), 3000);
             }
         } catch (e) {
             console.error("AI Booklet Error:", e);
-            alert("Erreur lors de la génération du contenu.");
+            alert(this.translationService.translate('COMMON.GenError'));
         } finally {
             this.saveMessage.set(null);
         }
@@ -328,11 +328,21 @@ export class AngleViewComponent implements OnInit {
         return this.allAngleData[viewId] || null;
     });
 
-    isToolLocked(requiredPlan: Plan): boolean {
-        // Default to Freemium (0) if plan is not found in map
-        const userLevel = this.planLevels[this.userPlan()] ?? 0;
-        const requiredLevel = this.planLevels[requiredPlan] ?? 0;
+    isToolLocked(requiredPlan: View['requiredTier']): boolean {
+        const tiers = ['Freemium', 'Bronze', 'Silver', 'Gold'];
+        const userLevel = tiers.indexOf(this.userPlan() || 'Freemium');
+        const requiredLevel = tiers.indexOf(requiredPlan || 'Freemium');
         return userLevel < requiredLevel;
+    }
+
+    getTierIndicatorClass(tier: string | undefined): string {
+        if (!tier) return '';
+        switch (tier) {
+            case 'Bronze': return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]';
+            case 'Silver': return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]';
+            case 'Gold': return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]';
+            default: return 'bg-slate-600';
+        }
     }
 
     currentQuestions = signal<OnboardingQuestion[]>([]);
@@ -424,12 +434,12 @@ export class AngleViewComponent implements OnInit {
                 await this.onboardingService.saveAnswers(propertyId, answersToSave);
                 await this.loadMaturityLevel(); // Refresh maturity
 
-                this.saveMessage.set("Audit enregistré avec succès !");
+                this.saveMessage.set(this.translationService.translate('COMMON.AuditSaved'));
                 setTimeout(() => this.saveMessage.set(null), 3000);
                 this.closeOnboarding();
             } catch (error) {
                 console.error('Error saving onboarding:', error);
-                alert("Erreur lors de l'enregistrement de l'audit.");
+                alert(this.translationService.translate('COMMON.SaveError'));
             }
         }
     }

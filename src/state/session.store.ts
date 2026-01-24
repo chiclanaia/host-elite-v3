@@ -410,6 +410,11 @@ export class SessionStore {
 
             // Update local state
             this.userProfile.update(u => u ? { ...u, ...data } : null);
+
+            // Synchronize language if changed
+            if (data.language) {
+                this.translationService.setLanguage(data.language as any);
+            }
         } catch (e) {
             console.error("Failed to update profile:", e);
             throw e;

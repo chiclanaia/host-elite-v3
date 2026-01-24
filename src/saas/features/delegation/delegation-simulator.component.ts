@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { GeminiService } from '../../../services/gemini.service';
+import { TranslationService } from '../../../services/translation.service';
 
 
 @Component({
@@ -135,6 +136,8 @@ export class DelegationSimulatorComponent {
     financialDelta = computed(() => this.netRevenueConcierge() - this.netRevenueDirect());
     realValueDelta = computed(() => this.totalValueConcierge() - this.totalValueDirectReal());
 
+    private ts = inject(TranslationService);
+
     // 6. Expert Advice Logic
     expertAdvice = computed(() => {
         const financialDiff = this.financialDelta(); // If negative, Owner makes less money with concierge
@@ -143,23 +146,32 @@ export class DelegationSimulatorComponent {
         if (this.totalValueConcierge() > this.netRevenueDirect()) {
             return {
                 type: 'success',
-                title: 'DELEGATION_WIN',
-                message: 'You earn MORE money and work 0 hours. No-brainer.'
+                key: 'DELEGATION.Advice.Win',
+                params: {}
             };
         } else if (this.realValueDelta() > 0) {
+            const costPerHour = (Math.abs(financialDiff) / hoursSaved).toFixed(2);
             return {
                 type: 'info',
-                title: 'TIME_FREEDOM',
-                message: `You 'pay' ${Math.abs(Math.round(financialDiff))}€ to save ${Math.round(hoursSaved)} hours. That's a cost of ${(Math.abs(financialDiff) / hoursSaved).toFixed(2)}€/hour. Worth it!`
+                key: 'DELEGATION.Advice.Freedom',
+                params: {
+                    amount: Math.abs(Math.round(financialDiff)),
+                    hours: Math.round(hoursSaved),
+                    cost: costPerHour
+                }
             };
         } else {
             return {
                 type: 'warning',
-                title: 'KEEP_CONTROL',
-                message: 'Direct management is significantly more profitable for your specific setup.'
+                key: 'DELEGATION.Advice.Control',
+                params: {}
             };
         }
     });
+
+    translateAdvice(advice: any): string {
+        return this.ts.translate(advice.key, advice.params) || '';
+    }
 
     // Helpers for Chart Bars (0-100% relative width)
     maxRevenue = computed(() => Math.max(this.netRevenueDirect(), this.netRevenueConcierge(), this.totalValueDirectReal()));

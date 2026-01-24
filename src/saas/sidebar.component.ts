@@ -49,8 +49,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                 </div>
                 <!-- Badge -->
                 @if (view.featureId) {
-                    @let badge = getBadge(view.featureId);
-                    @if (badge) {
+                    @if (getBadge(view.featureId); as badge) {
                         <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ml-2 whitespace-nowrap opacity-80" [class]="badge.colorClass">
                             {{ badge.label }}
                         </span>
@@ -108,39 +107,57 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 
                     <!-- Sub-views for the currently active property -->
                     @if(selectedProperty(); as prop) {
-                        <div class="pl-2 space-y-1 mt-3 border-l border-white/10 ml-2">
-                            <p class="px-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 truncate opacity-60">{{ prop.name }}</p>
-                            @for(subView of prop.subViews; track subView.id) {
-                                <a (click)="isLocked(subView) ? null : changeView(subView, prop.name)"
-                                class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-r-lg cursor-pointer transition-colors relative"
-                                [class]="activeView().id === subView.id && activeView().propertyName === prop.name 
-                                    ? 'text-white bg-white/5 border-l-2 border-[#D4AF37] -ml-[1px]' 
-                                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'"
-                                [class.opacity-50]="isLocked(subView)"
-                                [class.cursor-not-allowed]="isLocked(subView)">
-                                
-                                <div class="flex items-center min-w-0">
-                                    <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors" 
-                                          [class]="activeView().id === subView.id && activeView().propertyName === prop.name ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-slate-400'"
-                                          [innerHTML]="getIcon(subView.icon)"></span>
-                                    <span class="truncate">{{ 'NAV.' + subView.id | translate }}</span>
-                                </div>
-                                <!-- Badge -->
-                                @if (subView.featureId) {
-                                    @let badge = getBadge(subView.featureId);
-                                    @if (badge) {
-                                        <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ml-1 whitespace-nowrap opacity-70" [class]="badge.colorClass">
-                                            {{ badge.label }}
-                                        </span>
-                                    }
+                    <!-- Sub-views grouped by Phases -->
+                    @if(selectedProperty(); as prop) {
+                        <div class="pl-2 mt-3 ml-2 space-y-4">
+                            <!-- Property Label (Concise) -->
+                            <p class="px-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 truncate opacity-60">{{ prop.name }}</p>
+
+                            @for(phase of ['preparation', 'launch', 'exploitation', 'excellence']; track phase) {
+                                @if (getViewsForPhase(prop.subViews, phase); as phaseViews) {
+                                  @if (phaseViews.length > 0) {
+                                    <div class="space-y-1">
+                                        <!-- Phase Header -->
+                                        <div class="px-3 py-1 flex items-center justify-between group/phase">
+                                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest opacity-40 group-hover/phase:opacity-100 transition-opacity">
+                                                {{ 'PHASE.' + phase | translate }}
+                                            </span>
+                                            <div class="h-[1px] flex-1 bg-white/5 ml-3 opacity-20 group-hover/phase:opacity-40"></div>
+                                        </div>
+
+                                        @for(subView of phaseViews; track subView.id) {
+                                            <a (click)="isLocked(subView) ? null : changeView(subView, prop.name)"
+                                            class="group flex items-center justify-between px-3 py-2 text-sm font-medium rounded-r-lg cursor-pointer transition-all relative"
+                                            [class]="activeView().id === subView.id && activeView().propertyName === prop.name 
+                                                ? 'text-white bg-white/5 border-l-2 border-[#D4AF37] -ml-[1px]' 
+                                                : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'"
+                                            [class.opacity-50]="isLocked(subView)"
+                                            [class.cursor-not-allowed]="isLocked(subView)">
+                                            
+                                            <div class="flex items-center min-w-0">
+                                                <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors" 
+                                                      [class]="activeView().id === subView.id && activeView().propertyName === prop.name ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-slate-400'"
+                                                      [innerHTML]="getIcon(subView.icon)"></span>
+                                                <span class="truncate">{{ subView.title.startsWith('NAV.') ? (subView.title | translate) : subView.title }}</span>
+                                            </div>
+
+                                            <!-- Tier Indicator Circle / Lock -->
+                                            <div class="flex items-center space-x-2 ml-2">
+                                                @if (isLocked(subView)) {
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
+                                                }
+                                                @if (subView.requiredTier) {
+                                                    <span class="w-2 h-2 rounded-full shadow-sm" [class]="getTierIndicatorClass(subView.requiredTier)"></span>
+                                                }
+                                            </div>
+                                            </a>
+                                        }
+                                    </div>
+                                  }
                                 }
-                                <!-- Lock Icon -->
-                                @if (isLocked(subView)) {
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600 ml-1"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
-                                }
-                            </a>
                             }
                         </div>
+                    }
                     }
 
                     } @else {
@@ -174,8 +191,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                         {{ 'NAV.' + view.id | translate }}
                     </div>
                     @if (view.featureId) {
-                        @let badge = getBadge(view.featureId);
-                        @if (badge) {
+                        @if (getBadge(view.featureId); as badge) {
                             <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ml-2 whitespace-nowrap opacity-80" [class]="badge.colorClass">
                                 {{ badge.label }}
                             </span>
@@ -252,10 +268,11 @@ import { TranslatePipe } from '../pipes/translate.pipe';
             </div>
             <div class="overflow-hidden flex-1">
                 <p class="text-sm font-bold text-slate-200 truncate group-hover/profile:text-[#D4AF37] transition-colors">{{ userName() }}</p>
-                <div class="flex items-center text-xs">
-                    <span class="font-semibold mr-1" [class]="getPlanColor()">{{ userPlan() }}</span>
+                <div class="flex items-center text-xs mt-0.5">
+                    <span class="w-1.5 h-1.5 rounded-full mr-2 shadow-sm" [class]="getTierIndicatorClass(userPlan())"></span>
+                    <span class="font-semibold" [class]="getPlanColor()">{{ userPlan() }}</span>
                     @if(userRole() === 'admin') {
-                        <span class="bg-purple-900/50 text-purple-300 border border-purple-500/30 text-[9px] px-1.5 py-0.5 rounded-full ml-1">ADMIN</span>
+                        <span class="bg-purple-900/50 text-purple-300 border border-purple-500/30 text-[9px] px-1.5 py-0.5 rounded-full ml-2">ADMIN</span>
                     }
                 </div>
             </div>
@@ -348,12 +365,35 @@ export class SidebarComponent {
 
     // New Helper to check permission
     isLocked(view: View): boolean {
-        // If a view has a featureId, we check if the user has that feature
-        // If they don't, it's locked.
-        if (view.featureId) {
-            return !this.store.hasFeature(view.featureId);
+        // 1. Check feature lock if applicable
+        if (view.featureId && !this.store.hasFeature(view.featureId)) {
+            return true;
         }
+
+        // 2. Check Plan Lock
+        if (view.requiredTier) {
+            const tiers = ['Freemium', 'Bronze', 'Silver', 'Gold'];
+            const userTierIndex = tiers.indexOf(this.userPlan() || 'Freemium');
+            const requiredTierIndex = tiers.indexOf(view.requiredTier);
+            if (userTierIndex < requiredTierIndex) {
+                return true;
+            }
+        }
+
         return false;
+    }
+
+    getViewsForPhase(views: View[], phase: string): View[] {
+        return views.filter(v => v.phase === phase);
+    }
+
+    getTierIndicatorClass(tier: string): string {
+        switch (tier) {
+            case 'Bronze': return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]';
+            case 'Silver': return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]';
+            case 'Gold': return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]';
+            default: return 'bg-slate-600';
+        }
     }
 
     getPlanColor = computed(() => {

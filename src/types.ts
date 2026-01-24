@@ -61,6 +61,8 @@ export interface View {
   icon: string;
   propertyName?: string;
   featureId?: string; // Links this view to a specific feature for badge resolution
+  phase?: 'preparation' | 'launch' | 'exploitation' | 'excellence'; // New for UI Overhaul
+  requiredTier?: AppPlan; // Explicit tier requirement for the tool/view
 }
 
 export interface Property {

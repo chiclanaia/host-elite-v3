@@ -3,11 +3,10 @@
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-3xl font-extrabold text-white">{{ 'TOOL.airbnb_ready_name' | translate }}</h1>
-            <p class="text-slate-400 mt-1">Audit complet ({{ questions().length }} questions) de votre niveau
-                d'équipement et d'hospitalité.</p>
+            <p class="text-slate-400 mt-1">{{ 'AUDIT.FullAuditDesc' | translate:{count: questions().length} }}</p>
         </div>
-        <button (click)="close.emit()"
-            class="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white" title="Fermer">
+        <button (click)="close.emit()" [title]="'COMMON.Cancel' | translate"
+            class="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -27,17 +26,19 @@
             <div class="tier-card p-6 border-l-4 border-emerald-500">
                 <div class="flex items-end justify-between mb-4">
                     <div>
-                        <span class="text-sm font-bold text-slate-400 uppercase tracking-widest">Hospitality
-                            Score</span>
+                        <span class="text-sm font-bold text-slate-400 uppercase tracking-widest">{{
+                            'AUDIT.HospitalityScore' | translate }}</span>
                         <div class="text-5xl font-black text-white mt-1">{{ hospitalityScore() }}%</div>
                     </div>
                     <div class="text-right">
-                        <span class="text-sm text-slate-300 font-medium">Rang actuel :</span>
+                        <span class="text-sm text-slate-300 font-medium">{{ 'AUDIT.CurrentRank' | translate }}</span>
                         <div class="text-xl font-bold" [class.text-rose-400]="hospitalityScore() < 50"
                             [class.text-amber-400]="hospitalityScore() >= 50 && hospitalityScore() < 80"
                             [class.text-emerald-400]="hospitalityScore() >= 80">
-                            @if (hospitalityScore() < 30) { Basique } @else if (hospitalityScore() < 60) { Standard }
-                                @else if (hospitalityScore() < 90) { Premium } @else { Excellence } </div>
+                            @if (hospitalityScore() < 30) { {{ 'AUDIT.Rank.Basic' | translate }} } @else if
+                                (hospitalityScore() < 60) { {{ 'AUDIT.Rank.Standard' | translate }} } @else if
+                                (hospitalityScore() < 90) { {{ 'AUDIT.Rank.Premium' | translate }} } @else {
+                                {{ 'AUDIT.Rank.Excellence' | translate }} } </div>
                         </div>
                     </div>
                     <div class="w-full bg-slate-800 rounded-full h-3">
@@ -52,18 +53,14 @@
                     class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-6 flex items-start space-x-4 animate-pulse">
                     <div class="p-3 bg-rose-500/20 rounded-lg text-rose-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
+                            stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                     </div>
                     <div>
-                        <h3 class="font-bold text-rose-400">Alerte : Wi-Fi Haute Performance Manquant</h3>
-                        <p class="text-slate-300 text-sm mt-1">
-                            En tant qu'Hôte Expert, l'absence de Wi-Fi haut débit peut vous faire perdre jusqu'à
-                            <strong>15% de revenus annuels</strong>
-                            en excluant le marché des Digital Nomads.
-                        </p>
+                        <h3 class="font-bold text-rose-400">{{ 'AUDIT.WifiWarningTitle' | translate }}</h3>
+                        <p class="text-slate-300 text-sm mt-1" [innerHTML]="'AUDIT.WifiWarningDesc' | translate"></p>
                     </div>
                 </div>
                 }
@@ -112,7 +109,7 @@
                                         d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
-                            <h2 class="text-lg font-bold text-white">Conseils de l'IA</h2>
+                            <h2 class="text-lg font-bold text-white">{{ 'AUDIT.AICounsel' | translate }}</h2>
                         </div>
                         @if (!hasAiAccess()) {
                         <div
@@ -134,37 +131,41 @@
                         {{ aiRecommendation() }}
                     </div>
                     <button (click)="generateAiRecommendations()" [disabled]="isGeneratingAi() || !hasAiAccess()"
+                        [title]="'AUDIT.AIRefresh' | translate"
                         class="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold transition-all flex items-center justify-center disabled:cursor-not-allowed">
                         @if (isGeneratingAi()) {
                         <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Actualisation...
+                        {{ 'AUDIT.AIUpdating' | translate }}
                         } @else {
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Rafraîchir l'analyse
+                        {{ 'AUDIT.AIRefresh' | translate }}
                         }
                     </button>
                     } @else {
                     <div class="flex-1 flex flex-col items-center justify-center text-center p-8">
                         <p class="text-slate-400 text-sm mb-6">
-                            Cliquez pour lancer l'Analyse IA basée sur votre progression actuelle.
+                            {{ 'AUDIT.AIPromptDesc' | translate }}
                         </p>
                         <button (click)="generateAiRecommendations()" [disabled]="isGeneratingAi() || !hasAiAccess()"
+                            [title]="'AUDIT.AILaunch' | translate"
                             class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-900/50 transition-all flex items-center justify-center disabled:bg-slate-700 disabled:shadow-none disabled:cursor-not-allowed">
                             @if (isGeneratingAi()) {
                             <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                            Analyse en cours...
+                            {{ 'AUDIT.AIAnalyzing' | translate }}
                             } @else {
-                            <svg @if (!hasAiAccess()) xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                fill="currentColor" class="w-4 h-4 mr-2">
+                            @if (!hasAiAccess()) {
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                class="w-4 h-4 mr-2">
                                 <path fill-rule="evenodd"
                                     d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
                                     clip-rule="evenodd" />
                             </svg>
-                            Lancer l'Analyse IA
+                            }
+                            {{ 'AUDIT.AILaunch' | translate }}
                             }
                         </button>
                     </div>
@@ -178,11 +179,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Note
+                        {{ 'AUDIT.NoteTitle' | translate }}
                     </h3>
                     <p class="text-slate-400 text-xs leading-relaxed">
-                        L'audit est sauvegardé automatiquement. Vous pouvez revenir à tout moment pour mettre à jour vos
-                        équipements.
+                        {{ 'AUDIT.NoteDesc' | translate }}
                     </p>
                 </div>
             </div>

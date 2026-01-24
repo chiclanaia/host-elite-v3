@@ -34,12 +34,17 @@ import { NotificationService } from '../../services/notification.service';
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <button *ngFor="let plan of plans" 
                             (click)="setPlan(plan)"
-                            class="px-4 py-3 rounded-lg border transition-all duration-200 flex flex-col items-center justify-center space-y-2"
+                            class="px-4 py-3 rounded-lg border transition-all duration-200 flex flex-col items-center justify-center space-y-3 group"
                             [class]="currentPlan() === plan 
                                 ? getPlanClasses(plan, true)
                                 : getPlanClasses(plan, false)">
-                        <span class="font-bold uppercase">{{ plan }}</span>
-                        <div class="w-2 h-2 rounded-full" [class.bg-white]="currentPlan() === plan" [class.bg-slate-700]="currentPlan() !== plan"></div>
+                        <div class="flex items-center space-x-2">
+                             <div class="w-2 h-2 rounded-full" [class]="getTierIndicatorClass(plan)"></div>
+                             <span class="font-bold uppercase text-[11px] tracking-widest">{{ plan }}</span>
+                        </div>
+                        <div class="w-full h-1 rounded-full bg-black/20 overflow-hidden">
+                             <div class="h-full transition-all duration-500" [class.w-full]="currentPlan() === plan" [class.w-0]="currentPlan() !== plan" [class.bg-white]="currentPlan() === plan"></div>
+                        </div>
                     </button>
                 </div>
             </div>
@@ -501,16 +506,25 @@ export class AdminDebugViewComponent {
     }
 
     getPlanClasses(plan: string, active: boolean): string {
-        const base = "border-2 ";
+        const base = "border-2 shadow-inner ";
         if (active) {
             switch (plan) {
-                case 'Bronze': return base + "bg-amber-900/30 border-amber-500 text-amber-500";
-                case 'Silver': return base + "bg-slate-700 border-slate-300 text-slate-300";
-                case 'Gold': return base + "bg-yellow-900/30 border-yellow-500 text-yellow-500";
-                default: return base + "bg-slate-700 border-white text-white";
+                case 'Bronze': return base + "bg-amber-900/40 border-amber-500/50 text-amber-200";
+                case 'Silver': return base + "bg-slate-700/60 border-slate-400 text-slate-100 shadow-slate-900/50";
+                case 'Gold': return base + "bg-yellow-900/40 border-yellow-500/50 text-yellow-200 shadow-yellow-900/50";
+                default: return base + "bg-slate-800 border-white/30 text-white";
             }
         } else {
-            return "bg-slate-800 border-slate-700 text-slate-500 hover:bg-slate-700 hover:text-slate-300";
+            return "bg-slate-900/40 border-white/5 text-slate-500 hover:border-white/10 hover:bg-slate-800/60 hover:text-slate-300";
+        }
+    }
+
+    getTierIndicatorClass(tier: string): string {
+        switch (tier) {
+            case 'Bronze': return 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]';
+            case 'Silver': return 'bg-slate-400 shadow-[0_0_8px_rgba(148,163,184,0.6)]';
+            case 'Gold': return 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]';
+            default: return 'bg-slate-600';
         }
     }
 

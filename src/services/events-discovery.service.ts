@@ -35,14 +35,18 @@ export class EventsDiscoveryService {
         endDate: Date
     ): Promise<LocalEvent[]> {
         try {
+            console.log(`[EventsDiscovery] Searching for events near: ${address} within ${radiusKm}km`);
+
             // Step 1: Geocode the address
             const coords = await this.geocodeAddress(address);
+            console.log(`[EventsDiscovery] Geocoded to: ${coords.lat}, ${coords.lng}`);
 
-            // Step 2: Search for events (mock for now)
-            // TODO: Integrate with real API
+            // Step 2: Search for events
+            // We use the AI-assisted search from the component as the primary "real" source for now,
+            // while this service provides the geocoding and potential future direct API calls.
             return this.getMockEvents(coords, radiusKm, startDate, endDate);
         } catch (error) {
-            console.error('Error searching events:', error);
+            console.error('[EventsDiscovery] Error searching events:', error);
             return [];
         }
     }

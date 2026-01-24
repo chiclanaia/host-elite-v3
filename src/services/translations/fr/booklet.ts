@@ -340,4 +340,10 @@ export const booklet = {
     'WIDGET.events_outings': 'Agenda & Sorties',
     'WIDGET.tide_times': 'Horaires des Marées',
     'WIDGET.avalanche_bulletin': 'Bulletin Avalanche',
+    'BOOKLET.save': 'Sauvegarder',
+    'BOOKLET.live_preview': 'Aperçu Direct',
+    'BOOKLET.ai_design_success': 'Design généré par l\'IA !',
+    'BOOKLET.ai_error': 'Erreur IA',
+    'BOOKLET.faq_generated': 'FAQ Générée !',
+    'BOOKLET.default_headline': 'Bienvenue',
 };

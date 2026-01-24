@@ -131,4 +131,23 @@ export const audit = {
     'AUDIT.legal_q9': 'Do you work with an accountant specialized in real estate or furnished rentals?',
     'AUDIT.legal_q9_sub': 'Name of the accountant or firm',
     'AUDIT.legal_q10': 'Do you calculate (at least 1x/quarter) your net profitability (Net Profit) and your ROI (Return on Investment)?',
+
+    // New keys for PropertyAudit UI
+    'AUDIT.FullAuditDesc': 'Complete audit ({{count}} questions) of your equipment and hospitality level.',
+    'AUDIT.HospitalityScore': 'Hospitality Score',
+    'AUDIT.CurrentRank': 'Current Rank:',
+    'AUDIT.Rank.Basic': 'Basic',
+    'AUDIT.Rank.Standard': 'Standard',
+    'AUDIT.Rank.Premium': 'Premium',
+    'AUDIT.Rank.Excellence': 'Excellence',
+    'AUDIT.WifiWarningTitle': 'Alert: Missing High Performance Wi-Fi',
+    'AUDIT.WifiWarningDesc': 'As an Expert Host, the lack of high-speed Wi-Fi can cause you to lose up to **15% of annual revenue** by excluding the Digital Nomad market.',
+    'AUDIT.AICounsel': 'AI Tips',
+    'AUDIT.AIRefresh': 'Refresh analysis',
+    'AUDIT.AIUpdating': 'Updating...',
+    'AUDIT.AIPromptDesc': 'Click to launch AI Analysis based on your current progress.',
+    'AUDIT.AILaunch': 'Launch AI Analysis',
+    'AUDIT.AIAnalyzing': 'Analyzing...',
+    'AUDIT.NoteTitle': 'Note',
+    'AUDIT.NoteDesc': 'The audit is saved automatically. You can return at any time to update your equipment.',
 };

@@ -64,18 +64,18 @@ import { Chart, registerables, ChartConfiguration } from 'chart.js';
                 
                 <div class="group">
                   <label class="block text-sm font-medium text-slate-300 mb-1">{{ 'PROFITABILITY.GrossMonthlyRevenue' | translate }} (€)</label>
-                  <input type="number" formControlName="grossMonthlyRevenue" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition-all outline-none group-hover:border-white/20" placeholder="Ex: 2500">
+                  <input type="number" formControlName="grossMonthlyRevenue" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition-all outline-none group-hover:border-white/20" [placeholder]="'PROFITABILITY.Placeholder.GrossRevenue' | translate">
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-slate-300 mb-1">{{ 'PROFITABILITY.FixedCosts' | translate }} (€)</label>
-                        <input type="number" formControlName="fixedCosts" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all outline-none" placeholder="Loyer, Internet...">
+                        <input type="number" formControlName="fixedCosts" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all outline-none" [placeholder]="'PROFITABILITY.Placeholder.FixedCosts' | translate">
                         <p class="text-[10px] text-slate-500 mt-1">{{ 'PROFITABILITY.FixedCostsNote' | translate }}</p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-300 mb-1">{{ 'PROFITABILITY.VariableCosts' | translate }} (€)</label>
-                        <input type="number" formControlName="variableCosts" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all outline-none" placeholder="Ménage, Élec...">
+                        <input type="number" formControlName="variableCosts" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all outline-none" [placeholder]="'PROFITABILITY.Placeholder.VariableCosts' | translate">
                         <p class="text-[10px] text-slate-500 mt-1">{{ 'PROFITABILITY.VariableCostsNote' | translate }}</p>
                     </div>
                 </div>
@@ -104,7 +104,7 @@ import { Chart, registerables, ChartConfiguration } from 'chart.js';
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-slate-300 mb-1 pointer-events-none opacity-50">{{ 'PROFITABILITY.OtherOptional' | translate }}</label>
-                  <input type="number" formControlName="initialInvestment" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-[#D4AF37] transition-all outline-none" placeholder="Coûts Divers...">
+                  <input type="number" formControlName="initialInvestment" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-[#D4AF37] transition-all outline-none" [placeholder]="'PROFITABILITY.Placeholder.OtherCosts' | translate">
                 </div>
               </div>
 
@@ -117,9 +117,9 @@ import { Chart, registerables, ChartConfiguration } from 'chart.js';
                     <label class="block text-sm font-medium text-slate-300 mb-1">{{ 'PROFITABILITY.BookedDays' | translate }}</label>
                     <input type="number" formControlName="totalBookedDays" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 transition-all outline-none">
                   </div>
-                  <div>
+                   <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">{{ 'PROFITABILITY.AvailableDays' | translate }}</label>
-                    <input type="number" formControlName="totalAvailableDays" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="365">
+                    <input type="number" formControlName="totalAvailableDays" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" [placeholder]="'PROFITABILITY.Placeholder.DaysAvailable' | translate">
                   </div>
                 </div>
               </div>
@@ -152,13 +152,13 @@ import { Chart, registerables, ChartConfiguration } from 'chart.js';
                         <label class="block text-sm font-medium text-slate-300 mb-1">{{ 'PROFITABILITY.DownPayment' | translate }} (€)</label>
                         <input type="number" formControlName="downPayment" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-[#D4AF37] transition-all outline-none">
                     </div>
-                    <div>
+                     <div>
                         <label class="block text-sm font-medium text-slate-300 mb-1">{{ 'PROFITABILITY.InterestRate' | translate }} (%)</label>
-                        <input type="number" formControlName="interestRate" step="0.1" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-[#D4AF37] transition-all outline-none" placeholder="Ex: 4.5">
+                        <input type="number" formControlName="interestRate" step="0.1" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-[#D4AF37] transition-all outline-none" [placeholder]="'PROFITABILITY.Placeholder.InterestRate' | translate">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-300 mb-1">{{ 'PROFITABILITY.Duration' | translate }}</label>
-                        <input type="number" formControlName="loanTermYears" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-[#D4AF37] transition-all outline-none" placeholder="Ex: 20">
+                        <input type="number" formControlName="loanTermYears" class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-[#D4AF37] transition-all outline-none" [placeholder]="'PROFITABILITY.Placeholder.Duration' | translate">
                     </div>
                 </div>
               </div>
@@ -186,25 +186,25 @@ import { Chart, registerables, ChartConfiguration } from 'chart.js';
                <span class="text-emerald-400">{{ 'PROFITABILITY.Gross' | translate }}: {{ form.get('grossMonthlyRevenue')?.value | currency:'EUR':'symbol':'1.0-0' }}</span>
             </div>
              <!-- Mortgage Mini-Summary for Basic view -->
-             <div *ngIf="result()?.mortgage && !showTier(TierLevel.EXPERT)" class="mt-4 pt-4 border-t border-white/10 text-xs text-slate-400 flex justify-between">
+              <div *ngIf="result()?.mortgage && !showTier(TierLevel.EXPERT)" class="mt-4 pt-4 border-t border-white/10 text-xs text-slate-400 flex justify-between">
                 <span>{{ 'PROFITABILITY.Credit' | translate }}:</span>
-                <span class="text-white font-mono">{{ result()?.mortgage?.monthlyPayment | currency:'EUR':'symbol':'1.0-0' }} /mo</span>
+                <span class="text-white font-mono">{{ result()?.mortgage?.monthlyPayment | currency:'EUR':'symbol':'1.0-0' }} /{{ 'PROFITABILITY.Unit.Month' | translate }}</span>
              </div>
           </div>
 
           <!-- TIER 1 VISUALIZATIONS (Always visible) -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
-            <!-- Pocket Cash Gauge -->
+             <!-- Pocket Cash Gauge -->
             <div class="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
-              <h4 class="text-slate-400 text-[10px] uppercase font-bold mb-4 text-center">Pocket Cash Meter</h4>
+              <h4 class="text-slate-400 text-[10px] uppercase font-bold mb-4 text-center">{{ 'PROFITABILITY.Chart.PocketCashTitle' | translate }}</h4>
               <div class="relative h-48">
                 <canvas #pocketCashGauge></canvas>
               </div>
             </div>
 
-            <!-- Income vs Expenses Bar -->
+             <!-- Income vs Expenses Bar -->
             <div class="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
-              <h4 class="text-slate-400 text-[10px] uppercase font-bold mb-4">Income vs Expenses</h4>
+              <h4 class="text-slate-400 text-[10px] uppercase font-bold mb-4">{{ 'PROFITABILITY.Chart.IncomeExpensesTitle' | translate }}</h4>
               <div class="relative h-48">
                 <canvas #incomeExpensesBar></canvas>
               </div>
@@ -217,9 +217,9 @@ import { Chart, registerables, ChartConfiguration } from 'chart.js';
               <h4 class="text-slate-400 text-[10px] uppercase font-bold mb-1">{{ 'PROFITABILITY.AnnualizedROI' | translate }}</h4>
               <div class="text-2xl font-bold text-[#D4AF37]">{{ result()?.annualizedROI | number:'1.1-1' }}%</div>
             </div>
-            <div class="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+             <div class="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
               <h4 class="text-slate-400 text-[10px] uppercase font-bold mb-1">{{ 'PROFITABILITY.ReturnOnInv' | translate }}</h4>
-              <div class="text-2xl font-bold text-white">{{ result()?.paybackPeriodMonths | number:'1.1-1' }} <span class="text-sm font-normal text-slate-500">mo</span></div>
+              <div class="text-2xl font-bold text-white">{{ result()?.paybackPeriodMonths | number:'1.1-1' }} <span class="text-sm font-normal text-slate-500">{{ 'PROFITABILITY.Unit.Month' | translate }}</span></div>
             </div>
           </div>
 
@@ -240,9 +240,9 @@ import { Chart, registerables, ChartConfiguration } from 'chart.js';
                 <div class="text-[10px] text-slate-500 uppercase">{{ 'PROFITABILITY.RevPAR' | translate }}</div>
               </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
+             <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
                 <span class="text-xs text-slate-400">{{ 'PROFITABILITY.SinkingFund' | translate }}</span>
-                <span class="text-sm font-bold text-orange-400">{{ result()?.sinkingFundContribution | currency:'EUR' }} /mo</span>
+                <span class="text-sm font-bold text-orange-400">{{ result()?.sinkingFundContribution | currency:'EUR' }} /{{ 'PROFITABILITY.Unit.Month' | translate }}</span>
             </div>
           </div>
 
@@ -563,7 +563,8 @@ export class ProfitabilityCalculatorComponent {
       this.chartInstance.destroy();
     }
 
-    const labels = projections.map(p => `Year ${p.year}`);
+    const yearLabel = this.ts.translate('PROFITABILITY.Unit.Year') || 'Year';
+    const labels = projections.map(p => `${yearLabel} ${p.year}`);
     const cashFlowData = projections.map(p => p.cashFlow); // cents converted to euros in finalRes? Yes.
     const equityData = projections.map(p => p.equity);
 
@@ -701,17 +702,17 @@ export class ProfitabilityCalculatorComponent {
     this.barChartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Monthly'],
+        labels: [this.ts.translate('PROFITABILITY.Chart.Monthly')],
         datasets: [
           {
-            label: 'Income',
+            label: this.ts.translate('PROFITABILITY.Chart.Income'),
             data: [revenue],
             backgroundColor: '#10b981',
             borderColor: '#059669',
             borderWidth: 1
           },
           {
-            label: 'Expenses',
+            label: this.ts.translate('PROFITABILITY.Chart.Expenses'),
             data: [expenses],
             backgroundColor: '#f43f5e',
             borderColor: '#e11d48',

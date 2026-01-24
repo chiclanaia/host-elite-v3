@@ -14,4 +14,8 @@ export default {
     'EVENTS.Distance': 'Distance',
     'EVENTS.UpgradePrompt': 'Upgrade to Gold to add to calendar',
     'EVENTS.Added': 'Event added to calendar!',
+    'EVENTS.SuccessGenerated': 'Events generated with AI!',
+    'EVENTS.ErrorFallback': 'AI generation failed - using fallback',
+    'EVENTS.ErrorService': 'AI service error - using fallback',
+    'EVENTS.ErrorCalendar': 'Error adding event to calendar',
 }

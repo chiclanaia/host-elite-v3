@@ -279,7 +279,7 @@ export interface SectionDef {
  * If NO saved configuration exists, it generates a "Smart Default" based on
  * the content present in the bookletData (e.g. auto-enabling Guide if populated).
  */
-export function resolveMicrositeConfig(bookletData: any, savedConfig: Partial<MicrositeConfig> | null | undefined, defaultHeadline: string = 'Bienvenue'): MicrositeConfig {
+export function resolveMicrositeConfig(bookletData: any, savedConfig: Partial<MicrositeConfig> | null | undefined, defaultHeadline: string = ''): MicrositeConfig {
     const defaults: MicrositeConfig = {
         template: 'modern',
         primaryColor: '#3b82f6',

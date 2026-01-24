@@ -6,6 +6,10 @@ import { training } from './fr/training';
 import { checklists } from './fr/checklists';
 import { profitability } from './fr/profitability';
 import events from './fr/events';
+import { visibility } from './fr/visibility';
+import { listing } from './fr/listing';
+import { assistant } from './fr/assistant';
+import { calendar } from './fr/calendar';
 
 export const fr = {
     ...ui,
@@ -15,5 +19,9 @@ export const fr = {
     ...training,
     ...checklists,
     ...profitability,
-    ...events
+    ...events,
+    ...visibility,
+    ...listing,
+    ...assistant,
+    ...calendar
 };

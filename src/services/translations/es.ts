@@ -6,6 +6,10 @@ import { training } from './es/training';
 import { checklists } from './es/checklists';
 import { profitability } from './es/profitability';
 import events from './es/events';
+import { visibility } from './es/visibility';
+import { listing } from './es/listing';
+import { assistant } from './es/assistant';
+import { calendar } from './es/calendar';
 
 export const es = {
     ...ui,
@@ -15,5 +19,9 @@ export const es = {
     ...training,
     ...checklists,
     ...profitability,
-    ...events
+    ...events,
+    ...visibility,
+    ...listing,
+    ...assistant,
+    ...calendar
 };

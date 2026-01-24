@@ -6,7 +6,7 @@
                 <span class="text-3xl">🤝</span>
                 {{ 'TOOL.delegation_name' | translate }}
             </h2>
-            <p class="text-sm text-slate-400 mt-1">Simulateur de Rentabilité : Direct vs Conciergerie</p>
+            <p class="text-sm text-slate-400 mt-1">{{ 'DELEGATION.Simulator.Title' | translate }}</p>
         </div>
         <button (click)="close.emit()" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,13 +243,13 @@
                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
                             </path>
                         </svg>
-                        Potentiel Revenus
+                        {{ 'DELEGATION.PotentialRevenue' | translate }}
                     </h3>
 
                     <!-- Nightly Rate -->
                     <div class="mb-6">
                         <div class="flex justify-between text-sm mb-2">
-                            <span class="text-slate-300">Prix Nuitée Moyen</span>
+                            <span class="text-slate-300">{{ 'DELEGATION.AvgNightlyRate' | translate }}</span>
                             <span class="font-bold text-white">{{ nightlyRate() }} €</span>
                         </div>
                         <input type="range" min="50" max="500" step="5" [ngModel]="nightlyRate()"
@@ -260,7 +260,7 @@
                     <!-- Occupancy Direct -->
                     <div class="mb-6">
                         <div class="flex justify-between text-sm mb-2">
-                            <span class="text-slate-300">Occupation (Gestion Directe)</span>
+                            <span class="text-slate-300">{{ 'DELEGATION.OccupancyDirect' | translate }}</span>
                             <span class="font-bold text-white">{{ occupancyDirect() }}%</span>
                         </div>
                         <input type="range" min="30" max="100" step="5" [ngModel]="occupancyDirect()"
@@ -271,14 +271,13 @@
                     <!-- Occupancy Concierge -->
                     <div>
                         <div class="flex justify-between text-sm mb-2">
-                            <span class="text-slate-300">Occupation (Conciergerie)</span>
+                            <span class="text-slate-300">{{ 'DELEGATION.OccupancyConcierge' | translate }}</span>
                             <span class="font-bold text-[#D4AF37]">{{ occupancyConcierge() }}%</span>
                         </div>
                         <input type="range" min="30" max="100" step="5" [ngModel]="occupancyConcierge()"
                             (ngModelChange)="occupancyConcierge.set($event)"
                             class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]">
-                        <p class="text-[10px] text-slate-500 mt-1">*Les pros optimisent souvent mieux les
-                            prix/calendriers.</p>
+                        <p class="text-[10px] text-slate-500 mt-1">{{ 'DELEGATION.OptimizedNote' | translate }}</p>
                     </div>
                 </div>
 
@@ -290,13 +289,13 @@
                                 d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
                             </path>
                         </svg>
-                        Commissions
+                        {{ 'DELEGATION.Commissions' | translate }}
                     </h3>
 
                     <!-- Platform Commission -->
                     <div class="mb-6">
                         <div class="flex justify-between text-sm mb-2">
-                            <span class="text-slate-300">Plateforme (Airbnb/Booking)</span>
+                            <span class="text-slate-300">{{ 'DELEGATION.PlatformFee' | translate }}</span>
                             <span class="font-bold text-white">{{ commissionPlatform() }}%</span>
                         </div>
                         <input type="range" min="15" max="25" step="1" [ngModel]="commissionPlatform()"
@@ -307,7 +306,7 @@
                     <!-- Concierge Commission -->
                     <div>
                         <div class="flex justify-between text-sm mb-2">
-                            <span class="text-slate-300">Conciergerie</span>
+                            <span class="text-slate-300">{{ 'DELEGATION.Concierge' | translate }}</span>
                             <span class="font-bold text-[#D4AF37]">{{ commissionConcierge() }}%</span>
                         </div>
                         <input type="range" min="15" max="35" step="1" [ngModel]="commissionConcierge()"
@@ -323,13 +322,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        Valorisation du Temps
+                        {{ 'DELEGATION.TimeValuation' | translate }}
                     </h3>
 
                     <!-- Hours per Stay -->
                     <div class="mb-6">
                         <div class="flex justify-between text-sm mb-2">
-                            <span class="text-slate-300">Heures / Séjour (Ménage, Check-in...)</span>
+                            <span class="text-slate-300">{{ 'DELEGATION.HoursPerStay' | translate }}</span>
                             <span class="font-bold text-white">{{ hoursPerStay() }} h</span>
                         </div>
                         <input type="range" min="1" max="10" step="0.5" [ngModel]="hoursPerStay()"
@@ -340,7 +339,7 @@
                     <!-- Hourly Rate -->
                     <div>
                         <div class="flex justify-between text-sm mb-2">
-                            <span class="text-slate-300">Votre Taux Horaire Estimé</span>
+                            <span class="text-slate-300">{{ 'DELEGATION.EstimatedHourlyRate' | translate }}</span>
                             <span class="font-bold text-white">{{ ownerHourlyRate() }} €</span>
                         </div>
                         <input type="range" min="10" max="100" step="5" [ngModel]="ownerHourlyRate()"
@@ -368,16 +367,18 @@
                             </svg>
                         </div>
                         <div>
-                            <h4 class="text-slate-400 font-bold uppercase tracking-wider text-xs mb-2">Gestion Directe
+                            <h4 class="text-slate-400 font-bold uppercase tracking-wider text-xs mb-2">{{
+                                'DELEGATION.DirectManagement' | translate }}
                             </h4>
                             <div class="text-3xl font-bold text-white mb-1">{{ netRevenueDirect() | number:'1.0-0' }} €
                             </div>
-                            <div class="text-xs text-slate-400">Net annuel estimé</div>
+                            <div class="text-xs text-slate-400">{{ 'DELEGATION.EstimatedNetAnnual' | translate }}</div>
                         </div>
                         <div class="mt-6 pt-4 border-t border-white/10">
                             <div class="flex justify-between items-center text-red-300">
-                                <span class="text-xs font-semibold">Temps passé</span>
-                                <span class="font-mono font-bold">{{ annualHoursSpent() | number:'1.0-0' }} h/an</span>
+                                <span class="text-xs font-semibold">{{ 'DELEGATION.TimeSpent' | translate }}</span>
+                                <span class="font-mono font-bold">{{ annualHoursSpent() | number:'1.0-0' }} h/{{
+                                    'PROFITABILITY.Unit.Year' | translate | lowercase }}</span>
                             </div>
                         </div>
                     </div>
@@ -391,16 +392,18 @@
                             </svg> <!-- Placeholder icon -->
                         </div>
                         <div>
-                            <h4 class="text-[#D4AF37] font-bold uppercase tracking-wider text-xs mb-2">Gestion
-                                Conciergerie</h4>
+                            <h4 class="text-[#D4AF37] font-bold uppercase tracking-wider text-xs mb-2">{{
+                                'DELEGATION.ConciergeManagement' | translate }}</h4>
                             <div class="text-3xl font-bold text-white mb-1">{{ netRevenueConcierge() | number:'1.0-0' }}
                                 €</div>
-                            <div class="text-xs text-[#D4AF37]/80">Net annuel estimé</div>
+                            <div class="text-xs text-[#D4AF37]/80">{{ 'DELEGATION.EstimatedNetAnnual' | translate }}
+                            </div>
                         </div>
                         <div class="mt-6 pt-4 border-t border-[#D4AF37]/20">
                             <div class="flex justify-between items-center text-green-300">
-                                <span class="text-xs font-semibold">Temps gagné</span>
-                                <span class="font-mono font-bold">{{ annualHoursSpent() | number:'1.0-0' }} h/an</span>
+                                <span class="text-xs font-semibold">{{ 'DELEGATION.TimeSaved' | translate }}</span>
+                                <span class="font-mono font-bold">{{ annualHoursSpent() | number:'1.0-0' }} h/{{
+                                    'PROFITABILITY.Unit.Year' | translate | lowercase }}</span>
                             </div>
                         </div>
                     </div>
@@ -408,13 +411,13 @@
 
                 <!-- COMPARISON CHART BAR -->
                 <div class="bg-white/5 rounded-2xl p-8 border border-white/10">
-                    <h3 class="text-white font-bold mb-8">Analyse Comparative</h3>
+                    <h3 class="text-white font-bold mb-8">{{ 'DELEGATION.ComparativeAnalysis' | translate }}</h3>
 
                     <!-- Bar 1: Direct -->
                     <div class="mb-6 relative">
                         <div
                             class="flex justify-between text-xs text-slate-400 mb-2 font-medium uppercase tracking-wide">
-                            <span>Gestion Directe (Revenu Net)</span>
+                            <span>{{ 'DELEGATION.DirectNetRevenue' | translate }}</span>
                             <span>{{ netRevenueDirect() | number:'1.0-0' }} €</span>
                         </div>
                         <div class="h-4 bg-white/10 rounded-full overflow-hidden">
@@ -426,7 +429,7 @@
                     <!-- Bar 2: Direct Adjusted -->
                     <div class="mb-6 relative opacity-75">
                         <div class="flex justify-between text-xs text-red-300 mb-2 font-medium uppercase tracking-wide">
-                            <span>Gestion Directe (Après coût vore temps)</span>
+                            <span>{{ 'DELEGATION.DirectAdjRevenue' | translate }}</span>
                             <span>{{ totalValueDirectReal() | number:'1.0-0' }} €</span>
                         </div>
                         <div class="h-4 bg-white/10 rounded-full overflow-hidden flex">
@@ -437,8 +440,8 @@
                                 [style.width]="getBarWidth(timeCostValue())"></div>
                         </div>
                         <div class="text-[10px] text-red-400 mt-1 text-right">
-                            - {{ timeCostValue() | number:'1.0-0' }}€ ({{ annualHoursSpent() | number:'1.0-0' }}h x {{
-                            ownerHourlyRate() }}€)
+                            {{ 'DELEGATION.TimeCostDetail' | translate: { amount: (timeCostValue() | number:'1.0-0'),
+                            hours: (annualHoursSpent() | number:'1.0-0'), rate: ownerHourlyRate() } }}
                         </div>
                     </div>
 
@@ -446,7 +449,7 @@
                     <div class="relative">
                         <div
                             class="flex justify-between text-xs text-[#D4AF37] mb-2 font-medium uppercase tracking-wide">
-                            <span>Conciergerie (Net)</span>
+                            <span>{{ 'DELEGATION.ConciergeNetRevenue' | translate }}</span>
                             <span>{{ netRevenueConcierge() | number:'1.0-0' }} €</span>
                         </div>
                         <div class="h-4 bg-white/10 rounded-full overflow-hidden">
@@ -487,10 +490,10 @@
                                 [class.text-green-400]="expertAdvice().type === 'success'"
                                 [class.text-blue-400]="expertAdvice().type === 'info'"
                                 [class.text-orange-400]="expertAdvice().type === 'warning'">
-                                Conseil de l'expert
+                                {{ 'DELEGATION.ExpertAdvice' | translate }}
                             </h4>
                             <p class="text-white font-medium leading-relaxed">
-                                {{ expertAdvice().message }}
+                                {{ translateAdvice(expertAdvice()) }}
                             </p>
                         </div>
                     </div>
@@ -553,11 +556,10 @@
                         </svg>
                     </div>
                     <h3 class="text-2xl font-bold text-white mb-2">{{ 'DELEGATION.Supplier.Title' | translate }}</h3>
-                    <p class="text-slate-300 max-w-lg mb-6">Faites la différence entre les amateurs et les pros. Obtenez
-                        la liste des 5 questions pièges à poser avant de signer.</p>
+                    <p class="text-slate-300 max-w-lg mb-6">{{ 'DELEGATION.UnlockSilverDesc' | translate }}</p>
                     <button
                         class="px-6 py-3 bg-gradient-to-r from-slate-200 to-white text-slate-900 font-bold rounded-xl hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all transform hover:scale-105">
-                        Débloquer avec le Plan Silver
+                        {{ 'DELEGATION.UnlockSilverBtn' | translate }}
                     </button>
                 </div>
                 }
@@ -568,7 +570,7 @@
                     <div class="md:col-span-2 mb-4">
                         <h4 class="text-xl font-bold text-white mb-2">{{ 'DELEGATION.Supplier.TrapQuestions.Title' |
                             translate }}</h4>
-                        <p class="text-slate-400">Avant de signer, posez ces questions pour débusquer les amateurs.</p>
+                        <p class="text-slate-400">{{ 'DELEGATION.TrapQuestionsDesc' | translate }}</p>
                     </div>
 
                     <!-- Question 1 -->
@@ -581,7 +583,8 @@
                                 </h5>
                                 <div
                                     class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
-                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    <span class="font-bold block mb-1">{{ 'DELEGATION.ExpectedAnswer' | translate
+                                        }}</span>
                                     {{ 'DELEGATION.Q1.Answer' | translate }}
                                 </div>
                             </div>
@@ -598,7 +601,8 @@
                                 </h5>
                                 <div
                                     class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
-                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    <span class="font-bold block mb-1">{{ 'DELEGATION.ExpectedAnswer' | translate
+                                        }}</span>
                                     {{ 'DELEGATION.Q2.Answer' | translate }}
                                 </div>
                             </div>
@@ -615,7 +619,8 @@
                                 </h5>
                                 <div
                                     class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
-                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    <span class="font-bold block mb-1">{{ 'DELEGATION.ExpectedAnswer' | translate
+                                        }}</span>
                                     {{ 'DELEGATION.Q3.Answer' | translate }}
                                 </div>
                             </div>
@@ -632,7 +637,8 @@
                                 </h5>
                                 <div
                                     class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
-                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    <span class="font-bold block mb-1">{{ 'DELEGATION.ExpectedAnswer' | translate
+                                        }}</span>
                                     {{ 'DELEGATION.Q4.Answer' | translate }}
                                 </div>
                             </div>
@@ -649,7 +655,8 @@
                                 </h5>
                                 <div
                                     class="text-xs text-green-400 bg-green-500/10 p-3 rounded-lg border border-green-500/20">
-                                    <span class="font-bold block mb-1">✅ Réponse attendue :</span>
+                                    <span class="font-bold block mb-1">{{ 'DELEGATION.ExpectedAnswer' | translate
+                                        }}</span>
                                     {{ 'DELEGATION.Q5.Answer' | translate }}
                                 </div>
                             </div>

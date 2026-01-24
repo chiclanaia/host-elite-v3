@@ -131,4 +131,23 @@ export const audit = {
     'AUDIT.legal_q9': 'Travaillez-vous avec un expert-comptable spécialisé dans l\'immobilier ou la location meublée ?',
     'AUDIT.legal_q9_sub': 'Nom de l\'expert-comptable ou du cabinet',
     'AUDIT.legal_q10': 'Calculez-vous (au moins 1x/trimestre) votre rentabilité nette (Bénéfice Net) et votre ROI (Retour sur Investissement) ?',
+
+    // New keys for PropertyAudit UI
+    'AUDIT.FullAuditDesc': 'Audit complet ({{count}} questions) de votre niveau d\'équipement et d\'hospitalité.',
+    'AUDIT.HospitalityScore': 'Hospitality Score',
+    'AUDIT.CurrentRank': 'Rang actuel :',
+    'AUDIT.Rank.Basic': 'Basique',
+    'AUDIT.Rank.Standard': 'Standard',
+    'AUDIT.Rank.Premium': 'Premium',
+    'AUDIT.Rank.Excellence': 'Excellence',
+    'AUDIT.WifiWarningTitle': 'Alerte : Wi-Fi Haute Performance Manquant',
+    'AUDIT.WifiWarningDesc': 'En tant qu\'Hôte Expert, l\'absence de Wi-Fi haut débit peut vous faire perdre jusqu\'à **15% de revenus annuels** en excluant le marché des Digital Nomads.',
+    'AUDIT.AICounsel': 'Conseils de l\'IA',
+    'AUDIT.AIRefresh': 'Rafraîchir l\'analyse',
+    'AUDIT.AIUpdating': 'Actualisation...',
+    'AUDIT.AIPromptDesc': 'Cliquez pour lancer l\'Analyse IA basée sur votre progression actuelle.',
+    'AUDIT.AILaunch': 'Lancer l\'Analyse IA',
+    'AUDIT.AIAnalyzing': 'Analyse en cours...',
+    'AUDIT.NoteTitle': 'Note',
+    'AUDIT.NoteDesc': 'L\'audit est sauvegardé automatiquement. Vous pouvez revenir à tout moment pour mettre à jour vos équipements.',
 };

@@ -14,4 +14,8 @@ export default {
     'EVENTS.Distance': 'Distance',
     'EVENTS.UpgradePrompt': 'Passez à Gold pour ajouter au calendrier',
     'EVENTS.Added': 'Événement ajouté au calendrier !',
+    'EVENTS.SuccessGenerated': 'Événements générés avec l\'IA !',
+    'EVENTS.ErrorFallback': 'Échec de la génération IA - Utilisation de secours',
+    'EVENTS.ErrorService': 'Erreur du service IA - Utilisation de secours',
+    'EVENTS.ErrorCalendar': 'Erreur lors de l\'ajout au calendrier',
 }

@@ -57,13 +57,14 @@ export class VisibilityAuditComponent {
         this.auditResult.set(null);
 
         // 2. Simulate Deep Search (Visual Effect)
+        const translationService = this.injector.get(TranslationService);
         const steps = [
-            "Connexion aux serveurs Airbnb...",
-            "Analyse de la zone de recherche...",
-            "Vérification des filtres voyageurs...",
-            "Comparaison avec la concurrence locale...",
-            "Examen des résultats Booking.com...",
-            "Analyse du positionnement Google Maps..."
+            translationService.translate('VISIBILITY.Step1'),
+            translationService.translate('VISIBILITY.Step2'),
+            translationService.translate('VISIBILITY.Step3'),
+            translationService.translate('VISIBILITY.Step4'),
+            translationService.translate('VISIBILITY.Step5'),
+            translationService.translate('VISIBILITY.Step6')
         ];
 
         for (let i = 0; i < steps.length; i++) {
@@ -75,15 +76,16 @@ export class VisibilityAuditComponent {
 
         // 3. AI Analysis Step
         this.auditStatus.set('analyzing');
-        this.auditStep.set("Génération du rapport d'expert...");
+        this.auditStep.set(translationService.translate('VISIBILITY.StepAI') || "Generating report...");
         this.auditProgress.set(90);
 
         try {
             // Construct Context
+            const notSpecified = translationService.translate('VISIBILITY.NotSpecified') || 'Not specified';
             const context = {
                 name: propName,
-                address: propData?.address || 'Non spécifiée',
-                description: propData?.listing_description || 'Non spécifiée',
+                address: propData?.address || notSpecified,
+                description: propData?.listing_description || notSpecified,
                 amenities: propData?.property_equipments ? propData.property_equipments.map((e: any) => e.name) : [],
                 urls: {
                     airbnb: this.airbnbUrl(),
@@ -92,7 +94,6 @@ export class VisibilityAuditComponent {
                 }
             };
 
-            const translationService = this.injector.get(TranslationService);
             const report = await this.geminiService.generateVisibilityAudit(context, translationService.currentLang());
             this.auditResult.set(report);
             this.auditProgress.set(100);
@@ -100,7 +101,8 @@ export class VisibilityAuditComponent {
 
         } catch (error) {
             console.error(error);
-            alert("Erreur lors de l'audit.");
+            const errorMsg = translationService.translate('VISIBILITY.ErrorAudit') || "Error during audit.";
+            alert(errorMsg);
             this.auditStatus.set('idle');
         }
     }

@@ -13,11 +13,12 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
         <!-- New Event Button (Primary Action) -->
         @if (!filterToInternal() && !isReadOnly()) {
             <button (click)="addEventClicked.emit()" 
+                [title]="'CALENDAR.NewEvent' | translate"
                 class="w-full mb-6 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg active:scale-95 group">
-                <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
-                <span>Nouvel événement</span>
+                <span>{{ 'CALENDAR.NewEvent' | translate }}</span>
             </button>
         }
 
@@ -34,7 +35,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                         <div class="w-3 h-3 rounded-full shrink-0" [style.backgroundColor]="source.color"></div>
                         <div class="flex flex-col min-w-0">
                             <span class="text-sm text-white truncate font-medium">{{ source.name }}</span>
-                            <span class="text-xs text-white/40 truncate">{{ source.type === 'internal' ? 'Calendrier Principal' : 'iCal' }}</span>
+                            <span class="text-xs text-white/40 truncate">{{ source.type === 'internal' ? ('CALENDAR.MainCalendar' | translate) : 'iCal' }}</span>
                         </div>
                     </div>
                     
@@ -44,7 +45,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                             <button (click)="toggleVisibility(source)" class="p-1.5 transition-colors"
                                 [class.text-white/60]="source.visible !== false"
                                 [class.text-white/20]="source.visible === false"
-                                [title]="source.visible === false ? 'Show' : 'Hide'">
+                                [title]="source.visible === false ? ('COMMON.Show' | translate) : ('COMMON.Hide' | translate)">
                                 @if (source.visible !== false) {
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -58,8 +59,8 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                             </button>
                             
                             <!-- Delete Source -->
-                            <button (click)="removeSource(source.id)" class="p-1.5 text-red-400 hover:text-red-300 transition-colors">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <button (click)="removeSource(source.id)" [title]="'COMMON.Delete' | translate" class="p-1.5 text-red-400 hover:text-red-300 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </button>
@@ -67,7 +68,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                     } @else {
                         <!-- Locked indicator -->
                         <div class="px-2 py-1 text-[10px] font-bold text-white/20 uppercase tracking-tight">
-                            Fixe
+                            {{ 'CALENDAR.Fixed' | translate }}
                         </div>
                     }
                 </div>
@@ -94,20 +95,21 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
                     <!-- Type Selector -->
                     <div>
-                        <select formControlName="type"
+                        <select formControlName="type" title="Source Type"
                             class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
                             <option value="external">{{ typeExternalLabel }}</option>
                         </select>
-                        <p class="text-[10px] text-white/30 mt-1 pl-1">Synchronisez un calendrier iCal (Airbnb, Booking...) en lecture seule.</p>
+                        <p class="text-[10px] text-white/30 mt-1 pl-1">{{ 'CALENDAR.SyncDescription' | translate }}</p>
                     </div>
 
                     <!-- URL (only for external) -->
                     @if (addForm.get('type')?.value === 'external') {
                         <div>
                             <input type="text" formControlName="url" 
-                                placeholder="https://airbnb.com/calendar/..."
+                                [placeholder]="'CALENDAR.SourceUrlPlaceholder' | translate"
+                                [title]="'CALENDAR.SourceUrlPlaceholder' | translate"
                                 class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder-white/20">
-                            <p class="text-[10px] text-white/30 mt-1 pl-1">Ex: Airbnb iCal, Booking.com iCal...</p>
+                            <p class="text-[10px] text-white/30 mt-1 pl-1">{{ 'CALENDAR.SourceUrlHelp' | translate }}</p>
                         </div>
                     }
 
@@ -116,6 +118,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                         @for (color of presetColors; track color) {
                             <button type="button" 
                                 (click)="selectColor(color)"
+                                [title]="'Select Color: ' + color"
                                 class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none"
                                 [style.backgroundColor]="color"
                                 [class.border-white]="addForm.get('color')?.value === color"
@@ -128,7 +131,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                         [disabled]="addForm.invalid || isSubmitting()"
                         class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center">
                         @if (isSubmitting()) {
-                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -216,7 +219,8 @@ export class CalendarSidebarComponent implements OnInit {
                 this.sourceChanged.emit();
             } catch (e: any) {
                 console.error('Error adding calendar source:', e);
-                alert(`Erreur: ${e.message || 'Impossible d\'ajouter le calendrier'}`);
+                const msg = this.calendarService.translationService.translate('CALENDAR.ErrorAddingSource') || 'Error adding calendar';
+                alert(`${msg}: ${e.message || ''}`);
             } finally {
                 this.isSubmitting.set(false);
             }
@@ -224,7 +228,8 @@ export class CalendarSidebarComponent implements OnInit {
     }
 
     async removeSource(id: string) {
-        if (confirm('Delete this calendar source?')) {
+        const msg = this.calendarService.translationService.translate('CALENDAR.DeleteConfirmSource') || 'Delete this source?';
+        if (confirm(msg)) {
             await this.calendarService.deleteSource(id);
             this.sourceChanged.emit();
         }

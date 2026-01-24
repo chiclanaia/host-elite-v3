@@ -22,6 +22,7 @@ import { CalendarService } from '../calendar-tool/calendar.service';
           <p class="text-sm text-slate-400 mt-1">{{ 'EVENTS.Subtitle' | translate }}</p>
         </div>
         <button (click)="close.emit()" 
+          title="Close" aria-label="Close"
           class="text-slate-400 hover:text-white transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -34,11 +35,12 @@ import { CalendarService } from '../calendar-tool/calendar.service';
         <div class="flex justify-center">
           <!-- AI Generate Button (Silver+ only) -->
           <button *ngIf="hasSilverAccess()" (click)="generateWithAI()" [disabled]="isAiGenerating()"
+            [title]="'EVENTS.GenerateAI' | translate"
             class="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white rounded-lg font-medium transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg">
-            <svg *ngIf="!isAiGenerating()" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg *ngIf="!isAiGenerating()" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
               <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
             </svg>
-            <svg *ngIf="isAiGenerating()" class="animate-spin h-5 w-5" viewBox="0 0 24 24">
+            <svg *ngIf="isAiGenerating()" class="animate-spin h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -130,6 +132,7 @@ import { CalendarService } from '../calendar-tool/calendar.service';
                 <!-- Add to Calendar Button -->
                 <button *ngIf="isGoldUser()" (click)="addToCalendar(event)"
                   [disabled]="isEventAdded(event.id)"
+                  [title]="'EVENTS.AddToCalendar' | translate"
                   class="flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
                   [class]="isEventAdded(event.id) 
                     ? 'bg-emerald-600/50 text-white cursor-not-allowed' 
@@ -155,7 +158,7 @@ import { CalendarService } from '../calendar-tool/calendar.service';
       <!-- Success Message -->
       <div *ngIf="successMessage()" 
         class="fixed bottom-4 right-4 bg-emerald-600 text-white px-6 py-3 rounded-lg shadow-lg animate-bounce z-50">
-        {{ successMessage() }}
+        {{ successMessage() | translate }}
       </div>
     </div>
   `,
@@ -246,28 +249,17 @@ export class MarketAlertsComponent {
     }
 
     try {
-      // Ensure "Local Events" calendar source exists
-      await this.ensureLocalEventsSource(property.id);
-
-      // Find the Local Events source ID
-      const localEventsSource = this.calendarService.sources()
-        .find(s => s.name === 'Local Events' && s.type === 'internal');
-
-      if (!localEventsSource) {
-        console.error('Local Events source not found');
-        this.successMessage.set('Error: Calendar source not found');
-        setTimeout(() => this.successMessage.set(null), 3000);
-        return;
-      }
+      // Ensure "Local Events" calendar source exists via Service
+      const sourceId = await this.calendarService.ensureLocalEventsSource(property.id);
 
       // Prepare event for calendar
       const calendarEvent = {
         title: event.title,
         start: event.startDate.toISOString(),
         end: event.startDate.toISOString(),
-        description: `${event.description}\n\n📍 ${event.distance.toFixed(1)} km away\n🏷️ ${event.category}`,
+        description: `${event.description}\n\n📍 ${event.distance.toFixed(1)} km away\n🏷️ ${event.category}\n🌐 ${event.url || ''}`,
         property_id: property.id,
-        source_id: localEventsSource.id
+        source_id: sourceId
       };
 
       // Save to calendar
@@ -280,32 +272,21 @@ export class MarketAlertsComponent {
         return newSet;
       });
 
-      this.successMessage.set('Event added to calendar!');
+      this.successMessage.set('EVENTS.Added');
       setTimeout(() => this.successMessage.set(null), 3000);
     } catch (error) {
       console.error('Error adding event to calendar:', error);
-      this.successMessage.set('Error adding event to calendar');
+      this.successMessage.set('EVENTS.ErrorCalendar');
       setTimeout(() => this.successMessage.set(null), 3000);
     }
   }
 
-  private async ensureLocalEventsSource(propertyId: string) {
-    const currentSources = this.calendarService.sources();
-    if (currentSources.length === 0) {
-      await this.calendarService.loadSources(propertyId);
-    }
-
-    const localEventsExists = this.calendarService.sources()
-      .some(s => s.name === 'Local Events' && s.type === 'internal');
-
-    if (!localEventsExists) {
-      await this.calendarService.addSource({
-        name: 'Local Events',
-        type: 'internal',
-        color: '#9333ea',
-        property_id: propertyId
-      });
-    }
+  // Simplified translate helper if needed, or use Pipe in template
+  private translate(key: string): string {
+    // We can inject TranslationService if needed, but for now we'll stick to the pipe in template
+    // Actually, successMessage is a signal shown in template via {{ successMessage() }}
+    // So we should set the key and use translate pipe in template, OR inject service.
+    return key;
   }
 
   async generateWithAI() {
@@ -316,18 +297,21 @@ export class MarketAlertsComponent {
 
     this.isAiGenerating.set(true);
     try {
-      const prompt = `Generate a list of 5-8 interesting local events near ${property.address} for vacation rental guests. Include a variety of categories (music, food, sports, arts, culture). 
-
-For each event, provide:
-- title: (creative and appealing)
-- description: (2-3 sentences)
-- category: (one of: Music, Food & Drink, Sports, Arts & Culture, Other)
-- location: (specific venue name or address, e.g., "Central Park Amphitheater" or "123 Main Street")
-- distance: (in km, between 1-15km from property)
-- startDate: (ISO format within next 3 months)
-- url: (realistic example URL like "https://www.eventbrite.com/e/event-name" or "https://www.facebook.com/events/123456")
-
-Format as JSON array.`;
+      const prompt = `SEARCH AND FIND REAL UPCOMING LOCAL EVENTS for a property located at: ${property.address}.
+      
+      CRITICAL INSTRUCTIONS:
+      1. Find 5-8 REAL events happening in the NEXT 3 MONTHS.
+      2. Include major festivals, concerts, sports, or local markets.
+      3. For each event, provide:
+         - title: Catchy name
+         - description: Why a tourist would love it (2-3 sentences)
+         - category: One of: Music, Food & Drink, Sports, Arts & Culture, Other
+         - location: Specific venue name or address
+         - distance: Estimated km from ${property.address}
+         - startDate: ISO format (ensure it's in the future)
+         - url: A REAL website URL for the event if possible.
+      
+      Format strictly as a JSON array. DO NOT include markdown formatting or explanations outside the JSON.`;
 
       const response = await this.geminiService.generateText(prompt);
 
@@ -346,18 +330,18 @@ Format as JSON array.`;
         }));
 
         this.events.set(localEvents);
-        this.successMessage.set('Events generated with AI!');
+        this.successMessage.set('EVENTS.SuccessGenerated');
         setTimeout(() => this.successMessage.set(null), 3000);
       } catch (parseError) {
         console.error('[Market Alerts] Failed to parse AI response:', parseError);
         console.error('[Market Alerts] Raw response was:', response);
-        this.successMessage.set('AI generation failed - using fallback');
+        this.successMessage.set('EVENTS.ErrorFallback');
         await this.loadEvents();
         setTimeout(() => this.successMessage.set(null), 3000);
       }
     } catch (error) {
       console.error('[Market Alerts] AI generation error:', error);
-      this.successMessage.set('AI service error - using fallback');
+      this.successMessage.set('EVENTS.ErrorService');
       await this.loadEvents();
       setTimeout(() => this.successMessage.set(null), 3000);
     } finally {

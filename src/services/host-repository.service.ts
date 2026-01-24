@@ -13,13 +13,27 @@ export class HostRepository {
     private get supabase() { return this.supabaseService.supabase; }
 
     // Static sub-views configuration
+    // Static sub-views configuration reorganized by Phases
     private readonly defaultSubViews: View[] = [
-        { id: 'manage-property', title: 'Manage', icon: 'settings' },
+        // Phase 1: Préparation
+        { id: 'manage-property', title: 'Manage', icon: 'settings', phase: 'preparation', requiredTier: 'Bronze' },
+        { id: 'accomodation', title: 'NAV.accomodation', icon: 'property', phase: 'preparation', requiredTier: 'Bronze' },
+        { id: 'legal', title: 'NAV.legal', icon: 'info', phase: 'preparation', requiredTier: 'Bronze' },
+        { id: 'mindset', title: 'NAV.mindset', icon: 'training', phase: 'preparation', requiredTier: 'Bronze' },
 
-        { id: 'welcome-booklet', title: 'NAV.welcome-booklet', icon: 'info', featureId: 'booklet' },
-        { id: 'property-calendar', title: 'NAV.property-calendar', icon: 'calendar' },
-        { id: 'widget-library', title: 'NAV.widget-library', icon: 'widgets', featureId: 'microsite' },
-        { id: 'vocal-concierge', title: 'NAV.vocal-concierge', icon: 'concierge', featureId: 'vocal-concierge' },
+        // Phase 2: Lancement
+        { id: 'welcome-booklet', title: 'NAV.welcome-booklet', icon: 'info', featureId: 'booklet', phase: 'launch', requiredTier: 'Bronze' },
+        { id: 'marketing', title: 'NAV.marketing', icon: 'dashboard', phase: 'launch', requiredTier: 'Silver' },
+        { id: 'experience', title: 'NAV.experience', icon: 'concierge', phase: 'launch', requiredTier: 'Bronze' },
+        { id: 'widget-library', title: 'NAV.widget-library', icon: 'widgets', featureId: 'microsite', phase: 'launch', requiredTier: 'Bronze' },
+
+        // Phase 3: Exploitation
+        { id: 'property-calendar', title: 'NAV.property-calendar', icon: 'calendar', phase: 'exploitation', requiredTier: 'Silver' },
+        { id: 'vocal-concierge', title: 'NAV.vocal-concierge', icon: 'concierge', featureId: 'vocal-concierge', phase: 'exploitation', requiredTier: 'Silver' },
+        { id: 'operations', title: 'NAV.operations', icon: 'settings', phase: 'exploitation', requiredTier: 'Silver' },
+
+        // Phase 4: Excellence
+        { id: 'pricing', title: 'NAV.pricing', icon: 'widgets', phase: 'excellence', requiredTier: 'Gold' },
     ];
 
     async hasDiagnostic(userId: string): Promise<boolean> {

@@ -105,12 +105,12 @@ export class BookletToolComponent {
                     ...c,
                     ...aiConfig
                 }));
-                this.aiMessage.set("Design généré par l'IA !");
+                this.aiMessage.set("BOOKLET.ai_design_success");
                 setTimeout(() => this.aiMessage.set(null), 3000);
             }
         } catch (e) {
             console.error("AI Design Error:", e);
-            this.aiMessage.set("Erreur IA");
+            this.aiMessage.set("BOOKLET.ai_error");
         } finally {
             this.isAiDesigning.set(false);
         }

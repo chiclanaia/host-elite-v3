@@ -241,9 +241,9 @@ export class WelcomeBookletService implements OnDestroy {
             this.faqItems.set(newFaqs);
 
             this.isLoading.set(false);
-            this.saveMessage.set("FAQ Générée !");
+            this.saveMessage.set("BOOKLET.faq_generated");
             setTimeout(() => this.saveMessage.set(null), 3000);
-        }, 1500); // Simulate AI delay
+        }, 1500);
     }
 
     async save() {

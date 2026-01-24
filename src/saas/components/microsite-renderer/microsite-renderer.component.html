@@ -9,7 +9,8 @@
                 <span class="text-2xl">{{ guideModalState().icon }}</span>
                 <h3 class="text-xl font-bold text-slate-800">{{ guideModalState().title }}</h3>
             </div>
-            <button (click)="closeGuideModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+            <button (click)="closeGuideModal()" title="Close"
+                class="text-slate-400 hover:text-slate-600 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -50,7 +51,7 @@
             <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10">
                 <h1
                     class="text-4xl md:text-7xl font-extrabold text-white mb-6 drop-shadow-lg tracking-tight animate-fade-in-up">
-                    {{ config.headline }}</h1>
+                    {{ config.headline | translate }}</h1>
                 <button [style.backgroundColor]="config.primaryColor"
                     class="px-8 md:px-10 py-3 md:py-4 rounded-full text-white font-bold text-lg shadow-xl transform transition hover:scale-105 hover:shadow-2xl border-2 border-white/20 backdrop-blur-sm animate-bounce-subtle">
                     {{ 'BOOKLET.book_stay' | translate }}
@@ -85,7 +86,7 @@
                 @for(photo of photos; track $index) {
                 <div
                     class="aspect-square overflow-hidden rounded-xl cursor-pointer relative group shadow-md hover:shadow-xl transition-all duration-300">
-                    <img [src]="photo.url"
+                    <img [src]="photo.url" alt="Property Image"
                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300">
                     </div>
@@ -137,9 +138,10 @@
                 class="max-w-2xl mx-auto bg-white/40 backdrop-blur-sm p-8 rounded-2xl border border-white/50 shadow-sm relative">
                 <div class="text-6xl absolute -top-4 -left-2 opacity-10 font-serif">"</div>
                 <div class="flex justify-center space-x-1 text-yellow-400 mb-4 text-xl">★★★★★</div>
-                <p class="text-xl italic opacity-80 mb-4 leading-relaxed">"Un séjour absolument magnifique, tout était
-                    parfait ! L'emplacement est idéal et la décoration superbe."</p>
-                <p class="font-bold text-sm opacity-60 uppercase tracking-widest">- Voyageur Heureux</p>
+                <p class="text-xl italic opacity-80 mb-4 leading-relaxed">"{{ 'MICROSITE.ReviewPlaceholder' | translate
+                    }}"</p>
+                <p class="font-bold text-sm opacity-60 uppercase tracking-widest">- {{ 'MICROSITE.ReviewAuthor' |
+                    translate }}</p>
             </div>
         </div>
         }
@@ -240,9 +242,8 @@
         </div>
         }
 
-        <!-- Footer -->
         <div class="py-8 bg-black/5 text-center text-xs opacity-50">
-            <p>&copy; 2024 - {{ config.headline }}</p>
+            <p>&copy; 2024 - {{ config.headline | translate }}</p>
             <p class="mt-1">{{ 'BOOKLET.location_approx' | translate }}</p>
         </div>
     </div>

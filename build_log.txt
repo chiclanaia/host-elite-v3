@@ -1,44 +1,12 @@
-
-> h├┤te-bnb-d'exception:-diagnostic-ia-(jose)@0.0.0 build
-> ng build
-
 [33mΓ¥»[39m Building...
 [32mΓ£ö[39m Building...
-Application bundle generation failed. [6.236 seconds] - 2026-01-18T10:36:06.651Z
+Application bundle generation failed. [28.818 seconds] - 2026-01-24T10:13:54.023Z
 
-Γû▓ [WARNING] NG8113: TranslatePipe is not used within the template of MicrositeContainerComponent [plugin angular-compiler]
+Γû▓ [WARNING] NG8113: NotificationCenterComponent is not used within the template of NotificationBellComponent [plugin angular-compiler]
 
-    src/saas/features/microsite/microsite-container.component.ts:17:41:
-      17 Γöé ...mmonModule, FormsModule, TranslatePipe, MicrositeRendererCompon...
-         Γò╡                             ~~~~~~~~~~~~~
-
-
-Γû▓ [WARNING] NG8113: MicrositeContainerComponent is not used within the template of AngleViewComponent [plugin angular-compiler]
-
-    src/saas/views/angle-view.component.ts:128:62:
-      128 Γöé ...ule, FormsModule, MicrositeContainerComponent, AiPromptsCompon...
-          Γò╡                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-Γû▓ [WARNING] NG8113: AiPromptsComponent is not used within the template of AngleViewComponent [plugin angular-compiler]
-
-    src/saas/views/angle-view.component.ts:128:91:
-      128 Γöé ...teContainerComponent, AiPromptsComponent, VisibilityAuditCompo...
-          Γò╡                          ~~~~~~~~~~~~~~~~~~
-
-
-Γû▓ [WARNING] NG8113: VisibilityAuditComponent is not used within the template of AngleViewComponent [plugin angular-compiler]
-
-    src/saas/views/angle-view.component.ts:128:111:
-      128 Γöé ...nt, AiPromptsComponent, VisibilityAuditComponent, TranslatePipe],
-          Γò╡                            ~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-Γû▓ [WARNING] NG8113: TranslatePipe is not used within the template of AngleViewComponent [plugin angular-compiler]
-
-    src/saas/views/angle-view.component.ts:128:137:
-      128 Γöé ...nt, AiPromptsComponent, VisibilityAuditComponent, TranslatePipe],
-          Γò╡                                                      ~~~~~~~~~~~~~
+    src/saas/components/notification-bell.component.ts:10:28:
+      10 Γöé     imports: [CommonModule, NotificationCenterComponent],
+         Γò╡                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 Γû▓ [WARNING] NG8113: TranslatePipe is not used within the template of WelcomeBookletListingComponent [plugin angular-compiler]
@@ -48,16 +16,43 @@ Application bundle generation failed. [6.236 seconds] - 2026-01-18T10:36:06.651Z
         Γò╡                             ~~~~~~~~~~~~~
 
 
-X [ERROR] NG5002: Unexpected closing tag "div". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags [plugin angular-compiler]
+X [ERROR] TS2304: Cannot find name 'TranslationService'. [plugin angular-compiler]
 
-    src/saas/views/angle-view.component.html:210:0:
-      210 Γöé </div>
-          Γò╡ ~~~~~~
+    src/saas/features/delegation/delegation-simulator.component.ts:138:24:
+      138 Γöé     private ts = inject(TranslationService);
+          Γò╡                         ~~~~~~~~~~~~~~~~~~
 
-  Error occurs in the template of component AngleViewComponent.
 
-    src/saas/views/angle-view.component.ts:130:17:
-      130 Γöé     templateUrl: './angle-view.component.html',
-          Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+X [ERROR] TS2339: Property 'translate' does not exist on type 'unknown'. [plugin angular-compiler]
+
+    src/saas/features/delegation/delegation-simulator.component.ts:172:23:
+      172 Γöé         return this.ts.translate(advice.key, advice.params) || '';
+          Γò╡                        ~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'isAiGenerating' does not exist on type 'MicrositeContainerComponent'. [plugin angular-compiler]
+
+    src/saas/features/microsite/microsite-container.component.html:58:72:
+      58 Γöé ...MicrositeWithAI()" [disabled]="isAiGenerating() || !hasAiAccess()"
+         Γò╡                                   ~~~~~~~~~~~~~~
+
+  Error occurs in the template of component MicrositeContainerComponent.
+
+    src/saas/features/microsite/microsite-container.component.ts:18:17:
+      18 Γöé     templateUrl: './microsite-container.component.html',
+         Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG5002: Empty expressions are not allowed [plugin angular-compiler]
+
+    src/saas/features/property-audit/property-audit.component.html:160:37:
+      160 Γöé ...              <svg @if (!hasAiAccess()) xmlns="http://www.w3.o...
+          Γò╡                           ~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component PropertyAuditComponent.
+
+    src/saas/features/property-audit/property-audit.component.ts:14:17:
+      14 Γöé     templateUrl: './property-audit.component.html',
+         Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

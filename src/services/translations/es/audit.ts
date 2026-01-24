@@ -131,4 +131,23 @@ export const audit = {
     'AUDIT.legal_q9': '¿Trabaja con un contador especializado en bienes raíces o alquileres amueblados?',
     'AUDIT.legal_q9_sub': 'Nombre del contador o firma',
     'AUDIT.legal_q10': '¿Calcula (al menos 1 vez al trimestre) su rentabilidad neta (Beneficio Neto) y su ROI (Retorno de la Inversión)?',
+
+    // New keys for PropertyAudit UI
+    'AUDIT.FullAuditDesc': 'Auditoría completa ({{count}} preguntas) de su equipamiento y nivel de hospitalidad.',
+    'AUDIT.HospitalityScore': 'Hospitality Score',
+    'AUDIT.CurrentRank': 'Rango actual:',
+    'AUDIT.Rank.Basic': 'Básico',
+    'AUDIT.Rank.Standard': 'Estándar',
+    'AUDIT.Rank.Premium': 'Premium',
+    'AUDIT.Rank.Excellence': 'Excelencia',
+    'AUDIT.WifiWarningTitle': 'Alerta: Falta Wi-Fi de Alto Rendimiento',
+    'AUDIT.WifiWarningDesc': 'Como Anfitrión Experto, la falta de Wi-Fi de alta velocidad puede hacerle perder hasta un **15% de ingresos anuales** al excluir el mercado de nómadas digitales.',
+    'AUDIT.AICounsel': 'Consejos de IA',
+    'AUDIT.AIRefresh': 'Actualizar análisis',
+    'AUDIT.AIUpdating': 'Actualizando...',
+    'AUDIT.AIPromptDesc': 'Haga clic para lanzar el Análisis de IA basado en su progreso actual.',
+    'AUDIT.AILaunch': 'Lanzar Análisis de IA',
+    'AUDIT.AIAnalyzing': 'Analizando...',
+    'AUDIT.NoteTitle': 'Nota',
+    'AUDIT.NoteDesc': 'La auditoría se guarda automáticamente. Puede volver en cualquier momento para actualizar su equipamiento.',
 };
