@@ -1,11 +1,12 @@
 import { Component, computed, inject, input, signal, effect, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { OnboardingService, OnboardingQuestion } from '../../../services/onboarding.service';
-import { SessionStore } from '../../../state/session.store';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { TranslationService } from '../../../services/translation.service';
-import { GeminiService } from '../../../services/gemini.service';
+import { OnboardingService, OnboardingQuestion } from '../../../../services/onboarding.service';
+import { HostRepository } from '../../../../services/host-repository.service';
+import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { TranslationService } from '../../../../services/translation.service';
+import { GeminiService } from '../../../../services/gemini.service';
 
 @Component({
     selector: 'app-property-audit',

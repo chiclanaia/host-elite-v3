@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './sidebar.component';
 import { DashboardViewComponent } from './views/dashboard-view.component';
 import { HostWheelViewComponent } from './views/host-wheel-view.component';
-import { AngleViewComponent } from './views/angle-view.component';
+import { PhaseViewComponent } from './views/angle-view.component';
 import { ContextData, ReportData, Scores, UserRole, View, Property } from '../types';
-import { AnglesMenuComponent } from './angles-menu.component';
+import { PhasesMenuComponent } from './angles-menu.component';
 import { WelcomeBookletViewComponent } from './views/welcome-booklet-view.component';
 import { WidgetLibraryViewComponent } from './views/widget-library-view.component';
 import { VocalConciergeViewComponent } from './views/vocal-concierge-view.component';
@@ -26,7 +26,7 @@ import { NotificationBellComponent } from './components/notification-bell.compon
 import { NotificationCenterComponent } from './components/notification-center.component';
 import { NotificationService } from '../services/notification.service';
 import { ProfileModalComponent } from './components/profile-settings-modal.component';
-import { CalendarToolComponent } from './features/calendar-tool/components/calendar-tool.component';
+import { CalendarToolComponent } from './features/legacy/calendar-tool/components/calendar-tool.component';
 
 @Component({
   selector: 'saas-app',
@@ -36,8 +36,8 @@ import { CalendarToolComponent } from './features/calendar-tool/components/calen
     SidebarComponent,
     DashboardViewComponent,
     HostWheelViewComponent,
-    AngleViewComponent,
-    AnglesMenuComponent,
+    PhaseViewComponent,
+    PhasesMenuComponent,
     WelcomeBookletViewComponent,
     WidgetLibraryViewComponent,
     VocalConciergeViewComponent,
@@ -82,8 +82,8 @@ export class SaaSAppComponent implements OnInit {
   userPlan = computed<string>(() => this.store.userProfile()?.plan || this.reportData().recommendedPlan);
   userAvatar = computed<string | undefined>(() => this.store.userProfile()?.avatar_url);
 
-  private readonly angleIds = ['DIM_MKT', 'DIM_EXP', 'DIM_OPS', 'DIM_PRICING', 'DIM_LEGAL', 'mindset'];
-  isAngleView = computed(() => this.angleIds.includes(this.activeView().id));
+  // private readonly angleIds = ['DIM_MKT', 'DIM_EXP', 'DIM_OPS', 'DIM_PRICING', 'DIM_LEGAL', 'mindset'];
+  isAngleView = computed(() => this.activeView().id.startsWith('PH_'));
 
   selectedPropertyDetails = computed(() => {
     const propName = this.activeView().propertyName;
@@ -147,9 +147,9 @@ export class SaaSAppComponent implements OnInit {
       targetPropertyName = this.activeView().propertyName;
     }
 
-    // 2. If still no property and we are going to an Angle view, try to pick the first one
+    // 2. If still no property and we are going to a Phase view, try to pick the first one
     // This ensures components like 'Marketing Description' have a context to load data.
-    if (!targetPropertyName && this.angleIds.includes(view.id)) {
+    if (!targetPropertyName && view.id.startsWith('PH_')) {
       const props = this.properties();
       if (props.length > 0) {
         targetPropertyName = props[0].name;
@@ -157,7 +157,7 @@ export class SaaSAppComponent implements OnInit {
     }
 
     // 3. Update the view
-    if (targetPropertyName && this.angleIds.includes(view.id)) {
+    if (targetPropertyName && view.id.startsWith('PH_')) {
       this.activeView.set({ ...view, propertyName: targetPropertyName });
     } else {
       this.activeView.set(view);

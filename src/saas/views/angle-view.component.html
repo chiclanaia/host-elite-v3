@@ -1,198 +1,193 @@
-@if(dimensionDetails(); as details) {
-<div class="space-y-8 relative">
-    <!-- DEBUG: ViewID: {{view().id}}, ActiveTool: {{activeToolId()}} -->
+<!-- Notification -->
+@if (saveMessage()) {
+<div
+    class="fixed top-4 right-4 bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-2xl z-50 animate-bounce border border-white/20 backdrop-blur-md font-bold">
+    {{ saveMessage() }}
+</div>
+}
 
-    <!-- Notification -->
-    @if (saveMessage()) {
-    <div
-        class="fixed top-4 right-4 bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-2xl z-50 animate-bounce border border-white/20 backdrop-blur-md font-bold">
-        {{ saveMessage() }}
-    </div>
-    }
-
-    <!-- Onboarding Modal (Moved to Root) -->
-    @if (isModalOpen() && onboardingForm(); as form) {
-    <div class="fixed inset-0 bg-black/70 z-[60] flex items-center justify-center p-4 backdrop-blur-md"
-        (click)="closeOnboarding()">
-        <div class="bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col border border-white/20"
-            (click)="$event.stopPropagation()">
-            <div class="p-6 border-b border-white/10 flex justify-between items-center flex-shrink-0">
-                <h2 class="text-xl font-bold text-white">{{ 'COMMON.Evaluation' | translate }} : {{ details.title |
-                    translate }}</h2>
-                <button (click)="closeOnboarding()"
-                    class="text-3xl font-light text-slate-400 hover:text-white transition-colors">&times;</button>
-            </div>
-            <div class="p-8 flex-1 overflow-y-auto">
-                <form [formGroup]="form">
-                    <div class="space-y-5">
-                        @for(question of currentQuestions(); track question.id) {
-                        <div>
-                            <div class="relative flex items-start">
-                                <div class="flex h-6 items-center">
-                                    <input [id]="question.id" [formControlName]="question.id" type="checkbox"
-                                        title="Question"
-                                        class="h-5 w-5 rounded border-slate-500 bg-white/10 text-blue-500 focus:ring-blue-500 cursor-pointer">
-                                </div>
-                                <div class="ml-3 text-sm leading-6">
-                                    <label [for]="question.id"
-                                        class="font-medium text-slate-200 cursor-pointer hover:text-white transition-colors">{{
-                                        question.question_key | translate }}</label>
-                                </div>
+<!-- Onboarding Modal -->
+@if (isModalOpen() && onboardingForm(); as form) {
+<div class="fixed inset-0 bg-black/70 z-[60] flex items-center justify-center p-4 backdrop-blur-md"
+    (click)="closeOnboarding()">
+    <div class="bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col border border-white/20"
+        (click)="$event.stopPropagation()">
+        <div class="p-6 border-b border-white/10 flex justify-between items-center flex-shrink-0">
+            <h2 class="text-xl font-bold text-white">{{ 'COMMON.Evaluation' | translate }}</h2>
+            <button (click)="closeOnboarding()"
+                class="text-3xl font-light text-slate-400 hover:text-white transition-colors">&times;</button>
+        </div>
+        <div class="p-8 flex-1 overflow-y-auto">
+            <form [formGroup]="form">
+                <div class="space-y-5">
+                    @for(question of currentQuestions(); track question.id) {
+                    <div>
+                        <div class="relative flex items-start">
+                            <div class="flex h-6 items-center">
+                                <input [id]="question.id" [formControlName]="question.id" type="checkbox"
+                                    title="Question"
+                                    class="h-5 w-5 rounded border-slate-500 bg-white/10 text-blue-500 focus:ring-blue-500 cursor-pointer">
                             </div>
-                            @if (question.sub_question_config && form.get(question.id)?.value) {
-                            <div class="pl-8 mt-3 animate-fade-in">
-                                <label [for]="question.sub_question_config.id"
-                                    class="block text-xs font-bold text-indigo-300 mb-1 uppercase tracking-wide">{{
-                                    question.sub_question_config.label_key | translate }}</label>
-                                <input [type]="question.sub_question_config.type" [id]="question.sub_question_config.id"
-                                    [formControlName]="question.sub_question_config.id" placeholder="Details"
-                                    title="Details"
-                                    class="block w-full text-sm rounded-lg border-white/20 bg-black/30 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-indigo-500 p-2.5 shadow-inner">
+                            <div class="ml-3 text-sm leading-6">
+                                <label [for]="question.id"
+                                    class="font-medium text-slate-200 cursor-pointer hover:text-white transition-colors">{{
+                                    question.question_key | translate }}</label>
                             </div>
-                            }
+                        </div>
+                        @if (question.sub_question_config && form.get(question.id)?.value) {
+                        <div class="pl-8 mt-3 animate-fade-in">
+                            <label [for]="question.sub_question_config.id"
+                                class="block text-xs font-bold text-indigo-300 mb-1 uppercase tracking-wide">{{
+                                question.sub_question_config.label_key | translate }}</label>
+                            <input [type]="question.sub_question_config.type" [id]="question.sub_question_config.id"
+                                [formControlName]="question.sub_question_config.id" placeholder="Details"
+                                title="Details"
+                                class="block w-full text-sm rounded-lg border-white/20 bg-black/30 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-indigo-500 p-2.5 shadow-inner">
                         </div>
                         }
                     </div>
-                </form>
-            </div>
-            <div class="p-6 border-t border-white/10 flex justify-end space-x-4 flex-shrink-0 bg-black/20">
-                <button (click)="closeOnboarding()"
-                    class="px-6 py-2.5 text-sm font-bold text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent">{{
-                    'COMMON.Cancel' | translate }}</button>
-                <button (click)="saveOnboarding()" class="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-500 shadow-lg
-                shadow-blue-900/50 transition-all border border-blue-400/50">{{ 'COMMON.SaveProgress' | translate
-                    }}</button>
-            </div>
+                    }
+                </div>
+            </form>
+        </div>
+        <div class="p-6 border-t border-white/10 flex justify-end space-x-4 flex-shrink-0 bg-black/20">
+            <button (click)="closeOnboarding()"
+                class="px-6 py-2.5 text-sm font-bold text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent">{{
+                'COMMON.Cancel' | translate }}</button>
+            <button (click)="saveOnboarding()" class="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-500 shadow-lg
+            shadow-blue-900/50 transition-all border border-blue-400/50">{{ 'COMMON.SaveProgress' | translate
+                }}</button>
         </div>
     </div>
-    }
+</div>
+}
 
-    @if (!activeToolId()) {
-    <!-- STANDARD VIEW: List of Tools -->
-    <div>
-        <!-- Titre Blanc Eclatant -->
-        <div class="flex items-center justify-between">
-            <h1 class="text-4xl font-extrabold text-white drop-shadow-lg tracking-tight">{{ details.title | translate }}
-            </h1>
-            <!-- Maturity Badge -->
-            @if(maturityInfo(); as info) {
-            <div class="flex items-center space-x-2 px-4 py-2 rounded-full border border-white/20 backdrop-blur-md shadow-lg"
-                [class.bg-rose-500/20]="info.level === 'Low'" [class.bg-amber-500/20]="info.level === 'Medium'"
-                [class.bg-emerald-500/20]="info.level === 'High'">
-                <div class="w-2.5 h-2.5 rounded-full animate-pulse" [class]="info.color"></div>
-                <span class="text-xs font-bold text-white uppercase tracking-widest">{{ 'MATURITY.' + info.level |
-                    translate }}</span>
-            </div>
-            }
+<!-- Main View Content -->
+@if (!activeToolId()) {
+<!-- Phase View: List of Dimensions and Features -->
+<div class="space-y-16 pb-20 animate-fade-in-up">
+
+    <!-- Header with Phase Title and Description (Optional, taken from first dimension or store) -->
+    <!-- Ideally store.phases() could give us the phase description but we iterate on dimensions here. -->
+
+    @for (dim of phaseDimensions(); track dim.id) {
+    <section class="relative">
+        <!-- Decoration Line -->
+        <div class="absolute -left-8 top-6 bottom-6 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent">
         </div>
-        <!-- Description sur fond ultra-léger -->
-        <p
-            class="mt-3 text-slate-100 font-medium bg-white/10 inline-block px-4 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-sm leading-relaxed">
-            {{ details.description | translate }}
-        </p>
-    </div>
 
-    <!-- Onboarding Button Section (Ultra-Clear Glass) -->
-    <div
-        class="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl p-8 shadow-2xl transition-all duration-300 hover:bg-white/15">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-                <h3 class="text-xl font-bold text-white drop-shadow-md">{{ 'DIMENSION.CategoryOnboarding' | translate }}
-                </h3>
-                <p class="text-slate-200 mt-2 max-w-2xl font-light">{{ 'DIMENSION.AuditDescription' | translate }}</p>
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <h2 class="text-3xl font-extrabold text-white tracking-tight drop-shadow-md">
+                    {{ dim.name | translate }}
+                </h2>
+                <span class="px-3 py-1 bg-white/5 rounded-full text-xs font-mono text-slate-400 border border-white/5">
+                    {{ dim.features.length }} Features
+                </span>
             </div>
-            <div class="flex-shrink-0">
-                <button (click)="openOnboarding()" [title]="'DIMENSION.LaunchAudit' | translate"
-                    class="px-8 py-3 font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-900/30 transition-all hover:scale-105 border border-white/10">
-                    {{ 'DIMENSION.LaunchAudit' | translate }}
-                </button>
-            </div>
+
+            <!-- Legacy Audit Button -->
+            <button (click)="openLegacyAudit(dim.id)"
+                class="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold text-indigo-200 bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 hover:text-white transition-all shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span>Legacy Audit</span>
+            </button>
         </div>
-    </div>
 
-    <!-- Tools List -->
-    <h2 class="text-2xl font-bold text-white pt-4 drop-shadow-lg flex items-center">
-        <span class="bg-white/20 p-1.5 rounded-lg mr-3 backdrop-blur-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-        </span>
-        {{ 'DIMENSION.AssociatedTools' | translate }}
-    </h2>
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @for (feature of dim.features; track feature.id) {
+            <div (click)="isFeatureLocked(feature) ? null : openFeature(feature)"
+                class="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 transition-all duration-300 hover:bg-white/10 hover:shadow-2xl hover:-translate-y-1 cursor-pointer overflow-hidden"
+                [class.opacity-70]="isFeatureLocked(feature)" [class.cursor-not-allowed]="isFeatureLocked(feature)">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for(tool of details.tools; track tool.id) {
-        <div class="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl p-6 flex flex-col h-full transition-all duration-300 ease-out shadow-lg hover:shadow-2xl hover:bg-white/15 hover:-translate-y-1 group relative overflow-hidden"
-            [class.opacity-80]="isToolLocked(tool.requiredPlan)">
+                <!-- Hover Glow -->
+                <div
+                    class="absolute -inset-1 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                </div>
 
-            <!-- Glow Effect on Hover -->
-            <div
-                class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all duration-500">
-            </div>
-
-            <div class="flex-grow relative z-10">
-                <div class="flex justify-between items-start mb-3">
-                    <h3
-                        class="text-xl font-bold text-white drop-shadow-sm group-hover:text-[#D4AF37] transition-colors">
-                        {{ tool.name | translate }}
-                    </h3>
-                    <div class="flex items-center space-x-2">
-                        @if(isToolLocked(tool.requiredPlan)) {
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                            class="w-3.5 h-3.5 text-slate-500">
-                            <path fill-rule="evenodd"
-                                d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
-                                clip-rule="evenodd" />
+                <!-- Header -->
+                <div class="flex justify-between items-start mb-4 relative z-10">
+                    <div class="bg-white/10 p-2 rounded-lg text-white">
+                        <!-- Generic Icon based on Dimension? -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
                         </svg>
+                    </div>
+
+                    <!-- Lock / Tier Badge -->
+                    <div class="flex flex-col items-end gap-1">
+                        @if (isFeatureLocked(feature)) {
+                        <span class="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Locked
+                        </span>
                         }
-                        @if(tool.requiredPlan) {
-                        <span class="w-2.5 h-2.5 rounded-full shadow-sm"
-                            [class]="getTierIndicatorClass(tool.requiredPlan)" [title]="tool.requiredPlan"></span>
+                        @if (feature.required_tier && feature.required_tier !== 'TIER_0' && feature.required_tier !==
+                        'Freemium') {
+                        <span class="w-2.5 h-2.5 rounded-full" [class]="getTierClass(feature.required_tier)"
+                            [title]="feature.required_tier"></span>
                         }
                     </div>
                 </div>
-                <p class="text-slate-200 text-sm leading-relaxed font-light">
-                    {{ tool.description | translate }}
-                </p>
-            </div>
 
-            <button (click)="isToolLocked(tool.requiredPlan) ? null : openTool(tool.id)"
-                [disabled]="isToolLocked(tool.requiredPlan)"
-                [title]="(isToolLocked(tool.requiredPlan) ? 'COMMON.Unlock' : 'COMMON.OpenTool') | translate"
-                class="relative z-10 w-full mt-6 py-3 px-4 rounded-xl font-bold text-center transition-all text-sm flex items-center justify-center space-x-2 border shadow-lg"
-                [class]="isToolLocked(tool.requiredPlan) 
-                                ? 'bg-white/5 text-slate-400 border-white/10 cursor-not-allowed hover:bg-white/5' 
-                                : 'bg-white/20 text-white border-white/30 hover:bg-white hover:text-slate-900 hover:border-white'">
-                @if (isToolLocked(tool.requiredPlan)) {
-                <span>{{ 'COMMON.Unlock' | translate }}</span>
-                } @else {
-                <span>{{ 'COMMON.OpenTool' | translate }}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"
-                    aria-hidden="true">
-                    <path fill-rule="evenodd"
-                        d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-                        clip-rule="evenodd" />
-                </svg>
-                }
-            </button>
+                <!-- Content -->
+                <div class="relative z-10">
+                    <h3
+                        class="text-lg font-bold text-white mb-2 group-hover:text-[#D4AF37] transition-colors line-clamp-1">
+                        {{ feature.name }}
+                    </h3>
+                    <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-4 min-h-[3em]">
+                        {{ feature.description || 'No description available.' }}
+                    </p>
+
+                    <!-- Action Text -->
+                    <div class="flex items-center text-xs font-bold uppercase tracking-wider transition-colors"
+                        [class]="isFeatureLocked(feature) ? 'text-slate-600' : 'text-[#D4AF37] group-hover:text-white'">
+                        @if (isFeatureLocked(feature)) {
+                        <span>Upgrade Required</span>
+                        } @else {
+                        <span>Open Tool &rarr;</span>
+                        }
+                    </div>
+                </div>
+
+            </div>
+            }
         </div>
-        }
+    </section>
+    }
+
+    @if (phaseDimensions().length === 0) {
+    <div class="text-center py-20 text-slate-500">
+        <p>Aucune fonctionnalité disponible pour cette phase.</p>
     </div>
-    } @else if (activeToolId() === 'microsite') {
-    <!-- MICROSITE BUILDER (Isolated Feature) -->
+    }
+</div>
+
+} @else {
+<!-- Active Tool View (Preserved) -->
+<div class="animate-fade-in-up">
+    @if (activeToolId() === 'microsite') {
     <app-microsite-container [propertyName]="view().propertyName!" (close)="closeTool()">
     </app-microsite-container>
     } @else if (activeToolId() === 'ai-prompts') {
     <app-ai-prompts [propertyName]="view().propertyName!" (close)="closeTool()"></app-ai-prompts>
-    <!-- <div class="p-4 text-white">Debugging: Ai Prompts Disabled</div> -->
     } @else if (activeToolId() === 'visibility-audit') {
     <app-visibility-audit [propertyName]="view().propertyName!" (close)="closeTool()"></app-visibility-audit>
     } @else if (activeToolId() === 'booklet') {
     <app-booklet-tool [propertyName]="view().propertyName!"></app-booklet-tool>
-
-
     } @else if (activeToolId() === 'ai-assistant') {
     <app-ai-message-assistant [propertyName]="view().propertyName!" (close)="closeTool()"></app-ai-message-assistant>
     } @else if (activeToolId() === 'checklists') {
@@ -225,9 +220,11 @@
     <app-property-audit [propertyName]="view().propertyName!" [propertyId]="currentPropertyId()!" (close)="closeTool()">
     </app-property-audit>
     } @else {
-    <p class="text-white/80 bg-black/20 p-4 rounded-xl backdrop-blur-md inline-block">{{ 'COMMON.SectionNotFound' |
-        translate }}: '{{
-        activeToolId() }}' ({{ activeToolId()?.length }})</p>
+    <div class="p-8 text-center text-white/50 bg-white/5 rounded-2xl border border-white/10">
+        <p class="text-xl font-bold mb-2">Composant non trouvé pour cet ID</p>
+        <p class="font-mono text-sm">{{ activeToolId() }}</p>
+        <button (click)="closeTool()" class="mt-4 px-6 py-2 bg-slate-700 rounded-lg hover:bg-slate-600">Retour</button>
+    </div>
     }
 </div>
 }
@@ -247,43 +244,5 @@
 
     .animate-fade-in-up {
         animation: fadeInUp 0.8s ease-out forwards;
-    }
-
-    .toggle-checkbox:checked {
-        right: 0;
-        border-color: #3b82f6;
-    }
-
-    .toggle-checkbox:checked+.toggle-label {
-        background-color: #3b82f6;
-    }
-
-    .toggle-checkbox {
-        right: auto;
-        left: 0;
-        transition: all 0.3s;
-    }
-
-    .toggle-checkbox:checked {
-        left: auto;
-        right: 0;
-    }
-
-    /* Scrollbar custom for the palette */
-    aside::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    aside::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.1);
-    }
-
-    aside::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 3px;
-    }
-
-    aside::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.4);
     }
 </style>

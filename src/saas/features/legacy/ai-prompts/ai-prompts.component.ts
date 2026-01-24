@@ -1,12 +1,12 @@
 import { Component, computed, inject, input, signal, effect, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { GeminiService } from '../../../services/gemini.service';
-import { TranslationService } from '../../../services/translation.service';
-import { HostRepository } from '../../../services/host-repository.service';
-import { SessionStore } from '../../../state/session.store';
-import { WelcomeBookletService } from '../../views/welcome-booklet/welcome-booklet.service';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { GeminiService } from '../../../../services/gemini.service';
+import { TranslationService } from '../../../../services/translation.service';
+import { HostRepository } from '../../../../services/host-repository.service';
+import { SessionStore } from '../../../../state/session.store';
+import { WelcomeBookletService } from '../../../views/welcome-booklet/welcome-booklet.service';
 
 @Component({
     selector: 'app-ai-prompts',

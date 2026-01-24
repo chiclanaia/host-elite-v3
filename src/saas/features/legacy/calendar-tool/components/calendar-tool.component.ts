@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CalendarSidebarComponent } from './calendar-sidebar.component';
 import { CalendarViewComponent } from './calendar-view.component';
 import { CalendarService } from '../calendar.service';
-import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { TranslatePipe } from '../../../../../pipes/translate.pipe';
 import { effect } from '@angular/core';
 
 @Component({

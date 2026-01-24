@@ -1,9 +1,9 @@
 import { Component, computed, EventEmitter, Output, signal, input, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { GeminiService } from '../../../services/gemini.service';
-import { TranslationService } from '../../../services/translation.service';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { GeminiService } from '../../../../services/gemini.service';
+import { TranslationService } from '../../../../services/translation.service';
 
 
 @Component({

@@ -1,11 +1,11 @@
 import { Component, computed, effect, inject, signal, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { TranslationService } from '../../../services/translation.service';
-import { SessionStore } from '../../../state/session.store';
-import { FinancialCalculator } from '../../../services/financial-engine/engine';
-import { FinancialInput, FinancialOutput, TierLevel, YearlyProjection } from '../../../services/financial-engine/types';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { TranslationService } from '../../../../services/translation.service';
+import { SessionStore } from '../../../../state/session.store';
+import { FinancialCalculator } from '../../../../services/financial-engine/engine';
+import { FinancialInput, FinancialOutput, TierLevel, YearlyProjection } from '../../../../services/financial-engine/types';
 import { Chart, registerables, ChartConfiguration } from 'chart.js';
 
 // Chart.register(...registerables); // Moved to constructor

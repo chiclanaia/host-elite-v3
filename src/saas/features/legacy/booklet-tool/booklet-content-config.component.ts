@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { WelcomeBookletService } from '../../views/welcome-booklet/welcome-booklet.service';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { WelcomeBookletService } from '../../../views/welcome-booklet/welcome-booklet.service';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'app-booklet-config-panel',

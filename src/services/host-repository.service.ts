@@ -26,6 +26,52 @@ export class HostRepository {
         return data || [];
     }
 
+    async getPhases(): Promise<any[]> {
+        if (!this.supabaseService.isConfigured) return [];
+        const { data, error } = await this.supabase
+            .from('phases')
+            // Order by sort_order
+            .select('*')
+            .order('sort_order', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching phases:', error);
+            return [];
+        }
+        return data || [];
+    }
+
+    async getFeaturesHierarchy(): Promise<any[]> {
+        if (!this.supabaseService.isConfigured) return [];
+
+        // Join features with dimensions and phases
+        const { data, error } = await this.supabase
+            .from('features')
+            .select(`
+                *,
+                app_dimensions (
+                    dimension_id,
+                    name
+                ),
+                phases (
+                    id,
+                    name
+                ),
+                feature_configurations (
+                    tier_id,
+                    config_value
+                )
+            `);
+
+        if (error) {
+            console.error('Error fetching features hierarchy:', error);
+            return [];
+        }
+
+        // Map valid data to flat structure if needed, or keep relational
+        return data || [];
+    }
+
     // Static sub-views configuration
     // Static sub-views configuration reorganized by Phases
     private readonly defaultSubViews: View[] = [

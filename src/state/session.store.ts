@@ -1,6 +1,6 @@
 
 import { Injectable, computed, signal, inject } from '@angular/core';
-import { ContextData, ReportData, Scores, UserProfile, AppPlan, PlanConfig, AppTier } from '../types';
+import { ContextData, ReportData, Scores, UserProfile, AppPlan, PlanConfig, AppTier, AppPhase, Feature } from '../types';
 import { GeminiService } from '../services/gemini.service';
 import { HostRepository } from '../services/host-repository.service';
 import { SupabaseService } from '../services/supabase.service';
@@ -39,6 +39,49 @@ export class SessionStore {
     readonly showLanguageSwitcher = signal<boolean>(false);
     readonly allPlans = signal<PlanConfig[]>([]);
     readonly appTiers = signal<AppTier[]>([]);
+
+
+
+    // UI Structure Signals (Phases & Features)
+    readonly phases = signal<AppPhase[]>([]);
+    readonly featuresHierarchy = signal<any[]>([]);
+
+    // Computed Features by Phase
+    readonly featuresByPhase = computed(() => {
+        const rawFeatures = this.featuresHierarchy();
+        if (!rawFeatures.length) return {};
+
+        // Group features by phase_id
+        const grouped: Record<string, Feature[]> = {};
+        rawFeatures.forEach(row => {
+            const phaseId = row.phase_id;
+            if (!grouped[phaseId]) grouped[phaseId] = [];
+
+            // Map flat row to Feature type if needed, or cast
+            const feature: Feature = {
+                id: row.id,
+                name: row.name,
+                description: row.description,
+                dimension_id: row.dimension_id,
+                phase_id: row.phase_id,
+                parent_feature_id: row.parent_feature_id,
+                // Join data might be nested or flat depending on Supabase response
+                dimension_name: row.app_dimensions?.name,
+                phase_name: row.phases?.name,
+                required_tier: 'TIER_0' // Default, should calculate from config mapping
+            };
+
+            // Calculate effective tier for "Global" context for simplicity in UI lock check
+            // Ideally we check per user country but for now we look for a config match
+            if (row.feature_configurations && row.feature_configurations.length > 0) {
+                // Simple logic: grab the first config's tier for now or lowest
+                feature.required_tier = row.feature_configurations[0].tier_id;
+            }
+
+            grouped[phaseId].push(feature);
+        });
+        return grouped;
+    });
 
     // Computed
     readonly stepIndex = computed(() => {
@@ -135,6 +178,14 @@ export class SessionStore {
 
             const tiers = await this.repository.getTiers();
             this.appTiers.set(tiers);
+
+            // Load Phases and Features Structure
+            const phases = await this.repository.getPhases();
+            this.phases.set(phases);
+
+            const features = await this.repository.getFeaturesHierarchy();
+            this.featuresHierarchy.set(features);
+
         } catch (e) {
             console.warn("Failed to load global config:", e);
         }

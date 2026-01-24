@@ -2,7 +2,7 @@ import { Component, inject, input, output, signal, OnInit, computed } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CalendarService, CalendarSource } from '../calendar.service';
-import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { TranslatePipe } from '../../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'app-calendar-sidebar',

@@ -1,9 +1,9 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { EventsDiscoveryService, LocalEvent } from '../../../services/events-discovery.service';
-import { GeminiService } from '../../../services/gemini.service';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { EventsDiscoveryService, LocalEvent } from '../../../../services/events-discovery.service';
+import { GeminiService } from '../../../../services/gemini.service';
 import { CalendarService } from '../calendar-tool/calendar.service';
 
 @Component({

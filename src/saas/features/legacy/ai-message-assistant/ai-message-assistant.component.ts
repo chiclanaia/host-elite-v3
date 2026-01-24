@@ -1,9 +1,10 @@
 import { Component, input, output, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GeminiService } from '../../../services/gemini.service';
-import { HostRepository } from '../../../services/host-repository.service';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { GeminiService } from '../../../../services/gemini.service';
+import { HostRepository } from '../../../../services/host-repository.service';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { TranslationService } from '../../../../services/translation.service';
 
 interface FaqItem {
     question: string;

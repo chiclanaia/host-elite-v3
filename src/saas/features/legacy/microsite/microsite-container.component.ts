@@ -2,14 +2,15 @@
 import { Component, computed, inject, input, signal, effect, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { TranslationService } from '../../../services/translation.service';
-import { HostRepository } from '../../../services/host-repository.service';
-import { GeminiService } from '../../../services/gemini.service';
-import { SessionStore } from '../../../state/session.store';
-import { WelcomeBookletService } from '../../views/welcome-booklet/welcome-booklet.service';
-import { MicrositeRendererComponent } from '../../components/microsite-renderer/microsite-renderer.component';
-import { MicrositeConfig, SectionDef, BuilderPhoto, resolveMicrositeConfig } from '../../views/welcome-booklet/booklet-definitions';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { TranslationService } from '../../../../services/translation.service';
+import { HostRepository } from '../../../../services/host-repository.service';
+import { GeminiService } from '../../../../services/gemini.service';
+import { SessionStore } from '../../../../state/session.store';
+import { WelcomeBookletService } from '../../../views/welcome-booklet/welcome-booklet.service';
+import { MicrositeRendererComponent } from '../../../components/microsite-renderer/microsite-renderer.component';
+import { MicrositeConfig, SectionDef, BuilderPhoto, resolveMicrositeConfig } from '../../../views/welcome-booklet/booklet-definitions';
+
 
 @Component({
     selector: 'app-microsite-container',

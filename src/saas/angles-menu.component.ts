@@ -2,103 +2,86 @@
 import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { View } from '../types';
+import { View, AppPhase } from '../types';
 import { SessionStore } from '../state/session.store';
-import { TranslationService } from '../services/translation.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
 
 @Component({
-  selector: 'saas-angles-menu',
+  selector: 'saas-phases-menu',
   standalone: true,
   imports: [CommonModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- Floating Glass Panel Container (Soft Rounded Rectangle) -->
     <nav class="inline-flex items-center p-1.5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl ring-1 ring-black/5">
-      @for (view of angleViews; track view.id) {
-        <a (click)="isLocked(view) ? null : changeView(view)"
-           class="group relative flex flex-col items-center justify-center px-5 py-2 rounded-xl cursor-pointer transition-all duration-300 min-w-[90px]"
-           [class]="activeView().id === view.id 
+      @for (phase of phases(); track phase.id) {
+        <a (click)="selectPhase(phase)"
+           class="group relative flex flex-col items-center justify-center px-4 py-2 rounded-xl cursor-pointer transition-all duration-300 min-w-[80px]"
+           [class]="activePhaseId() === phase.id
              ? 'bg-white text-slate-900 shadow-md transform scale-105' 
-             : 'text-slate-300 hover:bg-white/10 hover:text-white'"
-           [class.opacity-50]="isLocked(view)"
-           [class.cursor-not-allowed]="isLocked(view)">
+             : 'text-slate-300 hover:bg-white/10 hover:text-white'">
            
-           <!-- Icon -->
+           <!-- Icon (Generic for now based on sort order or ID) -->
            <span class="w-5 h-5 mb-1 transition-transform duration-300" 
-                 [class.group-hover:-translate-y-0.5]="activeView().id !== view.id"
-                 [innerHTML]="getIcon(view.icon)">
+                 [class.group-hover:-translate-y-0.5]="activePhaseId() !== phase.id"
+                 [innerHTML]="getPhaseIcon(phase)">
            </span>
            
            <!-- Title -->
-           <span class="text-[10px] font-bold uppercase tracking-wider leading-none">
-             {{ view.title | translate }}
+           <span class="text-[10px] font-bold uppercase tracking-wider leading-none text-center">
+             {{ phase.name }}
            </span>
-           
-           <!-- Badge (Positioned absolute top right of the item) -->
-           @if (view.featureId) {
-              @let badge = getBadge(view.featureId);
-              @if (badge) {
-                  <span class="absolute top-1 right-2 w-2 h-2 rounded-full border border-white/20" 
-                        [class]="badge.colorClass.includes('amber') ? 'bg-amber-400' : (badge.colorClass.includes('slate') ? 'bg-slate-400' : 'bg-yellow-400')">
-                  </span>
-              }
-           }
-
-           <!-- Lock Icon Overlay -->
-           @if (isLocked(view)) {
-              <div class="absolute inset-0 flex items-center justify-center bg-black/10 rounded-xl backdrop-blur-[1px]">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-white drop-shadow-md"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
-              </div>
-           }
         </a>
       }
     </nav>
   `
 })
-export class AnglesMenuComponent {
+export class PhasesMenuComponent {
   activeView = input.required<View>();
   viewChange = output<View>();
 
   private store = inject(SessionStore);
   private sanitizer = inject(DomSanitizer);
 
-  // Define SVGs for icons
-  private readonly icons: Record<string, string> = {
-    DIM_MKT: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15ZM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM15.657 5.404a.75.75 0 1 0-1.06-1.06l-1.061 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM6.464 14.596a.75.75 0 1 0-1.06-1.06l-1.06 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM18 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 18 10ZM5 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 5 10ZM14.596 15.657a.75.75 0 0 0 1.06-1.06l-1.06-1.061a.75.75 0 1 0-1.06 1.06l1.06 1.06ZM5.404 6.464a.75.75 0 0 0 1.06-1.06l-1.06-1.06a.75.75 0 1 0-1.06 1.06l1.06 1.06Z"/></svg>`, // Sun/Burst for Visibility
-    DIM_EXP: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd" /></svg>`, // Star
-    DIM_OPS: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.34 1.804A1 1 0 0 1 9.32 1h1.36a1 1 0 0 1 .98.804l.295 1.473c.497.144.971.342 1.416.587l1.25-.834a1 1 0 0 1 1.262.125l.962.962a1 1 0 0 1 .125 1.262l-.834 1.25c.245.445.443.919.587 1.416l1.473.294a1 1 0 0 1 .804.98v1.361a1 1 0 0 1-.804.98l-1.473.295a6.995 6.995 0 0 1-.587 1.416l.834 1.25a1 1 0 0 1-.125 1.262l-.962.962a1 1 0 0 1-1.262.125l-1.25-.834a6.953 6.953 0 0 1-1.416.587l-.294 1.473a1 1 0 0 1-.98.804H9.32a1 1 0 0 1-.98-.804l-.295-1.473a6.995 6.995 0 0 1-1.416-.587l-1.25.834a1 1 0 0 1-1.262-.125l-.962-.962a1 1 0 0 1-.125-1.262l.834-1.25a6.953 6.953 0 0 1-.587-1.416l-1.473-.294A1 1 0 0 1 1 10.68V9.32a1 1 0 0 1 .804-.98l1.473-.295c.144-.497.342-.971.587-1.416l-.834-1.25a1 1 0 0 1 .125-1.262l.962-.962A1 1 0 0 1 5.38 3.03l1.25.834a6.957 6.957 0 0 1 1.416-.587l.294-1.473ZM13 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd" /></svg>`, // Gear
-    DIM_PRICING: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a.75.75 0 0 1 .75.75v12.59l1.95-2.1a.75.75 0 1 1 1.1 1.02l-3.25 3.5a.75.75 0 0 1-1.1 0l-3.25-3.5a.75.75 0 1 1 1.1-1.02l1.95 2.1V2.75A.75.75 0 0 1 10 2Z" clip-rule="evenodd" /></svg>`, // Arrow Down/Trend (Simplified) or Tag. Using simple arrow for "Optimization"
-    DIM_LEGAL: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2c-1.716 0-3.408.106-5.07.31C3.806 2.45 3 3.414 3 4.517V17.25a.75.75 0 0 0 1.075.676L10 15.082l5.925 2.844A.75.75 0 0 0 17 17.25V4.517c0-1.103-.806-2.068-1.93-2.207A41.403 41.403 0 0 0 10 2Z" clip-rule="evenodd" /></svg>`, // Bookmark/Law
-    mindset: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 0 0-6 6c0 1.887.454 3.665 1.257 5.234a.75.75 0 0 1 .044.65 2.625 2.625 0 0 0 .39 2.545.75.75 0 0 0 1.048.132C8.67 15.377 10.235 14.5 12 14.5s3.33.877 5.26 2.061a.75.75 0 0 0 1.049-.132 2.625 2.625 0 0 0 .39-2.545.75.75 0 0 1 .044-.65C19.546 11.665 20 9.887 20 8a6 6 0 0 0-6-6Zm0 9a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" /></svg>` // Lightbulb / Brain approx
-  };
+  phases = this.store.phases;
 
-  angleViews: View[] = [
-    { id: 'DIM_MKT', title: 'NAV.marketing', icon: 'DIM_MKT', featureId: 'microsite' },
-    { id: 'DIM_EXP', title: 'NAV.experience', icon: 'DIM_EXP', featureId: 'booklet' },
-    { id: 'DIM_OPS', title: 'NAV.operations', icon: 'DIM_OPS', featureId: 'checklists' },
-    { id: 'DIM_PRICING', title: 'NAV.pricing', icon: 'DIM_PRICING', featureId: 'ical-sync' },
-    { id: 'DIM_LEGAL', title: 'NAV.legal', icon: 'DIM_LEGAL', featureId: 'analytics' },
-    { id: 'mindset', title: 'NAV.mindset', icon: 'mindset', featureId: 'coaching' },
-  ];
+  activePhaseId() {
+    // Logic to determine active phase from active view
+    // If the view has a 'phase' property, match it.
+    // Or if the view ID matches a phase ID structure.
+    // For now, let's rely on the View having a 'phaseId' or similar, 
+    // but 'View' type uses 'phase' property which is lowercase enum.
+    // We might need to map it.
 
-  changeView(view: View): void {
+    const v = this.activeView();
+    // Only highlight if we are in a phase view (not dashboard/settings)
+    if (v.id.startsWith('PH_')) return v.id;
+
+    return null;
+  }
+
+  selectPhase(phase: AppPhase): void {
+    // Navigate to the phase view
+    // We construct a View object representing this phase
+    const view: View = {
+      id: phase.id,
+      title: phase.name,
+      icon: 'layers', // generic
+      propertyName: this.activeView().propertyName // Keep context
+    };
     this.viewChange.emit(view);
   }
 
-  getBadge(featureId: string) {
-    return this.store.getFeatureBadge(featureId);
-  }
+  getPhaseIcon(phase: AppPhase): SafeHtml {
+    // Simple icon mapping based on sort_order or ID content
+    let icon = '';
+    if (phase.id.includes('INVEST')) icon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" /></svg>`; // Bank
+    else if (phase.id.includes('DESIGN')) icon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.635l3.61 3.61a.75.75 0 0 1 .021 1.06l-2.135 2.136a.5.5 0 0 1-.707 0l-1.935-1.935a.75.75 0 0 1-.007-1.07Zm-2.796-7.43a15.995 15.995 0 0 1 4.635-4.764l-3.61-3.61a.75.75 0 0 0-1.06-.02l-2.136 2.135a.5.5 0 0 0 0 .707l1.935 1.935a.75.75 0 0 0 1.07.007Z" /></svg>`; // Brush
+    else if (phase.id.includes('LAUNCH')) icon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" /></svg>`; // Rocket
+    else if (phase.id.includes('OPS')) icon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 0 1 0 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>`; // Gear
+    else if (phase.id.includes('ANALYZE')) icon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>`; // Chart
+    else if (phase.id.includes('SCALE')) icon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" /></svg>`; // Crown/Structure
 
-  isLocked(view: View): boolean {
-    if (view.featureId) {
-      return !this.store.hasFeature(view.featureId);
-    }
-    return false;
-  }
-
-  getIcon(iconName: string): SafeHtml {
-    const svg = this.icons[iconName] || this.icons['DIM_MKT']; // Fallback
-    return this.sanitizer.bypassSecurityTrustHtml(svg);
+    return this.sanitizer.bypassSecurityTrustHtml(icon || '<span class="text-sm">?</span>');
   }
 }

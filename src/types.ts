@@ -77,3 +77,32 @@ export interface Property {
   name: string;
   subViews: View[];
 }
+
+// --- New Features System Types ---
+
+export interface AppPhase {
+  id: string;
+  name: string;
+  sort_order: number;
+  description?: string;
+}
+
+export interface AppDimension {
+  dimension_id: string;
+  name: string;
+  description?: string;
+}
+
+export interface Feature {
+  id: string;
+  parent_feature_id?: string;
+  dimension_id: string;
+  phase_id: string;
+  name: string;
+  description?: string;
+  // Joined fields
+  dimension_name?: string;
+  phase_name?: string;
+  config?: any; // The configuration value specific to the user's tier
+  required_tier?: string; // The tier required for this feature (derived from configs)
+}

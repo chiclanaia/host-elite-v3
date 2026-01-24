@@ -7,11 +7,12 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { CalendarService, CalendarEvent } from '../calendar.service';
+import { TranslatePipe } from '../../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'app-calendar-view',
     standalone: true,
-    imports: [CommonModule, FullCalendarModule, FormsModule],
+    imports: [CommonModule, FullCalendarModule, FormsModule, TranslatePipe],
     template: `
     <div class="h-full w-full p-4 bg-slate-900 relative">
       <full-calendar 

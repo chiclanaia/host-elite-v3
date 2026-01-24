@@ -2,11 +2,13 @@ import { Component, computed, inject, input, signal, effect } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BookletContentConfigComponent } from './booklet-content-config.component';
-import { WelcomeBookletPreviewComponent } from '../../views/welcome-booklet/components/welcome-booklet-preview.component';
-import { WelcomeBookletService } from '../../views/welcome-booklet/welcome-booklet.service';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { GeminiService } from '../../../services/gemini.service';
-import { HostRepository } from '../../../services/host-repository.service';
+import { WelcomeBookletPreviewComponent } from '../../../views/welcome-booklet/components/welcome-booklet-preview.component';
+import { HostRepository } from '../../../../services/host-repository.service';
+import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { TranslationService } from '../../../../services/translation.service';
+import { WelcomeBookletService } from '../../../views/welcome-booklet/welcome-booklet.service';
+import { GeminiService } from '../../../../services/gemini.service';
 
 @Component({
     selector: 'app-booklet-tool',

@@ -1,9 +1,11 @@
 import { Component, computed, inject, input, signal, effect, Output, EventEmitter, OnInit } from '@angular/core';
+import { HostRepository } from '../../../../services/host-repository.service';
+import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { TranslationService } from '../../../../services/translation.service';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { ChecklistService, ChecklistWithItems } from '../../../services/checklist.service';
-import { SessionStore } from '../../../state/session.store';
+import { ChecklistService, ChecklistWithItems } from '../../../../services/checklist.service';
 
 @Component({
     selector: 'app-checklists-tool',
