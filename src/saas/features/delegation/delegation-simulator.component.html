@@ -503,7 +503,7 @@
                                 Conseil de l'expert
                             </h4>
                             <p class="text-white font-medium leading-relaxed">
-                                {{ expertAdvice().message }}
+                                {{ expertAdvice().key | translate:expertAdvice().params }}
                             </p>
                         </div>
                     </div>

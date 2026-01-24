@@ -196,10 +196,10 @@ export class MarketAlertsComponent {
   addedEventIds = signal<Set<string>>(new Set());
   radiusKm = 20;
 
-  isGoldUser = computed(() => this.userPlan() === 'Gold');
+  isGoldUser = computed(() => this.userPlan() === 'Gold' || this.userPlan() === 'TIER_3');
   hasSilverAccess = computed(() => {
     const plan = this.userPlan();
-    return plan === 'Silver' || plan === 'Gold';
+    return plan === 'Silver' || plan === 'Gold' || plan === 'TIER_2' || plan === 'TIER_3';
   });
 
   isEventAdded(eventId: string): boolean {

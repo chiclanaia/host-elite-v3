@@ -20,8 +20,8 @@ export class DelegationSimulatorComponent {
     propertyDetails = input<any>(null);
 
     // Can only view "Supplier Interaction" if plan is Silver or Gold
-    canViewSupplierSection = computed(() => ['Silver', 'Gold'].includes(this.userPlan()));
-    isGold = computed(() => this.userPlan() === 'Gold');
+    canViewSupplierSection = computed(() => ['Silver', 'Gold', 'TIER_2', 'TIER_3'].includes(this.userPlan()));
+    isGold = computed(() => this.userPlan() === 'Gold' || this.userPlan() === 'TIER_3');
 
     // Toggle for Supplier Section
     isSupplierSectionOpen = signal(false);

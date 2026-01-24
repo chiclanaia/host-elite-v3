@@ -15,7 +15,14 @@ export interface Scores {
 }
 
 export type UserRole = 'user' | 'admin';
-export type AppPlan = 'Freemium' | 'Bronze' | 'Silver' | 'Gold';
+export type AppPlan = 'Freemium' | 'Bronze' | 'Silver' | 'Gold' | 'TIER_0' | 'TIER_1' | 'TIER_2' | 'TIER_3';
+
+export interface AppTier {
+  tier_id: string;
+  name: string;
+  rank_order: number;
+  description: string;
+}
 
 export interface ReportData {
   strengths: string[];

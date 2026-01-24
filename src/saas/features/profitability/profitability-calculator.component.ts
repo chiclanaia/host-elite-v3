@@ -323,10 +323,10 @@ export class ProfitabilityCalculatorComponent {
   TierLevel = TierLevel; // For template access
 
   tiers = [
-    { level: TierLevel.BASIC, label: 'PROFITABILITY.TierBasic', minPlan: 'Freemium' },
-    { level: TierLevel.LOW, label: 'PROFITABILITY.TierLow', minPlan: 'Bronze' },
-    { level: TierLevel.MEDIUM, label: 'PROFITABILITY.TierMedium', minPlan: 'Silver' },
-    { level: TierLevel.EXPERT, label: 'PROFITABILITY.TierExpert', minPlan: 'Gold' }
+    { level: TierLevel.BASIC, label: 'PROFITABILITY.TierBasic', minPlan: 'TIER_0' },
+    { level: TierLevel.LOW, label: 'PROFITABILITY.TierLow', minPlan: 'TIER_1' },
+    { level: TierLevel.MEDIUM, label: 'PROFITABILITY.TierMedium', minPlan: 'TIER_2' },
+    { level: TierLevel.EXPERT, label: 'PROFITABILITY.TierExpert', minPlan: 'TIER_3' }
   ];
 
   activeTier = signal<TierLevel>(TierLevel.BASIC);
@@ -366,9 +366,13 @@ export class ProfitabilityCalculatorComponent {
   constructor() {
     Chart.register(...registerables);
     // Set default active tier based on user plan
-    const plans = ['Freemium', 'Bronze', 'Silver', 'Gold'];
-    const currentPlan = this.store.userProfile()?.plan || 'Freemium';
-    const userPlanIndex = plans.indexOf(currentPlan);
+    const currentPlan = this.store.userProfile()?.plan || 'TIER_0';
+
+    // Map to index (0-3)
+    let userPlanIndex = 0;
+    if (currentPlan === 'TIER_3' || currentPlan === 'Gold') userPlanIndex = 3;
+    else if (currentPlan === 'TIER_2' || currentPlan === 'Silver') userPlanIndex = 2;
+    else if (currentPlan === 'TIER_1' || currentPlan === 'Bronze') userPlanIndex = 1;
 
     // Default to the highest unlocked tier (which corresponds to user plan index in our 1-to-1 mapping)
     if (userPlanIndex >= 0 && userPlanIndex < this.tiers.length) {
@@ -395,31 +399,35 @@ export class ProfitabilityCalculatorComponent {
 
   isHidden(tier: TierLevel): boolean {
     // Hide tiers LOWER than the current user plan level
-    const plans = ['Freemium', 'Bronze', 'Silver', 'Gold'];
-    const currentPlan = this.store.userProfile()?.plan || 'Freemium';
-    const userPlanIndex = plans.indexOf(currentPlan);
+    const currentPlan = this.store.userProfile()?.plan || 'TIER_0';
+    let userLevel = 0;
+    if (currentPlan === 'TIER_3' || currentPlan === 'Gold') userLevel = 3;
+    else if (currentPlan === 'TIER_2' || currentPlan === 'Silver') userLevel = 2;
+    else if (currentPlan === 'TIER_1' || currentPlan === 'Bronze') userLevel = 1;
 
-    // Find tier index
+    // Find target tier index
     const tierConfig = this.tiers.find(t => t.level === tier);
-    if (!tierConfig) return false; // Should not happen
+    if (!tierConfig) return false;
 
-    const tierIndex = plans.indexOf(tierConfig.minPlan);
+    const targetLevel = parseInt(tierConfig.minPlan.split('_')[1] || '0');
 
     // If Tier Level < User Level, it's lower -> Hide it as per user requirement "not see freemium" if bronze
-    return tierIndex < userPlanIndex;
+    return targetLevel < userLevel;
   }
 
   isLocked(tier: TierLevel): boolean {
     const tierConfig = this.tiers.find(t => t.level === tier);
     if (!tierConfig) return true;
 
-    // Plan Levels: Freemium=0, Bronze=1, Silver=2, Gold=3
-    const plans = ['Freemium', 'Bronze', 'Silver', 'Gold'];
-    const currentPlan = this.store.userProfile()?.plan || 'Freemium';
-    const userPlanIndex = plans.indexOf(currentPlan);
-    const reqPlanIndex = plans.indexOf(tierConfig.minPlan);
+    const currentPlan = this.store.userProfile()?.plan || 'TIER_0';
+    let userLevel = 0;
+    if (currentPlan === 'TIER_3' || currentPlan === 'Gold') userLevel = 3;
+    else if (currentPlan === 'TIER_2' || currentPlan === 'Silver') userLevel = 2;
+    else if (currentPlan === 'TIER_1' || currentPlan === 'Bronze') userLevel = 1;
 
-    return userPlanIndex < reqPlanIndex;
+    const reqLevel = parseInt(tierConfig.minPlan.split('_')[1] || '0');
+
+    return userLevel < reqLevel;
   }
 
   selectTier(tier: TierLevel) {

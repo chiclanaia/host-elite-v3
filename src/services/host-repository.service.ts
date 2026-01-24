@@ -1,7 +1,7 @@
 
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
-import { ContextData, Scores, ReportData, UserProfile, AppPlan, ApiKey, PlanConfig, AppSettings, View, Property } from '../types';
+import { ContextData, Scores, ReportData, UserProfile, AppPlan, ApiKey, PlanConfig, AppSettings, View, Property, AppTier } from '../types';
 
 @Injectable({
     providedIn: 'root'
@@ -12,28 +12,42 @@ export class HostRepository {
     // Helper to access raw client if needed, guarded by service configuration
     private get supabase() { return this.supabaseService.supabase; }
 
+    async getTiers(): Promise<AppTier[]> {
+        if (!this.supabaseService.isConfigured) return [];
+        const { data, error } = await this.supabase
+            .from('app_tiers')
+            .select('*')
+            .order('rank_order', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching tiers:', error);
+            return [];
+        }
+        return data || [];
+    }
+
     // Static sub-views configuration
     // Static sub-views configuration reorganized by Phases
     private readonly defaultSubViews: View[] = [
         // Phase 1: Préparation
-        { id: 'manage-property', title: 'Manage', icon: 'settings', phase: 'preparation', requiredTier: 'Bronze' },
-        { id: 'accomodation', title: 'NAV.accomodation', icon: 'property', phase: 'preparation', requiredTier: 'Bronze' },
-        { id: 'legal', title: 'NAV.legal', icon: 'info', phase: 'preparation', requiredTier: 'Bronze' },
-        { id: 'mindset', title: 'NAV.mindset', icon: 'training', phase: 'preparation', requiredTier: 'Bronze' },
+        { id: 'manage-property', title: 'Manage', icon: 'settings', phase: 'preparation', requiredTier: 'TIER_1' },
+        { id: 'welcome-booklet', title: 'NAV.welcome-booklet', icon: 'info', featureId: 'booklet', phase: 'preparation', requiredTier: 'TIER_1' },
+        { id: 'legal', title: 'NAV.legal', icon: 'info', phase: 'preparation', requiredTier: 'TIER_1' },
+        { id: 'mindset', title: 'NAV.mindset', icon: 'training', phase: 'preparation', requiredTier: 'TIER_1' },
 
         // Phase 2: Lancement
-        { id: 'welcome-booklet', title: 'NAV.welcome-booklet', icon: 'info', featureId: 'booklet', phase: 'launch', requiredTier: 'Bronze' },
-        { id: 'marketing', title: 'NAV.marketing', icon: 'dashboard', phase: 'launch', requiredTier: 'Silver' },
-        { id: 'experience', title: 'NAV.experience', icon: 'concierge', phase: 'launch', requiredTier: 'Bronze' },
-        { id: 'widget-library', title: 'NAV.widget-library', icon: 'widgets', featureId: 'microsite', phase: 'launch', requiredTier: 'Bronze' },
+
+        { id: 'marketing', title: 'NAV.marketing', icon: 'dashboard', phase: 'launch', requiredTier: 'TIER_2' },
+        { id: 'experience', title: 'NAV.experience', icon: 'concierge', phase: 'launch', requiredTier: 'TIER_1' },
+        { id: 'widget-library', title: 'NAV.widget-library', icon: 'widgets', featureId: 'microsite', phase: 'launch', requiredTier: 'TIER_1' },
 
         // Phase 3: Exploitation
-        { id: 'property-calendar', title: 'NAV.property-calendar', icon: 'calendar', phase: 'exploitation', requiredTier: 'Silver' },
-        { id: 'vocal-concierge', title: 'NAV.vocal-concierge', icon: 'concierge', featureId: 'vocal-concierge', phase: 'exploitation', requiredTier: 'Silver' },
-        { id: 'operations', title: 'NAV.operations', icon: 'settings', phase: 'exploitation', requiredTier: 'Silver' },
+        { id: 'property-calendar', title: 'NAV.property-calendar', icon: 'calendar', phase: 'exploitation', requiredTier: 'TIER_2' },
+        { id: 'vocal-concierge', title: 'NAV.vocal-concierge', icon: 'concierge', featureId: 'vocal-concierge', phase: 'exploitation', requiredTier: 'TIER_2' },
+        { id: 'operations', title: 'NAV.operations', icon: 'settings', phase: 'exploitation', requiredTier: 'TIER_2' },
 
         // Phase 4: Excellence
-        { id: 'pricing', title: 'NAV.pricing', icon: 'widgets', phase: 'excellence', requiredTier: 'Gold' },
+        { id: 'pricing', title: 'NAV.pricing', icon: 'widgets', phase: 'excellence', requiredTier: 'TIER_3' },
     ];
 
     async hasDiagnostic(userId: string): Promise<boolean> {

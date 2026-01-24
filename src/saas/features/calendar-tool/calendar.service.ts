@@ -403,4 +403,34 @@ export class CalendarService {
             .eq('id', id);
         if (error) throw error;
     }
+
+    /**
+     * Ensures a source for "Local Events" exists and returns its ID
+     */
+    async ensureLocalEventsSource(propertyId: string): Promise<string> {
+        // Check if we already have it in local state
+        const existing = this.sources().find(s => s.property_id === propertyId && s.name === 'Local Events');
+        if (existing) return existing.id;
+
+        // Check DB
+        const { data: sources } = await this.supabase.supabase
+            .from('calendar_sources')
+            .select('id')
+            .eq('property_id', propertyId)
+            .eq('name', 'Local Events')
+            .eq('type', 'internal')
+            .maybeSingle();
+
+        if (sources) return sources.id;
+
+        // Create it
+        const newSource = await this.addSource({
+            name: 'Local Events',
+            type: 'internal',
+            color: '#8b5cf6', // Violet for local events
+            property_id: propertyId
+        });
+
+        return (newSource as any).id;
+    }
 }

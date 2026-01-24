@@ -1,6 +1,6 @@
 
 import { Injectable, computed, signal, inject } from '@angular/core';
-import { ContextData, ReportData, Scores, UserProfile, AppPlan, PlanConfig } from '../types';
+import { ContextData, ReportData, Scores, UserProfile, AppPlan, PlanConfig, AppTier } from '../types';
 import { GeminiService } from '../services/gemini.service';
 import { HostRepository } from '../services/host-repository.service';
 import { SupabaseService } from '../services/supabase.service';
@@ -38,6 +38,7 @@ export class SessionStore {
     readonly showPlanBadges = signal<boolean>(false);
     readonly showLanguageSwitcher = signal<boolean>(false);
     readonly allPlans = signal<PlanConfig[]>([]);
+    readonly appTiers = signal<AppTier[]>([]);
 
     // Computed
     readonly stepIndex = computed(() => {
@@ -66,29 +67,37 @@ export class SessionStore {
         if (!this.showPlanBadges()) return null;
 
         const plans = this.allPlans();
-        if (!plans || plans.length === 0) return null;
+        const tiers = this.appTiers();
+        if (!plans || plans.length === 0 || !tiers || tiers.length === 0) return null;
 
         // Find the first plan (cheapest) that has this feature
         const featurePlan = plans.find(p => p.features.includes(featureId));
 
         if (!featurePlan) return null;
 
-        const planName = featurePlan.id;
-        let colorClass = 'bg-gray-100 text-gray-600'; // Default
+        const planId = featurePlan.id;
+        const tier = tiers.find(t => t.tier_id === planId || t.name === planId);
 
-        switch (planName) {
-            case 'Freemium': colorClass = 'bg-slate-800 text-white'; break;
-            case 'Bronze': colorClass = 'bg-amber-100 text-amber-800 border border-amber-200'; break;
-            case 'Silver': colorClass = 'bg-slate-200 text-slate-700 border border-slate-300'; break;
-            case 'Gold': colorClass = 'bg-yellow-100 text-yellow-800 border border-yellow-300'; break;
+        let colorClass = 'bg-gray-100 text-gray-600'; // Default
+        const effectiveId = tier?.tier_id || planId;
+
+        switch (effectiveId) {
+            case 'Freemium':
+            case 'TIER_0': colorClass = 'bg-slate-800 text-white'; break;
+            case 'Bronze':
+            case 'TIER_1': colorClass = 'bg-amber-100 text-amber-800 border border-amber-200'; break;
+            case 'Silver':
+            case 'TIER_2': colorClass = 'bg-slate-200 text-slate-700 border border-slate-300'; break;
+            case 'Gold':
+            case 'TIER_3': colorClass = 'bg-yellow-100 text-yellow-800 border border-yellow-300'; break;
         }
 
         // Special concise label logic
-        let label = planName;
-        if (planName === 'Freemium') label = 'FREE';
-        else if (planName === 'Bronze') label = 'BRZ';
-        else if (planName === 'Silver') label = 'SIL';
-        else if (planName === 'Gold') label = 'GOLD';
+        let label = tier?.name || planId;
+        if (effectiveId === 'TIER_0' || effectiveId === 'Freemium') label = 'FREE';
+        else if (effectiveId === 'TIER_1' || effectiveId === 'Bronze') label = 'BRZ';
+        else if (effectiveId === 'TIER_2' || effectiveId === 'Silver') label = 'SIL';
+        else if (effectiveId === 'TIER_3' || effectiveId === 'Gold') label = 'GOLD';
 
         return { label, colorClass };
     }
@@ -123,6 +132,9 @@ export class SessionStore {
                 features: Array.isArray(p.features) ? p.features : []
             }));
             this.allPlans.set(cleanPlans);
+
+            const tiers = await this.repository.getTiers();
+            this.appTiers.set(tiers);
         } catch (e) {
             console.warn("Failed to load global config:", e);
         }

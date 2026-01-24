@@ -1,0 +1,36 @@
+
+> h├┤te-bnb-d'exception:-diagnostic-ia-(jose)@0.0.0 build
+> ng build
+
+[33mΓ¥»[39m Building...
+[32mΓ£ö[39m Building...
+Application bundle generation failed. [21.784 seconds] - 2026-01-24T21:15:14.884Z
+
+Γû▓ [WARNING] NG8113: NotificationCenterComponent is not used within the template of NotificationBellComponent [plugin angular-compiler]
+
+    src/saas/components/notification-bell.component.ts:10:28:
+      10 Γöé     imports: [CommonModule, NotificationCenterComponent],
+         Γò╡                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8113: TranslatePipe is not used within the template of WelcomeBookletListingComponent [plugin angular-compiler]
+
+    src/saas/views/welcome-booklet/components/welcome-booklet-listing.component.ts:9:28:
+      9 Γöé     imports: [CommonModule, TranslatePipe],
+        Γò╡                             ~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'message' does not exist on type '{ type: string; key: string; params: { amount?: undefined; hours?: undefined; cost?: undefined; }; } | { type: string; key: string; params: { amount: number; hours: number; cost: string; }; }'.
+  Property 'message' does not exist on type '{ type: string; key: string; params: { amount?: undefined; hours?: undefined; cost?: undefined; }; }'. [plugin angular-compiler]
+
+    src/saas/features/delegation/delegation-simulator.component.html:506:50:
+      506 Γöé                                 {{ expertAdvice().message }}
+          Γò╡                                                   ~~~~~~~
+
+  Error occurs in the template of component DelegationSimulatorComponent.
+
+    src/saas/features/delegation/delegation-simulator.component.ts:13:17:
+      13 Γöé     templateUrl: './delegation-simulator.component.html'
+         Γò╡                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+

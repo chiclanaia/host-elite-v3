@@ -5,7 +5,7 @@ export interface OnboardingQuestion {
     id: string;
     angle: string;
     question_key: string;
-    level: 'Bronze' | 'Silver' | 'Gold';
+    level: 'Bronze' | 'Silver' | 'Gold' | 'TIER_1' | 'TIER_2' | 'TIER_3';
     order_index: number;
     has_sub_question: boolean;
     sub_question_config?: {
@@ -160,9 +160,9 @@ export class OnboardingService {
             return { level: 'Low', color: 'bg-rose-500', description: 'MATURITY.LowDesc' };
         }
 
-        const bronzeQuestions = questions.filter(q => q.level === 'Bronze');
-        const silverQuestions = questions.filter(q => q.level === 'Silver');
-        const goldQuestions = questions.filter(q => q.level === 'Gold');
+        const bronzeQuestions = questions.filter(q => q.level === 'Bronze' || q.level === 'TIER_1');
+        const silverQuestions = questions.filter(q => q.level === 'Silver' || q.level === 'TIER_2');
+        const goldQuestions = questions.filter(q => q.level === 'Gold' || q.level === 'TIER_3');
 
         const getCompletion = (qs: OnboardingQuestion[]) => {
             if (qs.length === 0) return 100;

@@ -101,8 +101,8 @@ import { PlanConfig } from '../../types';
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ 'PROFILE.Plan' | translate }}</label>
                             <select [formControl]="planControl" (change)="onPlanChange($event)"
                                     class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all appearance-none cursor-pointer">
-                              <option *ngFor="let p of plans()" [value]="p.id">
-                                {{ p.id }}
+                              <option *ngFor="let t of store.appTiers()" [value]="t.tier_id">
+                                {{ t.name }}
                               </option>
                             </select>
                         </div>
@@ -168,7 +168,7 @@ import { PlanConfig } from '../../types';
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-2">{{ 'PROFILE.UpgradeTitle' | translate }}</h3>
                 <p class="text-slate-300 mb-6">
-                   {{ 'PROFILE.UpgradeMessage' | translate:{ plan: pendingPlan()?.id, price: pendingPlan()?.price } }}
+                   {{ 'PROFILE.UpgradeMessage' | translate:{ plan: getTierName(pendingPlan()?.id), price: pendingPlan()?.price } }}
                 </p>
                 <div class="flex justify-center gap-4">
                    <button (click)="cancelChange()" class="px-4 py-2 text-slate-400 hover:text-white transition-colors">
@@ -270,25 +270,9 @@ export class ProfileModalComponent {
       stripe_customer_id: [user?.stripe_customer_id || ''],
       language: [user?.language || 'en']
     });
-
-    this.loadPlans();
   }
 
-  async loadPlans() {
-    // Populate plans - usually from DB, here hardcoded fallback if empty + async fetch
-    // We assume the repository has the right data or we mock it for the selector
-    let availablePlans = await this.repository.getPlans();
-    if (availablePlans.length === 0) {
-      // Fallback for UI if DB is empty
-      availablePlans = [
-        { id: 'Freemium', price: 0, features: [] },
-        { id: 'Bronze', price: 29, features: [] },
-        { id: 'Silver', price: 49, features: [] },
-        { id: 'Gold', price: 99, features: [] }
-      ];
-    }
-    this.plans.set(availablePlans);
-  }
+  // Removed loadPlans() as we use store.appTiers() and store.allPlans() directly in template and logic.
 
   onPlanChange(event: any) {
     const newPlanId = event.target.value;
@@ -296,13 +280,13 @@ export class ProfileModalComponent {
 
     if (newPlanId === currentPlanId) return;
 
-    const newPlan = this.plans().find(p => p.id === newPlanId);
-    const currentPlan = this.plans().find(p => p.id === currentPlanId);
+    const newPlan = this.store.allPlans().find(p => p.id === newPlanId);
+    const currentPlan = this.store.allPlans().find(p => p.id === currentPlanId);
 
     if (!newPlan) return;
 
     // Validation: Require Stripe ID for paid plans
-    if (newPlanId !== 'Freemium') {
+    if (newPlanId !== 'TIER_0' && newPlanId !== 'Freemium') {
       const stripeId = this.profileForm.get('stripe_customer_id')?.value;
       if (!stripeId || stripeId.trim() === '') {
         // Revert changes
@@ -363,9 +347,12 @@ export class ProfileModalComponent {
     // EXCEPT: If the plan change requires payment (stripe), usually it's immediate. 
     // Given the current scope (SaaS template), I will just confirm the UI selection and notify.
 
+    const tiers = this.store.appTiers();
+    const tier = tiers.find(t => t.tier_id === this.pendingPlan()?.id || t.name === this.pendingPlan()?.id);
+
     this.notificationService.postNotification({
       title: 'Plan Selection Updated',
-      message: `Plan changed to ${this.pendingPlan()?.id}. Don't forget to Save.`,
+      message: `Plan changed to ${tier?.name || this.pendingPlan()?.id}. Don't forget to Save.`,
       type: 'info'
     });
 
@@ -389,7 +376,7 @@ export class ProfileModalComponent {
     const selectedPlan = this.planControl.value;
     const stripeId = this.profileForm.value.stripe_customer_id;
 
-    if (selectedPlan !== 'Freemium' && (!stripeId || stripeId.trim() === '')) {
+    if (selectedPlan !== 'TIER_0' && selectedPlan !== 'Freemium' && (!stripeId || stripeId.trim() === '')) {
       this.notificationService.postNotification({
         title: 'Payment Info Required',
         message: 'You cannot save a paid plan without a valid Stripe Customer ID.',

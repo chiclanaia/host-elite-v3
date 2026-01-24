@@ -6,7 +6,7 @@ export interface Checklist {
     category: 'cleaning' | 'maintenance' | 'checkin' | 'checkout' | 'turnover' | 'emergency';
     name_key: string;
     description_key?: string;
-    tier: 'Bronze' | 'Silver' | 'Gold';
+    tier: 'Bronze' | 'Silver' | 'Gold' | 'TIER_1' | 'TIER_2' | 'TIER_3';
     icon?: string;
     order_index: number;
     is_active: boolean;
@@ -78,13 +78,18 @@ export class ChecklistService {
     /**
      * Get checklists by tier (for subscription-based filtering)
      */
-    async getChecklistsByTier(tier: 'Bronze' | 'Silver' | 'Gold'): Promise<Checklist[]> {
+    async getChecklistsByTier(tier: string): Promise<Checklist[]> {
         // Get checklists for this tier and all lower tiers
-        const allowedTiers = tier === 'Gold'
-            ? ['Bronze', 'Silver', 'Gold']
-            : tier === 'Silver'
-                ? ['Bronze', 'Silver']
-                : ['Bronze'];
+        let allowedTiers: string[] = [];
+
+        // Map legacy names or Handle TIER_X
+        if (tier === 'Gold' || tier === 'TIER_3') {
+            allowedTiers = ['Bronze', 'Silver', 'Gold', 'TIER_1', 'TIER_2', 'TIER_3'];
+        } else if (tier === 'Silver' || tier === 'TIER_2') {
+            allowedTiers = ['Bronze', 'Silver', 'TIER_1', 'TIER_2'];
+        } else {
+            allowedTiers = ['Bronze', 'TIER_1'];
+        }
 
         const { data, error } = await this.supabase.supabase
             .from('checklists')

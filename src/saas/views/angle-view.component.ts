@@ -25,7 +25,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
 import { OnboardingService } from '../../services/onboarding.service';
 
-type Plan = 'Freemium' | 'Bronze' | 'Silver' | 'Gold';
+type Plan = 'Freemium' | 'Bronze' | 'Silver' | 'Gold' | 'TIER_0' | 'TIER_1' | 'TIER_2' | 'TIER_3';
 
 interface Tool {
     id: string; // Added ID for easier selection
@@ -40,7 +40,7 @@ interface AngleDetails {
     tools: Tool[];
 }
 
-type QuestionLevel = 'Bronze' | 'Silver' | 'Gold';
+type QuestionLevel = 'Bronze' | 'Silver' | 'Gold' | 'TIER_1' | 'TIER_2' | 'TIER_3';
 
 interface OnboardingQuestion {
     id: string;
@@ -134,30 +134,33 @@ export class AngleViewComponent implements OnInit {
         return plan === 'Silver' || plan === 'Gold';
     });
 
-    private planLevels: Record<string, number> = {
-        'Freemium': 0,
-        'Bronze': 1,
-        'Silver': 2,
-        'Gold': 3
-    };
+    private get planLevels(): Record<string, number> {
+        const tiers = this.store.appTiers();
+        if (tiers.length === 0) return { 'Freemium': 0, 'Bronze': 1, 'Silver': 2, 'Gold': 3 };
+        return tiers.reduce((acc, t) => {
+            acc[t.tier_id] = t.rank_order;
+            acc[t.name] = t.rank_order; // Support both ID and Name for compatibility
+            return acc;
+        }, {} as Record<string, number>);
+    }
 
     private allAngleData: Record<string, AngleDetails> = {
         'marketing': {
             title: 'NAV.marketing',
             description: 'ANGLE.marketing_desc',
             tools: [
-                { id: 'microsite', name: 'TOOL.microsite_name', description: 'TOOL.microsite_desc', requiredPlan: 'Bronze' },
-                { id: 'ai-prompts', name: 'TOOL.ai_listing_name', description: 'TOOL.ai_listing_desc', requiredPlan: 'Silver' },
-                { id: 'visibility-audit', name: 'TOOL.audit_vis_name', description: 'TOOL.audit_vis_desc', requiredPlan: 'Gold' },
+                { id: 'microsite', name: 'TOOL.microsite_name', description: 'TOOL.microsite_desc', requiredPlan: 'TIER_1' },
+                { id: 'ai-prompts', name: 'TOOL.ai_listing_name', description: 'TOOL.ai_listing_desc', requiredPlan: 'TIER_2' },
+                { id: 'visibility-audit', name: 'TOOL.audit_vis_name', description: 'TOOL.audit_vis_desc', requiredPlan: 'TIER_3' },
             ]
         },
         'experience': {
             title: 'NAV.experience',
             description: 'ANGLE.experience_desc',
             tools: [
-                { id: 'booklet', name: 'TOOL.booklet_name', description: 'TOOL.booklet_desc', requiredPlan: 'Bronze' },
-                { id: 'ai-assistant', name: 'TOOL.ai_msg_name', description: 'TOOL.ai_msg_desc', requiredPlan: 'Silver' },
-                { id: 'guest-screening', name: 'TOOL.screening_name', description: 'TOOL.screening_desc', requiredPlan: 'Gold' },
+                { id: 'booklet', name: 'TOOL.booklet_name', description: 'TOOL.booklet_desc', requiredPlan: 'TIER_1' },
+                { id: 'ai-assistant', name: 'TOOL.ai_msg_name', description: 'TOOL.ai_msg_desc', requiredPlan: 'TIER_2' },
+                { id: 'guest-screening', name: 'TOOL.screening_name', description: 'TOOL.screening_desc', requiredPlan: 'TIER_3' },
             ]
         },
         'operations': {
@@ -173,37 +176,37 @@ export class AngleViewComponent implements OnInit {
             title: 'NAV.pricing',
             description: 'ANGLE.pricing_desc',
             tools: [
-                { id: 'profitability', name: 'TOOL.profit_name', description: 'TOOL.profit_desc', requiredPlan: 'Bronze' },
-                { id: 'market-alerts', name: 'TOOL.alerts_name', description: 'TOOL.alerts_desc', requiredPlan: 'Silver' },
-                { id: 'pricing-tools', name: 'TOOL.dynamic_name', description: 'TOOL.dynamic_desc', requiredPlan: 'Gold' },
+                { id: 'profitability', name: 'TOOL.profit_name', description: 'TOOL.profit_desc', requiredPlan: 'TIER_1' },
+                { id: 'market-alerts', name: 'TOOL.alerts_name', description: 'TOOL.alerts_desc', requiredPlan: 'TIER_2' },
+                { id: 'pricing-tools', name: 'TOOL.dynamic_name', description: 'TOOL.dynamic_desc', requiredPlan: 'TIER_3' },
             ]
         },
         'accomodation': {
             title: 'NAV.accomodation',
             description: 'ANGLE.accomodation_desc',
             tools: [
-                { id: 'airbnb-ready', name: 'TOOL.airbnb_ready_name', description: 'TOOL.airbnb_ready_desc', requiredPlan: 'Bronze' },
-                { id: 'security-check', name: 'TOOL.security_name', description: 'TOOL.security_desc', requiredPlan: 'Bronze' },
-                { id: 'manual-gen', name: 'TOOL.manual_name', description: 'TOOL.manual_desc', requiredPlan: 'Silver' },
-                { id: 'unique-gen', name: 'TOOL.unique_name', description: 'TOOL.unique_desc', requiredPlan: 'Gold' },
+                { id: 'airbnb-ready', name: 'TOOL.airbnb_ready_name', description: 'TOOL.airbnb_ready_desc', requiredPlan: 'TIER_1' },
+                { id: 'security-check', name: 'TOOL.security_name', description: 'TOOL.security_desc', requiredPlan: 'TIER_1' },
+                { id: 'manual-gen', name: 'TOOL.manual_name', description: 'TOOL.manual_desc', requiredPlan: 'TIER_2' },
+                { id: 'unique-gen', name: 'TOOL.unique_name', description: 'TOOL.unique_desc', requiredPlan: 'TIER_3' },
             ]
         },
         'legal': {
             title: 'NAV.legal',
             description: 'ANGLE.legal_desc',
             tools: [
-                { id: 'reminders', name: 'TOOL.reminders_name', description: 'TOOL.reminders_desc', requiredPlan: 'Bronze' },
-                { id: 'kpis-simple', name: 'TOOL.kpi_simple_name', description: 'TOOL.kpi_simple_desc', requiredPlan: 'Silver' },
-                { id: 'kpis-advanced', name: 'TOOL.kpi_adv_name', description: 'TOOL.kpi_adv_desc', requiredPlan: 'Gold' },
+                { id: 'reminders', name: 'TOOL.reminders_name', description: 'TOOL.reminders_desc', requiredPlan: 'TIER_1' },
+                { id: 'kpis-simple', name: 'TOOL.kpi_simple_name', description: 'TOOL.kpi_simple_desc', requiredPlan: 'TIER_2' },
+                { id: 'kpis-advanced', name: 'TOOL.kpi_adv_name', description: 'TOOL.kpi_adv_desc', requiredPlan: 'TIER_3' },
             ]
         },
         'mindset': {
             title: 'NAV.mindset',
             description: 'ANGLE.mindset_desc',
             tools: [
-                { id: 'elearning', name: 'TOOL.elearning_name', description: 'TOOL.elearning_desc', requiredPlan: 'Bronze' },
-                { id: 'community', name: 'TOOL.community_name', description: 'TOOL.community_desc', requiredPlan: 'Silver' },
-                { id: 'coaching', name: 'TOOL.coaching_name', description: 'TOOL.coaching_desc', requiredPlan: 'Gold' },
+                { id: 'elearning', name: 'TOOL.elearning_name', description: 'TOOL.elearning_desc', requiredPlan: 'TIER_1' },
+                { id: 'community', name: 'TOOL.community_name', description: 'TOOL.community_desc', requiredPlan: 'TIER_2' },
+                { id: 'coaching', name: 'TOOL.coaching_name', description: 'TOOL.coaching_desc', requiredPlan: 'TIER_3' },
             ]
         },
     };
@@ -329,18 +332,32 @@ export class AngleViewComponent implements OnInit {
     });
 
     isToolLocked(requiredPlan: View['requiredTier']): boolean {
-        const tiers = ['Freemium', 'Bronze', 'Silver', 'Gold'];
-        const userLevel = tiers.indexOf(this.userPlan() || 'Freemium');
-        const requiredLevel = tiers.indexOf(requiredPlan || 'Freemium');
+        const tiers = this.store.appTiers();
+        if (tiers.length === 0) {
+            const legacyTiers = ['Freemium', 'Bronze', 'Silver', 'Gold'];
+            const userLevel = legacyTiers.indexOf(this.userPlan() || 'Freemium');
+            const requiredLevel = legacyTiers.indexOf(requiredPlan || 'Freemium');
+            return userLevel < requiredLevel;
+        }
+
+        const userLevel = this.planLevels[this.userPlan() || 'TIER_0'] || 0;
+        const requiredLevel = this.planLevels[requiredPlan || 'TIER_0'] || 0;
         return userLevel < requiredLevel;
     }
 
     getTierIndicatorClass(tier: string | undefined): string {
         if (!tier) return '';
-        switch (tier) {
-            case 'Bronze': return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]';
-            case 'Silver': return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]';
-            case 'Gold': return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]';
+        // Map to ID if it's a name
+        const tiers = this.store.appTiers();
+        const tierId = tiers.find(t => t.name === tier)?.tier_id || tier;
+
+        switch (tierId) {
+            case 'Bronze':
+            case 'TIER_1': return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]';
+            case 'Silver':
+            case 'TIER_2': return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]';
+            case 'Gold':
+            case 'TIER_3': return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]';
             default: return 'bg-slate-600';
         }
     }

@@ -270,7 +270,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                 <p class="text-sm font-bold text-slate-200 truncate group-hover/profile:text-[#D4AF37] transition-colors">{{ userName() }}</p>
                 <div class="flex items-center text-xs mt-0.5">
                     <span class="w-1.5 h-1.5 rounded-full mr-2 shadow-sm" [class]="getTierIndicatorClass(userPlan())"></span>
-                    <span class="font-semibold" [class]="getPlanColor()">{{ userPlan() }}</span>
+                    <span class="font-semibold" [class]="getPlanColor()">{{ displayPlanName() }}</span>
                     @if(userRole() === 'admin') {
                         <span class="bg-purple-900/50 text-purple-300 border border-purple-500/30 text-[9px] px-1.5 py-0.5 rounded-full ml-2">ADMIN</span>
                     }
@@ -372,10 +372,23 @@ export class SidebarComponent {
 
         // 2. Check Plan Lock
         if (view.requiredTier) {
-            const tiers = ['Freemium', 'Bronze', 'Silver', 'Gold'];
-            const userTierIndex = tiers.indexOf(this.userPlan() || 'Freemium');
-            const requiredTierIndex = tiers.indexOf(view.requiredTier);
-            if (userTierIndex < requiredTierIndex) {
+            const tiers = this.store.appTiers();
+            if (tiers.length === 0) {
+                const legacyTiers = ['Freemium', 'Bronze', 'Silver', 'Gold'];
+                const userTierIndex = legacyTiers.indexOf(this.userPlan() || 'Freemium');
+                const requiredTierIndex = legacyTiers.indexOf(view.requiredTier);
+                return userTierIndex < requiredTierIndex;
+            }
+
+            const planLevels = tiers.reduce((acc, t) => {
+                acc[t.tier_id] = t.rank_order;
+                acc[t.name] = t.rank_order;
+                return acc;
+            }, {} as Record<string, number>);
+
+            const userLevel = planLevels[this.userPlan() || 'TIER_0'] || 0;
+            const requiredLevel = planLevels[view.requiredTier || 'TIER_0'] || 0;
+            if (userLevel < requiredLevel) {
                 return true;
             }
         }
@@ -388,19 +401,39 @@ export class SidebarComponent {
     }
 
     getTierIndicatorClass(tier: string): string {
-        switch (tier) {
-            case 'Bronze': return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]';
-            case 'Silver': return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]';
-            case 'Gold': return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]';
+        const tiers = this.store.appTiers();
+        const tierId = tiers.find(t => t.name === tier)?.tier_id || tier;
+
+        switch (tierId) {
+            case 'Bronze':
+            case 'TIER_1': return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]';
+            case 'Silver':
+            case 'TIER_2': return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]';
+            case 'Gold':
+            case 'TIER_3': return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]';
             default: return 'bg-slate-600';
         }
     }
 
+    displayPlanName = computed(() => {
+        const tier = this.userPlan();
+        const tiers = this.store.appTiers();
+        const tierData = tiers.find(t => t.tier_id === tier || t.name === tier);
+        return tierData?.name || tier;
+    });
+
     getPlanColor = computed(() => {
-        switch (this.userPlan()) {
-            case 'Bronze': return 'text-amber-400';
-            case 'Silver': return 'text-slate-300';
-            case 'Gold': return 'text-yellow-400';
+        const tier = this.userPlan();
+        const tiers = this.store.appTiers();
+        const tierId = tiers.find(t => t.name === tier)?.tier_id || tier;
+
+        switch (tierId) {
+            case 'Bronze':
+            case 'TIER_1': return 'text-amber-400';
+            case 'Silver':
+            case 'TIER_2': return 'text-slate-300';
+            case 'Gold':
+            case 'TIER_3': return 'text-yellow-400';
             default: return 'text-slate-500';
         }
     });
