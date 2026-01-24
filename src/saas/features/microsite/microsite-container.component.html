@@ -5,7 +5,7 @@
     @if (saveMessage()) {
     <div
         class="fixed top-4 right-4 bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-2xl z-50 animate-bounce border border-white/20 backdrop-blur-md font-bold">
-        {{ saveMessage() | translate }}
+        {{ saveMessage() }}
     </div>
     }
 
@@ -20,8 +20,7 @@
                  Wait, this button needs to trigger the parent. 
                  I'll add an @Output close = new EventEmitter<void>(); in TS next step if needed. 
                  For now, let's just emit a simple event. -->
-            <button (click)="close.emit()" [attr.title]="'COMMON.Back' | translate"
-                [attr.aria-label]="'COMMON.Back' | translate"
+            <button (click)="close.emit()" [attr.aria-label]="'COMMON.Close' | translate" title="Fermer"
                 class="text-slate-300 hover:text-white bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-6 h-6">
@@ -31,9 +30,14 @@
             <h2 class="text-lg font-bold text-white tracking-wide">{{ 'MICROSITE.EditorTitle' | translate }}</h2>
         </div>
         <div class="flex space-x-3">
-            <button (click)="saveMicrosite()"
+            <button (click)="saveMicrosite()" data-debug-id="save-microsite-button"
                 class="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-green-900/20 transition-all flex items-center border border-green-400/50">
-                {{ 'MICROSITE.Publish' | translate }}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                {{ 'COMMON.Publish' | translate }}
             </button>
         </div>
     </div>
@@ -47,19 +51,30 @@
             <div class="bg-indigo-900/40 p-4 rounded-xl border border-indigo-500/30 shadow-inner"
                 [class.opacity-50]="!hasAiAccess()">
                 <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-sm font-bold text-indigo-100">{{ 'MICROSITE.AssistantTitle' | translate }}</h3>
+                    <h3 class="text-sm font-bold text-indigo-100">✨ {{ 'MICROSITE.AiAssistant' | translate }}</h3>
                     @if(!hasAiAccess()) {
                     <span
                         class="bg-white/10 text-white border border-white/20 text-[10px] px-2 py-0.5 rounded-full font-bold">Silver+</span>
                     }
                 </div>
-                <p class="text-xs text-indigo-200 mb-3 font-light">{{ 'MICROSITE.AssistantDesc' | translate }}
-                </p>
+                <p class="text-xs text-indigo-200 mb-3 font-light">{{ 'MICROSITE.AiAssistantDesc' | translate }}</p>
                 <button (click)="generateMicrositeWithAI()" [disabled]="isAiDesigning() || !hasAiAccess()"
-                    [title]="'MICROSITE.AutoDesign' | translate" [attr.aria-label]="'MICROSITE.AutoDesign' | translate"
+                    data-debug-id="generate-microsite-button"
                     class="w-full py-2 rounded-lg text-sm font-semibold flex items-center justify-center transition-all shadow-sm border"
                     [class]="hasAiAccess() ? 'bg-indigo-600 border-indigo-400 hover:bg-indigo-500 text-white' : 'bg-white/5 border-white/10 text-slate-400 cursor-not-allowed'">
-                    {{ isAiDesigning() ? ('MICROSITE.Creating' | translate) : ('MICROSITE.AutoDesign' | translate) }}
+                    @if(isAiDesigning()) {
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    {{ 'MICROSITE.Generating' | translate }}
+                    } @else {
+                    {{ 'MICROSITE.AutoDesign' | translate }}
+                    }
                 </button>
             </div>
 
@@ -69,10 +84,11 @@
                     'MICROSITE.Appearance' | translate }}</label>
 
                 <div>
-                    <label class="text-xs text-slate-300 block mb-1">{{ 'MICROSITE.VisualTheme' | translate }}</label>
-                    <select [id]="'theme-select'" [ngModel]="micrositeConfig().template"
-                        (ngModelChange)="updateConfig('template', $event)" [title]="'MICROSITE.ThemeSelect' | translate"
-                        class="w-full rounded-lg border-white/20 text-sm bg-white/10 text-white focus:bg-slate-800 focus:border-indigo-500 focus:ring-indigo-500">
+                    <label class="text-xs text-slate-300 block mb-1">{{ 'MICROSITE.Theme' | translate }}</label>
+                    <select [ngModel]="micrositeConfig().template" (ngModelChange)="updateConfig('template', $event)"
+                        [attr.data-debug-id]="'template-select'"
+                        class="w-full rounded-lg border-white/20 text-sm bg-white/10 text-white focus:bg-slate-800 focus:border-indigo-500 focus:ring-indigo-500"
+                        aria-label="Selectionner le thème visuel">
                         @for(theme of themeOptions; track theme.id) {
                         <option [value]="theme.id" class="text-slate-900">{{ theme.label | translate }}</option>
                         }
@@ -85,9 +101,10 @@
                         @for(color of ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#1e293b']; track
                         color) {
                         <button (click)="updateConfig('primaryColor', color)" [style.backgroundColor]="color"
-                            [title]="'MICROSITE.ColorPick' | translate"
                             [class.ring-2]="micrositeConfig().primaryColor === color"
-                            class="w-6 h-6 rounded-full border border-white/50 ring-offset-1 ring-offset-transparent ring-white shadow-sm hover:scale-110 transition-transform"></button>
+                            [attr.data-debug-id]="'color-' + color"
+                            class="w-6 h-6 rounded-full border border-white/50 ring-offset-1 ring-offset-transparent ring-white shadow-sm hover:scale-110 transition-transform"
+                            aria-label="Selectionner la couleur principale"></button>
                         }
                     </div>
                 </div>
@@ -101,17 +118,21 @@
                 <div>
                     <label class="text-xs text-slate-300 block mb-1">{{ 'MICROSITE.Headline' | translate }}</label>
                     <input type="text" [ngModel]="micrositeConfig().headline"
-                        [title]="'MICROSITE.HeadlineLabel' | translate"
-                        (ngModelChange)="updateConfig('headline', $event)"
-                        class="w-full rounded-lg border-white/20 text-sm bg-white/10 text-white placeholder-slate-400 focus:border-indigo-500 focus:ring-indigo-500">
+                        (ngModelChange)="updateConfig('headline', $event)" [attr.data-debug-id]="'headline-input'"
+                        [placeholder]="'MICROSITE.HeadlinePlaceholder' | translate"
+                        class="w-full rounded-lg border-white/20 text-sm bg-white/10 text-white placeholder-slate-400 focus:border-indigo-500 focus:ring-indigo-500"
+                        [attr.aria-label]="'MICROSITE.Headline' | translate" [title]="'MICROSITE.Headline' | translate">
                 </div>
 
                 <!-- Description Editor -->
                 <div>
                     <label class="text-xs text-slate-300 block mb-1">{{ 'MICROSITE.Description' | translate }}</label>
                     <textarea [ngModel]="marketingText()" (ngModelChange)="marketingText.set($event)" rows="6"
+                        [attr.data-debug-id]="'microsite-description-textarea'"
                         class="w-full rounded-lg border-white/20 text-sm bg-white/10 text-white placeholder-slate-400 focus:border-indigo-500 focus:ring-indigo-500"
-                        [placeholder]="'MICROSITE.DescriptionPlaceholder' | translate"></textarea>
+                        [placeholder]="'MICROSITE.DescriptionPlaceholder' | translate"
+                        [attr.aria-label]="'MICROSITE.Description' | translate"
+                        [title]="'MICROSITE.Description' | translate"></textarea>
                 </div>
 
                 <div class="pt-2 border-t border-white/10 mt-2 space-y-3">
@@ -125,6 +146,7 @@
                             class="relative inline-block w-10 align-middle select-none transition duration-200 ease-in">
                             <input type="checkbox" [checked]="micrositeConfig().showDescription"
                                 (change)="toggleDescriptionVisibility($event)" id="showDesc"
+                                [attr.data-debug-id]="'showDescription'"
                                 class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer" />
                             <label for="showDesc"
                                 class="toggle-label block overflow-hidden h-5 rounded-full bg-white/20 cursor-pointer"></label>
@@ -138,6 +160,7 @@
                             class="relative inline-block w-10 align-middle select-none transition duration-200 ease-in">
                             <input type="checkbox" [checked]="micrositeConfig().showContact"
                                 (change)="toggleContactForm($event)" id="showContact"
+                                [attr.data-debug-id]="'showContact'"
                                 class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer" />
                             <label for="showContact"
                                 class="toggle-label block overflow-hidden h-5 rounded-full bg-white/20 cursor-pointer"></label>
@@ -153,10 +176,11 @@
                         @for(section of availableSections; track section.id) {
                         <div class="flex items-center">
                             <input type="checkbox" [id]="'sec-' + section.id"
-                                [title]="'MICROSITE.ToggleSection' | translate"
                                 [checked]="micrositeConfig().visibleSections.includes(section.id)"
                                 (change)="toggleSectionVisibility(section.id, $event)"
-                                class="h-4 w-4 rounded border-slate-500 bg-white/10 text-indigo-500 focus:ring-indigo-500">
+                                class="h-4 w-4 rounded border-slate-500 bg-white/10 text-indigo-500 focus:ring-indigo-500"
+                                [attr.aria-label]="section.label | translate" [title]="section.label | translate"
+                                [attr.data-debug-id]="'section-' + section.id" [attr.title]="section.label | translate">
                             <label [for]="'sec-' + section.id" class="ml-2 block text-sm text-slate-200 cursor-pointer">
                                 {{ section.label | translate }}
                             </label>
@@ -172,9 +196,13 @@
                             <span class="text-slate-200">{{ section.label | translate }}</span>
                             <div class="flex space-x-1">
                                 <button (click)="moveSection(i, 'up')" [disabled]="i === 0"
-                                    class="p-1 text-slate-400 hover:text-white disabled:opacity-30">↑</button>
+                                    data-debug-id="move-section-up"
+                                    class="p-1 text-slate-400 hover:text-white disabled:opacity-30"
+                                    [attr.aria-label]="'COMMON.MoveUp' | translate">↑</button>
                                 <button (click)="moveSection(i, 'down')" [disabled]="i === orderedSections().length - 1"
-                                    class="p-1 text-slate-400 hover:text-white disabled:opacity-30">↓</button>
+                                    data-debug-id="move-section-down"
+                                    class="p-1 text-slate-400 hover:text-white disabled:opacity-30"
+                                    [attr.aria-label]="'COMMON.MoveDown' | translate">↓</button>
                             </div>
                         </div>
                         }
@@ -199,9 +227,11 @@
                             <label class="block text-xs font-medium text-slate-400 mb-1">{{ 'MICROSITE.Restaurants' |
                                 translate }}</label>
                             <textarea rows="3" [ngModel]="content?.guideGastro?.recommandationRestaurants"
-                                [title]="'MICROSITE.Restaurants' | translate"
                                 (ngModelChange)="updateBookletText('guideGastro', 'recommandationRestaurants', $event)"
-                                class="w-full text-xs rounded border-white/20 bg-white/10 text-white placeholder-slate-500"></textarea>
+                                data-debug-id="guide-restaurants-textarea"
+                                class="w-full text-xs rounded border-white/20 bg-white/10 text-white placeholder-slate-500"
+                                [attr.aria-label]="'MICROSITE.GuideRestaurantsAria' | translate"
+                                [title]="'MICROSITE.Restaurants' | translate"></textarea>
                         </div>
                         <!-- Add other guide fields here if needed per original code, kept brief for now as they are dynamically bound in the renderer via content object -->
                     </div>
@@ -221,16 +251,22 @@
                         [class.opacity-50]="!photo.visible">
                         <!-- Controls -->
                         <button (click)="setCoverPhoto(photo.url)" class="mr-2 transition-colors"
+                            data-debug-id="set-cover-photo-button"
                             [class.text-yellow-400]="micrositeConfig().headerPhotoUrl === photo.url"
-                            [class.text-slate-500]="micrositeConfig().headerPhotoUrl !== photo.url">
+                            [class.text-slate-500]="micrositeConfig().headerPhotoUrl !== photo.url"
+                            [attr.aria-label]="'MICROSITE.SetCover' | translate"
+                            [title]="'MICROSITE.SetCover' | translate">
                             ★
                         </button>
-                        <button (click)="togglePhotoVisibility($index)" class="mr-2 text-slate-400 hover:text-white">
+                        <button (click)="togglePhotoVisibility($index)" class="mr-2 text-slate-400 hover:text-white"
+                            data-debug-id="toggle-photo-visibility-button"
+                            [attr.aria-label]="'MICROSITE.HidePhoto' | translate"
+                            [title]="'MICROSITE.HidePhoto' | translate">
                             {{ photo.visible ? '👁️' : '🚫' }}
                         </button>
 
-                        <img [src]="photo.url" alt="Gallery Photo Preview"
-                            class="w-8 h-8 object-cover rounded mr-3 bg-black/50">
+                        <img [src]="photo.url" class="w-8 h-8 object-cover rounded mr-3 bg-black/50"
+                            alt="Photo de la galerie">
                         <div class="flex-grow min-w-0">
                             <p class="text-xs truncate text-slate-300">{{ photo.category || 'Photo' }}</p>
                         </div>

@@ -7,12 +7,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { CalendarService, CalendarEvent } from '../calendar.service';
-import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'app-calendar-view',
     standalone: true,
-    imports: [CommonModule, FullCalendarModule, FormsModule, TranslatePipe],
+    imports: [CommonModule, FullCalendarModule, FormsModule],
     template: `
     <div class="h-full w-full p-4 bg-slate-900 relative">
       <full-calendar 
@@ -29,8 +28,8 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                     <h3 class="text-xl font-bold text-white">
                         {{ (isEditing() ? 'CALENDAR.EditEvent' : 'CALENDAR.NewEvent') | translate }}
                     </h3>
-                    <button (click)="closeModal()" [title]="'COMMON.Close' | translate" class="text-white/40 hover:text-white transition-colors">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <button (click)="closeModal()" data-debug-id="modal-close-button" class="text-white/40 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -41,79 +40,86 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                     @if (!showDeleteConfirm()) {
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-slate-400 mb-1">{{ 'CALENDAR.TitleLabel' | translate }}</label>
-                                <input [(ngModel)]="eventForm.title" type="text" [title]="'CALENDAR.TitleLabel' | translate"
+                                <label class="block text-sm font-medium text-slate-400 mb-1">{{ 'CALENDAR.EventTitle' | translate }}</label>
+                                <input [(ngModel)]="eventForm.title" type="text" 
+                                    data-debug-id="event-title-input"
                                     class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 placeholder-white/20"
-                                    [placeholder]="'CALENDAR.TitlePlaceholder' | translate">
+                                    [placeholder]="'CALENDAR.EventPlaceholder' | translate">
                             </div>
 
-                             <div class="space-y-4">
+                            <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-400 mb-1">{{ 'CALENDAR.StartLabel' | translate }}</label>
-                                    <input [(ngModel)]="eventForm.start" type="datetime-local" [title]="'CALENDAR.StartLabel' | translate"
+                                    <label class="block text-sm font-medium text-slate-400 mb-1">{{ 'CALENDAR.Start' | translate }}</label>
+                                    <input [(ngModel)]="eventForm.start" type="datetime-local" 
+                                        data-debug-id="event-start-input"
                                         class="w-full bg-slate-900/80 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-base">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-400 mb-1">{{ 'CALENDAR.EndLabel' | translate }}</label>
-                                    <input [(ngModel)]="eventForm.end" type="datetime-local" [title]="'CALENDAR.EndLabel' | translate"
+                                    <label class="block text-sm font-medium text-slate-400 mb-1">{{ 'CALENDAR.End' | translate }}</label>
+                                    <input [(ngModel)]="eventForm.end" type="datetime-local" 
+                                        data-debug-id="event-end-input"
                                         class="w-full bg-slate-900/80 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-base">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-slate-400 mb-1">{{ 'CALENDAR.DescriptionLabel' | translate }}</label>
-                                <textarea [(ngModel)]="eventForm.description" rows="3" [title]="'CALENDAR.DescriptionLabel' | translate"
+                                <label class="block text-sm font-medium text-slate-400 mb-1">{{ 'CALENDAR.Description' | translate }}</label>
+                                <textarea [(ngModel)]="eventForm.description" rows="3"
+                                    data-debug-id="event-description-textarea"
                                     class="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 placeholder-white/20"
-                                    [placeholder]="'CALENDAR.DescriptionPlaceholder' | translate"></textarea>
+                                    [placeholder]="'CALENDAR.DetailsPlaceholder' | translate"></textarea>
                             </div>
                         </div>
                     } @else {
                         <div class="py-8 flex flex-col items-center text-center space-y-4 animate-in fade-in zoom-in duration-300">
                             <div class="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mb-2">
-                                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </div>
-                            <h4 class="text-xl font-bold text-white">{{ 'CALENDAR.DeleteConfirmEvent' | translate }}</h4>
-                            <p class="text-slate-400 text-sm max-w-[280px]">
-                                {{ 'CALENDAR.DeleteConfirmEventDesc' | translate:{title: eventForm.title} }}
+                            <h4 class="text-xl font-bold text-white">{{ 'CALENDAR.DeleteConfirmTitle' | translate }}</h4>
+                            <p class="text-slate-400 text-sm max-w-[280px]" [innerHTML]="'CALENDAR.DeleteConfirmText' | translate:{title: eventForm.title}">
                             </p>
                         </div>
                     }
                 </div>
 
                 <!-- Modal Footer -->
-                 <div class="p-6 bg-slate-900/50 border-t border-white/10">
+                <div class="p-6 bg-slate-900/50 border-t border-white/10">
                     @if (!showDeleteConfirm()) {
                         <div class="flex items-center justify-between gap-3 w-full">
                             @if (isEditing()) {
-                                <button (click)="onDelete()" [title]="'COMMON.Delete' | translate"
+                                <button (click)="onDelete()" 
+                                    data-debug-id="modal-delete-button"
                                     class="px-4 py-2 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-all">
-                                    {{ 'COMMON.Delete' | translate }}
+                                    {{ 'CALENDAR.DeleteEvent' | translate }}
                                 </button>
                             } @else {
                                 <div></div>
                             }
                             
                             <div class="flex gap-3">
-                                <button (click)="closeModal()" [title]="'COMMON.Cancel' | translate"
+                                <button (click)="closeModal()" 
+                                    data-debug-id="modal-cancel-button"
                                     class="px-5 py-2 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-all">
-                                    {{ 'COMMON.Cancel' | translate }}
+                                    {{ 'CALENDAR.Cancel' | translate }}
                                 </button>
                                 <button (click)="onSave()" [disabled]="!eventForm.title"
-                                    [title]="(isEditing() ? 'CALENDAR.UpdateBtn' : 'CALENDAR.SaveBtn') | translate"
+                                    data-debug-id="modal-save-button"
                                     class="px-6 py-2 text-sm font-bold text-slate-900 bg-blue-500 hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all shadow-lg active:scale-95">
-                                    {{ (isEditing() ? 'CALENDAR.UpdateBtn' : 'CALENDAR.SaveBtn') | translate }}
+                                    {{ (isEditing() ? 'CALENDAR.Update' : 'CALENDAR.Save') | translate }}
                                 </button>
                             </div>
                         </div>
                     } @else {
                         <div class="grid grid-cols-2 gap-3 w-full animate-in slide-in-from-bottom-2 duration-300">
-                            <button (click)="cancelDelete()" [title]="'CALENDAR.CancelDelete' | translate"
+                            <button (click)="cancelDelete()" 
+                                data-debug-id="confirm-keep-button"
                                 class="px-5 py-2.5 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 rounded-lg border border-white/5 transition-all">
-                                {{ 'CALENDAR.CancelDelete' | translate }}
+                                {{ 'CALENDAR.KeepEvent' | translate }}
                             </button>
-                            <button (click)="confirmDelete()" [title]="'CALENDAR.ConfirmDelete' | translate"
+                            <button (click)="confirmDelete()" 
+                                data-debug-id="confirm-delete-button"
                                 class="px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-500 rounded-lg transition-all shadow-lg shadow-red-900/30 active:scale-95">
                                 {{ 'CALENDAR.ConfirmDelete' | translate }}
                             </button>
@@ -211,7 +217,7 @@ export class CalendarViewComponent {
     calendarOptions: CalendarOptions = {
         plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
         initialView: 'dayGridMonth',
-        locale: 'fr',
+        locale: this.calendarService.locale(),
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -316,7 +322,7 @@ export class CalendarViewComponent {
             this.closeModal();
         } catch (e) {
             console.error(e);
-            alert('Erreur lors de l\'enregistrement de l\'événement');
+            alert(this.calendarService.translate('CALENDAR.SaveError'));
         }
     }
 
@@ -337,7 +343,7 @@ export class CalendarViewComponent {
             this.closeModal();
         } catch (e) {
             console.error(e);
-            alert('Erreur lors de la suppression');
+            alert(this.calendarService.translate('CALENDAR.DeleteError'));
         }
     }
 

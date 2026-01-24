@@ -11,7 +11,8 @@
             </h2>
             <p class="text-sm text-slate-400 mt-1">{{ 'TOOL.checklists_desc' | translate }}</p>
         </div>
-        <button (click)="close.emit()" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+        <button (click)="close.emit()" class="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            [attr.aria-label]="'COMMON.Close' | translate" title="Close">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -39,7 +40,7 @@
 
             <div class="flex-1 overflow-y-auto custom-scrollbar space-y-2">
                 @for (checklist of filteredChecklists(); track checklist.id) {
-                <button (click)="selectChecklist(checklist)"
+                <button (click)="selectChecklist(checklist)" [attr.data-debug-id]="checklist.id"
                     class="w-full text-left p-4 rounded-xl border transition-all group relative overflow-hidden"
                     [class]="selectedChecklist()?.id === checklist.id
                                     ? 'bg-white/10 border-[#D4AF37]/50 shadow-lg'
@@ -183,7 +184,7 @@
 
                         <div class="space-y-2">
                             @for (item of getItemsForSection(checklist, section); track item.id) {
-                            <div
+                            <div [attr.data-debug-id]="item.id"
                                 class="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all group">
                                 <!-- Checkbox -->
                                 <div class="shrink-0 mt-0.5">
@@ -238,8 +239,7 @@
     <div id="print-layout-container" class="hidden print:block p-8 bg-white text-black h-auto">
         <!-- Elegant Header -->
         <div class="text-center mb-12">
-            <h1 class="text-6xl text-slate-800"
-                style="font-family: 'Great Vibes', 'Brush Script MT', cursive; font-weight: 400;">
+            <h1 class="text-6xl text-slate-800 font-handwriting">
                 <!-- Updated to use Property Name if available -->
                 {{ propertyName() || (checklist.name_key | translate) }}
             </h1>
@@ -260,9 +260,8 @@
                 </h3>
                 }
 
-                <ul class="space-y-4">
-                    @for (item of getItemsForSection(checklist, section); track item.id) {
-                    <li class="flex items-center gap-4 group">
+                <ul class="space-y-4">@for (item of getItemsForSection(checklist, section); track item.id) {<li
+                        class="flex items-center gap-4 group">
                         <!-- Square Checkbox (Vertically Centered) -->
                         <div class="shrink-0 w-5 h-5 border border-slate-800 bg-white"></div>
 
@@ -270,8 +269,7 @@
                         <span class="text-slate-800 text-base font-normal font-sans leading-relaxed flex-1">
                             {{ item.item_text_key | translate }}
                         </span>
-                    </li>
-                    }
+                    </li>}
                 </ul>
             </div>
             }

@@ -27,17 +27,17 @@ import { effect } from '@angular/core';
         <div class="flex items-center gap-3">
           @if (!isGlobal()) {
             <button (click)="view.openCreateModal()" 
-              [title]="'CALENDAR.NewEvent' | translate"
+              data-debug-id="add-event-button"
               class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg active:scale-95">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
               <span>{{ 'CALENDAR.NewEvent' | translate }}</span>
             </button>
           }
           
-          <button (click)="close.emit()" [title]="'COMMON.Close' | translate" class="p-2 hover:bg-white/10 rounded-lg text-white transition-colors">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <button (click)="close.emit()" data-debug-id="close-calendar-button" class="p-2 hover:bg-white/10 rounded-lg text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>

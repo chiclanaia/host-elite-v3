@@ -8,8 +8,6 @@
     <div class="mb-8 text-center">
         <h3 class="text-3xl font-bold text-white flex items-center justify-center space-x-3 drop-shadow-md">
             <span>👁️</span> <span>{{ 'TOOL.audit_vis_name' | translate }}</span>
-            <span
-                class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs px-2 py-0.5 rounded-full font-bold ml-2">GOLD</span>
         </h3>
         <p class="text-slate-200 mt-2 font-light max-w-2xl mx-auto">
             {{ 'TOOL.audit_vis_desc' | translate }}
@@ -23,46 +21,46 @@
             <div class="absolute inset-0 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
             <div
                 class="relative bg-white/10 border border-white/20 p-8 rounded-full shadow-2xl backdrop-blur-md flex items-center justify-center w-full h-full">
-                <span class="text-6xl filter drop-shadow-lg" aria-hidden="true">🚀</span>
+                <span class="text-6xl filter drop-shadow-lg">🚀</span>
             </div>
         </div>
 
         <div class="text-center space-y-4 max-w-lg w-full">
-            <h4 class="text-xl font-bold text-white">{{ 'VISIBILITY.Status.Idle' | translate }}</h4>
+            <h4 class="text-xl font-bold text-white">{{ 'AUDIT_VIS.ReadyTitle' | translate }}</h4>
             <p class="text-slate-300 text-sm">
-                {{ 'VISIBILITY.Status.IdleDesc' | translate }}
+                {{ 'AUDIT_VIS.ReadySubtitle' | translate }}
             </p>
 
             <div class="space-y-3 text-left bg-black/20 p-4 rounded-xl border border-white/10">
                 <div>
-                    <label class="text-slate-400 text-xs font-bold uppercase ml-1">{{ 'VISIBILITY.LienAirbnb' |
-                        translate }}</label>
-                    <input type="text" [ngModel]="airbnbUrl()" (ngModelChange)="airbnbUrl.set($event)"
-                        [placeholder]="'VISIBILITY.PlaceholderAirbnb' | translate"
-                        [title]="'VISIBILITY.UrlTitle' | translate"
+                    <label class="text-slate-400 text-xs font-bold uppercase ml-1" for="airbnbUrl">{{
+                        'AUDIT_VIS.AirbnbUrl' | translate }}</label>
+                    <input type="text" id="airbnbUrl" [ngModel]="airbnbUrl()" (ngModelChange)="airbnbUrl.set($event)"
+                        data-debug-id="airbnb-url-input" placeholder="https://www.airbnb.fr/rooms/..."
+                        [title]="'AUDIT_VIS.AirbnbUrl' | translate"
                         class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                 </div>
                 <div>
-                    <label class="text-slate-400 text-xs font-bold uppercase ml-1">{{ 'VISIBILITY.LienBooking' |
-                        translate }}</label>
-                    <input type="text" [ngModel]="bookingUrl()" (ngModelChange)="bookingUrl.set($event)"
-                        [placeholder]="'VISIBILITY.PlaceholderBooking' | translate"
-                        [title]="'VISIBILITY.UrlTitle' | translate"
+                    <label class="text-slate-400 text-xs font-bold uppercase ml-1" for="bookingUrl">{{
+                        'AUDIT_VIS.BookingUrl' | translate }}</label>
+                    <input type="text" id="bookingUrl" [ngModel]="bookingUrl()" (ngModelChange)="bookingUrl.set($event)"
+                        data-debug-id="booking-url-input" placeholder="https://www.booking.com/hotel/..."
+                        [title]="'AUDIT_VIS.BookingUrl' | translate"
                         class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                 </div>
                 <div>
-                    <label class="text-slate-400 text-xs font-bold uppercase ml-1">{{ 'VISIBILITY.LienOther' | translate
-                        }}</label>
-                    <input type="text" [ngModel]="otherUrl()" (ngModelChange)="otherUrl.set($event)"
-                        [placeholder]="'VISIBILITY.PlaceholderOther' | translate"
-                        [title]="'VISIBILITY.UrlTitle' | translate"
+                    <label class="text-slate-400 text-xs font-bold uppercase ml-1" for="otherUrl">{{
+                        'AUDIT_VIS.OtherUrl' | translate }}</label>
+                    <input type="text" id="otherUrl" [ngModel]="otherUrl()" (ngModelChange)="otherUrl.set($event)"
+                        data-debug-id="other-url-input" placeholder="https://mon-site-direct.com"
+                        [title]="'AUDIT_VIS.OtherUrl' | translate"
                         class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                 </div>
             </div>
 
-            <button (click)="runVisibilityAudit()" [title]="'VISIBILITY.LaunchAudit' | translate"
+            <button (click)="runVisibilityAudit()" data-debug-id="run-audit-button"
                 class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-900/40 transition-all transform hover:scale-105 border border-blue-400/30 w-full">
-                {{ 'VISIBILITY.LaunchAudit' | translate }}
+                {{ 'AUDIT_VIS.RunButton' | translate }}
             </button>
         </div>
     </div>
@@ -87,7 +85,7 @@
 
         <div class="w-full max-w-md space-y-4">
             <div class="flex justify-between text-xs font-semibold text-slate-300 uppercase tracking-widest">
-                <span>{{ 'VISIBILITY.Progress' | translate }}</span>
+                <span>{{ 'AUDIT_VIS.Progress' | translate }}</span>
                 <span>{{ auditProgress() }}%</span>
             </div>
             <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
@@ -109,8 +107,8 @@
             <!-- Score Gauge -->
             <div
                 class="bg-black/20 rounded-xl p-6 border border-white/10 flex flex-col items-center justify-center text-center backdrop-blur-sm">
-                <h4 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">{{ 'VISIBILITY.ScoreTitle' |
-                    translate }}</h4>
+                <h4 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">{{
+                    'AUDIT_VIS.VisibilityScore' | translate }}</h4>
                 <div class="relative w-32 h-32 flex items-center justify-center">
                     <svg class="transform -rotate-90 w-32 h-32">
                         <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="12" fill="transparent"
@@ -125,8 +123,8 @@
                 </div>
                 <p class="text-sm mt-2 font-medium"
                     [class]="result.score >= 80 ? 'text-green-400' : result.score >= 50 ? 'text-yellow-400' : 'text-red-400'">
-                    {{ result.score >= 80 ? ('VISIBILITY.Level.Excellent' | translate) : result.score >= 50 ?
-                    ('VISIBILITY.Level.Average' | translate) : ('VISIBILITY.Level.Critical' | translate) }}
+                    {{ result.score >= 80 ? ('AUDIT_VIS.ScoreExcellent' | translate) : result.score >= 50 ?
+                    ('AUDIT_VIS.ScoreAverage' | translate) : ('AUDIT_VIS.ScoreCritical' | translate) }}
                 </p>
             </div>
 
@@ -134,7 +132,7 @@
             <div class="md:col-span-2 space-y-4">
                 <div class="bg-blue-600/20 border border-blue-500/30 p-4 rounded-xl">
                     <h4 class="text-blue-300 font-bold mb-1 flex items-center"><span class="mr-2">💡</span> {{
-                        'VISIBILITY.Summary' | translate }}
+                        'AUDIT_VIS.Summary' | translate }}
                     </h4>
                     <p class="text-slate-200 text-sm leading-relaxed">{{ result.summary }}</p>
                 </div>
@@ -145,9 +143,9 @@
                         <div class="font-bold text-white text-sm mb-1">{{ plat.name }}</div>
                         <div class="text-xs font-bold px-2 py-0.5 rounded-full inline-block mb-2"
                             [class]="(plat.status === 'Good' || plat.status === 'Visible') ? 'bg-green-500/20 text-green-300' : (plat.status === 'Average') ? 'bg-yellow-500/20 text-yellow-300' : 'bg-red-500/20 text-red-300'">
-                            {{ (plat.status === 'Good' || plat.status === 'Visible') ? ('VISIBILITY.Status.Visible' |
+                            {{ (plat.status === 'Good' || plat.status === 'Visible') ? ('AUDIT_VIS.StatusVisible' |
                             translate) : (plat.status ===
-                            'Average') ? ('VISIBILITY.Level.Average' | translate) : ('VISIBILITY.Status.Invisible' |
+                            'Average') ? ('AUDIT_VIS.StatusAverage' | translate) : ('AUDIT_VIS.StatusInvisible' |
                             translate) }}
                         </div>
                         <p class="text-[10px] text-slate-400 leading-tight">{{ plat.observation }}</p>
@@ -162,25 +160,23 @@
             <!-- Action Plan -->
             <div class="bg-white/5 border border-white/10 rounded-xl p-6">
                 <h4 class="text-white font-bold mb-4 flex items-center"><span class="mr-2 text-xl">📋</span> {{
-                    'VISIBILITY.ActionPlan' | translate }}</h4>
-                <ul class="space-y-4">
-                    @for (tip of result.tips; track tip.title) {
-                    <li class="flex items-start bg-black/20 p-3 rounded-lg border border-white/5">
+                    'AUDIT_VIS.ActionPlan' | translate }}</h4>
+                <ul class="space-y-4">@for (tip of result.tips; track tip.title) {<li
+                        class="flex items-start bg-black/20 p-3 rounded-lg border border-white/5">
                         <span class="text-green-400 mr-3 mt-0.5">✔</span>
                         <div>
                             <strong class="text-slate-200 text-sm block">{{ tip.title }}</strong>
                             <span class="text-slate-400 text-xs">{{ tip.description }}</span>
                         </div>
-                    </li>
-                    }
+                    </li>}
                 </ul>
             </div>
 
             <!-- Keywords -->
             <div class="bg-white/5 border border-white/10 rounded-xl p-6">
                 <h4 class="text-white font-bold mb-4 flex items-center"><span class="mr-2 text-xl">🔑</span> {{
-                    'VISIBILITY.MissingKeywords' | translate }}</h4>
-                <p class="text-slate-400 text-xs mb-4">{{ 'VISIBILITY.KeywordsDesc' | translate }}</p>
+                    'AUDIT_VIS.MissingKeywords' | translate }}</h4>
+                <p class="text-slate-400 text-xs mb-4">{{ 'AUDIT_VIS.KeywordsDesc' | translate }}</p>
                 <div class="flex flex-wrap gap-2">
                     @for (kw of result.keywords; track kw) {
                     <span
@@ -192,7 +188,7 @@
 
                 <div class="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                     <p class="text-yellow-200 text-xs">
-                        <strong>{{ 'VISIBILITY.ProTip' | translate }}</strong> {{ 'VISIBILITY.ProTipDesc' | translate }}
+                        <strong>{{ 'AUDIT_VIS.ProTip' | translate }}</strong> {{ 'AUDIT_VIS.ProTipText' | translate }}
                     </p>
                 </div>
             </div>

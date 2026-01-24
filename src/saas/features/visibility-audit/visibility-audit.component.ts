@@ -28,7 +28,7 @@ export class VisibilityAuditComponent {
     private geminiService = inject(GeminiService);
     private repository = inject(HostRepository);
     private store = inject(SessionStore);
-    private injector = inject(Injector);
+    private translationService = inject(TranslationService);
 
     // Audit State
     auditStatus = signal<'idle' | 'searching' | 'analyzing' | 'complete'>('idle');
@@ -57,18 +57,17 @@ export class VisibilityAuditComponent {
         this.auditResult.set(null);
 
         // 2. Simulate Deep Search (Visual Effect)
-        const translationService = this.injector.get(TranslationService);
         const steps = [
-            translationService.translate('VISIBILITY.Step1'),
-            translationService.translate('VISIBILITY.Step2'),
-            translationService.translate('VISIBILITY.Step3'),
-            translationService.translate('VISIBILITY.Step4'),
-            translationService.translate('VISIBILITY.Step5'),
-            translationService.translate('VISIBILITY.Step6')
+            'AUDIT_VIS.StepAirbnb',
+            'AUDIT_VIS.StepSearchArea',
+            'AUDIT_VIS.StepFilters',
+            'AUDIT_VIS.StepCompetition',
+            'AUDIT_VIS.StepBooking',
+            'AUDIT_VIS.StepGoogleMaps'
         ];
 
         for (let i = 0; i < steps.length; i++) {
-            this.auditStep.set(steps[i]);
+            this.auditStep.set(this.translationService.translate(steps[i]));
             // Random delay between 500ms and 1500ms for realism
             await new Promise(r => setTimeout(r, 500 + Math.random() * 1000));
             this.auditProgress.set(Math.floor(((i + 1) / steps.length) * 80));
@@ -76,16 +75,15 @@ export class VisibilityAuditComponent {
 
         // 3. AI Analysis Step
         this.auditStatus.set('analyzing');
-        this.auditStep.set(translationService.translate('VISIBILITY.StepAI') || "Generating report...");
+        this.auditStep.set(this.translationService.translate('AUDIT_VIS.StepReport'));
         this.auditProgress.set(90);
 
         try {
             // Construct Context
-            const notSpecified = translationService.translate('VISIBILITY.NotSpecified') || 'Not specified';
             const context = {
                 name: propName,
-                address: propData?.address || notSpecified,
-                description: propData?.listing_description || notSpecified,
+                address: propData?.address || 'Non spécifiée',
+                description: propData?.listing_description || 'Non spécifiée',
                 amenities: propData?.property_equipments ? propData.property_equipments.map((e: any) => e.name) : [],
                 urls: {
                     airbnb: this.airbnbUrl(),
@@ -94,15 +92,14 @@ export class VisibilityAuditComponent {
                 }
             };
 
-            const report = await this.geminiService.generateVisibilityAudit(context, translationService.currentLang());
+            const report = await this.geminiService.generateVisibilityAudit(context, this.translationService.currentLang());
             this.auditResult.set(report);
             this.auditProgress.set(100);
             this.auditStatus.set('complete');
 
         } catch (error) {
             console.error(error);
-            const errorMsg = translationService.translate('VISIBILITY.ErrorAudit') || "Error during audit.";
-            alert(errorMsg);
+            alert(this.translationService.translate('COMMON.Error'));
             this.auditStatus.set('idle');
         }
     }

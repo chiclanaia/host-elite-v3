@@ -69,7 +69,7 @@ export class MicrositeContainerComponent {
         hiddenPhotoUrls: [],
         headerPhotoUrl: null,
         heroLayout: 'full',
-        headline: 'MICROSITE.DefaultHeadline'
+        headline: 'Bienvenue chez vous'
     });
     micrositePhotos = signal<BuilderPhoto[]>([]);
 
@@ -81,11 +81,11 @@ export class MicrositeContainerComponent {
     visiblePhotos = computed(() => this.micrositePhotos().filter(p => p.visible));
 
     readonly availableSections: SectionDef[] = [
-        { id: 'gallery', label: 'MICROSITE.Section.gallery' },
-        { id: 'amenities', label: 'MICROSITE.Section.amenities' },
-        { id: 'reviews', label: 'MICROSITE.Section.reviews' },
-        { id: 'rules', label: 'MICROSITE.Section.rules' },
-        { id: 'guide', label: 'MICROSITE.Section.guide' },
+        { id: 'gallery', label: 'MICROSITE.SectionGallery' },
+        { id: 'amenities', label: 'MICROSITE.SectionAmenities' },
+        { id: 'reviews', label: 'MICROSITE.SectionReviews' },
+        { id: 'rules', label: 'MICROSITE.SectionRules' },
+        { id: 'guide', label: 'MICROSITE.SectionGuide' },
     ];
 
     orderedSections = computed(() => {
@@ -97,9 +97,9 @@ export class MicrositeContainerComponent {
     });
 
     readonly themeOptions = [
-        { id: 'modern', label: 'MICROSITE.Theme.modern' },
-        { id: 'cozy', label: 'MICROSITE.Theme.cozy' },
-        { id: 'luxury', label: 'MICROSITE.Theme.luxury' },
+        { id: 'modern', label: 'MICROSITE.ThemeModern' },
+        { id: 'cozy', label: 'MICROSITE.ThemeCozy' },
+        { id: 'luxury', label: 'MICROSITE.ThemeLuxury' },
     ];
 
     constructor() {
@@ -283,12 +283,12 @@ export class MicrositeContainerComponent {
                         this.availableSections.some(avail => avail.id === s)
                     )
                 }));
-                this.saveMessage.set("MICROSITE.AIDesignSuccess");
+                this.saveMessage.set(this.translationService.translate('MICROSITE.DesignGenerated'));
                 setTimeout(() => this.saveMessage.set(null), 3000);
             }
         } catch (e) {
             console.error("AI Design Error:", e);
-            alert(this.translationService.translate("MICROSITE.AIDesignError"));
+            alert(this.translationService.translate('COMMON.Error'));
         } finally {
             this.isAiDesigning.set(false);
         }
@@ -318,11 +318,11 @@ export class MicrositeContainerComponent {
                 await this.repository.savePropertyPhotos(this.currentPropertyId()!, this.micrositePhotos());
             }
 
-            this.saveMessage.set("MICROSITE.SaveSuccess");
+            this.saveMessage.set(this.translationService.translate('MICROSITE.Published'));
             setTimeout(() => this.saveMessage.set(null), 3000);
         } catch (e) {
             console.error(e);
-            alert(this.translationService.translate("MICROSITE.SaveError"));
+            alert(this.translationService.translate('COMMON.Error'));
         }
     }
 }

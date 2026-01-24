@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { GeminiService } from '../../../services/gemini.service';
+import { TranslationService } from '../../../services/translation.service';
 import { HostRepository } from '../../../services/host-repository.service';
 import { SessionStore } from '../../../state/session.store';
 import { WelcomeBookletService } from '../../views/welcome-booklet/welcome-booklet.service';
@@ -27,6 +28,7 @@ export class AiPromptsComponent {
     private repository = inject(HostRepository);
     private bookletService = inject(WelcomeBookletService);
     private store = inject(SessionStore);
+    private translationService = inject(TranslationService);
 
     // Inputs/State
     currentPropertyId = signal<string | null>(null);
@@ -99,7 +101,7 @@ export class AiPromptsComponent {
         if (!propId || !propName) return;
 
         this.isGenerating.set(true);
-        this.aiAnalysisStatus.set('Analyse des photos et rédaction...');
+        this.aiAnalysisStatus.set(this.translationService.translate('LISTING_AI.StatusAnalyzing'));
 
         try {
             const propData = this.propertyDetails();
@@ -133,14 +135,14 @@ export class AiPromptsComponent {
 
                 this.marketingText.set(result.description);
                 if (result.selectedPhotoIds?.length > 0) {
-                    this.saveMessage.set(`IA : Description générée avec ${result.selectedPhotoIds.length} photos analysées !`);
+                    this.saveMessage.set(this.translationService.translate('LISTING_AI.GenSuccess', { count: result.selectedPhotoIds.length }));
                     setTimeout(() => this.saveMessage.set(null), 4000);
                 }
             }
 
         } catch (e) {
             console.error(e);
-            alert("Erreur lors de la génération.");
+            alert(this.translationService.translate('COMMON.Error'));
         } finally {
             this.isGenerating.set(false);
             this.aiAnalysisStatus.set('');
@@ -168,12 +170,12 @@ export class AiPromptsComponent {
                 await this.repository.saveBooklet(this.propertyName(), bookletPayload);
 
                 // Notify user
-                this.saveMessage.set("Description sauvegardée !");
+                this.saveMessage.set(this.translationService.translate('LISTING_AI.SaveSuccess'));
                 setTimeout(() => this.saveMessage.set(null), 3000);
             }
         } catch (error) {
             console.error('Error saving:', error);
-            alert("Erreur lors de la sauvegarde.");
+            alert(this.translationService.translate('COMMON.Error'));
         }
     }
 }

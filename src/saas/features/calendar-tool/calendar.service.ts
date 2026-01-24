@@ -33,13 +33,22 @@ export interface CalendarEvent {
 })
 export class CalendarService {
     private supabase = inject(SupabaseService);
-    public translationService = inject(TranslationService);
+    private ts = inject(TranslationService);
 
     // Signals for state
     sources = signal<CalendarSource[]>([]);
     isLoading = signal(false);
 
     constructor() { }
+
+    // --- TRANSLATION HELPERS ---
+    translate(key: string, params?: Record<string, string | number>): string {
+        return this.ts.translate(key, params);
+    }
+
+    locale(): string {
+        return this.ts.currentLang();
+    }
 
     // --- SOURCES MANAGEMENT ---
     private propertyPalette = [
@@ -72,7 +81,7 @@ export class CalendarService {
 
         this.loadingProps.add(propertyId);
         try {
-            // Fetch existing sources
+            // First pass: Fetch existing sources
             let { data: sources, error } = await this.supabase.supabase
                 .from('calendar_sources')
                 .select('*')
@@ -81,21 +90,20 @@ export class CalendarService {
             if (error) throw error;
             let currentSources = sources || [];
 
-            // Identify specific sources
-            const propertySources = currentSources.filter(s => s.type === 'internal' && s.name !== 'Local Events' && s.name !== this.translationService.translate('CALENDAR.MainCalendar'));
-            const localEventSources = currentSources.filter(s => s.type === 'internal' && (s.name === 'Local Events' || s.name === this.translationService.translate('WIDGET.local-events')));
+            // Check internal sources
+            const internalSources = currentSources.filter(s => s.type === 'internal');
 
-            // 1. Ensure exactly ONE property calendar
-            if (propertySources.length !== 1) {
-                if (propertySources.length > 1) {
-                    console.log(`[CalendarService] Multiple property internal sources for ${propertyId}, cleaning up...`);
-                    for (let i = 1; i < propertySources.length; i++) {
-                        await this.deleteSource(propertySources[i].id);
+            // 1. Creation/Cleanup if needed
+            if (internalSources.length !== 1) {
+                if (internalSources.length > 1) {
+                    console.log(`[CalendarService] Multiple internal sources for ${propertyId}, cleaning up...`);
+                    for (let i = 1; i < internalSources.length; i++) {
+                        await this.deleteSource(internalSources[i].id);
                     }
-                } else if (propertySources.length === 0) {
-                    const name = propertyName || this.translationService.translate('CALENDAR.MainCalendar') || 'Calendrier';
+                } else if (internalSources.length === 0) {
+                    const name = propertyName || 'Calendrier';
                     const color = this.getPropertyColor(propertyId);
-                    console.log(`[CalendarService] No property internal source for ${propertyId}, creating '${name}'...`);
+                    console.log(`[CalendarService] No internal source for ${propertyId}, creating '${name}' with color ${color}...`);
                     await this.addSource({
                         name: name,
                         type: 'internal',
@@ -103,22 +111,34 @@ export class CalendarService {
                         property_id: propertyId
                     });
                 }
+
+                // Final pass: Re-fetch after creation/cleanup
+                const { data: refreshedData, error: refreshError } = await this.supabase.supabase
+                    .from('calendar_sources')
+                    .select('*')
+                    .eq('property_id', propertyId);
+
+                if (refreshError) throw refreshError;
+                currentSources = refreshedData || [];
             }
 
-            // 2. Refresh sources after potential property calendar creation
-            const { data: refreshedData, error: refreshError } = await this.supabase.supabase
-                .from('calendar_sources')
-                .select('*')
-                .eq('property_id', propertyId);
+            // Exactly one internal calendar exists now or we've updated it
+            const internal = currentSources.find(s => s.type === 'internal');
+            const primaryColor = this.getPropertyColor(propertyId);
 
-            if (refreshError) throw refreshError;
-            currentSources = refreshedData || [];
+            if (internal && propertyName && (internal.name !== propertyName || internal.color !== primaryColor)) {
+                await this.supabase.supabase
+                    .from('calendar_sources')
+                    .update({ name: propertyName, color: primaryColor })
+                    .eq('id', internal.id);
+                internal.name = propertyName;
+                internal.color = primaryColor;
+            }
 
             // Sort and set signal
             const sortedSources = [...currentSources].sort((a, b) => {
-                const mainCalName = this.translationService.translate('CALENDAR.MainCalendar');
-                if (a.type === 'internal' && a.name !== 'Local Events' && a.name !== mainCalName) return -1;
-                if (b.type === 'internal' && b.name !== 'Local Events' && b.name !== mainCalName) return 1;
+                if (a.type === 'internal') return -1;
+                if (b.type === 'internal') return 1;
                 return a.name.localeCompare(b.name);
             });
 
@@ -126,27 +146,6 @@ export class CalendarService {
         } finally {
             this.loadingProps.delete(propertyId);
         }
-    }
-
-    /**
-     * Specifically ensures a "Local Events" source exists for this property
-     */
-    async ensureLocalEventsSource(propertyId: string): Promise<string> {
-        const sources = this.sources();
-        const localEventsLabel = this.translationService.translate('WIDGET.local-events') || 'Local Events';
-        const existing = sources.find(s => (s.name === 'Local Events' || s.name === localEventsLabel) && s.property_id === propertyId);
-
-        if (existing) return existing.id;
-
-        console.log(`[CalendarService] Creating Local Events source for ${propertyId}...`);
-        const newSource = await this.addSource({
-            name: localEventsLabel,
-            type: 'internal',
-            color: '#9333ea', // Royal Purple for events
-            property_id: propertyId
-        });
-
-        return newSource.id;
     }
 
     toggleVisibility(id: string) {
