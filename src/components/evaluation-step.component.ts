@@ -72,6 +72,7 @@ interface Angle {
                    min="1" max="10" step="1"
                    [value]="scores()[angle.id]"
                    (input)="updateScore(angle.id, $event)"
+                   [attr.data-debug-id]="'slider-' + angle.id"
                    class="w-full block"
                    aria-label="Score"
                  >
@@ -110,7 +111,7 @@ interface Angle {
        <!-- Action Button -->
        <div class="pt-4 sticky bottom-4">
          <button 
-            (click)="onSubmit()" 
+            (click)="onSubmit()" data-debug-id="generate-action-plan-button"
             class="w-full py-4 px-6 bg-slate-900 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-slate-800 focus:ring-4 focus:ring-slate-300 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
             Générer mon Plan d'Action IA
          </button>
@@ -132,11 +133,11 @@ export class EvaluationStepComponent {
     legal: 5,
     mindset: 5
   });
-  
+
   readonly angles: Angle[] = [
-    { 
-      id: 'marketing', 
-      label: 'Marketing & Visibilité', 
+    {
+      id: 'marketing',
+      label: 'Marketing & Visibilité',
       icon: '📢',
       checklist: [
         'Photos pro & description optimisée (SEO)',
@@ -144,9 +145,9 @@ export class EvaluationStepComponent {
         'Stratégie de différenciation claire'
       ]
     },
-    { 
-      id: 'experience', 
-      label: 'Expérience Client', 
+    {
+      id: 'experience',
+      label: 'Expérience Client',
       icon: '⭐',
       checklist: [
         'Communication rapide (<1h) & proactive',
@@ -154,9 +155,9 @@ export class EvaluationStepComponent {
         'Petites attentions (panier de bienvenue)'
       ]
     },
-    { 
-      id: 'operations', 
-      label: 'Gestion Opérationnelle', 
+    {
+      id: 'operations',
+      label: 'Gestion Opérationnelle',
       icon: '⚙️',
       checklist: [
         'Processus de ménage standardisé',
@@ -164,9 +165,9 @@ export class EvaluationStepComponent {
         'Automatisation des tâches répétitives'
       ]
     },
-    { 
-      id: 'pricing', 
-      label: 'Stratégie Tarifaire', 
+    {
+      id: 'pricing',
+      label: 'Stratégie Tarifaire',
       icon: '💰',
       checklist: [
         'Tarification dynamique (saison/events)',
@@ -174,9 +175,9 @@ export class EvaluationStepComponent {
         'Analyse de la concurrence'
       ]
     },
-    { 
-      id: 'accomodation', 
-      label: 'Optimisation Logement', 
+    {
+      id: 'accomodation',
+      label: 'Optimisation Logement',
       icon: '🏠',
       checklist: [
         'Décoration & Confort (Literie/Wifi)',
@@ -184,9 +185,9 @@ export class EvaluationStepComponent {
         'Effet "Whaou" ou atout unique'
       ]
     },
-    { 
-      id: 'legal', 
-      label: 'Légal & Finance', 
+    {
+      id: 'legal',
+      label: 'Légal & Finance',
       icon: '⚖️',
       checklist: [
         'Conformité légale & Assurances',
@@ -194,9 +195,9 @@ export class EvaluationStepComponent {
         'Optimisation fiscale'
       ]
     },
-    { 
-      id: 'mindset', 
-      label: 'Mindset & Développement', 
+    {
+      id: 'mindset',
+      label: 'Mindset & Développement',
       icon: '🧠',
       checklist: [
         'Professionnalisme & Résilience',

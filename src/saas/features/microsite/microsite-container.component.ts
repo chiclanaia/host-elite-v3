@@ -81,11 +81,11 @@ export class MicrositeContainerComponent {
     visiblePhotos = computed(() => this.micrositePhotos().filter(p => p.visible));
 
     readonly availableSections: SectionDef[] = [
-        { id: 'gallery', label: 'Galerie Photos' },
-        { id: 'amenities', label: 'Équipements' },
-        { id: 'reviews', label: 'Avis' },
-        { id: 'rules', label: 'Règles' },
-        { id: 'guide', label: 'Guide Local' },
+        { id: 'gallery', label: 'MICROSITE.SectionGallery' },
+        { id: 'amenities', label: 'MICROSITE.SectionAmenities' },
+        { id: 'reviews', label: 'MICROSITE.SectionReviews' },
+        { id: 'rules', label: 'MICROSITE.SectionRules' },
+        { id: 'guide', label: 'MICROSITE.SectionGuide' },
     ];
 
     orderedSections = computed(() => {
@@ -97,9 +97,9 @@ export class MicrositeContainerComponent {
     });
 
     readonly themeOptions = [
-        { id: 'modern', label: 'Moderne (Épuré & Blanc)' },
-        { id: 'cozy', label: 'Cosy (Chaleureux & Beige)' },
-        { id: 'luxury', label: 'Luxe (Sombre & Doré)' },
+        { id: 'modern', label: 'MICROSITE.ThemeModern' },
+        { id: 'cozy', label: 'MICROSITE.ThemeCozy' },
+        { id: 'luxury', label: 'MICROSITE.ThemeLuxury' },
     ];
 
     constructor() {
@@ -283,12 +283,12 @@ export class MicrositeContainerComponent {
                         this.availableSections.some(avail => avail.id === s)
                     )
                 }));
-                this.saveMessage.set("Design généré par l'IA !");
+                this.saveMessage.set(this.translationService.translate('MICROSITE.DesignGenerated'));
                 setTimeout(() => this.saveMessage.set(null), 3000);
             }
         } catch (e) {
             console.error("AI Design Error:", e);
-            alert("Erreur lors de la génération du design.");
+            alert(this.translationService.translate('COMMON.Error'));
         } finally {
             this.isAiDesigning.set(false);
         }
@@ -318,11 +318,11 @@ export class MicrositeContainerComponent {
                 await this.repository.savePropertyPhotos(this.currentPropertyId()!, this.micrositePhotos());
             }
 
-            this.saveMessage.set("Microsite publié et contenu sauvegardé !");
+            this.saveMessage.set(this.translationService.translate('MICROSITE.Published'));
             setTimeout(() => this.saveMessage.set(null), 3000);
         } catch (e) {
             console.error(e);
-            alert("Erreur lors de la publication.");
+            alert(this.translationService.translate('COMMON.Error'));
         }
     }
 }

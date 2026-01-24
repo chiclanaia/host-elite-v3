@@ -28,7 +28,7 @@ export class VisibilityAuditComponent {
     private geminiService = inject(GeminiService);
     private repository = inject(HostRepository);
     private store = inject(SessionStore);
-    private injector = inject(Injector);
+    private translationService = inject(TranslationService);
 
     // Audit State
     auditStatus = signal<'idle' | 'searching' | 'analyzing' | 'complete'>('idle');
@@ -58,16 +58,16 @@ export class VisibilityAuditComponent {
 
         // 2. Simulate Deep Search (Visual Effect)
         const steps = [
-            "Connexion aux serveurs Airbnb...",
-            "Analyse de la zone de recherche...",
-            "Vérification des filtres voyageurs...",
-            "Comparaison avec la concurrence locale...",
-            "Examen des résultats Booking.com...",
-            "Analyse du positionnement Google Maps..."
+            'AUDIT_VIS.StepAirbnb',
+            'AUDIT_VIS.StepSearchArea',
+            'AUDIT_VIS.StepFilters',
+            'AUDIT_VIS.StepCompetition',
+            'AUDIT_VIS.StepBooking',
+            'AUDIT_VIS.StepGoogleMaps'
         ];
 
         for (let i = 0; i < steps.length; i++) {
-            this.auditStep.set(steps[i]);
+            this.auditStep.set(this.translationService.translate(steps[i]));
             // Random delay between 500ms and 1500ms for realism
             await new Promise(r => setTimeout(r, 500 + Math.random() * 1000));
             this.auditProgress.set(Math.floor(((i + 1) / steps.length) * 80));
@@ -75,7 +75,7 @@ export class VisibilityAuditComponent {
 
         // 3. AI Analysis Step
         this.auditStatus.set('analyzing');
-        this.auditStep.set("Génération du rapport d'expert...");
+        this.auditStep.set(this.translationService.translate('AUDIT_VIS.StepReport'));
         this.auditProgress.set(90);
 
         try {
@@ -92,15 +92,14 @@ export class VisibilityAuditComponent {
                 }
             };
 
-            const translationService = this.injector.get(TranslationService);
-            const report = await this.geminiService.generateVisibilityAudit(context, translationService.currentLang());
+            const report = await this.geminiService.generateVisibilityAudit(context, this.translationService.currentLang());
             this.auditResult.set(report);
             this.auditProgress.set(100);
             this.auditStatus.set('complete');
 
         } catch (error) {
             console.error(error);
-            alert("Erreur lors de l'audit.");
+            alert(this.translationService.translate('COMMON.Error'));
             this.auditStatus.set('idle');
         }
     }

@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { SupabaseService } from '../../../services/supabase.service';
+import { TranslationService } from '../../../services/translation.service';
 import { from, Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
@@ -32,12 +33,22 @@ export interface CalendarEvent {
 })
 export class CalendarService {
     private supabase = inject(SupabaseService);
+    private ts = inject(TranslationService);
 
     // Signals for state
     sources = signal<CalendarSource[]>([]);
     isLoading = signal(false);
 
     constructor() { }
+
+    // --- TRANSLATION HELPERS ---
+    translate(key: string, params?: Record<string, string | number>): string {
+        return this.ts.translate(key, params);
+    }
+
+    locale(): string {
+        return this.ts.currentLang();
+    }
 
     // --- SOURCES MANAGEMENT ---
     private propertyPalette = [

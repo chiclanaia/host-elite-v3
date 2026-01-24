@@ -2,7 +2,7 @@
     <!-- Header / Tabs -->
     <div class="flex items-center justify-between border-b border-white/20 px-6 py-3 bg-transparent">
         <div class="flex space-x-6">
-            <button (click)="setActiveTab('edit')"
+            <button (click)="setActiveTab('edit')" data-debug-id="tab-edit"
                 [class]="activeTab() === 'edit' ? 'border-blue-400 text-blue-400' : 'border-transparent text-white/70 hover:text-white hover:border-white/30'"
                 class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
                 <span class="flex items-center gap-2">
@@ -17,7 +17,7 @@
             </button>
 
             <!-- Annonce -->
-            <button (click)="setActiveTab('listing')"
+            <button (click)="setActiveTab('listing')" data-debug-id="tab-listing"
                 [class]="activeTab() === 'listing' ? 'border-blue-400 text-blue-400' : 'border-transparent text-white/70 hover:text-white hover:border-white/30'"
                 class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
                 <span class="flex items-center gap-2">
@@ -30,7 +30,7 @@
             </button>
 
             <!-- Welcome Book -->
-            <button (click)="setActiveTab('booklet')"
+            <button (click)="setActiveTab('booklet')" data-debug-id="tab-booklet"
                 [class]="activeTab() === 'booklet' ? 'border-blue-400 text-blue-400' : 'border-transparent text-white/70 hover:text-white hover:border-white/30'"
                 class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
                 <span class="flex items-center gap-2">
@@ -42,7 +42,7 @@
                 </span>
             </button>
 
-            <button (click)="setActiveTab('microsite')"
+            <button (click)="setActiveTab('microsite')" data-debug-id="tab-microsite"
                 [class]="activeTab() === 'microsite' ? 'border-blue-400 text-blue-400' : 'border-transparent text-white/70 hover:text-white hover:border-white/30'"
                 class="whitespace-nowrap py-2 border-b-2 font-medium text-sm transition-colors">
                 <span class="flex items-center gap-2">
@@ -59,10 +59,10 @@
         <div class="flex items-center space-x-3">
             <div *ngIf="saveMessage()" class="text-green-600 text-sm font-medium animate-pulse">{{ saveMessage() }}
             </div>
-            <button (click)="save()" [disabled]="isLoading()"
+            <button (click)="save()" [disabled]="isLoading()" data-debug-id="global-save-button"
                 class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center shadow-sm disabled:opacity-50">
                 <span *ngIf="isLoading()" class="mr-2">...</span>
-                {{ isLoading() ? 'Chargement...' : 'Enregistrer' }}
+                {{ isLoading() ? ('COMMON.Loading' | translate) : ('COMMON.Save' | translate) }}
             </button>
         </div>
     </div>

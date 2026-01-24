@@ -8,7 +8,8 @@
             </h2>
             <p class="text-sm text-slate-400 mt-1">Simulateur de Rentabilité : Direct vs Conciergerie</p>
         </div>
-        <button (click)="close.emit()" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+        <button (click)="close.emit()" class="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            [attr.aria-label]="'COMMON.Close' | translate" title="Close">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -44,7 +45,7 @@
                     <p class="text-yellow-100/70 max-w-2xl">{{ 'DELEGATION.AI.Desc' | translate }}</p>
                 </div>
 
-                <button (click)="runAiAnalysis()" [disabled]="isAnalyzing()"
+                <button (click)="runAiAnalysis()" [disabled]="isAnalyzing()" data-debug-id="run-ai-analysis-button"
                     class="group relative px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl font-medium text-black shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-wait">
                     <span class="flex items-center gap-2">
                         @if (isAnalyzing()) {
@@ -253,8 +254,9 @@
                             <span class="font-bold text-white">{{ nightlyRate() }} €</span>
                         </div>
                         <input type="range" min="50" max="500" step="5" [ngModel]="nightlyRate()"
-                            (ngModelChange)="nightlyRate.set($event)"
-                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]">
+                            (ngModelChange)="nightlyRate.set($event)" data-debug-id="delegation-slider-nightly-rate"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                            aria-label="Prix Nuitée Moyen">
                     </div>
 
                     <!-- Occupancy Direct -->
@@ -265,7 +267,9 @@
                         </div>
                         <input type="range" min="30" max="100" step="5" [ngModel]="occupancyDirect()"
                             (ngModelChange)="occupancyDirect.set($event)"
-                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400">
+                            data-debug-id="delegation-slider-occupancy-direct"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400"
+                            aria-label="Occupation (Gestion Directe)">
                     </div>
 
                     <!-- Occupancy Concierge -->
@@ -276,7 +280,9 @@
                         </div>
                         <input type="range" min="30" max="100" step="5" [ngModel]="occupancyConcierge()"
                             (ngModelChange)="occupancyConcierge.set($event)"
-                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]">
+                            data-debug-id="delegation-slider-occupancy-concierge"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                            aria-label="Occupancy Concierge">
                         <p class="text-[10px] text-slate-500 mt-1">*Les pros optimisent souvent mieux les
                             prix/calendriers.</p>
                     </div>
@@ -301,7 +307,9 @@
                         </div>
                         <input type="range" min="15" max="25" step="1" [ngModel]="commissionPlatform()"
                             (ngModelChange)="commissionPlatform.set($event)"
-                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400">
+                            data-debug-id="delegation-slider-commission-platform"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400"
+                            aria-label="Platform Commission">
                     </div>
 
                     <!-- Concierge Commission -->
@@ -312,7 +320,9 @@
                         </div>
                         <input type="range" min="15" max="35" step="1" [ngModel]="commissionConcierge()"
                             (ngModelChange)="commissionConcierge.set($event)"
-                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]">
+                            data-debug-id="delegation-slider-commission-concierge"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                            [attr.aria-label]="'DELEGATION.ConciergeFee' | translate" title="Conciergerie Commission">
                     </div>
                 </div>
 
@@ -333,8 +343,9 @@
                             <span class="font-bold text-white">{{ hoursPerStay() }} h</span>
                         </div>
                         <input type="range" min="1" max="10" step="0.5" [ngModel]="hoursPerStay()"
-                            (ngModelChange)="hoursPerStay.set($event)"
-                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400">
+                            (ngModelChange)="hoursPerStay.set($event)" data-debug-id="delegation-slider-hours-per-stay"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400"
+                            aria-label="Hours per stay">
                     </div>
 
                     <!-- Hourly Rate -->
@@ -345,7 +356,9 @@
                         </div>
                         <input type="range" min="10" max="100" step="5" [ngModel]="ownerHourlyRate()"
                             (ngModelChange)="ownerHourlyRate.set($event)"
-                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]">
+                            data-debug-id="delegation-slider-owner-hourly-rate"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                            aria-label="Hourly Rate">
                     </div>
                 </div>
 
