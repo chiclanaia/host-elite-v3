@@ -74,11 +74,11 @@ export const ui = {
     'NAV.admin-users': 'Users',
     'NAV.properties': 'My Properties',
     'NAV.marketing': 'Marketing',
-    'NAV.experience': 'Experience',
+    'NAV.experience': 'Guest Experience',
     'NAV.operations': 'Operations',
     'NAV.pricing': 'Pricing',
-    'NAV.accomodation': 'Accommodation',
-    'NAV.legal': 'Legal & Finance',
+    'NAV.finance': 'Finance',
+    'NAV.legal': 'Legal',
     'NAV.mindset': 'Mindset',
 
     // Dashboard
@@ -105,19 +105,19 @@ export const ui = {
     'MATURITY.MediumDesc': 'Basics are mastered. Aim for intermediate goals (Silver questions).',
     'MATURITY.HighDesc': 'Excellent mastery. Continue optimizing with advanced goals (Gold questions).',
 
-    // Angle Descriptions
-    'ANGLE.marketing_desc': 'Attract more travelers and maximize your online visibility.',
-    'ANGLE.experience_desc': 'Offer an unforgettable 5-star experience to your travelers.',
-    'ANGLE.operations_desc': 'Simplify and automate the daily management of your rental.',
-    'ANGLE.pricing_desc': 'Optimize your prices to maximize your income all year round.',
-    'ANGLE.accomodation_desc': 'Highlight your property and ensure its compliance.',
-    'ANGLE.legal_desc': 'Navigate administrative and financial complexity with peace of mind.',
-    'ANGLE.mindset_desc': 'Develop your skills to become a hospitality entrepreneur.',
-    'ANGLE.CategoryOnboarding': 'Category Onboarding',
-    'ANGLE.AuditDescription': 'Evaluate your mastery of this angle by answering a few questions.',
-    'ANGLE.LaunchAudit': 'Launch Audit',
-    'ANGLE.AssociatedTools': 'Associated Tools',
-    'ANGLE.SaveToBooklet': 'Save to Welcome Booklet',
+    // Dimension Descriptions
+    'DIMENSION.marketing_desc': 'Attract more travelers and maximize your online visibility.',
+    'DIMENSION.experience_desc': 'Offer an unforgettable 5-star experience to your travelers.',
+    'DIMENSION.operations_desc': 'Simplify and automate the daily management of your rental.',
+    'DIMENSION.pricing_desc': 'Optimize your prices to maximize your income all year round.',
+    'DIMENSION.finance_desc': 'Manage your profitability, cashflow, and taxation.',
+    'DIMENSION.legal_desc': 'Navigate administrative and financial complexity with peace of mind.',
+    'DIMENSION.mindset_desc': 'Develop your skills to become a hospitality entrepreneur.',
+    'DIMENSION.CategoryOnboarding': 'Dimension Onboarding',
+    'DIMENSION.AuditDescription': 'Evaluate your mastery of this dimension by answering a few questions.',
+    'DIMENSION.LaunchAudit': 'Launch Audit',
+    'DIMENSION.AssociatedTools': 'Associated Tools',
+    'DIMENSION.SaveToBooklet': 'Save to Welcome Booklet',
 
     // Welcome / Marketing
     'WELCOME.Title': 'Welcome',

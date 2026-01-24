@@ -82,7 +82,7 @@ export class SaaSAppComponent implements OnInit {
   userPlan = computed<string>(() => this.store.userProfile()?.plan || this.reportData().recommendedPlan);
   userAvatar = computed<string | undefined>(() => this.store.userProfile()?.avatar_url);
 
-  private readonly angleIds = ['marketing', 'experience', 'operations', 'pricing', 'accomodation', 'legal', 'mindset'];
+  private readonly angleIds = ['DIM_MKT', 'DIM_EXP', 'DIM_OPS', 'DIM_PRICING', 'DIM_LEGAL', 'mindset'];
   isAngleView = computed(() => this.angleIds.includes(this.activeView().id));
 
   selectedPropertyDetails = computed(() => {

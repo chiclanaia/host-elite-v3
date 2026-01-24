@@ -3,7 +3,7 @@ import { SupabaseService } from './supabase.service';
 
 export interface OnboardingQuestion {
     id: string;
-    angle: string;
+    dimension: string;
     question_key: string;
     level: 'Bronze' | 'Silver' | 'Gold' | 'TIER_1' | 'TIER_2' | 'TIER_3';
     order_index: number;
@@ -33,13 +33,13 @@ export class OnboardingService {
     private supabase = inject(SupabaseService);
 
     /**
-     * Get all questions for a specific angle
+     * Get all questions for a specific dimension
      */
-    async getQuestionsByAngle(angle: string): Promise<OnboardingQuestion[]> {
+    async getQuestionsByDimension(dimension: string): Promise<OnboardingQuestion[]> {
         const { data, error } = await this.supabase.supabase
             .from('onboarding_questions')
             .select('*')
-            .eq('angle', angle)
+            .eq('angle', dimension)
             .order('order_index', { ascending: true });
 
         if (error) {
@@ -69,16 +69,16 @@ export class OnboardingService {
     }
 
     /**
-     * Get user answers for a specific property and angle
+     * Get user answers for a specific property and dimension
      */
-    async getAnswers(propertyId: string, angle: string): Promise<Map<string, OnboardingAnswer>> {
+    async getAnswers(propertyId: string, dimension: string): Promise<Map<string, OnboardingAnswer>> {
         const user = await this.supabase.supabase.auth.getUser();
         if (!user.data.user) {
             throw new Error('User not authenticated');
         }
 
-        // First get all questions for this angle
-        const questions = await this.getQuestionsByAngle(angle);
+        // First get all questions for this dimension
+        const questions = await this.getQuestionsByDimension(dimension);
         const questionIds = questions.map(q => q.id);
 
         // Then get answers for these questions
@@ -137,11 +137,11 @@ export class OnboardingService {
     }
 
     /**
-     * Get completion percentage for an angle
+     * Get completion percentage for a dimension
      */
-    async getAngleCompletion(propertyId: string, angle: string): Promise<number> {
-        const questions = await this.getQuestionsByAngle(angle);
-        const answers = await this.getAnswers(propertyId, angle);
+    async getDimensionCompletion(propertyId: string, dimension: string): Promise<number> {
+        const questions = await this.getQuestionsByDimension(dimension);
+        const answers = await this.getAnswers(propertyId, dimension);
 
         if (questions.length === 0) return 0;
 
@@ -150,11 +150,11 @@ export class OnboardingService {
     }
 
     /**
-     * Get maturity level for an angle based on tiers
+     * Get maturity level for a dimension based on tiers
      */
-    async getMaturityLevel(propertyId: string, angle: string): Promise<{ level: 'Low' | 'Medium' | 'High', color: string, description: string }> {
-        const questions = await this.getQuestionsByAngle(angle);
-        const answers = await this.getAnswers(propertyId, angle);
+    async getMaturityLevel(propertyId: string, dimension: string): Promise<{ level: 'Low' | 'Medium' | 'High', color: string, description: string }> {
+        const questions = await this.getQuestionsByDimension(dimension);
+        const answers = await this.getAnswers(propertyId, dimension);
 
         if (questions.length === 0) {
             return { level: 'Low', color: 'bg-rose-500', description: 'MATURITY.LowDesc' };

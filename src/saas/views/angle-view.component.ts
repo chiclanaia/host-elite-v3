@@ -144,65 +144,64 @@ export class AngleViewComponent implements OnInit {
         }, {} as Record<string, number>);
     }
 
-    private allAngleData: Record<string, AngleDetails> = {
-        'marketing': {
+    private allDimensionData: Record<string, AngleDetails> = {
+        'DIM_MKT': {
             title: 'NAV.marketing',
-            description: 'ANGLE.marketing_desc',
+            description: 'DIMENSION.marketing_desc',
             tools: [
                 { id: 'microsite', name: 'TOOL.microsite_name', description: 'TOOL.microsite_desc', requiredPlan: 'TIER_1' },
                 { id: 'ai-prompts', name: 'TOOL.ai_listing_name', description: 'TOOL.ai_listing_desc', requiredPlan: 'TIER_2' },
                 { id: 'visibility-audit', name: 'TOOL.audit_vis_name', description: 'TOOL.audit_vis_desc', requiredPlan: 'TIER_3' },
             ]
         },
-        'experience': {
+        'DIM_EXP': {
             title: 'NAV.experience',
-            description: 'ANGLE.experience_desc',
+            description: 'DIMENSION.experience_desc',
             tools: [
                 { id: 'booklet', name: 'TOOL.booklet_name', description: 'TOOL.booklet_desc', requiredPlan: 'TIER_1' },
                 { id: 'ai-assistant', name: 'TOOL.ai_msg_name', description: 'TOOL.ai_msg_desc', requiredPlan: 'TIER_2' },
                 { id: 'guest-screening', name: 'TOOL.screening_name', description: 'TOOL.screening_desc', requiredPlan: 'TIER_3' },
             ]
         },
-        'operations': {
+        'DIM_OPS': {
             title: 'NAV.operations',
-            description: 'ANGLE.operations_desc',
+            description: 'DIMENSION.operations_desc',
             tools: [
-                { id: 'checklists', name: 'TOOL.checklists_name', description: 'TOOL.checklists_desc', requiredPlan: 'Freemium' }, // Checklists is standard
+                { id: 'checklists', name: 'TOOL.checklists_name', description: 'TOOL.checklists_desc', requiredPlan: 'Freemium' },
                 { id: 'calendar-sync', name: 'TOOL.calendar_name', description: 'TOOL.calendar_desc', requiredPlan: 'Silver' },
                 { id: 'delegation-sim', name: 'TOOL.delegation_name', description: 'TOOL.delegation_desc', requiredPlan: 'Freemium' },
-            ]
-        },
-        'pricing': {
-            title: 'NAV.pricing',
-            description: 'ANGLE.pricing_desc',
-            tools: [
-                { id: 'profitability', name: 'TOOL.profit_name', description: 'TOOL.profit_desc', requiredPlan: 'TIER_1' },
-                { id: 'market-alerts', name: 'TOOL.alerts_name', description: 'TOOL.alerts_desc', requiredPlan: 'TIER_2' },
-                { id: 'pricing-tools', name: 'TOOL.dynamic_name', description: 'TOOL.dynamic_desc', requiredPlan: 'TIER_3' },
-            ]
-        },
-        'accomodation': {
-            title: 'NAV.accomodation',
-            description: 'ANGLE.accomodation_desc',
-            tools: [
                 { id: 'airbnb-ready', name: 'TOOL.airbnb_ready_name', description: 'TOOL.airbnb_ready_desc', requiredPlan: 'TIER_1' },
                 { id: 'security-check', name: 'TOOL.security_name', description: 'TOOL.security_desc', requiredPlan: 'TIER_1' },
                 { id: 'manual-gen', name: 'TOOL.manual_name', description: 'TOOL.manual_desc', requiredPlan: 'TIER_2' },
                 { id: 'unique-gen', name: 'TOOL.unique_name', description: 'TOOL.unique_desc', requiredPlan: 'TIER_3' },
             ]
         },
-        'legal': {
+        'DIM_PRICING': {
+            title: 'NAV.pricing',
+            description: 'DIMENSION.pricing_desc',
+            tools: [
+                { id: 'profitability', name: 'TOOL.profit_name', description: 'TOOL.profit_desc', requiredPlan: 'TIER_1' },
+                { id: 'market-alerts', name: 'TOOL.alerts_name', description: 'TOOL.alerts_desc', requiredPlan: 'TIER_2' },
+                { id: 'pricing-tools', name: 'TOOL.dynamic_name', description: 'TOOL.dynamic_desc', requiredPlan: 'TIER_3' },
+            ]
+        },
+        'DIM_LEGAL': {
             title: 'NAV.legal',
-            description: 'ANGLE.legal_desc',
+            description: 'DIMENSION.legal_desc',
             tools: [
                 { id: 'reminders', name: 'TOOL.reminders_name', description: 'TOOL.reminders_desc', requiredPlan: 'TIER_1' },
                 { id: 'kpis-simple', name: 'TOOL.kpi_simple_name', description: 'TOOL.kpi_simple_desc', requiredPlan: 'TIER_2' },
                 { id: 'kpis-advanced', name: 'TOOL.kpi_adv_name', description: 'TOOL.kpi_adv_desc', requiredPlan: 'TIER_3' },
             ]
         },
+        'DIM_FINANCE': {
+            title: 'NAV.finance',
+            description: 'DIMENSION.finance_desc',
+            tools: []
+        },
         'mindset': {
             title: 'NAV.mindset',
-            description: 'ANGLE.mindset_desc',
+            description: 'DIMENSION.mindset_desc',
             tools: [
                 { id: 'elearning', name: 'TOOL.elearning_name', description: 'TOOL.elearning_desc', requiredPlan: 'TIER_1' },
                 { id: 'community', name: 'TOOL.community_name', description: 'TOOL.community_desc', requiredPlan: 'TIER_2' },
@@ -326,9 +325,20 @@ export class AngleViewComponent implements OnInit {
 
 
 
-    angleDetails = computed<AngleDetails | null>(() => {
-        const viewId = this.view().id;
-        return this.allAngleData[viewId] || null;
+    dimensionDetails = computed(() => {
+        const id = this.view().id;
+        return this.allDimensionData[id];
+    });
+
+    onboardingMaturity = computed(() => {
+        const id = this.view().id;
+        const info = this.maturityInfo();
+        if (!info) return null;
+        return info;
+    });
+
+    isDimensionView = computed(() => {
+        return this.view().id.startsWith('DIM_') || this.view().id === 'mindset';
     });
 
     isToolLocked(requiredPlan: View['requiredTier']): boolean {
@@ -367,7 +377,7 @@ export class AngleViewComponent implements OnInit {
 
     async openOnboarding(): Promise<void> {
         try {
-            const angle = this.view().id;
+            const dimension = this.view().id;
             const propertyId = this.currentPropertyId();
 
             if (!propertyId) {
@@ -375,18 +385,18 @@ export class AngleViewComponent implements OnInit {
                 return;
             }
 
-            // Load questions from database for this angle
-            let questions = await this.onboardingService.getQuestionsByAngle(angle);
+            // Load questions from database for this dimension
+            let questions = await this.onboardingService.getQuestionsByDimension(dimension);
 
-            // HYBRID LOGIC: Force expansion to 40 items for 'accomodation' (Logement)
-            if (angle === 'accomodation' && questions.length < 40) {
+            // HYBRID LOGIC: Force expansion to 40 items for 'DIM_OPS' (Operations & Logement)
+            if (dimension === 'DIM_OPS' && questions.length < 40) {
                 const existingKeys = new Set(questions.map(q => q.question_key));
                 for (let i = 1; i <= 40; i++) {
                     const key = `AUDIT.accomodation_q${i}`;
                     if (!existingKeys.has(key)) {
                         questions.push({
                             id: `synthetic_${i}`,
-                            angle: 'accomodation',
+                            dimension: 'DIM_OPS',
                             question_key: key,
                             level: i <= 10 ? 'Bronze' : (i <= 20 ? 'Silver' : 'Gold'),
                             order_index: i,
@@ -398,7 +408,7 @@ export class AngleViewComponent implements OnInit {
             }
 
             if (!questions || questions.length === 0) {
-                console.warn('No questions found for angle:', angle);
+                console.warn('No questions found for dimension:', dimension);
                 return;
             }
 
@@ -406,7 +416,7 @@ export class AngleViewComponent implements OnInit {
             this.currentQuestions.set(questions);
 
             // Load existing answers
-            const answersMap = await this.onboardingService.getAnswers(propertyId, angle);
+            const answersMap = await this.onboardingService.getAnswers(propertyId, dimension);
 
             // Build form controls with existing values
             const formControls = questions.reduce((acc, q) => {

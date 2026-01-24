@@ -113,49 +113,35 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                             <!-- Property Label (Concise) -->
                             <p class="px-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 truncate opacity-60">{{ prop.name }}</p>
 
-                            @for(phase of ['preparation', 'launch', 'exploitation', 'excellence']; track phase) {
-                                @if (getViewsForPhase(prop.subViews, phase); as phaseViews) {
-                                  @if (phaseViews.length > 0) {
-                                    <div class="space-y-1">
-                                        <!-- Phase Header -->
-                                        <div class="px-3 py-1 flex items-center justify-between group/phase">
-                                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest opacity-40 group-hover/phase:opacity-100 transition-opacity">
-                                                {{ 'PHASE.' + phase | translate }}
-                                            </span>
-                                            <div class="h-[1px] flex-1 bg-white/5 ml-3 opacity-20 group-hover/phase:opacity-40"></div>
-                                        </div>
+                            <div class="space-y-1 mt-1">
+                                @for(subView of prop.subViews; track subView.id) {
+                                    <a (click)="isLocked(subView) ? null : changeView(subView, prop.name)"
+                                    class="group flex items-center justify-between px-3 py-2 text-sm font-medium rounded-r-lg cursor-pointer transition-all relative"
+                                    [class]="activeView().id === subView.id && activeView().propertyName === prop.name 
+                                        ? 'text-white bg-white/5 border-l-2 border-[#D4AF37] -ml-[1px]' 
+                                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'"
+                                    [class.opacity-50]="isLocked(subView)"
+                                    [class.cursor-not-allowed]="isLocked(subView)">
+                                    
+                                    <div class="flex items-center min-w-0">
+                                        <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors" 
+                                              [class]="activeView().id === subView.id && activeView().propertyName === prop.name ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-slate-400'"
+                                              [innerHTML]="getIcon(subView.icon)"></span>
+                                        <span class="truncate">{{ subView.title.startsWith('NAV.') ? (subView.title | translate) : subView.title }}</span>
+                                    </div>
 
-                                        @for(subView of phaseViews; track subView.id) {
-                                            <a (click)="isLocked(subView) ? null : changeView(subView, prop.name)"
-                                            class="group flex items-center justify-between px-3 py-2 text-sm font-medium rounded-r-lg cursor-pointer transition-all relative"
-                                            [class]="activeView().id === subView.id && activeView().propertyName === prop.name 
-                                                ? 'text-white bg-white/5 border-l-2 border-[#D4AF37] -ml-[1px]' 
-                                                : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'"
-                                            [class.opacity-50]="isLocked(subView)"
-                                            [class.cursor-not-allowed]="isLocked(subView)">
-                                            
-                                            <div class="flex items-center min-w-0">
-                                                <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors" 
-                                                      [class]="activeView().id === subView.id && activeView().propertyName === prop.name ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-slate-400'"
-                                                      [innerHTML]="getIcon(subView.icon)"></span>
-                                                <span class="truncate">{{ subView.title.startsWith('NAV.') ? (subView.title | translate) : subView.title }}</span>
-                                            </div>
-
-                                            <!-- Tier Indicator Circle / Lock -->
-                                            <div class="flex items-center space-x-2 ml-2">
-                                                @if (isLocked(subView)) {
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
-                                                }
-                                                @if (subView.requiredTier) {
-                                                    <span class="w-2 h-2 rounded-full shadow-sm" [class]="getTierIndicatorClass(subView.requiredTier)"></span>
-                                                }
-                                            </div>
-                                            </a>
+                                    <!-- Tier Indicator Circle / Lock -->
+                                    <div class="flex items-center space-x-2 ml-2">
+                                        @if (isLocked(subView)) {
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
+                                        }
+                                        @if (subView.requiredTier) {
+                                            <span class="w-2 h-2 rounded-full shadow-sm" [class]="getTierIndicatorClass(subView.requiredTier)"></span>
                                         }
                                     </div>
-                                  }
+                                    </a>
                                 }
-                            }
+                            </div>
                         </div>
                     }
                     }

@@ -306,14 +306,14 @@ export class TrainingViewComponent implements OnInit {
         { id: 'quiz', label: 'Quiz', icon: '📝' }
     ];
 
-    // Angle metadata
+    // Dimension metadata
     angleMetadata = [
-        { id: 'marketing', nameKey: 'TRAINING.Angles.Marketing', icon: '📢', color: 'from-blue-500 to-cyan-500' },
-        { id: 'experience', nameKey: 'TRAINING.Angles.Experience', icon: '⭐', color: 'from-purple-500 to-pink-500' },
-        { id: 'operations', nameKey: 'TRAINING.Angles.Operations', icon: '⚙️', color: 'from-orange-500 to-red-500' },
-        { id: 'pricing', nameKey: 'TRAINING.Angles.Pricing', icon: '💰', color: 'from-emerald-500 to-teal-500' },
-        { id: 'accommodation', nameKey: 'TRAINING.Angles.Accommodation', icon: '🏠', color: 'from-amber-500 to-yellow-500' },
-        { id: 'legal', nameKey: 'TRAINING.Angles.Legal', icon: '⚖️', color: 'from-slate-500 to-gray-500' }
+        { id: 'DIM_MKT', nameKey: 'TRAINING.Angles.Marketing', icon: '📢', color: 'from-blue-500 to-cyan-500' },
+        { id: 'DIM_EXP', nameKey: 'TRAINING.Angles.Experience', icon: '⭐', color: 'from-purple-500 to-pink-500' },
+        { id: 'DIM_OPS', nameKey: 'TRAINING.Angles.Operations', icon: '⚙️', color: 'from-orange-500 to-red-500' },
+        { id: 'DIM_PRICING', nameKey: 'TRAINING.Angles.Pricing', icon: '💰', color: 'from-emerald-500 to-teal-500' },
+        { id: 'DIM_LEGAL', nameKey: 'TRAINING.Angles.Legal', icon: '⚖️', color: 'from-slate-500 to-gray-500' },
+        { id: 'mindset', nameKey: 'TRAINING.Angles.Mindset', icon: '🧠', color: 'from-indigo-500 to-purple-500' }
     ];
 
     // Group modules by angle
@@ -382,7 +382,7 @@ export class TrainingViewComponent implements OnInit {
 
         // Build question_id -> angle mapping
         const questionMap = new Map<string, string>();
-        questions.forEach(q => questionMap.set(q.id, q.angle));
+        questions.forEach(q => questionMap.set(q.id, q.dimension));
         this.questionToAngleMap.set(questionMap);
     }
 
@@ -396,10 +396,10 @@ export class TrainingViewComponent implements OnInit {
         if (properties?.id) {
             // Fetch answers for all questions in one go for efficiency if possible, 
             // but the service uses angle-based fetching. Let's do it per angle as before.
-            const angles = ['marketing', 'experience', 'operations', 'pricing', 'accomodation', 'legal', 'mindset'];
+            const dimensions = ['DIM_MKT', 'DIM_EXP', 'DIM_OPS', 'DIM_PRICING', 'DIM_LEGAL', 'mindset'];
             const allAnswers = new Map<string, OnboardingAnswer>();
-            for (const angle of angles) {
-                const answers = await this.onboardingService.getAnswers(properties.id, angle);
+            for (const dim of dimensions) {
+                const answers = await this.onboardingService.getAnswers(properties.id, dim);
                 answers.forEach((val, key) => allAnswers.set(key, val));
             }
             return allAnswers;

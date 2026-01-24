@@ -32,22 +32,15 @@ export class HostRepository {
         // Phase 1: Préparation
         { id: 'manage-property', title: 'Manage', icon: 'settings', phase: 'preparation', requiredTier: 'TIER_1' },
         { id: 'welcome-booklet', title: 'NAV.welcome-booklet', icon: 'info', featureId: 'booklet', phase: 'preparation', requiredTier: 'TIER_1' },
-        { id: 'legal', title: 'NAV.legal', icon: 'info', phase: 'preparation', requiredTier: 'TIER_1' },
-        { id: 'mindset', title: 'NAV.mindset', icon: 'training', phase: 'preparation', requiredTier: 'TIER_1' },
 
         // Phase 2: Lancement
-
-        { id: 'marketing', title: 'NAV.marketing', icon: 'dashboard', phase: 'launch', requiredTier: 'TIER_2' },
-        { id: 'experience', title: 'NAV.experience', icon: 'concierge', phase: 'launch', requiredTier: 'TIER_1' },
         { id: 'widget-library', title: 'NAV.widget-library', icon: 'widgets', featureId: 'microsite', phase: 'launch', requiredTier: 'TIER_1' },
 
         // Phase 3: Exploitation
         { id: 'property-calendar', title: 'NAV.property-calendar', icon: 'calendar', phase: 'exploitation', requiredTier: 'TIER_2' },
         { id: 'vocal-concierge', title: 'NAV.vocal-concierge', icon: 'concierge', featureId: 'vocal-concierge', phase: 'exploitation', requiredTier: 'TIER_2' },
-        { id: 'operations', title: 'NAV.operations', icon: 'settings', phase: 'exploitation', requiredTier: 'TIER_2' },
 
         // Phase 4: Excellence
-        { id: 'pricing', title: 'NAV.pricing', icon: 'widgets', phase: 'excellence', requiredTier: 'TIER_3' },
     ];
 
     async hasDiagnostic(userId: string): Promise<boolean> {

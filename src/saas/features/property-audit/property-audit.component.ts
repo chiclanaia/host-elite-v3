@@ -89,19 +89,19 @@ export class PropertyAuditComponent implements OnInit {
 
         this.isLoading.set(true);
         try {
-            const angle = 'accomodation';
-            let qs = await this.onboardingService.getQuestionsByAngle(angle);
+            const dimension = 'DIM_OPS';
+            let qs = await this.onboardingService.getQuestionsByDimension(dimension);
 
             // HYBRID LOGIC: If DB is incomplete (< 40 questions), we synthetically add the missing ones
             // to ensure the user SEES the 40 items immediately.
-            if (qs.length < 40) {
+            if (dimension === 'DIM_OPS' && qs.length < 40) {
                 const existingKeys = new Set(qs.map(q => q.question_key));
                 for (let i = 1; i <= 40; i++) {
                     const key = `AUDIT.accomodation_q${i}`;
                     if (!existingKeys.has(key)) {
                         qs.push({
                             id: `synthetic_${i}`,
-                            angle: 'accomodation',
+                            dimension: 'DIM_OPS',
                             question_key: key,
                             level: i <= 10 ? 'Bronze' : (i <= 20 ? 'Silver' : 'Gold'),
                             order_index: i,
@@ -112,9 +112,9 @@ export class PropertyAuditComponent implements OnInit {
                 qs.sort((a, b) => a.order_index - b.order_index);
             }
 
-            console.log(`[PropertyAudit] Loaded ${qs.length} questions for angle ${angle}`);
+            console.log(`[PropertyAudit] Loaded ${qs.length} questions for dimension ${dimension}`);
             this.questions.set([...qs]);
-            const ans = await this.onboardingService.getAnswers(id, angle);
+            const ans = await this.onboardingService.getAnswers(id, dimension);
             this.answers.set(ans);
 
             this.initForm(qs, ans);

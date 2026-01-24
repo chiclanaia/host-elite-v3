@@ -74,11 +74,11 @@ export const ui = {
     'NAV.admin-users': 'Usuarios',
     'NAV.properties': 'Mis Propiedades',
     'NAV.marketing': 'Marketing',
-    'NAV.experience': 'Experiencia',
+    'NAV.experience': 'Experiencia del Huésped',
     'NAV.operations': 'Operaciones',
     'NAV.pricing': 'Precios',
-    'NAV.accomodation': 'Alojamiento',
-    'NAV.legal': 'Legal y Finanzas',
+    'NAV.finance': 'Finanzas',
+    'NAV.legal': 'Legal',
     'NAV.mindset': 'Mindset',
 
     // Dashboard
@@ -105,19 +105,19 @@ export const ui = {
     'MATURITY.MediumDesc': 'Conceptos básicos dominados. Apunte a metas intermedias (preguntas Silver).',
     'MATURITY.HighDesc': 'Excelente dominio. Siga optimizando con metas avanzadas (preguntas Gold).',
 
-    // Angle Descriptions
-    'ANGLE.marketing_desc': 'Atraiga a más viajeros y maximice su visibilidad en línea.',
-    'ANGLE.experience_desc': 'Ofrezca una experiencia inolvidable de 5 estrellas a sus viajeros.',
-    'ANGLE.operations_desc': 'Simplifique y automatice la gestión diaria de su alquiler.',
-    'ANGLE.pricing_desc': 'Optimice sus precios para maximizar sus ingresos durante todo el año.',
-    'ANGLE.accomodation_desc': 'Resalte su propiedad y asegure su cumplimiento.',
-    'ANGLE.legal_desc': 'Navegue por la complejidad administrativa y financiera con tranquilidad.',
-    'ANGLE.mindset_desc': 'Desarrolle sus habilidades para convertirse en un emprendedor de la hospitalidad.',
-    'ANGLE.CategoryOnboarding': 'Onboarding de la Categoría',
-    'ANGLE.AuditDescription': 'Evalúe su dominio de este ángulo respondiendo a algunas preguntas.',
-    'ANGLE.LaunchAudit': 'Lanzar Auditoría',
-    'ANGLE.AssociatedTools': 'Herramientas Asociadas',
-    'ANGLE.SaveToBooklet': 'Guardar en la Guía de Bienvenida',
+    // Dimension Descriptions
+    'DIMENSION.marketing_desc': 'Atraiga a más viajeros y maximice su visibilidad en línea.',
+    'DIMENSION.experience_desc': 'Ofrezca una experiencia inolvidable de 5 estrellas a sus viajeros.',
+    'DIMENSION.operations_desc': 'Simplifique y automatice la gestión diaria de su alquiler.',
+    'DIMENSION.pricing_desc': 'Optimice sus precios para maximizar sus ingresos durante todo el año.',
+    'DIMENSION.finance_desc': 'Gestione su rentabilidad, flujo de caja y fiscalidad.',
+    'DIMENSION.legal_desc': 'Navegue por la complejidad administrativa y jurídica con tranquilidad.',
+    'DIMENSION.mindset_desc': 'Desarrolle sus habilidades para convertirse en un emprendedor de la hospitalidad.',
+    'DIMENSION.CategoryOnboarding': 'Onboarding de la Dimensión',
+    'DIMENSION.AuditDescription': 'Evalúe su dominio de esta dimensión respondiendo a algunas preguntas.',
+    'DIMENSION.LaunchAudit': 'Lanzar Auditoría',
+    'DIMENSION.AssociatedTools': 'Herramientas Asociadas',
+    'DIMENSION.SaveToBooklet': 'Guardar en la Guía de Bienvenida',
 
     // Welcome / Marketing
     'WELCOME.Title': 'Bienvenido',
