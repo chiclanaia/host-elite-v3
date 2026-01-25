@@ -59,6 +59,7 @@ export class HostRepository {
                 ),
                 feature_configurations (
                     tier_id,
+                    country_code,
                     config_value
                 )
             `);

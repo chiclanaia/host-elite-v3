@@ -134,10 +134,10 @@
                             Locked
                         </span>
                         }
-                        @if (feature.required_tier && feature.required_tier !== 'TIER_0' && feature.required_tier !==
-                        'Freemium') {
+                        @if (store.showPlanBadges() || (feature.required_tier && feature.required_tier !== 'TIER_0' &&
+                        feature.required_tier !== 'Freemium')) {
                         <span class="w-2.5 h-2.5 rounded-full" [class]="getTierClass(feature.required_tier)"
-                            [title]="feature.required_tier"></span>
+                            [title]="getTierLabel(feature.required_tier)"></span>
                         }
                     </div>
                 </div>

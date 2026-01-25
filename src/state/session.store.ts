@@ -51,13 +51,32 @@ export class SessionStore {
         const rawFeatures = this.featuresHierarchy();
         if (!rawFeatures.length) return {};
 
+        // 1. Determine Current Country from Language
+        const currentLang = this.translationService.currentLang();
+        let currentCountry = 'GLOBAL';
+        if (currentLang === 'fr') currentCountry = 'FR';
+        else if (currentLang === 'en') currentCountry = 'UK'; // Default EN to UK
+        else if (currentLang === 'es') currentCountry = 'ES';
+
         // Group features by phase_id
         const grouped: Record<string, Feature[]> = {};
         rawFeatures.forEach(row => {
+            const configs = row.feature_configurations || [];
+
+            // FILTERING LOGIC:
+            // Include feature ONLY if it has a 'GLOBAL' config OR a specific config for the current country.
+            // (e.g. A feature with ONLY 'DE' config should NOT appear for 'FR' user)
+            const hasGlobal = configs.some((c: any) => c.country_code === 'GLOBAL');
+            const hasLocal = configs.some((c: any) => c.country_code === currentCountry);
+
+            if (!hasGlobal && !hasLocal) {
+                return; // Skip filtering
+            }
+
             const phaseId = row.phase_id;
             if (!grouped[phaseId]) grouped[phaseId] = [];
 
-            // Map flat row to Feature type if needed, or cast
+            // Map flat row to Feature type
             const feature: Feature = {
                 id: row.id,
                 name: row.name,
@@ -65,17 +84,19 @@ export class SessionStore {
                 dimension_id: row.dimension_id,
                 phase_id: row.phase_id,
                 parent_feature_id: row.parent_feature_id,
-                // Join data might be nested or flat depending on Supabase response
                 dimension_name: row.app_dimensions?.name,
                 phase_name: row.phases?.name,
-                required_tier: 'TIER_0' // Default, should calculate from config mapping
+                required_tier: 'TIER_0'
             };
 
-            // Calculate effective tier for "Global" context for simplicity in UI lock check
-            // Ideally we check per user country but for now we look for a config match
-            if (row.feature_configurations && row.feature_configurations.length > 0) {
-                // Simple logic: grab the first config's tier for now or lowest
-                feature.required_tier = row.feature_configurations[0].tier_id;
+            // EFFECTIVE TIER LOGIC:
+            // Prioritize Local Config > Global Config
+            const localConfig = configs.find((c: any) => c.country_code === currentCountry);
+            const globalConfig = configs.find((c: any) => c.country_code === 'GLOBAL');
+            const effectiveConfig = localConfig || globalConfig;
+
+            if (effectiveConfig) {
+                feature.required_tier = effectiveConfig.tier_id;
             }
 
             grouped[phaseId].push(feature);
