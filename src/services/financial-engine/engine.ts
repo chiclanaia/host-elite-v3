@@ -14,6 +14,9 @@ export class FinancialCalculator {
         // 1. Basic Validations
         this.validateInput(input);
 
+        // RG_FIN_05: Currency conversion placeholder (if needed in future)
+        // const currency = input.currency || 'EUR';
+
         // 2. Initialize Output
         const output: FinancialOutput = {
             netMonthlyCashFlow: 0,
@@ -96,6 +99,8 @@ export class FinancialCalculator {
             let totalInterest = 0;
 
             if (input.interestRate && input.loanTermYears && input.loanAmount) {
+                // RG_FIN_03: Amortization Formula Integration
+                // The formula M = P(1+r)^n - 1 / r(1+r)^n is handled inside generateAmortizationSchedule > calculateMonthlyLoanPayment
                 const schedule = Formulas.generateAmortizationSchedule(
                     input.loanAmount,
                     input.interestRate,

@@ -100,4 +100,15 @@ export const AUDIT_TRANSLATION_KEYS = {
     'AUDIT.legal_q9': 'Do you work with an accountant specialized in real estate or furnished rentals?',
     'AUDIT.legal_q9_sub': 'Name of the accountant or firm',
     'AUDIT.legal_q10': 'Do you calculate (at least 1x/quarter) your net profitability (Net Profit) and your ROI (Return on Investment)?',
+
+    // Profitability Simulator
+    'PROFIT.Title': 'Profitability Simulator',
+    'PROFIT.Subtitle': 'Visualize your real cashflow and make the right decisions',
+    'PROFIT.Inputs': 'Financial Inputs',
+    'PROFIT.MonthlyRevenue': 'Monthly Revenue (Rent)',
+    'PROFIT.MonthlyLoan': 'Monthly Loan Payment',
+    'PROFIT.MonthlyCharges': 'Monthly Charges (Total)',
+    'PROFIT.ChargesTooltip': 'Include everything! Co-ownership fees, electricity, internet, insurance, taxes, maintenance...',
+    'PROFIT.RentWarning': 'Is this rent realistic? > 500€ seems high unless it is a luxury property.',
+    'NAV.profit-calculator': 'Simulator'
 };

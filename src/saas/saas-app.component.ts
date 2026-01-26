@@ -28,6 +28,8 @@ import { NotificationService } from '../services/notification.service';
 import { ProfileModalComponent } from './components/profile-settings-modal.component';
 import { CalendarToolComponent } from './features/legacy/calendar-tool/components/calendar-tool.component';
 
+import { ProfitabilityViewComponent } from './views/profitability-view.component';
+
 @Component({
   selector: 'saas-app',
   imports: [
@@ -45,6 +47,7 @@ import { CalendarToolComponent } from './features/legacy/calendar-tool/component
     TrainingViewComponent,
     HostInfoViewComponent,
     PropertyViewComponent,
+    ProfitabilityViewComponent,
 
     AdminUsersViewComponent,
     AdminDebugViewComponent,

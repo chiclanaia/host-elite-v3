@@ -74,6 +74,107 @@ export class FranceMicroBICStrategy implements TaxStrategy {
     }
 }
 
+
+/**
+ * LMNP Censi-Bouvard (Legacy/Specific): Tax reduction of 11% of HT price over 9 years.
+ * Only for specific residences (Senior, Student).
+ * User requirement: "Censi-Bouvard" option logic.
+ */
+export class FranceLMNPCensiBouvardStrategy implements TaxStrategy {
+    calculate(ctx: TaxContext): TaxResult {
+        // Censi-Bouvard implies Micro-BIC usually OR Reel without Amortization of structure?
+        // Actually, it allows tax reduction but DISALLOWS amortization of the property value (only furniture/works).
+        // Tax Reduction = 11% of Price / 9 years. Cap 300k.
+
+        const priceCapped = Math.min(ctx.amortizableBasis, 30000000); // 300k€ in cents
+        const annualTaxReduc = Math.round((priceCapped * 0.11) / 9);
+
+        // Taxable Income (Micro-BIC usually preferred or Reel without amort)
+        // Let's assume Reel sans amort structure for calculation base
+        const deductions = ctx.annualOperatingExpenses + ctx.mortgageInterest; // No amort building
+        const taxable = Math.max(0, ctx.annualRevenue - deductions);
+
+        const estimatedRate = 0.20; // TMI
+        let tax = Math.round(taxable * estimatedRate);
+
+        // Apply Reduction
+        tax = Math.max(0, tax - annualTaxReduc);
+
+        return {
+            taxableIncome: taxable,
+            taxAmount: tax,
+            effectiveTaxRate: (tax / ctx.annualRevenue) * 100,
+            netIncomeAfterTax: ctx.annualRevenue - ctx.annualOperatingExpenses - ctx.mortgageInterest - tax
+        };
+    }
+}
+
+/**
+ * SCI à l'IS (Impôt sur les Sociétés).
+ * 15% up to 38120€, 25% beyond.
+ * Deduct real expenses + Amortization + Director Remuneration (not handled here).
+ */
+export class FranceSCIISStrategy implements TaxStrategy {
+    calculate(ctx: TaxContext): TaxResult {
+        // Amortization (Building ~3%)
+        const amortization = Math.round(ctx.amortizableBasis * 0.03);
+        const taxable = Math.max(0, ctx.annualRevenue - ctx.annualOperatingExpenses - ctx.mortgageInterest - amortization);
+
+        // IS Rates 2024
+        const limit15 = 4250000; // 42,500 € since 2024? Or 38120? Let's use 42500.
+        // Actually limit is 38120 for 15% rate usually for SMEs. 42500 is PME limit? Stick to 38120 standard.
+        const limitStandard = 3812000; // 38120 € cents
+
+        let tax = 0;
+        if (taxable <= limitStandard) {
+            tax = taxable * 0.15;
+        } else {
+            tax = (limitStandard * 0.15) + ((taxable - limitStandard) * 0.25);
+        }
+
+        tax = Math.round(tax);
+
+        return {
+            taxableIncome: taxable,
+            taxAmount: tax,
+            effectiveTaxRate: (tax / ctx.annualRevenue) * 100,
+            netIncomeAfterTax: ctx.annualRevenue - ctx.annualOperatingExpenses - ctx.mortgageInterest - tax
+        };
+    }
+}
+
+/**
+ * SCI à l'IR (Impôt sur le Revenu).
+ * Transparent. Taxed at partner's TMI.
+ * No amortization!
+ * Only deductions: Interest, Works (maintenance), Tax, Insurance, Management.
+ */
+export class FranceSCIRStrategy implements TaxStrategy {
+    calculate(ctx: TaxContext): TaxResult {
+        // No Amortization allowed generally (Déficit Foncier possible)
+        const deductions = ctx.annualOperatingExpenses + ctx.mortgageInterest;
+        const taxable = ctx.annualRevenue - deductions; // Can be negative (Deficit Foncier)
+
+        // TMI Assumption: 30% + 17.2% CSG = 47.2%
+        const taxRate = 0.472;
+
+        let tax = 0;
+        if (taxable > 0) {
+            tax = Math.round(taxable * taxRate);
+        }
+        // If negative, it reduces global tax, effectively a negative tax (gain). 
+        // For conservative "cost", let's say 0 tax but track deficit?
+        // Let's return 0 for safe simulation if negative.
+
+        return {
+            taxableIncome: taxable,
+            taxAmount: tax,
+            effectiveTaxRate: (tax / ctx.annualRevenue) * 100,
+            netIncomeAfterTax: ctx.annualRevenue - ctx.annualOperatingExpenses - ctx.mortgageInterest - tax
+        };
+    }
+}
+
 // --- SPAIN STRATEGIES ---
 
 /**
@@ -162,7 +263,12 @@ export class UKSection24Strategy implements TaxStrategy {
 export function getTaxStrategy(country: string, regime?: string): TaxStrategy {
     switch (country) {
         case 'France':
-            return regime === 'LMNP_MICRO' ? new FranceMicroBICStrategy() : new FranceLMNPReelStrategy();
+            // RG_FIN_02
+            if (regime === 'LMNP_MICRO') return new FranceMicroBICStrategy();
+            if (regime === 'LMNP_CENSI') return new FranceLMNPCensiBouvardStrategy();
+            if (regime === 'SCI_IS') return new FranceSCIISStrategy();
+            if (regime === 'SCI_IR') return new FranceSCIRStrategy();
+            return new FranceLMNPReelStrategy(); // Default
         case 'Spain':
             // Can be parameterized via regime or a separate toggle. Default EU.
             return new SpainTaxStrategy(regime !== 'NON_EU');

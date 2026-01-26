@@ -1,0 +1,433 @@
+<div class="h-full flex flex-col lg:flex-row gap-8 animate-fade-in overflow-hidden print:hidden">
+
+    <!-- LEFT: Step-by-Step Form & Results -->
+    <div class="flex-1 flex flex-col space-y-6 min-h-0 overflow-hidden">
+
+        <!-- Header: Multi-step Progress -->
+        <div
+            class="bg-black/20 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between border border-white/10 shrink-0">
+            <div class="flex items-center space-x-4">
+                <div *ngFor="let s of [1,2,3]"
+                    class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-500"
+                    [class]="activeStep() === s ? 'bg-[#D4AF37] text-slate-900 shadow-lg scale-110' : (activeStep() > s ? 'bg-emerald-500 text-white' : 'bg-white/5 text-slate-500')">
+                    <span *ngIf="activeStep() <= s">{{ s }}</span>
+                    <svg *ngIf="activeStep() > s" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            </div>
+            <div class="hidden sm:block text-right">
+                <h2 class="text-white font-bold text-lg">Profitability Suite</h2>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest">
+                    {{ (activeStep() === 1 ? 'Phase 1: Acquisition' : activeStep() === 2 ? 'Phase 2: Exploitation' :
+                    'Phase 3: Charges') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 min-h-0 overflow-hidden">
+
+            <!-- FORM CONTENT -->
+            <div class="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col overflow-hidden">
+                <div class="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                    <form [formGroup]="form" class="space-y-6">
+
+                        <!-- STEP 1: ACQUISITION -->
+                        <div *ngIf="activeStep() === 1" class="space-y-4 animate-slide-in">
+                            <!-- Pedagogical Objective Banner -->
+                            <div class="mb-4 bg-slate-800/50 p-4 rounded-xl border-l-4 border-emerald-500">
+                                <h4 class="text-emerald-400 font-bold text-xs uppercase mb-2">🎯 Objectif Pédagogique
+                                </h4>
+                                <p class="text-sm text-slate-300 italic mb-2">"Investir sans calculer sa rentabilité
+                                    réelle, c'est comme piloter sans tableau de bord."</p>
+                                <p class="text-[11px] text-slate-400 leading-relaxed">
+                                    Transformez votre intuition en décision rationnelle basée sur le <strong>Cashflow
+                                        réel</strong> (ce qu'il reste dans votre poche après charges et impôts). C'est
+                                    le pilier qui garantit votre pérennité.
+                                </p>
+                            </div>
+
+                            <h3 class="text-lg font-bold text-white mb-4">🏠 Coûts d'Acquisition</h3>
+
+                            <!-- RG_FIN_04: AI URL Input (Tier 3) -->
+                            <div class="mb-6 p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30"
+                                *ngIf="!isTierLocked(TierLevel.MEDIUM)">
+                                <label class="block text-xs font-bold text-indigo-300 uppercase mb-2">✨ Super-Power IA :
+                                    Copiez une annonce</label>
+                                <div class="flex gap-2">
+                                    <input type="text" formControlName="announcementUrl" class="input-modern flex-1"
+                                        placeholder="https://leboncoin.fr/..." aria-label="URL de l'annonce">
+                                    <button type="button" (click)="extractDataFromUrl()"
+                                        class="px-4 py-2 bg-indigo-600 rounded-lg text-white font-bold text-xs hover:bg-indigo-500 transition-all">
+                                        Analyser
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="group">
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Prix d'Achat
+                                        (€)</label>
+                                    <input type="number" formControlName="purchasePrice" class="input-modern"
+                                        placeholder="Ex: 250000" aria-label="Prix d'achat">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Travaux
+                                            (€)</label>
+                                        <input type="number" formControlName="renovationCosts" class="input-modern"
+                                            placeholder="Ex: 20000" aria-label="Coût des travaux">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Mobilier
+                                            (€)</label>
+                                        <input type="number" formControlName="furnitureCosts" class="input-modern"
+                                            placeholder="Ex: 5000" aria-label="Coût du mobilier">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Frais de
+                                        Notaire (€)</label>
+                                    <input type="number" formControlName="notaryFees" class="input-modern"
+                                        placeholder="8% par défaut" aria-label="Frais de notaire">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 2: EXPLOITATION -->
+                        <div *ngIf="activeStep() === 2" class="space-y-4 animate-slide-in">
+                            <h3 class="text-lg font-bold text-white mb-4">📈 Estimation Professionnelle</h3>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">CA Mensuel Brut
+                                    (€)</label>
+                                <div class="relative">
+                                    <input type="number" formControlName="grossMonthlyRevenue"
+                                        class="input-modern pr-24" placeholder="Ex: 2500"
+                                        aria-label="Chiffre d'affaires mensuel">
+                                    <!-- RG_04: Visible but locked for stimulation -->
+                                    <button type="button"
+                                        class="absolute right-2 top-2 px-3 py-1 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold border border-blue-500/30 hover:bg-blue-500/40 transition-all"
+                                        [class.opacity-50]="isTierLocked(TierLevel.MEDIUM)"
+                                        [title]="isTierLocked(TierLevel.MEDIUM) ? 'Débloquez le Tier 3 pour utiliser l\'API' : 'Actualiser via API Market Data'">
+                                        API Market
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ADVANCED FISCAL FIELDS (Locked for T0-T2) -->
+                            <div class="pt-4 border-t border-white/5 space-y-4"
+                                [class.opacity-40]="isTierLocked(TierLevel.MEDIUM)"
+                                [class.pointer-events-none]="isTierLocked(TierLevel.MEDIUM)">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-slate-400 uppercase mb-1">Pays</label>
+                                        <select formControlName="country" class="input-modern bg-slate-900"
+                                            aria-label="Sélectionner le pays">
+                                            <option value="France">France 🇫🇷</option>
+                                            <option value="Spain">Espagne 🇪🇸</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Régime
+                                            Fiscal</label>
+                                        <select formControlName="taxRegime" class="input-modern bg-slate-900"
+                                            aria-label="Sélectionner le régime fiscal">
+                                            <option *ngFor="let r of availableRegimes()" [value]="r.id">{{r.label}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-500/5 border border-blue-500/20"
+                                    *ngIf="isTierLocked(TierLevel.MEDIUM)">
+                                    <p class="text-[9px] text-blue-300 uppercase font-black">✨ Super-Power TIER 3</p>
+                                    <p class="text-[10px] text-slate-400 italic">"Calcul d'impôts automatisé selon le
+                                        régime choisi."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 3: CHARGES -->
+                        <div *ngIf="activeStep() === 3" class="space-y-4 animate-slide-in">
+                            <h3 class="text-lg font-bold text-white mb-4">📉 Frais & Charges</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Électricité
+                                        (€)</label>
+                                    <input type="number" formControlName="electricity" class="input-modern"
+                                        aria-label="Frais d'électricité">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Internet/Wifi
+                                        (€)</label>
+                                    <input type="number" formControlName="wifi" class="input-modern"
+                                        aria-label="Frais internet et wifi">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Frais de Ménage /
+                                    séjour (€)</label>
+                                <input type="number" formControlName="cleaning" class="input-modern"
+                                    aria-label="Frais de ménage par séjour">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Frais de Gestion
+                                    (%)</label>
+                                <input type="number" formControlName="managementFees" class="input-modern"
+                                    placeholder="20%" aria-label="Pourcentage de frais de gestion">
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- Footer: Navigation -->
+                <div class="p-4 bg-black/40 border-t border-white/10 flex justify-between items-center shrink-0 gap-4">
+                    <button (click)="prevStep()" [disabled]="activeStep() === 1"
+                        class="px-4 py-2 text-sm text-slate-400 hover:text-white transition-colors disabled:opacity-0 cursor-pointer">
+                        &larr; Précédent
+                    </button>
+
+                    <!-- RG_FIN_01: Save Button -->
+                    <button type="button" (click)="saveSimulation()" *ngIf="activeStep() === 3"
+                        class="px-4 py-2 text-sm font-bold text-slate-300 border border-slate-700 rounded-lg hover:bg-white/5 transition-all">
+                        💾 Sauvegarder
+                    </button>
+
+                    <!-- RG Report PDF Button (Tier 3) -->
+                    <button type="button" (click)="generatePdf()" *ngIf="activeStep() === 3"
+                        class="px-4 py-2 text-sm font-bold text-indigo-300 border border-indigo-500/30 rounded-lg hover:bg-indigo-500/10 transition-all ml-2"
+                        [class.opacity-50]="isTierLocked(TierLevel.EXPERT)"
+                        [title]="isTierLocked(TierLevel.EXPERT) ? 'Débloquez le Tier 3 pour le Dossier Bancaire' : 'Générer le PDF'">
+                        📑 Dossier PDF
+                    </button>
+
+                    <button (click)="nextStep()"
+                        class="px-8 py-2.5 bg-[#D4AF37] text-slate-900 rounded-xl font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-[#D4AF37]/20 ml-auto">
+                        {{ activeStep() === 3 ? 'Terminer Simulation' : 'Suivant &rarr;' }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESULTS PREVIEW -->
+            <div class="flex flex-col space-y-6 overflow-y-auto custom-scrollbar">
+
+                <!-- Main KPI Card -->
+                <div class="p-6 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center relative overflow-hidden"
+                    [class]="getProfitabilityColor()">
+                    <div class="absolute inset-0 bg-black/20 backdrop-blur-[2px]"></div>
+                    <div class="relative z-10">
+                        <p class="text-xs uppercase font-bold text-white/70 mb-1">Net Monthly Cash-Flow</p>
+                        <h2 class="text-4xl font-black text-white font-mono tracking-tighter">
+                            {{ fromCents(results()?.netMonthlyCashFlow) | currency:'EUR':'symbol':'1.0-0' }}
+                        </h2>
+                        <div class="mt-2 text-xs font-bold px-3 py-1 bg-white/20 rounded-full text-white inline-block">
+                            Rentabilité: {{ results()?.annualizedROI | number:'1.2-2' }}%
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expense Distribution Chart -->
+                <div
+                    class="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 flex flex-col items-center">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase mb-6 w-full text-left">Répartition Dépenses
+                    </h4>
+                    <div class="relative w-48 h-48">
+                        <canvas #expenseChart></canvas>
+                    </div>
+                </div>
+
+                <!-- Export Button (T1+) -->
+                <button [disabled]="isTierLocked(TierLevel.LOW)"
+                    class="w-full py-4 rounded-2xl border-2 border-dashed border-white/10 text-slate-500 font-bold hover:border-white/30 hover:text-white transition-all flex items-center justify-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Dossier Bancaire PDF</span>
+                    <span *ngIf="isTierLocked(TierLevel.LOW)"
+                        class="ml-2 py-0.5 px-1.5 bg-white/10 text-[8px] rounded uppercase">Tier 1+</span>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT: Coaching Sidebar -->
+    <div class="w-full lg:w-80 flex flex-col space-y-4 shrink-0">
+        <div
+            class="bg-slate-900 border border-[#D4AF37]/30 rounded-2xl p-6 shadow-2xl relative overflow-hidden flex-1 group">
+            <div
+                class="absolute -top-12 -right-12 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000">
+            </div>
+
+            <div class="flex items-center space-x-3 mb-6 relative z-10">
+                <div class="w-2 h-8 bg-[#D4AF37] rounded-full"></div>
+                <h3 class="font-black text-white uppercase tracking-tighter text-xl italic">The Coach</h3>
+            </div>
+
+            <div class="space-y-6 relative z-10">
+                <div class="p-4 bg-black/40 rounded-xl border-l-4 border-[#D4AF37] animate-pulse-slow">
+                    <p class="text-sm text-slate-300 leading-relaxed italic">
+                        " {{ coachingMessage() }} "
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Conseils d'Experts</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start space-x-2 text-xs text-slate-400 group/item">
+                            <span
+                                class="text-[#D4AF37] font-bold group-hover/item:scale-125 transition-transform">•</span>
+                            <span>Refacturez les frais de ménage séparément pour protéger votre cash-flow.</span>
+                        </li>
+                        <li class="flex items-start space-x-2 text-xs text-slate-400 group/item text-opacity-50">
+                            <span
+                                class="text-slate-600 font-bold group-hover/item:scale-125 transition-transform">•</span>
+                            <span>[Tier 3] Vos taxes sont calculées automatiquement selon le régime fiscal.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Simulation Count -->
+                <div class="pt-6 border-t border-white/5" *ngIf="userPlan() === 'Freemium'">
+                    <div class="flex justify-between items-center text-[10px] text-slate-500 uppercase font-bold mb-2">
+                        <span>Simulations restantes</span>
+                        <span>{{ maxSimulationsT0 - simulationCount() }} / {{ maxSimulationsT0 }}</span>
+                    </div>
+                    <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full bg-[#D4AF37] transition-all duration-1000"
+                            [style.width.%]="(simulationCount() / maxSimulationsT0) * 100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upsell Card -->
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-indigo-900/50 to-slate-900 border border-indigo-500/30">
+            <h4 class="text-white font-bold text-sm mb-2">Analyse Fiscale</h4>
+            <p class="text-[11px] text-slate-400 mb-4">Débloquez l'analyse fiscale réelle pour voir votre vrai bénéfice
+                net après impôts.</p>
+            <button
+                class="w-full py-2 bg-indigo-600 rounded-lg text-white font-bold text-[10px] uppercase hover:bg-indigo-500 transition-all">
+                Voir les Plans
+            </button>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- PRINT ONLY: BANQUIER DOSSIER -->
+<div class="hidden print:block text-black p-8 max-w-[21cm] mx-auto bg-white">
+    <!-- Header -->
+    <div class="flex justify-between items-end border-b-2 border-[#D4AF37] pb-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-serif font-bold text-slate-900 mb-1">Dossier d'Investissement Locatif</h1>
+            <p class="text-sm text-slate-500">Généré par Hôte d'Exception - Intelligent Investor Suite</p>
+        </div>
+        <div class="text-right">
+            <p class="text-sm font-bold text-slate-900">{{ today | date:'dd/MM/yyyy' }}</p>
+            <p class="text-xs text-slate-500">Réf: SIM-{{ simulationCount() }}</p>
+        </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="mb-8">
+        <h2 class="text-xl font-bold text-slate-800 mb-4 border-l-4 border-[#D4AF37] pl-3">Synthèse du Projet</h2>
+        <div class="grid grid-cols-2 gap-8">
+            <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">Investissement Total</p>
+                <p class="text-2xl font-bold text-slate-900">
+                    {{ (form.value.purchasePrice + form.value.renovationCosts + form.value.furnitureCosts +
+                    form.value.notaryFees) | currency:'EUR':'symbol':'1.0-0' }}
+                </p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">Cash-Flow Net Mensuel</p>
+                <p class="text-2xl font-bold" [class.text-emerald-600]="(results()?.netMonthlyCashFlow || 0) > 0"
+                    [class.text-rose-600]="(results()?.netMonthlyCashFlow || 0) < 0">
+                    {{ fromCents(results()?.netMonthlyCashFlow) | currency:'EUR':'symbol':'1.0-0' }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Details Table -->
+    <div class="mb-8">
+        <h2 class="text-xl font-bold text-slate-800 mb-4 border-l-4 border-[#D4AF37] pl-3">Détail Financier</h2>
+        <table class="w-full text-sm">
+            <thead class="bg-slate-100">
+                <tr>
+                    <th class="p-2 text-left">Poste</th>
+                    <th class="p-2 text-right">Mensuel</th>
+                    <th class="p-2 text-right">Annuel</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+                <tr>
+                    <td class="p-2 font-bold">Revenus Locatifs (Estimés)</td>
+                    <td class="p-2 text-right font-bold text-emerald-600">{{ form.value.grossMonthlyRevenue |
+                        currency:'EUR':'symbol':'1.0-0' }}</td>
+                    <td class="p-2 text-right font-bold text-emerald-600">{{ (form.value.grossMonthlyRevenue * 12) |
+                        currency:'EUR':'symbol':'1.0-0' }}</td>
+                </tr>
+                <tr>
+                    <td class="p-2 pl-4 text-slate-600">- Crédit (Estimé)</td>
+                    <td class="p-2 text-right text-rose-500">{{ (results()?.mortgage?.monthlyPayment ?
+                        fromCents(results()?.mortgage?.monthlyPayment) : 0) | currency:'EUR':'symbol':'1.0-0' }}</td>
+                    <td class="p-2 text-right text-rose-500">{{ ((results()?.mortgage?.monthlyPayment || 0) * 12 / 100)
+                        | currency:'EUR':'symbol':'1.0-0' }}</td>
+                </tr>
+                <tr>
+                    <td class="p-2 pl-4 text-slate-600">- Charges Exploitation</td>
+                    <td class="p-2 text-right text-rose-500">{{ fromCents(results()?.totalMonthlyFixedCosts! +
+                        results()?.totalMonthlyVariableCosts!) | currency:'EUR':'symbol':'1.0-0' }}</td>
+                    <td class="p-2 text-right text-rose-500">{{ (fromCents(results()?.totalMonthlyFixedCosts! +
+                        results()?.totalMonthlyVariableCosts!) * 12) | currency:'EUR':'symbol':'1.0-0' }}</td>
+                </tr>
+                <tr class="bg-slate-50 font-bold">
+                    <td class="p-2 border-t-2 border-slate-300">CASH-FLOW NET AVANT IMPÔTS</td>
+                    <td class="p-2 text-right border-t-2 border-slate-300">{{ fromCents(results()?.netMonthlyCashFlow) |
+                        currency:'EUR':'symbol':'1.0-0' }}</td>
+                    <td class="p-2 text-right border-t-2 border-slate-300">{{ (fromCents(results()?.netMonthlyCashFlow)
+                        * 12) | currency:'EUR':'symbol':'1.0-0' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Assumptions -->
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-slate-700 mb-2">Hypothèses Retenues</h3>
+        <ul class="list-disc list-inside text-sm text-slate-600 grid grid-cols-2 gap-2">
+            <li>Prix Achat: {{ form.value.purchasePrice | currency:'EUR':'symbol':'1.0-0' }}</li>
+            <li>Apport: {{ (form.value.initialInvestment || 0) | currency:'EUR':'symbol':'1.0-0' }}</li>
+            <li>Taux Emprunt: {{ form.value.interestRate || '4.0' }}%</li>
+            <li>Durée: {{ form.value.loanTermYears || '20' }} ans</li>
+            <li>Vacance Locative: 10% (Standard)</li>
+            <li>Régime Fiscal: {{ form.value.taxRegime }}</li>
+        </ul>
+    </div>
+
+    <!-- AI Risk Analysis (Tier 3) -->
+    <div class="mb-8 p-4 border border-indigo-200 bg-indigo-50 rounded"
+        *ngIf="activeTier() === TierLevel.EXPERT || activeTier() === TierLevel.MEDIUM">
+        <h3 class="text-indigo-800 font-bold mb-2 flex items-center">
+            <span>🧠 Analyse IA "Intelligent Investor"</span>
+        </h3>
+        <p class="text-sm text-indigo-900 italic">
+            "Ce projet présente un potentiel de rendement solide. Le ratio dette/revenu est sain. Attention toutefois à
+            la saisonnalité de la zone qui pourrait impacter la trésorerie hivernale."
+        </p>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="mt-12 pt-4 border-t border-slate-200 text-[10px] text-slate-400 text-center">
+        Document généré à titre indicatif. Ne constitue pas une offre contractuelle. Hôte d'Exception ne saurait être
+        tenu responsable des décisions d'investissement.
+    </div>
+</div>

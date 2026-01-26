@@ -124,15 +124,16 @@ export class PhaseViewComponent implements OnInit {
         'MKT_03': 'visibility-audit',
         'EXP_01': 'booklet',
         'EXP_02': 'ai-assistant',
-        'EXP_03': 'guest-screening', // No implementation?
-        'OPS_01': 'checklists',
+        'EXP_03': 'microsite', // Web Welcome Book
+        'EXP_04': 'ai-assistant', // Guest AI Chatbot
+        'OPS_01': 'construction-schedule', // No tool? Placeholder
         'OPS_02': 'calendar-sync',
-        'OPS_03': 'delegation-sim',
-        'OPS_04': 'airbnb-ready',
-        // 'OPS_05': 'security-check',
-        'PRC_01': 'profitability',
-        'PRC_02': 'market-alerts',
-        // 'PRC_03': 'pricing-tools' 
+        'OPS_03': 'calendar-sync',
+        'OPS_11': 'checklists',
+        'FIN_01': 'profitability',
+        'FIN_09': 'delegation-sim',
+        'PRI_03': 'market-alerts',
+        'LEG_00': 'property-audit'
     };
 
     constructor() {
@@ -187,14 +188,37 @@ export class PhaseViewComponent implements OnInit {
     }
 
     isFeatureLocked(feature: Feature): boolean {
-        // Simple tier check: User Tier Rank vs Feature Required Tier Rank
-        // We need a helper for rank
         const levels: Record<string, number> = { 'Freemium': 0, 'TIER_0': 0, 'Bronze': 1, 'TIER_1': 1, 'Silver': 2, 'TIER_2': 2, 'Gold': 3, 'TIER_3': 3 };
-
         const userLevel = levels[this.userPlan()] || 0;
         const requiredLevel = levels[feature.required_tier || 'TIER_0'] || 0;
-
         return userLevel < requiredLevel;
+    }
+
+    isFlavorLocked(tierId: string): boolean {
+        const levels: Record<string, number> = { 'Freemium': 0, 'TIER_0': 0, 'Bronze': 1, 'TIER_1': 1, 'Silver': 2, 'TIER_2': 2, 'Gold': 3, 'TIER_3': 3 };
+        const userLevel = levels[this.userPlan()] || 0;
+        const targetLevel = levels[tierId] || 0;
+        return userLevel < targetLevel;
+    }
+
+    formatFlavor(tierId: string, config: any): string {
+        if (!config) return '';
+        if (config.projects_limit) return `${config.projects_limit} Prj`;
+        if (config.monthly_limit) return `${config.monthly_limit} Gen`;
+        if (config.model) return `AI: ${config.model}`;
+        if (config.export_pdf) return `PDF Exp`;
+        if (config.custom_branding) return `Branding`;
+        if (config.automation === 'full_api') return `API Auto`;
+        if (config.mode === 'advanced_amortization') return `Adv Amort`;
+        if (config.refresh_rate) return `Ref: ${config.refresh_rate}`;
+        if (config.strategies) return `Strat: ${config.strategies.length}`;
+        return 'Premium';
+    }
+
+    getSortedFlavors(feature: Feature) {
+        if (!feature.flavors) return [];
+        const levels: Record<string, number> = { 'TIER_0': 0, 'TIER_1': 1, 'TIER_2': 2, 'TIER_3': 3 };
+        return [...feature.flavors].sort((a, b) => levels[a.tier_id] - levels[b.tier_id]);
     }
 
     getTierClass(tier: string | undefined): string {

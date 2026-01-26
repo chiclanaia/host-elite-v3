@@ -152,4 +152,15 @@ export const audit = {
     'AUDIT.AIAnalyzing': 'Analyse en cours...',
     'AUDIT.NoteTitle': 'Note',
     'AUDIT.NoteDesc': 'L\'audit est sauvegardé automatiquement. Vous pouvez revenir à tout moment pour mettre à jour vos équipements.',
+
+    // Profitability Simulator
+    'PROFIT.Title': 'Simulateur de Rentabilité',
+    'PROFIT.Subtitle': 'Visualisez votre cash-flow réel et prenez les bonnes décisions',
+    'PROFIT.Inputs': 'Données Financières',
+    'PROFIT.MonthlyRevenue': 'Revenus Mensuels (Loyer)',
+    'PROFIT.MonthlyLoan': 'Mensualité de Crédit',
+    'PROFIT.MonthlyCharges': 'Charges Mensuelles (Total)',
+    'PROFIT.ChargesTooltip': 'Incluez tout ! Frais de copro, électricité, internet, assurance, taxes, entretien...',
+    'PROFIT.RentWarning': 'Ce loyer est-il réaliste ? > 500€ semble élevé sauf si c\'est du luxe.',
+    'NAV.profit-calculator': 'Simulateur'
 };

@@ -76,7 +76,6 @@ export class SessionStore {
             const phaseId = row.phase_id;
             if (!grouped[phaseId]) grouped[phaseId] = [];
 
-            // Map flat row to Feature type
             const feature: Feature = {
                 id: row.id,
                 name: row.name,
@@ -86,17 +85,26 @@ export class SessionStore {
                 parent_feature_id: row.parent_feature_id,
                 dimension_name: row.app_dimensions?.name,
                 phase_name: row.phases?.name,
-                required_tier: 'TIER_0'
+                required_tier: 'TIER_0',
+                flavors: []
             };
 
-            // EFFECTIVE TIER LOGIC:
-            // Prioritize Local Config > Global Config
-            const localConfig = configs.find((c: any) => c.country_code === currentCountry);
-            const globalConfig = configs.find((c: any) => c.country_code === 'GLOBAL');
-            const effectiveConfig = localConfig || globalConfig;
+            // Calculate context-specific config (Local > Global)
+            const contextConfigs = configs.filter((c: any) => c.country_code === currentCountry || c.country_code === 'GLOBAL');
 
-            if (effectiveConfig) {
-                feature.required_tier = effectiveConfig.tier_id;
+            // Populate all flavors (one per tier)
+            const tierList = ['TIER_0', 'TIER_1', 'TIER_2', 'TIER_3'];
+            tierList.forEach(t => {
+                const tierConfigs = contextConfigs.filter((c: any) => c.tier_id === t);
+                const bestForTier = tierConfigs.find((c: any) => c.country_code === currentCountry) || tierConfigs.find((c: any) => c.country_code === 'GLOBAL');
+                if (bestForTier) {
+                    feature.flavors!.push({ tier_id: t, config: bestForTier.config_value });
+                }
+            });
+
+            // Set effective required_tier as the lowest tier that HAS a config for this feature
+            if (feature.flavors!.length > 0) {
+                feature.required_tier = feature.flavors![0].tier_id;
             }
 
             grouped[phaseId].push(feature);

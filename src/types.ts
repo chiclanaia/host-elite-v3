@@ -100,9 +100,12 @@ export interface Feature {
   phase_id: string;
   name: string;
   description?: string;
+  is_active?: boolean;
   // Joined fields
   dimension_name?: string;
   phase_name?: string;
   config?: any; // The configuration value specific to the user's tier
   required_tier?: string; // The tier required for this feature (derived from configs)
+  flavors?: { tier_id: string, config: any }[]; // [NEW] All available tier-specific configs
+  feature_configurations?: any[]; // [NEW] Join results from database
 }

@@ -352,12 +352,28 @@ VALUES (
         'Read-only view for owners'
     ),
     (
-        'LEG_06',
+        'FIN_09',
         NULL,
-        'DIM_LEGAL',
-        'PH_6_SCALE',
-        'Company Audit',
-        'Structure simulation (SCI/SAS/LTD)'
+        'DIM_FINANCE',
+        'PH_1_INVEST',
+        'Delegation ROI Simulator',
+        'Simulate costs and returns of delegating management'
+    ),
+    (
+        'OPS_11',
+        NULL,
+        'DIM_OPS',
+        'PH_4_OPS',
+        'Operational Checklists',
+        'Manage cleaning and maintenance tasks'
+    ),
+    (
+        'PRI_03',
+        NULL,
+        'DIM_PRICING',
+        'PH_5_ANALYZE',
+        'Market Performance Alerts',
+        'Smart alerts based on market trends'
     ) ON CONFLICT (id) DO
 UPDATE
 SET parent_feature_id = EXCLUDED.parent_feature_id,

@@ -104,6 +104,16 @@ export interface FinancialInput {
     loanAmount?: number; // in cents (Principal)
     taxRate?: number; // percentage (margin tax rate)
     depreciationYearType?: 'RESIDENTIAL_27_5' | 'COMMERCIAL_39';
+
+    // Tier 3: AI Intelligence
+    announcementUrl?: string; // URL for AI extraction
+    currency?: 'EUR' | 'USD' | 'GBP'; // RG_FIN_05
+}
+
+export interface AiRiskScore {
+    score: number; // 0-100 (100 = safe)
+    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+    message: string;
 }
 
 export interface RedFlag {
@@ -142,6 +152,9 @@ export interface FinancialOutput {
     projections?: YearlyProjection[];
     redFlags?: RedFlag[];
     seasonalityCurve?: number[]; // Projected monthly revenue for display
+
+    // Intelligent Investor Specs
+    aiScoring?: AiRiskScore;
 }
 
 export interface LoanDetails {

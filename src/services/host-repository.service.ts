@@ -70,7 +70,20 @@ export class HostRepository {
         }
 
         // Map valid data to flat structure if needed, or keep relational
-        return data || [];
+        return (data || []).map(f => ({
+            ...f,
+            dimension_name: f.app_dimensions?.name,
+            phase_name: f.phases?.name
+        }));
+    }
+
+    async toggleFeatureActive(featureId: string, isActive: boolean): Promise<void> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+        const { error } = await this.supabase
+            .from('features')
+            .update({ is_active: isActive })
+            .eq('id', featureId);
+        if (error) throw error;
     }
 
     // Static sub-views configuration
@@ -82,6 +95,7 @@ export class HostRepository {
 
         // Phase 2: Lancement
         { id: 'widget-library', title: 'NAV.widget-library', icon: 'widgets', featureId: 'microsite', phase: 'launch', requiredTier: 'TIER_1' },
+        { id: 'profit-calculator', title: 'NAV.profit-calculator', icon: 'calculator', phase: 'launch', requiredTier: 'TIER_0' }, // Available to all (Tier 0 mode)
 
         // Phase 3: Exploitation
         { id: 'property-calendar', title: 'NAV.property-calendar', icon: 'calendar', phase: 'exploitation', requiredTier: 'TIER_2' },
@@ -794,6 +808,93 @@ export class HostRepository {
     async deleteApiKey(id: string): Promise<void> {
         if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
         const { error } = await this.supabase.rpc('delete_api_key', { target_id: id });
+        if (error) throw error;
+    }
+
+    async upsertFeatureConfiguration(featureId: string, tierId: string, countryCode: string, configValue: any): Promise<void> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+
+        // We use a combination of feature_id, tier_id, and country_code for matching
+        // In the migration, we don't have a unique constraint on these three, so we query first or use a known config_id if we had it.
+        // Assuming we want to upsert based on these criteria:
+        const { data: existing } = await this.supabase
+            .from('feature_configurations')
+            .select('config_id')
+            .eq('feature_id', featureId)
+            .eq('tier_id', tierId)
+            .eq('country_code', countryCode)
+            .single();
+
+        if (existing) {
+            const { error } = await this.supabase
+                .from('feature_configurations')
+                .update({ config_value: configValue })
+                .eq('config_id', existing.config_id);
+            if (error) throw error;
+        } else {
+            // Get max ID for simple manual increment (or let DB handle if it were serial, but migration used PRIMARY KEY)
+            const { data: maxIdData } = await this.supabase
+                .from('feature_configurations')
+                .select('config_id')
+                .order('config_id', { ascending: false })
+                .limit(1);
+
+            const nextId = (maxIdData && maxIdData.length > 0) ? maxIdData[0].config_id + 1 : 1;
+
+            const { error } = await this.supabase
+                .from('feature_configurations')
+                .insert({
+                    config_id: nextId,
+                    feature_id: featureId,
+                    tier_id: tierId,
+                    country_code: countryCode,
+                    config_value: configValue
+                });
+            if (error) throw error;
+        }
+    }
+
+    // --- Profitability Simulations (Tier 1+) ---
+
+    async saveSimulation(name: string, inputs: any, results: any): Promise<void> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+        const { user } = await this.supabaseService.getUser();
+        if (!user) throw new Error("User not authenticated");
+
+        // Limit check based on Tier could be here, but we'll do it in UI for UX.
+        const { error } = await this.supabase
+            .from('saved_simulations')
+            .insert({
+                user_id: user.id,
+                name: name,
+                inputs: inputs,
+                results: results
+            });
+
+        if (error) throw error;
+    }
+
+    async getSimulations(): Promise<any[]> {
+        if (!this.supabaseService.isConfigured) return [];
+        const { data, error } = await this.supabase
+            .from('saved_simulations')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Error fetching simulations:", error);
+            return [];
+        }
+        return data || [];
+    }
+
+    async deleteSimulation(id: string): Promise<void> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+        const { error } = await this.supabase
+            .from('saved_simulations')
+            .delete()
+            .eq('id', id);
+
         if (error) throw error;
     }
 }
