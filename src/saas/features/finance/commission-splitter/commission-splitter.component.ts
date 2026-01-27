@@ -34,23 +34,23 @@ import { SessionStore } from '../../../../state/session.store';
                <form [formGroup]="form" class="space-y-4">
                    <div>
                        <label class="block text-xs font-medium text-slate-400 mb-1">Total Booking Gross (€)</label>
-                       <input type="number" formControlName="gross" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                       <input type="number" formControlName="gross" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="comm-input-gross">
                    </div>
                    
                    <div class="grid grid-cols-2 gap-4">
                        <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Platform Fee (%)</label>
-                           <input type="number" formControlName="platformFee" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="platformFee" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="comm-input-platformfee">
                        </div>
                        <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Your Commission (%)</label>
-                           <input type="number" formControlName="myCommission" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="myCommission" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="comm-input-commission">
                        </div>
                    </div>
 
                    <div class="pt-4 border-t border-white/10">
                        <label class="block text-xs font-medium text-slate-400 mb-1">Deductible Expenses (Cleaning, Maintenance) (€)</label>
-                       <input type="number" formControlName="expenses" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                       <input type="number" formControlName="expenses" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="comm-input-expenses">
                    </div>
 
                    @if (isTier3()) {
@@ -61,7 +61,7 @@ import { SessionStore } from '../../../../state/session.store';
                                <p class="text-[10px] text-slate-400">Payouts will be routed automatically.</p>
                            </div>
                            <label class="relative inline-flex items-center cursor-pointer">
-                              <input type="checkbox" value="" class="sr-only peer" checked>
+                              <input type="checkbox" value="" class="sr-only peer" checked data-debug-id="comm-stripe-toggle">
                               <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                            </label>
                        </div>
@@ -116,7 +116,7 @@ import { SessionStore } from '../../../../state/session.store';
                </div>
                
                @if (!isTier3()) {
-                   <button class="mt-6 w-full border-2 border-slate-900 text-slate-900 font-bold py-2 rounded hover:bg-slate-50 transition-colors uppercase">
+                   <button class="mt-6 w-full border-2 border-slate-900 text-slate-900 font-bold py-2 rounded hover:bg-slate-50 transition-colors uppercase" data-debug-id="comm-download-pdf-btn">
                        Download PDF
                    </button>
                }

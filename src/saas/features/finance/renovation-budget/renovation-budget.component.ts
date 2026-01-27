@@ -34,7 +34,7 @@ import { SessionStore } from '../../../../state/session.store';
               <h3 class="text-2xl font-bold text-white mb-2">Renovation Checklist</h3>
               <p class="text-slate-400 max-w-md mb-8">Access our professional room-by-room renovation checklist. Upgrade to unlock the interactive budget calculator and AI Quote Auditor.</p>
               
-              <button class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all">
+              <button class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all" data-debug-id="renovation-download-pdf-btn">
                   <span class="material-icons">download</span> Download PDF Guide
               </button>
           </div>
@@ -48,7 +48,7 @@ import { SessionStore } from '../../../../state/session.store';
               <div class="lg:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col overflow-hidden">
                   <div class="flex justify-between items-center mb-6">
                       <h3 class="text-xl font-bold text-white">Room Budget Planner</h3>
-                      <button (click)="addRoom()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 transition-colors">
+                      <button (click)="addRoom()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 transition-colors" data-debug-id="renovation-add-room-btn">
                           <span class="material-icons text-xs">add</span> Add Room
                       </button>
                   </div>
@@ -59,7 +59,7 @@ import { SessionStore } from '../../../../state/session.store';
                               <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                                   <div class="md:col-span-1">
                                       <label class="block text-xs text-slate-400 mb-1">Room Type</label>
-                                      <select [value]="room.type" (change)="updateRoom($index, 'type', $event)" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-sm">
+                                      <select [value]="room.type" (change)="updateRoom($index, 'type', $event)" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-sm" [attr.data-debug-id]="'renovation-room-type-' + $index">
                                           <option value="Living Room">Living Room</option>
                                           <option value="Kitchen">Kitchen</option>
                                           <option value="Bathroom">Bathroom</option>
@@ -68,11 +68,11 @@ import { SessionStore } from '../../../../state/session.store';
                                   </div>
                                   <div>
                                       <label class="block text-xs text-slate-400 mb-1">Area (m²)</label>
-                                      <input type="number" [value]="room.area" (input)="updateRoom($index, 'area', $event)" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-sm">
+                                      <input type="number" [value]="room.area" (input)="updateRoom($index, 'area', $event)" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-sm" [attr.data-debug-id]="'renovation-room-area-' + $index">
                                   </div>
                                    <div>
                                       <label class="block text-xs text-slate-400 mb-1">Finish Level</label>
-                                      <select [value]="room.finish" (change)="updateRoom($index, 'finish', $event)" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-sm">
+                                      <select [value]="room.finish" (change)="updateRoom($index, 'finish', $event)" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-sm" [attr.data-debug-id]="'renovation-room-finish-' + $index">
                                           <option value="Standard">Standard (€400/m²)</option>
                                           <option value="Premium">Premium (€800/m²)</option>
                                           <option value="Luxury">Luxury (€1200/m²)</option>
@@ -121,7 +121,7 @@ import { SessionStore } from '../../../../state/session.store';
                        </h3>
                        
                        @if (isTier3()) {
-                           <div class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center hover:bg-white/5 transition-colors cursor-pointer" (click)="triggerAudit()">
+                           <div class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center hover:bg-white/5 transition-colors cursor-pointer" (click)="triggerAudit()" data-debug-id="renovation-audit-upload-area">
                                <span class="material-icons text-slate-500 text-3xl mb-2">upload_file</span>
                                <p class="text-xs text-slate-400">Drop contractor PDF here to compare against market prices.</p>
                            </div>

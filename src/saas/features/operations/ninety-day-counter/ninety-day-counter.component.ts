@@ -45,11 +45,11 @@ import { SessionStore } from '../../../../state/session.store';
                 <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
                     <h3 class="text-white font-bold mb-4">Planning Strategy</h3>
                     <div class="flex gap-4">
-                        <button class="bg-indigo-600/20 hover:bg-indigo-600/40 border border-indigo-500/30 text-indigo-300 p-4 rounded-lg flex-1 text-center transition-all">
+                        <button class="bg-indigo-600/20 hover:bg-indigo-600/40 border border-indigo-500/30 text-indigo-300 p-4 rounded-lg flex-1 text-center transition-all" data-debug-id="90day-switch-midterm-btn">
                             <span class="block material-icons mb-2">event_repeat</span>
                             <span class="text-xs font-bold block">Switch to Mid-Term (30d+)</span>
                         </button>
-                         <button class="bg-slate-700 hover:bg-slate-600 text-white p-4 rounded-lg flex-1 text-center transition-all">
+                         <button class="bg-slate-700 hover:bg-slate-600 text-white p-4 rounded-lg flex-1 text-center transition-all" data-debug-id="90day-block-calendar-btn">
                             <span class="block material-icons mb-2">block</span>
                             <span class="text-xs font-bold block">Block Calendar</span>
                         </button>

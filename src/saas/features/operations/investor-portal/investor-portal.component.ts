@@ -40,7 +40,7 @@ import { SessionStore } from '../../../../state/session.store';
                              <h4 class="text-white font-bold">Mr. Smith (Owner 1)</h4>
                              <p class="text-xs text-slate-500">Owns: Loft Marais</p>
                         </div>
-                        <button class="px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-xs rounded">Send Invite</button>
+                        <button class="px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-xs rounded" data-debug-id="investor-invite-btn">Send Invite</button>
                     </div>
                 </div>
            </div>
@@ -70,7 +70,7 @@ import { SessionStore } from '../../../../state/session.store';
                       </p>
                       
                       <div class="mt-4 pt-4 border-t border-slate-100 flex justify-end">
-                          <button class="text-indigo-600 text-xs font-bold flex items-center gap-1">
+                          <button class="text-indigo-600 text-xs font-bold flex items-center gap-1" data-debug-id="investor-download-pdf-btn">
                               <span class="material-icons text-sm">download</span> Download PDF
                           </button>
                       </div>

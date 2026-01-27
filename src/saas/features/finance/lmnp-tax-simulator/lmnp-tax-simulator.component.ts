@@ -45,7 +45,7 @@ import { SessionStore } from '../../../../state/session.store';
                       <h4 class="font-bold text-white">Régime Réel</h4>
                       <p class="text-sm text-slate-400">Deduct ALL real expenses + Amortization. Often results in 0€ tax for 10+ years.</p>
                   </div>
-                  <button class="mt-4 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold transition-all">
+                  <button class="mt-4 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold transition-all" data-debug-id="lmnp-start-simulator-btn">
                       Start Simulator (Upgrade Required)
                   </button>
               </div>
@@ -61,27 +61,27 @@ import { SessionStore } from '../../../../state/session.store';
                    <form [formGroup]="form" class="space-y-4">
                        <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Total Acquisition Cost (€)</label>
-                           <input type="number" formControlName="price" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="price" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="lmnp-input-price">
                        </div>
                        <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-medium text-slate-400 mb-1">Furniture Value (€)</label>
-                                <input type="number" formControlName="furniture" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                                <input type="number" formControlName="furniture" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="lmnp-input-furniture">
                             </div>
                              <div>
                                 <label class="block text-xs font-medium text-slate-400 mb-1">Renovation Works (€)</label>
-                                <input type="number" formControlName="works" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                                <input type="number" formControlName="works" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="lmnp-input-works">
                             </div>
                        </div>
                        
                         <div class="pt-4 border-t border-white/10">
                            <label class="block text-xs font-medium text-slate-400 mb-1">Annual Rental Income (€)</label>
-                           <input type="number" formControlName="income" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="income" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="lmnp-input-income">
                        </div>
                        
                        <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Annual Real Expenses (Condo, Tax, Ins...) (€)</label>
-                           <input type="number" formControlName="expenses" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="expenses" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="lmnp-input-expenses">
                            @if(formValues().expenses === 0) {
                                <p class="text-[10px] text-amber-400 mt-1 italic">Note: If 0, we'll estimate 20% of rent.</p>
                            }

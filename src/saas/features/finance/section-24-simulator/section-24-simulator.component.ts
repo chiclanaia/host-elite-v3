@@ -57,22 +57,22 @@ import { SessionStore } from '../../../../state/session.store';
                    <form [formGroup]="form" class="space-y-4">
                        <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Annual Rental Income (£)</label>
-                           <input type="number" formControlName="income" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="income" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="sec24-input-income">
                        </div>
                        
                         <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Mortgage Interest (Annual) (£)</label>
-                           <input type="number" formControlName="interest" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="interest" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="sec24-input-interest">
                        </div>
                        
                        <div class="pt-4 border-t border-white/10">
                            <label class="block text-xs font-medium text-slate-400 mb-1">Other Allowable Expenses (£)</label>
-                           <input type="number" formControlName="expenses" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="expenses" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="sec24-input-expenses">
                        </div>
                        
                        <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Your Tax Band</label>
-                           <select formControlName="taxBand" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white text-sm">
+                           <select formControlName="taxBand" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white text-sm" data-debug-id="sec24-select-taxband">
                               <option value="20">Basic Rate (20%)</option>
                               <option value="40">Higher Rate (40%)</option>
                               <option value="45">Additional Rate (45%)</option>
@@ -82,7 +82,7 @@ import { SessionStore } from '../../../../state/session.store';
                        @if (isTier3()) {
                            <div class="mt-6 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
                                 <label class="block text-xs font-bold text-indigo-300 mb-2">Stress Test: Interest Rate Spike</label>
-                                <input type="range" min="0" max="100" class="w-full accent-indigo-500" [value]="stressFactor" (input)="updateStress($event)">
+                                <input type="range" min="0" max="100" class="w-full accent-indigo-500" [value]="stressFactor" (input)="updateStress($event)" data-debug-id="sec24-stress-slider">
                                 <div class="flex justify-between text-[10px] text-indigo-200 mt-1">
                                     <span>Current</span>
                                     <span>+{{stressFactor}}% Rate</span>

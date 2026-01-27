@@ -35,7 +35,7 @@ export class TranslationService {
     }
 
     // Debug Support
-    debugMode = signal(localStorage.getItem('debug_show_tags') === 'true');
+    debugMode = signal(true); // Forced true for dev
 
     toggleDebugMode() {
         const newValue = !this.debugMode();

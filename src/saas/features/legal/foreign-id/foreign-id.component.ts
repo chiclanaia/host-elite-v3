@@ -23,7 +23,7 @@ import { SessionStore } from '../../../../state/session.store';
             <div>
                  <h2 class="text-2xl font-bold text-white mb-6">Which ID do you need?</h2>
                  <div class="space-y-4">
-                     <button class="w-full text-left p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-indigo-500 transition-all group">
+                     <button class="w-full text-left p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-indigo-500 transition-all group" data-debug-id="foreign-id-select-nie">
                          <div class="flex justify-between items-center mb-1">
                              <div class="font-bold text-white group-hover:text-indigo-400">NIE (Spain)</div>
                              <span class="material-icons text-slate-500 group-hover:text-indigo-400">chevron_right</span>
@@ -31,7 +31,7 @@ import { SessionStore } from '../../../../state/session.store';
                          <p class="text-xs text-slate-500">Foreigner ID Number. Mandatory for utilities & taxes.</p>
                      </button>
                      
-                      <button class="w-full text-left p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-indigo-500 transition-all group">
+                      <button class="w-full text-left p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-indigo-500 transition-all group" data-debug-id="foreign-id-select-siret">
                          <div class="flex justify-between items-center mb-1">
                              <div class="font-bold text-white group-hover:text-indigo-400">Siret (France)</div>
                              <span class="material-icons text-slate-500 group-hover:text-indigo-400">chevron_right</span>
@@ -39,7 +39,7 @@ import { SessionStore } from '../../../../state/session.store';
                          <p class="text-xs text-slate-500">Business Registration Number. Mandatory for all hosts.</p>
                      </button>
 
-                      <button class="w-full text-left p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-indigo-500 transition-all group">
+                      <button class="w-full text-left p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-indigo-500 transition-all group" data-debug-id="foreign-id-select-codice">
                          <div class="flex justify-between items-center mb-1">
                              <div class="font-bold text-white group-hover:text-indigo-400">Codice Fiscale (Italy)</div>
                              <span class="material-icons text-slate-500 group-hover:text-indigo-400">chevron_right</span>

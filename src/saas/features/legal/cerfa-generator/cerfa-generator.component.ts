@@ -85,11 +85,11 @@ import { SessionStore } from '../../../../state/session.store';
                       <!-- Action Bar -->
                       <div class="absolute bottom-8 right-8 flex gap-4">
                            @if (tier() === 'TIER_3') {
-                              <button class="bg-indigo-600 text-white px-6 py-3 rounded shadow-lg font-bold text-sm flex items-center gap-2 hover:bg-indigo-700">
+                              <button class="bg-indigo-600 text-white px-6 py-3 rounded shadow-lg font-bold text-sm flex items-center gap-2 hover:bg-indigo-700" data-debug-id="cerfa-submit-btn">
                                   <span class="material-icons text-sm">send</span> Auto-Submit to City Hall
                               </button>
                            } @else {
-                               <button class="bg-slate-900 text-white px-6 py-3 rounded shadow-lg font-bold text-sm flex items-center gap-2 hover:bg-slate-700">
+                               <button class="bg-slate-900 text-white px-6 py-3 rounded shadow-lg font-bold text-sm flex items-center gap-2 hover:bg-slate-700" data-debug-id="cerfa-download-btn">
                                   <span class="material-icons text-sm">download</span> Download PDF
                               </button>
                            }

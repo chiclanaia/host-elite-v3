@@ -24,17 +24,17 @@ import { SessionStore } from '../../../../state/session.store';
                 <div class="bg-slate-800 p-6 rounded-xl border border-white/10">
                      <h3 class="text-white font-bold mb-4">Host Details</h3>
                      <div class="grid grid-cols-1 gap-4">
-                         <input type="text" placeholder="Full Name / Company Name" class="bg-black/30 border border-white/10 rounded px-4 py-2 text-white">
-                         <input type="text" placeholder="Address (Ladungsfähige Anschrift)" class="bg-black/30 border border-white/10 rounded px-4 py-2 text-white">
-                         <input type="email" placeholder="Email" class="bg-black/30 border border-white/10 rounded px-4 py-2 text-white">
-                         <input type="text" placeholder="VAT ID (USt-IdNr.)" class="bg-black/30 border border-white/10 rounded px-4 py-2 text-white">
+                         <input type="text" placeholder="Full Name / Company Name" class="bg-black/30 border border-white/10 rounded px-4 py-2 text-white" data-debug-id="impressum-name-input">
+                         <input type="text" placeholder="Address (Ladungsfähige Anschrift)" class="bg-black/30 border border-white/10 rounded px-4 py-2 text-white" data-debug-id="impressum-address-input">
+                         <input type="email" placeholder="Email" class="bg-black/30 border border-white/10 rounded px-4 py-2 text-white" data-debug-id="impressum-email-input">
+                         <input type="text" placeholder="VAT ID (USt-IdNr.)" class="bg-black/30 border border-white/10 rounded px-4 py-2 text-white" data-debug-id="impressum-vat-input">
                      </div>
                 </div>
 
                 <div class="bg-slate-800 p-6 rounded-xl border border-white/10">
                      <h3 class="text-white font-bold mb-4">Dispute Resolution</h3>
                      <label class="flex items-center gap-3">
-                         <input type="checkbox" checked class="bg-transparent border-slate-600 rounded text-indigo-500">
+                         <input type="checkbox" checked class="bg-transparent border-slate-600 rounded text-indigo-500" data-debug-id="impressum-dispute-check">
                          <span class="text-slate-400 text-sm">Include OS-Plattform link (EU Reg. 524/2013)</span>
                      </label>
                 </div>

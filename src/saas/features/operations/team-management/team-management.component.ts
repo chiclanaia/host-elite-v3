@@ -22,7 +22,7 @@ import { SessionStore } from '../../../../state/session.store';
        <div class="flex-1 bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col">
             <div class="flex justify-between items-center mb-6">
                  <h3 class="text-xl font-bold text-white">Team Members</h3>
-                 <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold flex items-center gap-2">
+                 <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold flex items-center gap-2" data-debug-id="team-invite-btn">
                      <span class="material-icons text-sm">person_add</span> Invite
                  </button>
             </div>
@@ -80,7 +80,7 @@ import { SessionStore } from '../../../../state/session.store';
                             </td>
                             <td class="p-3 text-slate-500">2 hours ago</td>
                             <td class="p-3 text-right">
-                                <button class="text-slate-500 hover:text-white"><span class="material-icons text-sm">more_vert</span></button>
+                                <button class="text-slate-500 hover:text-white" data-debug-id="team-row-actions-1"><span class="material-icons text-sm">more_vert</span></button>
                             </td>
                         </tr>
                     </tbody>

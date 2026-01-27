@@ -30,7 +30,7 @@ import { SessionStore } from '../../../../state/session.store';
                <form [formGroup]="form" class="space-y-4">
                    <div>
                        <label class="block text-xs font-medium text-slate-400 mb-1">Fiscal Residence (Home)</label>
-                        <select formControlName="residence" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white text-sm">
+                        <select formControlName="residence" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white text-sm" data-debug-id="dtr-select-residence">
                               <option value="UK">United Kingdom</option>
                               <option value="US">USA</option>
                               <option value="DE">Germany</option>
@@ -39,7 +39,7 @@ import { SessionStore } from '../../../../state/session.store';
                    
                     <div>
                        <label class="block text-xs font-medium text-slate-400 mb-1">Property Location (Source)</label>
-                        <select formControlName="source" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white text-sm">
+                        <select formControlName="source" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white text-sm" data-debug-id="dtr-select-source">
                               <option value="FR">France</option>
                               <option value="ES">Spain</option>
                               <option value="IT">Italy</option>
@@ -48,7 +48,7 @@ import { SessionStore } from '../../../../state/session.store';
                    
                    <div class="pt-4 border-t border-white/10">
                        <label class="block text-xs font-medium text-slate-400 mb-1">Total Tax Paid at Source (€)</label>
-                       <input type="number" formControlName="taxPaid" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                       <input type="number" formControlName="taxPaid" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="dtr-input-taxpaid">
                    </div>
                </form>
                
@@ -120,7 +120,7 @@ import { SessionStore } from '../../../../state/session.store';
                             <span class="text-3xl mb-3">🗺️</span>
                             <h3 class="text-lg font-bold text-white mb-2">Unlock Treaty Advisor</h3>
                             <p class="text-xs text-slate-300 mb-4 max-w-xs">Don't guess with international law. Get a step-by-step filing map for your specific country pair.</p>
-                            <button class="px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white hover:bg-indigo-500 transition-colors">Upgrade Plan</button>
+                            <button class="px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white hover:bg-indigo-500 transition-colors" data-debug-id="dtr-upgrade-btn">Upgrade Plan</button>
                         </div>
                    }
               </div>

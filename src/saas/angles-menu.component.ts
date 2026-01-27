@@ -19,7 +19,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
            class="group relative flex flex-col items-center justify-center px-4 py-2 rounded-xl cursor-pointer transition-all duration-300 min-w-[80px]"
            [class]="activePhaseId() === phase.id
              ? 'bg-white text-slate-900 shadow-md transform scale-105' 
-             : 'text-slate-300 hover:bg-white/10 hover:text-white'">
+             : 'text-slate-300 hover:bg-white/10 hover:text-white'"
+           [attr.data-debug-id]="'phase-menu-' + phase.id">
            
            <!-- Icon (Generic for now based on sort order or ID) -->
            <span class="w-5 h-5 mb-1 transition-transform duration-300" 

@@ -25,14 +25,14 @@ import { SessionStore } from '../../../../state/session.store';
                
                <div class="space-y-4">
                    <div class="bg-white/5 p-4 rounded-lg flex items-start gap-3">
-                       <input type="checkbox" checked class="mt-1 bg-transparent border-emerald-500 rounded text-emerald-500 focus:ring-0">
+                       <input type="checkbox" checked class="mt-1 bg-transparent border-emerald-500 rounded text-emerald-500 focus:ring-0" data-debug-id="vut-check-cedula">
                        <div>
                            <div class="text-white font-bold text-sm">Cédula de Habitabilidad</div>
                            <p class="text-xs text-slate-500">Valid occupancy certificate required.</p>
                        </div>
                    </div>
                    <div class="bg-white/5 p-4 rounded-lg flex items-start gap-3">
-                       <input type="checkbox" class="mt-1 bg-transparent border-slate-600 rounded text-emerald-500 focus:ring-0">
+                       <input type="checkbox" class="mt-1 bg-transparent border-slate-600 rounded text-emerald-500 focus:ring-0" data-debug-id="vut-check-occupation">
                        <div>
                            <div class="text-white font-bold text-sm">First Occupation License</div>
                            <p class="text-xs text-slate-500">Must be registered with the town hall.</p>
@@ -45,7 +45,7 @@ import { SessionStore } from '../../../../state/session.store';
                                <span class="material-icons text-sm">upload_file</span> Statute Analyzer (AI)
                            </h4>
                            <p class="text-xs text-slate-400 mb-3">Upload your building's "Estatutos" PDF to check for hidden anti-Airbnb clauses.</p>
-                           <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-bold">Select PDF</button>
+                           <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-bold" data-debug-id="vut-upload-statutes-btn">Select PDF</button>
                        </div>
                    }
                </div>

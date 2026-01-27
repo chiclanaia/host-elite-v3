@@ -26,7 +26,7 @@ import { SessionStore } from '../../../../state/session.store';
             
             <div class="space-y-4">
                 @for (doc of documents(); track doc.id) {
-                    <div class="p-4 bg-white/5 rounded-lg border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors">
+                    <div class="p-4 bg-white/5 rounded-lg border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors" [attr.data-debug-id]="'regulatory-doc-item-' + doc.id">
                         <div class="flex items-center gap-4">
                              <div class="w-10 h-10 rounded-full flex items-center justify-center" 
                                 [class.bg-emerald-500_20]="doc.status === 'valid'"
@@ -44,7 +44,7 @@ import { SessionStore } from '../../../../state/session.store';
                         @if (tier() === 'TIER_3') {
                             <div class="flex flex-col items-end">
                                 <span class="text-xs font-mono text-slate-500">Expires: {{ doc.expiry || 'N/A' }}</span>
-                                <span class="text-xs px-2 py-1 rounded bg-slate-700 text-slate-300 mt-1 cursor-pointer hover:bg-indigo-600">Update</span>
+                                <span class="text-xs px-2 py-1 rounded bg-slate-700 text-slate-300 mt-1 cursor-pointer hover:bg-indigo-600" [attr.data-debug-id]="'regulatory-doc-update-' + doc.id">Update</span>
                             </div>
                         } @else {
                              <div class="flex items-center">
@@ -82,7 +82,7 @@ import { SessionStore } from '../../../../state/session.store';
             @if (tier() === 'TIER_0') {
                 <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
                     <p class="text-amber-200 text-sm">Download the static PDF checklist to track this manually.</p>
-                    <button class="mt-3 w-full py-2 bg-amber-600/20 hover:bg-amber-600/40 text-amber-100 text-xs font-bold rounded border border-amber-500/50">Download PDF</button>
+                    <button class="mt-3 w-full py-2 bg-amber-600/20 hover:bg-amber-600/40 text-amber-100 text-xs font-bold rounded border border-amber-500/50" data-debug-id="regulatory-download-pdf-btn">Download PDF</button>
                 </div>
             }
             

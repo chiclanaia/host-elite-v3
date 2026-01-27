@@ -101,7 +101,7 @@ import { SessionStore } from '../../../../state/session.store';
                    <form [formGroup]="form" class="space-y-4">
                        <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Property Location</label>
-                           <select formControlName="country" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white text-sm">
+                           <select formControlName="country" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white text-sm" data-debug-id="nrt-select-country">
                               <option value="ES_EU">Spain (EU Resident)</option>
                               <option value="ES_NON_EU">Spain (Non-EU)</option>
                               <option value="FR">France</option>
@@ -111,12 +111,12 @@ import { SessionStore } from '../../../../state/session.store';
 
                        <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Gross Annual Income (€)</label>
-                           <input type="number" formControlName="gross" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="gross" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="nrt-input-gross">
                        </div>
                        
                         <div>
                            <label class="block text-xs font-medium text-slate-400 mb-1">Deductible Expenses (€)</label>
-                           <input type="number" formControlName="expenses" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                           <input type="number" formControlName="expenses" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="nrt-input-expenses">
                            @if (isNonEuSpain()) {
                                <p class="text-[10px] text-rose-400 mt-1">Note: Non-EU residents typically cannot deduct expenses in Spain.</p>
                            }
@@ -137,7 +137,7 @@ import { SessionStore } from '../../../../state/session.store';
                        </p>
 
                        @if (isTier3()) {
-                           <div class="w-full max-w-xs bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 cursor-pointer hover:bg-indigo-500/20 transition-all group">
+                           <div class="w-full max-w-xs bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 cursor-pointer hover:bg-indigo-500/20 transition-all group" data-debug-id="nrt-generate-form-btn">
                                <div class="flex items-center justify-center gap-2 text-indigo-300 font-bold mb-1">
                                     <span class="material-icons group-hover:animate-pulse">description</span>
                                     <span>Generate Tax Form</span>

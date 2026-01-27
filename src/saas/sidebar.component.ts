@@ -15,7 +15,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
     template: `
     <aside class="w-64 flex-shrink-0 flex flex-col h-full bg-slate-900 border-r border-white/10 text-white transition-all duration-300 relative z-20">
       <!-- Logo Header -->
-      <div class="px-6 h-16 flex items-center border-b border-white/10 flex-shrink-0">
+      <div class="px-6 h-16 flex items-center border-b border-white/10 flex-shrink-0" data-debug-id="nav-logo">
         <h1 class="text-lg font-bold flex items-center space-x-3 leading-tight tracking-wide">
             <div class="p-1.5 bg-white/10 rounded-lg backdrop-blur-sm border border-white/5 shadow-inner">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-[#D4AF37]"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd" /></svg>
@@ -40,7 +40,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                     ? 'bg-white/10 text-[#D4AF37] border-l-2 border-[#D4AF37] shadow-inner' 
                     : 'text-slate-400 hover:text-white hover:bg-white/5'"
                 [class.opacity-50]="isLocked(view)"
-                [class.cursor-not-allowed]="isLocked(view)">
+                [class.cursor-not-allowed]="isLocked(view)"
+                [attr.data-debug-id]="'nav-link-' + view.id">
                 <div class="flex items-center">
                     <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors" 
                           [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
@@ -73,7 +74,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                     <div class="relative">
                         <!-- Dropdown Trigger -->
                         <button (click)="togglePropertyDropdown()" 
-                                class="w-full flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-all border border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/20 shadow-lg group">
+                                class="w-full flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-all border border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/20 shadow-lg group"
+                                data-debug-id="nav-properties-dropdown">
                             <div class="flex items-center min-w-0">
                                 <span class="w-5 h-5 mr-2 flex items-center justify-center flex-shrink-0 text-[#D4AF37]" [innerHTML]="getIcon('property')"></span>
                                 <span class="truncate">{{ 'SIDEBAR.MyProperties' | translate }}</span>
@@ -88,7 +90,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                             @for (property of properties(); track property.id) {
                             <a (click)="selectProperty(property)" 
                             class="w-full text-left px-4 py-3 text-sm cursor-pointer flex items-center justify-between group border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors"
-                            [class]="property.name === selectedProperty()?.name ? 'text-[#D4AF37] font-semibold bg-white/5' : 'text-slate-300'">
+                            [class]="property.name === selectedProperty()?.name ? 'text-[#D4AF37] font-semibold bg-white/5' : 'text-slate-300'"
+                            [attr.data-debug-id]="'nav-property-select-' + property.id">
                                 <span class="truncate">{{ property.name }}</span>
                                 @if(property.name === selectedProperty()?.name) {
                                     <span class="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_8px_#D4AF37]"></span>
@@ -96,7 +99,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                             </a>
                             }
                             <div class="bg-slate-900/50">
-                                <a (click)="createProperty()" class="block w-full text-left px-4 py-3 text-xs text-blue-400 hover:bg-white/5 hover:text-blue-300 cursor-pointer font-bold uppercase tracking-wide flex items-center border-t border-white/10">
+                                <a (click)="createProperty()" class="block w-full text-left px-4 py-3 text-xs text-blue-400 hover:bg-white/5 hover:text-blue-300 cursor-pointer font-bold uppercase tracking-wide flex items-center border-t border-white/10"
+                                   data-debug-id="nav-create-property">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 mr-2"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>
                                     {{ 'SIDEBAR.NewProperty' | translate }}
                                 </a>
@@ -121,7 +125,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                                         ? 'text-white bg-white/5 border-l-2 border-[#D4AF37] -ml-[1px]' 
                                         : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'"
                                     [class.opacity-50]="isLocked(subView)"
-                                    [class.cursor-not-allowed]="isLocked(subView)">
+                                    [class.cursor-not-allowed]="isLocked(subView)"
+                                    [attr.data-debug-id]="'nav-subview-' + subView.id">
                                     
                                     <div class="flex items-center min-w-0">
                                         <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors" 
@@ -148,7 +153,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 
                     } @else {
                         <!-- No property state -->
-                        <button (click)="createProperty()" class="w-full flex items-center justify-center px-3 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors bg-[#D4AF37] text-slate-900 hover:bg-yellow-500 shadow-lg">
+                        <button (click)="createProperty()" class="w-full flex items-center justify-center px-3 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors bg-[#D4AF37] text-slate-900 hover:bg-yellow-500 shadow-lg"
+                                data-debug-id="nav-create-first-property">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-2"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>
                             {{ 'SIDEBAR.CreateFirst' | translate }}
                         </button>
@@ -169,7 +175,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                         ? 'bg-white/10 text-[#D4AF37] border-l-2 border-[#D4AF37] shadow-inner' 
                         : 'text-slate-400 hover:text-white hover:bg-white/5'"
                     [class.opacity-50]="isLocked(view)"
-                    [class.cursor-not-allowed]="isLocked(view)">
+                    [class.cursor-not-allowed]="isLocked(view)"
+                    [attr.data-debug-id]="'nav-training-' + view.id">
                     <div class="flex items-center">
                         <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
                               [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
@@ -205,7 +212,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                         ? 'bg-white/10 text-[#D4AF37] border-l-2 border-[#D4AF37] shadow-inner' 
                         : 'text-slate-400 hover:text-white hover:bg-white/5'"
                     [class.opacity-50]="isLocked(view)"
-                    [class.cursor-not-allowed]="isLocked(view)">
+                    [class.cursor-not-allowed]="isLocked(view)"
+                    [attr.data-debug-id]="'nav-support-' + view.id">
                     <div class="flex items-center">
                         <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
                               [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
@@ -231,7 +239,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                         class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-colors border border-transparent"
                         [class]="activeView().id === view.id 
                             ? 'bg-purple-900/30 text-purple-300 border-purple-500/20' 
-                            : 'text-slate-400 hover:text-white hover:bg-white/5'">
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'"
+                        [attr.data-debug-id]="'nav-admin-' + view.id">
                         <span class="w-5 h-5 mr-3 flex items-center justify-center text-purple-500 group-hover:text-purple-300" [innerHTML]="getIcon(view.icon)"></span>
                         {{ view.title }}
                         </a>
@@ -243,7 +252,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 
       <!-- Footer User Profile -->
       <div class="px-4 py-4 border-t border-white/10 flex-shrink-0 bg-black/20 backdrop-blur-sm">
-        <div class="flex items-center cursor-pointer group/profile" (click)="onOpenSettings()">
+        <div class="flex items-center cursor-pointer group/profile" (click)="onOpenSettings()" data-debug-id="nav-profile-settings">
             <div class="w-9 h-9 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center font-bold mr-3 shadow-md border border-white/10 overflow-hidden"
                  [class.from-purple-900.to-purple-700]="userRole() === 'admin'">
                 @if (userAvatar()) {
@@ -268,7 +277,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                 </svg>
             </div>
         </div>
-        <button (click)="onLogout()" class="w-full mt-4 text-left flex items-center px-3 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+        <button (click)="onLogout()" class="w-full mt-4 text-left flex items-center px-3 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                data-debug-id="nav-logout">
             <span class="w-4 h-4 mr-2 flex items-center justify-center" [innerHTML]="getIcon('logout')"></span>
             {{ 'SIDEBAR.Logout' | translate }}
         </button>

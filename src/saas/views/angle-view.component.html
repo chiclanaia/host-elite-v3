@@ -78,7 +78,8 @@
 
         <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-4">
-                <h2 class="text-3xl font-extrabold text-white tracking-tight drop-shadow-md">
+                <h2 class="text-3xl font-extrabold text-white tracking-tight drop-shadow-md"
+                    [attr.data-debug-id]="'phase-dimension-header-' + dim.id">
                     {{ dim.name | translate }}
                 </h2>
                 <span class="px-3 py-1 bg-white/5 rounded-full text-xs font-mono text-slate-400 border border-white/5">
@@ -88,7 +89,8 @@
 
             <!-- Legacy Audit Button -->
             <button (click)="openLegacyAudit(dim.id)"
-                class="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold text-indigo-200 bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 hover:text-white transition-all shadow-sm">
+                class="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold text-indigo-200 bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 hover:text-white transition-all shadow-sm"
+                [attr.data-debug-id]="'legacy-audit-btn-' + dim.id">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -103,7 +105,8 @@
             @for (feature of dim.features; track feature.id) {
             <div (click)="isFeatureLocked(feature) ? null : openFeature(feature)"
                 class="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 transition-all duration-300 hover:bg-white/10 hover:shadow-2xl hover:-translate-y-1 cursor-pointer overflow-hidden"
-                [class.opacity-70]="isFeatureLocked(feature)" [class.cursor-not-allowed]="isFeatureLocked(feature)">
+                [class.opacity-70]="isFeatureLocked(feature)" [class.cursor-not-allowed]="isFeatureLocked(feature)"
+                [attr.data-debug-id]="'feature-card-' + feature.id">
 
                 <!-- Hover Glow -->
                 <div
@@ -144,8 +147,8 @@
 
                 <!-- Content -->
                 <div class="relative z-10">
-                    <h3
-                        class="text-lg font-bold text-white mb-2 group-hover:text-[#D4AF37] transition-colors line-clamp-1">
+                    <h3 class="text-lg font-bold text-white mb-2 group-hover:text-[#D4AF37] transition-colors line-clamp-1"
+                        [attr.data-debug-id]="'feature-card-title-' + feature.id">
                         {{ feature.name }}
                     </h3>
                     <p class="text-[11px] text-slate-400 line-clamp-2 leading-relaxed mb-4 h-[2.5em]">
@@ -156,7 +159,8 @@
 
                     <!-- Action Text -->
                     <div class="flex items-center text-xs font-bold uppercase tracking-wider transition-colors"
-                        [class]="isFeatureLocked(feature) ? 'text-slate-600' : 'text-[#D4AF37] group-hover:text-white'">
+                        [class]="isFeatureLocked(feature) ? 'text-slate-600' : 'text-[#D4AF37] group-hover:text-white'"
+                        [attr.data-debug-id]="'feature-card-action-' + feature.id">
                         @if (isFeatureLocked(feature)) {
                         <span>Upgrade Required</span>
                         } @else {
@@ -183,7 +187,8 @@
 <div class="animate-fade-in-up">
     @if (activeFeatureComponent(); as ComponentClass) {
     <div class="h-full relative z-10 p-6 flex flex-col">
-        <button (click)="closeTool()" class="mb-4 self-start text-sm text-slate-400 hover:text-white flex items-center">
+        <button (click)="closeTool()" class="mb-4 self-start text-sm text-slate-400 hover:text-white flex items-center"
+            data-debug-id="tool-back-btn">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -217,7 +222,8 @@
         (close)="closeTool()"></app-calendar-tool>
     } @else if (activeToolId() === 'profitability') {
     <div class="h-full relative z-10 p-6 flex flex-col">
-        <button (click)="closeTool()" class="mb-4 self-start text-sm text-slate-400 hover:text-white flex items-center">
+        <button (click)="closeTool()" class="mb-4 self-start text-sm text-slate-400 hover:text-white flex items-center"
+            data-debug-id="tool-back-btn">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />

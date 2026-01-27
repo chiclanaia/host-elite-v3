@@ -95,7 +95,7 @@ import { SessionStore } from '../../../../state/session.store';
                  <!-- Fake Heatmap Visual for Demo -->
                  <div class="flex-1 w-full grid grid-cols-12 gap-1 opacity-80">
                     @for (year of [1,2,3,4,5,6,7,8,9,10]; track year) {
-                        <div class="col-span-1 rounded bg-emerald-500/20 hover:bg-emerald-500/40 transition-colors flex items-end justify-center pb-2 text-xs text-slate-400 h-full relative group cursor-pointer">
+                        <div class="col-span-1 rounded bg-emerald-500/20 hover:bg-emerald-500/40 transition-colors flex items-end justify-center pb-2 text-xs text-slate-400 h-full relative group cursor-pointer" [attr.data-debug-id]="'profitability-heatmap-year-' + year">
                              <div class="absolute bottom-0 w-full bg-emerald-500" [style.height.%]="year * 8 + 20"></div>
                              <span class="relative z-10 font-bold text-white mix-blend-difference">Y{{year}}</span>
                              
@@ -110,7 +110,7 @@ import { SessionStore } from '../../../../state/session.store';
                  
                  @if (isTier3()) {
                     <div class="mt-4 flex justify-end">
-                         <button class="px-4 py-2 bg-rose-500/20 text-rose-300 border border-rose-500/50 rounded-lg hover:bg-rose-500/30 transition-colors text-xs font-bold flex items-center gap-2">
+                         <button class="px-4 py-2 bg-rose-500/20 text-rose-300 border border-rose-500/50 rounded-lg hover:bg-rose-500/30 transition-colors text-xs font-bold flex items-center gap-2" data-debug-id="profitability-stress-test-btn">
                             <span class="text-lg">⚡</span> Run Stress Test (-20% Market)
                          </button>
                     </div>
@@ -123,7 +123,7 @@ import { SessionStore } from '../../../../state/session.store';
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2">Predictive Command Center Locked</h3>
                     <p class="text-slate-400 max-w-md mb-6">Aggregate real-time portfolio data and simulate 10-year market cycles with the Expert Tier.</p>
-                    <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/25">
+                    <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/25" data-debug-id="profitability-upgrade-btn">
                         Upgrade to Expert
                     </button>
                 </div>

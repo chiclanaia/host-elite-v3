@@ -32,10 +32,10 @@ import { SessionStore } from '../../../../state/session.store';
               <p class="text-slate-400 text-sm max-w-xs mb-8">Generate your compliant "Fichier des Écritures Comptables" for French tax audits.</p>
               
               <div class="flex flex-col gap-3 w-full max-w-xs">
-                  <button (click)="export('2024')" class="w-full bg-white/10 hover:bg-white/20 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all group">
+                  <button (click)="export('2024')" class="w-full bg-white/10 hover:bg-white/20 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all group" data-debug-id="fec-export-2024-btn">
                       <span class="material-icons group-hover:animate-bounce">download</span> Export 2024 (Txt)
                   </button>
-                  <button (click)="export('2023')" class="w-full bg-transparent hover:bg-white/5 border border-white/10 text-slate-300 py-3 rounded-lg text-sm transition-all">
+                  <button (click)="export('2023')" class="w-full bg-transparent hover:bg-white/5 border border-white/10 text-slate-300 py-3 rounded-lg text-sm transition-all" data-debug-id="fec-export-2023-btn">
                       Export 2023 Archive
                   </button>
               </div>
@@ -89,7 +89,7 @@ import { SessionStore } from '../../../../state/session.store';
                             <span class="text-2xl mb-2">🔒</span>
                             <h3 class="text-sm font-bold text-white mb-2">Automate Accounting</h3>
                             <p class="text-xs text-slate-400 mb-4">Sync directly with Quickbooks, Xero, or Pennylane.</p>
-                            <button class="px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white hover:bg-indigo-500 transition-colors">Upgrade</button>
+                            <button class="px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white hover:bg-indigo-500 transition-colors" data-debug-id="fec-upgrade-btn">Upgrade</button>
                         </div>
                     }
                </div>

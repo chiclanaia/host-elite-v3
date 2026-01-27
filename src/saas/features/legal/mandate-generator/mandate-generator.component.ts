@@ -28,14 +28,14 @@ import { SessionStore } from '../../../../state/session.store';
                        <div>
                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Management Fee</label>
                            <div class="flex items-center gap-2">
-                               <input type="number" value="20" class="bg-black/30 border border-white/10 rounded px-3 py-2 text-white w-20 text-center font-bold">
+                               <input type="number" value="20" class="bg-black/30 border border-white/10 rounded px-3 py-2 text-white w-20 text-center font-bold" data-debug-id="mandate-fee-input">
                                <span class="text-white font-bold">%</span>
                            </div>
                        </div>
                        
                         <div>
                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Liability Limit</label>
-                           <select class="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white">
+                           <select class="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white" data-debug-id="mandate-liability-select">
                                <option>Standard (Gross Negligence only)</option>
                                <option>Full Liability (Premium)</option>
                            </select>
@@ -47,7 +47,7 @@ import { SessionStore } from '../../../../state/session.store';
                    <div class="bg-indigo-900/20 p-6 rounded-xl border border-indigo-500/30">
                        <h3 class="text-white font-bold mb-2">e-Signature</h3>
                        <p class="text-xs text-slate-400 mb-4">Send directly to owner via DocuSign/HelloSign integration.</p>
-                       <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded text-xs flex items-center justify-center gap-2">
+                       <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded text-xs flex items-center justify-center gap-2" data-debug-id="mandate-sign-btn">
                            <span class="material-icons text-sm">draw</span> Send for Signature
                        </button>
                    </div>

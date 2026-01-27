@@ -46,8 +46,8 @@ import { SessionStore } from '../../../../state/session.store';
             <h3 class="text-xl font-bold text-white mb-4">AI Listing Auditor</h3>
             
             <div class="flex gap-4 mb-6">
-                <input type="text" placeholder="Paste Airbnb URL here..." class="flex-1 bg-black/30 border border-white/20 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors">
+                <input type="text" placeholder="Paste Airbnb URL here..." class="flex-1 bg-black/30 border border-white/20 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none" data-debug-id="listing-audit-input-url">
+                <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors" data-debug-id="listing-audit-analyze-btn">
                     Analyze Listing
                 </button>
             </div>

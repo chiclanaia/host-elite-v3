@@ -33,7 +33,7 @@ import { SessionStore } from '../../../../state/session.store';
            <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-white">Investment Parameters</h3>
                 @if (isTier3()) {
-                    <button (click)="autoFill()" class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30 hover:bg-indigo-500/40 transition-colors flex items-center gap-1">
+                    <button (click)="autoFill()" class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30 hover:bg-indigo-500/40 transition-colors flex items-center gap-1" data-debug-id="roi-autofill-btn">
                         <span>✨</span> Auto-Fill (AI)
                     </button>
                 }
@@ -44,17 +44,17 @@ import { SessionStore } from '../../../../state/session.store';
               <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Purchase Price (€)</label>
-                    <input type="number" formControlName="price" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                    <input type="number" formControlName="price" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-price">
                   </div>
                   <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Monthly Rent (€)</label>
-                    <input type="number" formControlName="rent" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                    <input type="number" formControlName="rent" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-rent">
                   </div>
               </div>
 
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1">Monthly Loan Payment (€)</label>
-                <input type="number" formControlName="loan" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                <input type="number" formControlName="loan" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-loan">
               </div>
 
               <!-- Advanced Fields (Tier 1+) -->
@@ -67,11 +67,11 @@ import { SessionStore } from '../../../../state/session.store';
                       <div class="grid grid-cols-2 gap-4">
                           <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1">Condo Fees / Charges</label>
-                            <input type="number" formControlName="condo" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                            <input type="number" formControlName="condo" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-condo">
                           </div>
                           <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1">Insurance</label>
-                            <input type="number" formControlName="insurance" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                            <input type="number" formControlName="insurance" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-insurance">
                           </div>
                       </div>
 
@@ -81,7 +81,7 @@ import { SessionStore } from '../../../../state/session.store';
                             <span class="text-indigo-400 cursor-help material-icons text-[14px]">info</span>
                         </label>
                         <input type="number" formControlName="repairs" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
-                            [class.border-indigo-500]="showCoachTip()">
+                            [class.border-indigo-500]="showCoachTip()" data-debug-id="roi-input-repairs">
                         
                         <!-- Coach Popup -->
                         <div class="absolute left-0 bottom-full mb-2 w-64 bg-slate-800 border border-indigo-500/30 p-3 rounded-lg shadow-xl z-20"
@@ -94,14 +94,14 @@ import { SessionStore } from '../../../../state/session.store';
                       
                       <div class="mt-4">
                         <label class="block text-xs font-medium text-slate-400 mb-1">Taxes (Monthly avg)</label>
-                        <input type="number" formControlName="taxes" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                        <input type="number" formControlName="taxes" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-taxes">
                       </div>
                   </div>
               } @else {
                   <!-- Teaser for Tier 1 -->
                   <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700/50 text-center mt-4">
                       <p class="text-xs text-slate-400 mb-2">Detailed expense tracking (Insurance, Repairs, Taxes) available in Standard Plan.</p>
-                      <button class="text-xs text-indigo-400 hover:text-indigo-300 font-bold">Unlock Full Expense Itemization</button>
+                      <button class="text-xs text-indigo-400 hover:text-indigo-300 font-bold" data-debug-id="roi-unlock-expenses-btn">Unlock Full Expense Itemization</button>
                   </div>
               }
            </form>

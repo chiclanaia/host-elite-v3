@@ -61,7 +61,7 @@ import { SessionStore } from '../../../../state/session.store';
                       </div>
                   }
 
-                  <button class="w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white text-sm font-bold transition-colors">
+                  <button class="w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white text-sm font-bold transition-colors" data-debug-id="channel-airbnb-configure-btn">
                       Configure
                   </button>
               </div>
@@ -78,7 +78,7 @@ import { SessionStore } from '../../../../state/session.store';
                   
                   <p class="text-slate-400 text-sm mb-6">Connect your Booking.com Extranet ID to start syncing prices and inventory.</p>
 
-                  <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg transition-colors shadow-lg shadow-indigo-500/20">
+                  <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg transition-colors shadow-lg shadow-indigo-500/20" data-debug-id="channel-booking-connect-btn">
                       Connect XML
                   </button>
               </div>

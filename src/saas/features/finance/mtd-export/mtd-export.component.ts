@@ -42,7 +42,7 @@ import { SessionStore } from '../../../../state/session.store';
               
               @if (isTier3()) {
                    <div class="w-full max-w-xs space-y-3">
-                       <button (click)="submitToHmrc()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20">
+                       <button (click)="submitToHmrc()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20" data-debug-id="mtd-submit-btn">
                            <span class="material-icons">cloud_upload</span> Submit Q1 2025
                        </button>
                        <div class="flex justify-between text-xs text-slate-500 px-2">
@@ -62,7 +62,7 @@ import { SessionStore } from '../../../../state/session.store';
                    }
               } @else {
                   <div class="w-full max-w-xs space-y-3">
-                       <button class="w-full bg-white/10 hover:bg-white/20 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all">
+                       <button class="w-full bg-white/10 hover:bg-white/20 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all" data-debug-id="mtd-download-csv-btn">
                            <span class="material-icons">table_view</span> Download CSV (HMRC Ready)
                        </button>
                        <p class="text-[10px] text-slate-500 mt-2">Manual upload required via HMRC workaround.</p>

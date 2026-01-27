@@ -33,10 +33,10 @@ import { SessionStore } from '../../../../state/session.store';
                <!-- Toolbar -->
                <div class="p-4 border-b border-white/10 flex justify-between items-center">
                    <div class="flex gap-2">
-                       <button class="px-3 py-1.5 bg-white/10 text-white text-xs rounded hover:bg-white/20">Open (2)</button>
-                       <button class="px-3 py-1.5 text-slate-400 text-xs hover:text-white">Closed (12)</button>
+                       <button class="px-3 py-1.5 bg-white/10 text-white text-xs rounded hover:bg-white/20" data-debug-id="maint-filter-open">Open (2)</button>
+                       <button class="px-3 py-1.5 text-slate-400 text-xs hover:text-white" data-debug-id="maint-filter-closed">Closed (12)</button>
                    </div>
-                   <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg flex items-center gap-2">
+                   <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg flex items-center gap-2" data-debug-id="maint-new-ticket-btn">
                        <span>+</span> New Ticket
                    </button>
                </div>
@@ -44,7 +44,7 @@ import { SessionStore } from '../../../../state/session.store';
                <!-- Ticket List -->
                <div class="flex-1 overflow-y-auto p-4 space-y-3">
                    <!-- Ticket Item -->
-                   <div class="p-4 bg-white/5 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group">
+                   <div class="p-4 bg-white/5 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group" data-debug-id="maint-ticket-1">
                        <div class="flex justify-between items-start">
                            <div>
                                <div class="flex items-center gap-2 mb-1">
@@ -70,7 +70,7 @@ import { SessionStore } from '../../../../state/session.store';
                    </div>
                    
                    <!-- Ticket Item 2 -->
-                   <div class="p-4 bg-white/5 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer">
+                   <div class="p-4 bg-white/5 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer" data-debug-id="maint-ticket-2">
                        <div class="flex justify-between items-start">
                            <div>
                                <div class="flex items-center gap-2 mb-1">

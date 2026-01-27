@@ -28,11 +28,11 @@ import { SessionStore } from '../../../../state/session.store';
                     <div>
                         <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Current Structure</label>
                         <div class="flex gap-4">
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 p-3 rounded-lg border border-white/10 flex-1">
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 p-3 rounded-lg border border-white/10 flex-1" data-debug-id="audit-struct-personal">
                                 <span class="w-4 h-4 rounded-full border border-white/50 bg-indigo-500"></span>
                                 <span class="text-white text-sm">Personal Name</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 p-3 rounded-lg border border-white/10 flex-1 opacity-50">
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 p-3 rounded-lg border border-white/10 flex-1 opacity-50" data-debug-id="audit-struct-holding">
                                 <span class="w-4 h-4 rounded-full border border-white/50"></span>
                                 <span class="text-white text-sm">Holding Co.</span>
                             </label>
@@ -42,7 +42,7 @@ import { SessionStore } from '../../../../state/session.store';
                      <div>
                         <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Portfolio Value</label>
                         <div class="text-3xl font-mono text-white">€1,200,000</div>
-                        <input type="range" class="w-full mt-2 h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer">
+                        <input type="range" class="w-full mt-2 h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer" data-debug-id="audit-portfolio-range">
                     </div>
 
                     @if (tier() === 'TIER_3') {
@@ -56,7 +56,7 @@ import { SessionStore } from '../../../../state/session.store';
                         </div>
                     }
 
-                    <button class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-lg shadow-lg shadow-orange-500/20">
+                    <button class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-lg shadow-lg shadow-orange-500/20" data-debug-id="audit-run-sim-btn">
                         Run Simulation
                     </button>
                 </div>

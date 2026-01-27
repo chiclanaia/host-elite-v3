@@ -117,7 +117,7 @@ import { SessionStore } from '../../../../state/session.store';
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2">Unlock Competitive Intelligence</h3>
                     <p class="text-slate-400 max-w-md mb-6">Stop guessing. Compare your RevPAR against the top 10% of properties in your exact neighborhood to spot under-pricing.</p>
-                    <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/25 transition-all">
+                    <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/25 transition-all" data-debug-id="occupancy-upgrade-btn">
                         Upgrade to Market Explorer
                     </button>
                 </div>
