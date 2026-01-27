@@ -53,6 +53,7 @@ export class SessionStore {
 
         // 1. Determine Current Country from Language
         const currentLang = this.translationService.currentLang();
+        // const currentLang = 'fr'; // DEBUG FORCE
         let currentCountry = 'GLOBAL';
         if (currentLang === 'fr') currentCountry = 'FR';
         else if (currentLang === 'en') currentCountry = 'UK'; // Default EN to UK

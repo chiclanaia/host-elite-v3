@@ -63,7 +63,7 @@
 }
 
 <!-- Main View Content -->
-@if (!activeToolId()) {
+@if (!activeToolId() && !activeFeatureComponent()) {
 <!-- Phase View: List of Dimensions and Features -->
 <div class="space-y-16 pb-20 animate-fade-in-up">
 
@@ -181,7 +181,20 @@
 } @else {
 <!-- Active Tool View (Preserved) -->
 <div class="animate-fade-in-up">
-    @if (activeToolId() === 'microsite') {
+    @if (activeFeatureComponent(); as ComponentClass) {
+    <div class="h-full relative z-10 p-6 flex flex-col">
+        <button (click)="closeTool()" class="mb-4 self-start text-sm text-slate-400 hover:text-white flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            {{ 'COMMON.Back' | translate }}
+        </button>
+        <div class="flex-1 min-h-0">
+            <ng-container *ngComponentOutlet="ComponentClass; inputs: { feature: activeFeature() }"></ng-container>
+        </div>
+    </div>
+    } @else if (activeToolId() === 'microsite') {
     <app-microsite-container [propertyName]="view().propertyName!" (close)="closeTool()">
     </app-microsite-container>
     } @else if (activeToolId() === 'ai-prompts') {

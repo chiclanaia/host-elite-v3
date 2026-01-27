@@ -79,6 +79,14 @@ export class SaaSAppComponent implements OnInit {
   activeView = signal<View>(this.initialView);
   properties = signal<Property[]>([]);
 
+  // Debug: Available Tiers for Selector
+  availableTiers = ['Freemium', 'TIER_0', 'TIER_1', 'TIER_2', 'TIER_3'];
+
+  onPlanChange(plan: string): void {
+    console.log('[SaaSApp] Switching Plan to:', plan);
+    this.store.setPlan(plan as any);
+  }
+
   // Computed values
   userRole = computed<UserRole>(() => this.store.userProfile()?.role || 'user');
   userName = computed<string>(() => this.store.userProfile()?.full_name || 'Hôte');

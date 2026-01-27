@@ -38,6 +38,18 @@
 
             <!-- Header Actions -->
             <div class="flex items-center gap-4">
+                <!-- DEBUG: Tier Selector -->
+                <div class="hidden md:flex items-center bg-indigo-500/10 rounded-lg px-2 border border-indigo-500/20">
+                    <span class="text-xs text-indigo-300 font-bold mr-2 uppercase">Simulate:</span>
+                    <select #planSelect (change)="onPlanChange(planSelect.value)" [value]="userPlan()"
+                        aria-label="Tier Selector"
+                        class="bg-transparent text-white text-xs font-mono font-bold py-1 focus:ring-0 border-none outline-none cursor-pointer">
+                        @for(tier of availableTiers; track tier) {
+                        <option [value]="tier" class="bg-slate-800 text-white">{{ tier }}</option>
+                        }
+                    </select>
+                </div>
+
                 <!-- Global Language Switcher -->
                 @if (store.showLanguageSwitcher()) {
                 <div class="flex bg-white/10 backdrop-blur-md rounded-lg p-1 border border-white/10">

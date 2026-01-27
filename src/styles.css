@@ -17,6 +17,40 @@
     }
 }
 
+/* DEBUG VISUALIZATION */
+/* This ensures that elements with data-debug-id are visible when hovered */
+[data-debug-id] {
+    position: relative;
+    /* Outline to show bounding box */
+}
+
+/* On hover, show the ID in a tooltip-like overlay */
+[data-debug-id]:hover::after {
+    content: attr(data-debug-id);
+    position: absolute;
+    top: -24px;
+    left: 0;
+    z-index: 9999;
+    background-color: #f43f5e;
+    /* Rose-500 */
+    color: white;
+    font-size: 10px;
+    font-family: monospace;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    pointer-events: none;
+    font-weight: bold;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Also give a subtle outline helper */
+[data-debug-id]:hover {
+    outline: 2px dashed #f43f5e;
+    outline-offset: 2px;
+}
+
 /* Aggressive Print Styles to Solves View Encapsulation Issues */
 @media print {
 

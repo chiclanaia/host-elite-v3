@@ -1,5 +1,7 @@
 
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal, OnInit, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal, OnInit, effect, Type } from '@angular/core';
+import { FEATURE_COMPONENTS } from '../features/feature-registry';
+
 import { CommonModule } from '@angular/common';
 import { View, Feature } from '../../types';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -82,21 +84,22 @@ export class PhaseViewComponent implements OnInit {
     currentQuestions = signal<OnboardingQuestion[]>([]);
     saveMessage = signal<string | null>(null);
 
-    // Maturity for legacy badge in header (optional, maybe specific to dimension)
-    maturityInfo = signal<any>(null);
+    // New Feature System State
+    activeFeatureComponent = signal<Type<any> | null>(null);
+    activeFeature = signal<Feature | null>(null);
 
+    // Maturity for legacy badge in header
+    maturityInfo = signal<any>(null);
 
     // Computed Data for Phase View
     phaseFeatures = computed(() => {
         const viewId = this.view().id;
-        // The view ID should correspond to the Phase ID (e.g. PH_1_INVEST)
         const allFeatures = this.store.featuresByPhase();
         return allFeatures[viewId] || [];
     });
 
     phaseDimensions = computed(() => {
         const features = this.phaseFeatures();
-        // Group by dimension
         const groups: Record<string, { id: string, name: string, features: Feature[] }> = {};
 
         features.forEach(f => {
@@ -110,23 +113,18 @@ export class PhaseViewComponent implements OnInit {
             }
             groups[dimId].features.push(f);
         });
-
-        // Return array sorted by logic or just keys
-        // Ideally sorting by dimension order would be better but we don't have rank_order on dim yet.
         return Object.values(groups);
     });
 
-    // Mapping DB Features to Legacy Tools
-    // Key: DB Feature ID / Name (or part of it) -> Value: Legacy Tool Selector ID
     private legacyToolMapping: Record<string, string> = {
         'MKT_01': 'microsite',
         'MKT_02': 'ai-prompts',
         'MKT_03': 'visibility-audit',
         'EXP_01': 'booklet',
         'EXP_02': 'ai-assistant',
-        'EXP_03': 'microsite', // Web Welcome Book
-        'EXP_04': 'ai-assistant', // Guest AI Chatbot
-        'OPS_01': 'construction-schedule', // No tool? Placeholder
+        'EXP_03': 'microsite',
+        'EXP_04': 'ai-assistant',
+        'OPS_01': 'construction-schedule',
         'OPS_02': 'calendar-sync',
         'OPS_03': 'calendar-sync',
         'OPS_11': 'checklists',
@@ -138,11 +136,8 @@ export class PhaseViewComponent implements OnInit {
 
     constructor() {
         effect(() => {
-            // Reset tool when view changes
             this.activeToolId.set(null);
             this.loadPropertyData();
-
-            // Sync booklet service
             const currentProp = this.view().propertyName;
             if (currentProp && this.bookletService.propertyName() !== currentProp) {
                 this.bookletService.propertyName.set(currentProp);
@@ -170,14 +165,21 @@ export class PhaseViewComponent implements OnInit {
     }
 
     openFeature(feature: Feature) {
-        // Check legacy mapping
+        this.activeToolId.set(null);
+        this.activeFeatureComponent.set(null);
+
+        const ComponentClass = FEATURE_COMPONENTS[feature.id];
+        if (ComponentClass) {
+            this.activeFeature.set(feature);
+            this.activeFeatureComponent.set(ComponentClass);
+            return;
+        }
+
         const legacyId = this.legacyToolMapping[feature.id];
         if (legacyId) {
             this.activeToolId.set(legacyId);
         } else {
-            // New feature placeholder
-            console.log("Opening new feature:", feature.name);
-            // Optionally set a specialized ID or show a "Coming Soon" toast
+            console.log("Opening new feature (not implemented):", feature.name);
             this.saveMessage.set(`Feature "${feature.name}" is coming soon!`);
             setTimeout(() => this.saveMessage.set(null), 3000);
         }
@@ -185,7 +187,9 @@ export class PhaseViewComponent implements OnInit {
 
     closeTool() {
         this.activeToolId.set(null);
+        this.activeFeatureComponent.set(null);
     }
+
 
     isFeatureLocked(feature: Feature): boolean {
         const levels: Record<string, number> = { 'Freemium': 0, 'TIER_0': 0, 'Bronze': 1, 'TIER_1': 1, 'Silver': 2, 'TIER_2': 2, 'Gold': 3, 'TIER_3': 3 };
