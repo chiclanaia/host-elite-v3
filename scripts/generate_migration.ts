@@ -55,16 +55,22 @@ ON CONFLICT (id) DO UPDATE SET
 
 }
 
+
 // Advanced Extraction Logic
-// The CSV puts everything in 'dev_prompt'. The DB has a separate 'behavior_matrix' column.
-// I need to parse the 'dev_prompt' from CSV to find "2. Behavior Matrix: (.*?) 3. User Journey".
-// This was likely how the original seed was generated too.
+// The CSV puts everything in 'dev_prompt' and 'functional_specs'. The DB has a separate 'behavior_matrix' column.
+// We concatenate functional_specs to dev_prompt to ensure full context is saved.
 
 const recordsWithExtracted = records.map((r: any) => {
-    const prompt = r.dev_prompt || '';
+    let prompt = r.dev_prompt || '';
+    if (r.functional_specs) {
+        prompt += '\n\n' + r.functional_specs;
+    }
+
+    // Extract Behavior Matrix from the pedagogical prompt (usually in dev_prompt)
     const matrixMatch = prompt.match(/2\. Behavior Matrix:\s*(.*?)(?=\s*3\. User Journey|$)/s);
     const behaviorMatrix = matrixMatch ? matrixMatch[1].trim() : null;
-    return { ...r, behavior_matrix: behaviorMatrix };
+
+    return { ...r, dev_prompt: prompt, behavior_matrix: behaviorMatrix };
 });
 
 

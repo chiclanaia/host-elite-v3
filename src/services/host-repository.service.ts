@@ -95,7 +95,6 @@ export class HostRepository {
 
         // Phase 2: Lancement
         { id: 'widget-library', title: 'NAV.widget-library', icon: 'widgets', featureId: 'microsite', phase: 'launch', requiredTier: 'TIER_1' },
-        { id: 'profit-calculator', title: 'NAV.profit-calculator', icon: 'calculator', phase: 'launch', requiredTier: 'TIER_0' }, // Available to all (Tier 0 mode)
 
         // Phase 3: Exploitation
         { id: 'property-calendar', title: 'NAV.property-calendar', icon: 'calendar', phase: 'exploitation', requiredTier: 'TIER_2' },

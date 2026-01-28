@@ -13,7 +13,7 @@ interface WelcomeModule {
 }
 
 @Component({
-    selector: 'exp-03-welcome-book',
+    selector: 'ops-04-welcome-book',
     standalone: true,
     imports: [CommonModule, FormsModule],
     template: `
@@ -21,12 +21,12 @@ interface WelcomeModule {
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Web Welcome Book</h1>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">Guest Welcome Portal</h1>
           <p class="text-slate-400 mt-2 max-w-2xl">Interactive digital concierge that reduces questions by 90%.</p>
         </div>
         <div class="flex gap-2">
              <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono flex items-center gap-2">
-                <span>📖</span> Guest Portal
+                <span>📖</span> Web App
             </div>
              <div class="px-4 py-2 bg-purple-500/10 text-purple-300 rounded-lg border border-purple-500/30 text-xs font-mono flex items-center gap-2">
                 <span>🤖</span> AI Translate
@@ -53,10 +53,10 @@ interface WelcomeModule {
                </div>
 
                <!-- Coach Tip -->
-               <div class="mb-6 p-4 bg-indigo-900/20 border-l-4 border-indigo-500 rounded-r-lg">
+               <div class="mb-6 p-4 bg-purple-900/20 border-l-4 border-purple-500 rounded-r-lg">
                    <div class="flex items-center gap-2 mb-1">
                        <span class="text-lg">💡</span>
-                       <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
+                       <span class="text-purple-300 font-bold text-sm uppercase">Coach Tip</span>
                    </div>
                    <p class="text-slate-300 text-xs italic">
                        "Video > Text. Guests don't read manuals. A 30s video showing how to unlock the door or use the weird coffee maker works wonders."
@@ -146,7 +146,7 @@ interface WelcomeModule {
                          </div>
                          
                          <!-- Grid Menu -->
-                         <div class="p-4 grid grid-cols-2 gap-3 overflow-y-auto pb-20">
+                         <div class="p-4 grid grid-cols-2 gap-3 overflow-y-auto pb-20 no-scrollbar">
                              <div class="col-span-2 bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-center gap-3 active:scale-95 transition-transform cursor-pointer" 
                                   (click)="triggerPreviewAction('wifi')"
                                   data-debug-id="preview-wifi-card">
@@ -192,7 +192,7 @@ interface WelcomeModule {
                          </div>
                          
                          <!-- Navigation -->
-                         <div class="absolute bottom-0 left-0 w-full h-16 bg-white border-t border-slate-100 flex items-center justify-around px-2 text-slate-400">
+                         <div class="absolute bottom-0 left-0 w-full h-16 bg-white border-t border-slate-100 flex items-center justify-around px-2 text-slate-400 z-10">
                             <div class="flex flex-col items-center text-indigo-600"><span class="material-icons">home</span><span class="text-[9px]">Home</span></div>
                             <div class="flex flex-col items-center"><span class="material-icons">chat</span><span class="text-[9px]">Chat</span></div>
                             <div class="flex flex-col items-center"><span class="material-icons">person</span><span class="text-[9px]">Profile</span></div>
@@ -206,6 +206,12 @@ interface WelcomeModule {
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class WelcomeBookComponent {
+    feature = computed(() => ({
+        id: 'OPS_04',
+        name: 'Welcome Book',
+        description: 'Guest Portal & Concierge',
+    } as any));
+
     session = inject(SessionStore);
 
     tier = computed(() => {

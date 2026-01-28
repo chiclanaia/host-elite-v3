@@ -13,7 +13,7 @@ interface ChatMessage {
 }
 
 @Component({
-    selector: 'exp-04-chatbot',
+    selector: 'ops-06-guest-chatbot',
     standalone: true,
     imports: [CommonModule, FormsModule],
     template: `
@@ -24,14 +24,16 @@ interface ChatMessage {
           <h1 class="text-3xl font-extrabold text-white tracking-tight">Contextual Hospitality Agent</h1>
           <p class="text-slate-400 mt-2 max-w-2xl">RAG-driven AI guest assistant for technical support and inquiries.</p>
         </div>
-        <div class="flex gap-2">
-             <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono flex items-center gap-2">
-                <span>🤖</span> RAG Bot
-            </div>
+        <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
+             [ngClass]="{
+                'bg-slate-800 text-slate-400 border-slate-700': isTier0(),
+                'bg-indigo-500/20 text-indigo-300 border-indigo-500/30': !isTier0()
+             }">
+             {{ isTier3() ? 'RAG AI Engine' : (isTier2() ? 'Auto-Responses' : 'Manual SMS') }}
         </div>
       </div>
 
-       <div class="flex-1 bg-slate-800 rounded-xl border border-white/10 overflow-hidden flex flex-col lg:flex-row">
+       <div class="flex-1 bg-slate-800 rounded-xl border border-white/10 overflow-hidden flex flex-col lg:flex-row min-h-0">
             <!-- Left: Chat Interface -->
             <div class="flex-1 flex flex-col border-r border-white/10 relative">
                 <!-- Tier 1 Indicator -->
@@ -96,16 +98,17 @@ interface ChatMessage {
                 <!-- Topic Frequency Word Cloud (Requirement) -->
                 @if (isTier3()) {
                     <div class="bg-black/20 p-4 rounded-xl border border-white/5">
-                        <h4 class="text-xs text-slate-400 font-bold uppercase mb-3">Topic Frequency (WordCloud)</h4>
-                        <div class="flex flex-wrap gap-2 justify-center">
-                            <span class="text-emerald-400 text-lg font-bold">WiFi</span>
-                            <span class="text-slate-300 text-xs">Parking</span>
-                            <span class="text-indigo-400 text-sm font-bold">Heating</span>
-                            <span class="text-slate-400 text-[10px]">Keys</span>
-                            <span class="text-pink-400 text-md font-bold">Checkout</span>
-                            <span class="text-slate-300 text-xs">Pool</span>
-                            <span class="text-amber-400 text-sm">Late</span>
-                            <span class="text-slate-500 text-[10px]">Noise</span>
+                        <h4 class="text-xs text-slate-400 font-bold uppercase mb-3 text-center">Topic Frequency (WordCloud)</h4>
+                        <div class="flex flex-wrap gap-2 justify-center items-center h-48 relative overflow-hidden">
+                             <!-- Simple CSS Word Cloud Simulation -->
+                            <span class="text-emerald-400 text-2xl font-bold animate-pulse">WiFi</span>
+                            <span class="text-slate-300 text-xs absolute top-2 right-4">Parking</span>
+                            <span class="text-indigo-400 text-lg font-bold absolute bottom-4 left-4">Heating</span>
+                            <span class="text-slate-400 text-[10px] absolute top-8 left-2">Keys</span>
+                            <span class="text-pink-400 text-xl font-bold">Checkout</span>
+                            <span class="text-slate-300 text-xs absolute bottom-10 right-2">Pool</span>
+                            <span class="text-amber-400 text-sm absolute top-4 left-1/2">Late</span>
+                            <span class="text-slate-500 text-[10px] absolute bottom-2 right-1/2">Noise</span>
                         </div>
                     </div>
                 }
@@ -152,7 +155,13 @@ interface ChatMessage {
     `,
     styles: [`:host { display: block; height: 100%; }`]
 })
-export class GuestAiChatbotComponent {
+export class GuestChatbotComponent {
+    feature = computed(() => ({
+        id: 'OPS_06',
+        name: 'Guest AI Chatbot',
+        description: 'Auto-Responder & Concierge',
+    } as any));
+
     session = inject(SessionStore);
 
     tier = computed(() => {
@@ -177,9 +186,7 @@ export class GuestAiChatbotComponent {
         // Add User Message
         this.messages.update(msgs => [...msgs, {
             id: Date.now().toString(),
-            sender: 'user', // In real app this would be swapped, but for training UI we act as host? Or Simulator?
-            // Actually spec says "Train AI", so maybe we are chatting AS guest? 
-            // Lets assume we are simulating conversation
+            sender: 'user',
             text: this.newMessage,
             timestamp: new Date(),
             isSms

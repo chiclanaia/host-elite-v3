@@ -12,123 +12,167 @@ import { SessionStore } from '../../../../state/session.store';
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ feature().name }}</h1>
-          <p class="text-slate-400 mt-2">{{ feature().description }}</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">UK Compliance Hub (MTD)</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">Making Tax Digital is mandatory for VAT. Miss a deadline, get a penalty.</p>
         </div>
+         <!-- Tier Badge -->
          <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
                 'bg-slate-800 text-slate-400 border-slate-700': isTier0(),
                 'bg-indigo-500/20 text-indigo-200 border-indigo-500/30': !isTier0()
              }">
-             {{ isTier3() ? 'HMRC API Bridge' : 'Manual Mode' }}
+             {{ isTier3() ? 'HMRC Bridge (Auto)' : 'Deadline Tracker' }}
          </div>
       </div>
 
-      <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8">
-          
-          <!-- Submission Area -->
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-8 flex flex-col items-center justify-center text-center backdrop-blur-sm">
-              <div class="w-20 h-20 bg-indigo-500/20 rounded-full flex items-center justify-center mb-6 relative">
-                  <span class="material-icons text-indigo-400 text-4xl">backup</span>
-                  @if (isTier3()) {
-                      <div class="absolute top-0 right-0 w-6 h-6 bg-emerald-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
-                          <span class="material-icons text-[10px] text-white">link</span>
-                      </div>
-                  }
-              </div>
-              
-              <h3 class="text-xl font-bold text-white mb-2">Making Tax Digital (MTD)</h3>
-              <p class="text-slate-400 text-sm max-w-xs mb-8">Quarterly submission for UK VAT and Income Tax. Ensure "Digital Links" are preserved.</p>
-              
-              @if (isTier3()) {
-                   <div class="w-full max-w-xs space-y-3">
-                       <button (click)="submitToHmrc()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20" data-debug-id="mtd-submit-btn">
-                           <span class="material-icons">cloud_upload</span> Submit Q1 2025
-                       </button>
-                       <div class="flex justify-between text-xs text-slate-500 px-2">
-                           <span>Next Deadline:</span>
-                           <span class="text-amber-400">07 April</span>
+       <!-- VISUAL: Submission Timeline (Deadline Defender) -->
+       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm relative overflow-hidden">
+           <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-8">Fiscal Timeline (Quarterly)</h3>
+           
+           <div class="relative px-4">
+               <!-- Line -->
+               <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-700 -translate-y-1/2 z-0"></div>
+               
+               <!-- Steps -->
+               <div class="relative z-10 flex justify-between">
+                   <!-- Past -->
+                   <div class="flex flex-col items-center gap-2 group">
+                       <div class="w-8 h-8 rounded-full bg-emerald-500 border-4 border-slate-900 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                           <span class="material-icons text-white text-xs">check</span>
+                       </div>
+                       <div class="text-center">
+                           <div class="text-[10px] text-slate-400 font-bold uppercase">Q4 2024</div>
+                           <div class="text-[10px] text-emerald-400">Filed</div>
+                       </div>
+                   </div>
+
+                   <!-- Current (Active) -->
+                   <div class="flex flex-col items-center gap-2 group">
+                       <div class="w-10 h-10 rounded-full bg-indigo-600 border-4 border-slate-900 flex items-center justify-center shadow-lg shadow-indigo-500/40 relative">
+                           <span class="material-icons text-white text-sm animate-pulse">edit_document</span>
+                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border border-slate-900"></div>
+                       </div>
+                       <div class="text-center">
+                           <div class="text-xs text-white font-bold uppercase">Q1 2025</div>
+                           <div class="text-[10px] text-amber-400 font-mono">Due: 07 APR</div>
+                       </div>
+                   </div>
+
+                   <!-- Future -->
+                   <div class="flex flex-col items-center gap-2 group opacity-50">
+                       <div class="w-8 h-8 rounded-full bg-slate-800 border-4 border-slate-900 flex items-center justify-center">
+                           <span class="text-xs text-slate-500 font-bold">Q2</span>
+                       </div>
+                       <div class="text-center">
+                           <div class="text-[10px] text-slate-500 font-bold uppercase">Q2 2025</div>
+                           <div class="text-[10px] text-slate-600">07 JUL</div>
                        </div>
                    </div>
                    
-                   @if (submissionStatus()) {
-                       <div class="mt-6 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-2 animate-fade-in text-left">
-                           <span class="material-icons text-emerald-400">verified</span>
-                           <div>
-                               <p class="text-xs font-bold text-emerald-300">Submission Accepted</p>
-                               <p class="text-[10px] text-emerald-200/70">Receipt: IR-MARK-23948230</p>
-                           </div>
+                    <!-- Future -->
+                   <div class="flex flex-col items-center gap-2 group opacity-50">
+                       <div class="w-8 h-8 rounded-full bg-slate-800 border-4 border-slate-900 flex items-center justify-center">
+                           <span class="text-xs text-slate-500 font-bold">Q3</span>
                        </div>
-                   }
+                       <div class="text-center">
+                           <div class="text-[10px] text-slate-500 font-bold uppercase">Q3 2025</div>
+                           <div class="text-[10px] text-slate-600">07 OCT</div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+
+      <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8 min-h-0">
+          
+          <!-- Tier 3: HMRC Direct Link -->
+          <div class="bg-indigo-600/10 border border-indigo-500/20 rounded-2xl p-8 flex flex-col items-center justify-center text-center backdrop-blur-sm relative overflow-hidden group">
+              @if (isTier3()) {
+                  <div class="w-24 h-24 bg-indigo-500/20 rounded-full flex items-center justify-center mb-6 relative group-hover:scale-110 transition-transform duration-500">
+                      <span class="material-icons text-indigo-400 text-5xl">cloud_sync</span>
+                      <div class="absolute top-0 right-0 w-8 h-8 bg-emerald-500 rounded-full border-2 border-slate-900 flex items-center justify-center shadow-lg animate-bounce">
+                          <span class="material-icons text-xs text-white">lock</span>
+                      </div>
+                  </div>
+                  
+                  <h3 class="text-xl font-bold text-white mb-2">HMRC Direct Link</h3>
+                  <p class="text-indigo-200 text-sm max-w-xs mb-8">Your VAT return is calculated. Ready to submit directly to HMRC securely via API.</p>
+                  
+                  <div class="w-full max-w-xs space-y-3 relative z-10">
+                      <button (click)="submitToHmrc()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50" data-debug-id="mtd-submit-btn">
+                          <span class="material-icons">send</span> SUBMIT Q1 RETURN
+                      </button>
+                      
+                       @if (submissionStatus()) {
+                           <div class="absolute top-full left-0 w-full mt-4 p-3 bg-emerald-500/90 backdrop-blur text-white rounded-lg flex items-center gap-3 animate-fade-in shadow-xl">
+                               <span class="material-icons">check_circle</span>
+                               <div class="text-left">
+                                   <div class="text-xs font-bold">Receipt ID: IR-88392-X</div>
+                                   <div class="text-[10px]">Submitted: Just now</div>
+                               </div>
+                           </div>
+                       }
+                  </div>
               } @else {
-                  <div class="w-full max-w-xs space-y-3">
-                       <button class="w-full bg-white/10 hover:bg-white/20 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all" data-debug-id="mtd-download-csv-btn">
-                           <span class="material-icons">table_view</span> Download CSV (HMRC Ready)
+                  <div class="absolute inset-0 z-10 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center">
+                       <span class="text-3xl mb-4">🇬🇧</span>
+                       <h3 class="text-xl font-bold text-white mb-2">Manual Submission Only</h3>
+                       <p class="text-slate-400 text-sm mb-6 max-w-xs">On the Silver plan, you must download a CSV and manually type figures into the HMRC gateway.</p>
+                       <button class="px-6 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-sm font-bold text-white transition-colors flex items-center gap-2" data-debug-id="mtd-download-csv-btn">
+                           <span class="material-icons text-sm">download</span> Download CSV
                        </button>
-                       <p class="text-[10px] text-slate-500 mt-2">Manual upload required via HMRC workaround.</p>
                   </div>
               }
           </div>
 
-          <!-- Compliance Checklist -->
+          <!-- Coach Check -->
           <div class="flex flex-col gap-6">
-               <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-                   <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Digital Audit Trail</h3>
+               <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex-1">
+                   <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Audit Validation</h3>
                    
                    <div class="space-y-4">
-                       <div class="flex items-center gap-3">
-                           <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                               <span class="material-icons text-emerald-400 text-xs">check</span>
+                       <div class="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-white/5">
+                           <div class="flex items-center gap-3">
+                               <span class="material-icons text-emerald-400 text-sm">receipt_long</span>
+                               <span class="text-sm text-slate-300">Total Sales (Box 6)</span>
                            </div>
-                           <span class="text-sm text-slate-300">Bank Feed Connected</span>
+                           <span class="text-white font-mono font-bold">£12,450.00</span>
                        </div>
-                       <div class="flex items-center gap-3">
-                           <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                               <span class="material-icons text-emerald-400 text-xs">check</span>
+                       <div class="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-white/5">
+                           <div class="flex items-center gap-3">
+                               <span class="material-icons text-emerald-400 text-sm">shopping_cart</span>
+                               <span class="text-sm text-slate-300">Total Purchases (Box 7)</span>
                            </div>
-                           <span class="text-sm text-slate-300">Digital Receipts Matched (98%)</span>
+                           <span class="text-white font-mono font-bold">£3,200.00</span>
                        </div>
-                       <div class="flex items-center gap-3 opacity-50">
-                           <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
-                               <span class="material-icons text-slate-400 text-xs">hourglass_empty</span>
+                       <div class="flex items-center justify-between p-3 bg-indigo-500/10 rounded-lg border border-indigo-500/30">
+                           <div class="flex items-center gap-3">
+                               <span class="material-icons text-indigo-400 text-sm">account_balance</span>
+                               <span class="text-sm text-indigo-200">VAT Due (Box 5)</span>
                            </div>
-                           <span class="text-sm text-slate-300">VAT Return Calculated</span>
+                           <span class="text-indigo-300 font-mono font-bold">£1,850.00</span>
                        </div>
                    </div>
                </div>
                
-               <!-- Tier 3 Feature Lock Teaser -->
-               @if (!isTier3()) {
-                   <div class="bg-gradient-to-br from-indigo-900/40 to-slate-900/40 border border-indigo-500/20 rounded-2xl p-6 relative overflow-hidden">
-                       <div class="absolute top-0 right-0 p-4 opacity-10">
-                           <span class="material-icons text-6xl text-white">api</span>
+               <!-- Coach -->
+               <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                       <span class="text-xl">⚖️</span>
+                       <div>
+                           <h4 class="font-bold text-rose-300 text-sm">Penalty Notice: 30-Day Rule</h4>
+                           <p class="text-xs text-rose-200/80 mt-1 leading-relaxed">
+                               HMRC now charges points for late submissions. If you miss the April 7th deadline, you enter a 12-month probation period.
+                               <br><strong class="text-rose-300">Current Status: 18 days remaining.</strong>
+                           </p>
                        </div>
-                       <h4 class="font-bold text-indigo-300 mb-2">Go Fully Digital</h4>
-                       <p class="text-xs text-slate-400 mb-4">Tier 3 allows direct API submission to HMRC without spreadsheets. Reduce error risk to 0%.</p>
-                       <button class="text-xs bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 px-3 py-1.5 rounded border border-indigo-500/30 transition-colors">Upgrade Plan</button>
                    </div>
-               }
+               </div>
           </div>
       </div>
-
-       <!-- Coach -->
-       <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4">
-            <div class="flex items-start gap-3">
-               <span class="text-xl">🇬🇧</span>
-               <div>
-                   <h4 class="font-bold text-indigo-300 text-sm">What are 'Digital Links'?</h4>
-                   <p class="text-xs text-indigo-200/80 mt-1">HMRC forbids "copy-pasting" data. Data must flow digitally from invoice to return. Use our API bridge or "Download CSV" features to remain compliant.</p>
-               </div>
-           </div>
-       </div>
     </div>
   `,
-    styles: [`
-    :host {
-      display: block;
-      height: 100%;
-    }
-  `]
+    styles: [`:host { display: block; height: 100%; }`]
 })
 export class MtdExportComponent {
     feature = input.required<Feature>();
@@ -141,6 +185,7 @@ export class MtdExportComponent {
     submissionStatus = signal<boolean>(false);
 
     submitToHmrc() {
+        if (!this.isTier3()) return;
         // Mock API call
         setTimeout(() => {
             this.submissionStatus.set(true);

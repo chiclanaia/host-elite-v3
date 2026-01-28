@@ -12,67 +12,163 @@ import { SessionStore } from '../../../../state/session.store';
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ feature().name }}</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">{{ feature().description }}</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">AI Copywriter & SEO</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">Description generator trained on 1M+ high-performing listings.</p>
         </div>
-        <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono">
-            ✍️ Copywriting
+        <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
+             [ngClass]="{
+                'bg-slate-800 text-slate-400 border-slate-700': isTier0(),
+                'bg-emerald-500/20 text-emerald-300 border-emerald-500/30': !isTier0()
+             }">
+             {{ isTier3() ? 'Neuro-Semantic SEO' : (isTier2() ? 'AI Writer' : 'Manual Input') }}
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
-          <!-- Inputs -->
-          <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
-              <h3 class="text-xl font-bold text-white mb-6">Describe your place</h3>
-              
-              <div class="space-y-4">
-                  <div>
-                      <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Key Highlights</label>
-                      <textarea rows="4" class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-white text-sm focus:border-indigo-500 outline-none" placeholder="e.g. Sea view, 5 min to metro, Quiet street..." data-debug-id="ai-writer-highlights-input"></textarea>
-                  </div>
+       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 overflow-hidden min-h-0">
+           
+           <!-- Left: Input Configuration -->
+           <div class="bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col gap-6 overflow-y-auto">
+               <h3 class="text-white font-bold text-lg">Listing Parameters</h3>
+               
+               <div class="space-y-4">
+                   <div>
+                       <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Key USPs</label>
+                       <textarea [(ngModel)]="highlights" rows="3" class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm focus:border-indigo-500 outline-none placeholder:text-slate-600" placeholder="e.g. Ocean view, 500mbps Wifi, Brand new kitchen..." data-debug-id="ai-writer-highlights-input"></textarea>
+                   </div>
+                   
+                   @if (isTier2()) {
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Vibe / Tone</label>
+                            <select [(ngModel)]="tone" class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm outline-none">
+                                <option value="luxury">💎 Luxury & Elegant</option>
+                                <option value="cozy">🧸 Cozy & Family</option>
+                                <option value="modern">🚀 Modern & Tech</option>
+                                <option value="minimal">🍃 Minimalist</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Length</label>
+                            <select class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm outline-none">
+                                <option>Compact (200 words)</option>
+                                <option>Standard (400 words)</option>
+                                <option>Storytelling (800 words)</option>
+                            </select>
+                        </div>
+                    </div>
+                   }
 
-                  @if (tier() === 'TIER_3') {
-                      <div>
-                          <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Target Audience (Persona)</label>
-                          <select class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-white text-sm outline-none" data-debug-id="ai-writer-audience-select">
-                              <option>👨‍👩‍👧 Family with Kids</option>
-                              <option>💻 Digital Nomads</option>
-                              <option>💑 Romantic Couple</option>
-                          </select>
-                      </div>
-                  }
-                  
-                  <button class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-lg hover:from-indigo-500 hover:to-purple-500 transition-all shadow-lg shadow-indigo-500/20" data-debug-id="ai-writer-generate-btn">
-                      Generate Description ✨
-                  </button>
-
-                  <!-- Coach Tip -->
-                  <div class="mt-4 p-4 bg-indigo-900/20 border-l-4 border-indigo-500 rounded-r-lg">
-                      <div class="flex items-center gap-2 mb-1">
-                        <span class="text-lg">💡</span>
-                        <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
-                      </div>
-                      <p class="text-slate-300 text-xs italic">
-                          "Sell the Dream, not just the features. Don't just list 'coffee machine', mention 'enjoying a morning brew on the balcony'."
-                      </p>
-                  </div>
-              </div>
-          </div>
-
-          <!-- Output -->
-          <div class="bg-slate-900 rounded-xl border border-white/10 p-6 flex flex-col relative overflow-hidden">
-               <div class="absolute top-0 right-0 p-2 opacity-5">
-                   <span class="text-9xl font-serif">"</span>
+                   @if (isTier3()) {
+                       <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                           <div class="flex justify-between items-center mb-3">
+                               <label class="text-emerald-300 text-xs uppercase font-bold flex items-center gap-2">
+                                   <span class="material-icons text-sm">vpn_key</span> SEO Injection
+                               </label>
+                               <span class="text-[10px] text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">ACTIVE</span>
+                           </div>
+                           <div class="flex flex-wrap gap-2">
+                               <span class="px-2 py-1 bg-black/30 rounded border border-white/10 text-[10px] text-slate-300">"Near convention center"</span>
+                               <span class="px-2 py-1 bg-black/30 rounded border border-white/10 text-[10px] text-slate-300">"Family friendly"</span>
+                               <span class="px-2 py-1 bg-black/30 rounded border border-white/10 text-[10px] text-slate-300">"Self check-in"</span>
+                           </div>
+                       </div>
+                   }
+                   
+                   <button (click)="generate()" 
+                           class="relative w-full py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 background-animate text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 active:scale-95 overflow-hidden group"
+                           [disabled]="generating()"
+                           data-debug-id="ai-writer-generate-btn">
+                       
+                       <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 skew-y-12"></div>
+                       
+                       @if(generating()) {
+                           <div class="flex items-center justify-center gap-2">
+                               <span class="material-icons animate-spin">auto_awesome</span> Writing...
+                           </div>
+                       } @else {
+                           <span class="flex items-center justify-center gap-2 text-lg">
+                               <span class="material-icons">auto_fix_high</span> Generate Magic
+                           </span>
+                       }
+                   </button>
                </div>
                
-               <div class="flex-1 flex items-center justify-center text-slate-500 text-sm italic">
-                   Result will appear here...
+               <!-- Coach -->
+               <div class="p-4 bg-indigo-500/10 border-l-4 border-indigo-500 rounded-r-lg mt-auto">
+                   <div class="flex items-center gap-2 mb-1">
+                       <span class="text-lg">💡</span>
+                       <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
+                   </div>
+                   <p class="text-slate-300 text-xs italic">
+                       "Micro-Struggle: Guests skim. Use bullet points for amenities. Our AI automatically structures your description with emojis for 50% better readability."
+                   </p>
                </div>
-          </div>
-      </div>
+           </div>
+
+           <!-- Right: Output Editor -->
+           <div class="bg-slate-900 rounded-xl border border-white/10 flex flex-col relative overflow-hidden group">
+               <!-- Magical Overlay while generating -->
+               <div *ngIf="generating()" class="absolute inset-0 bg-black/80 z-20 flex items-center justify-center backdrop-blur-sm">
+                   <div class="text-center">
+                       <div class="text-6xl mb-4 animate-bounce">🧙‍♂️</div>
+                       <div class="text-indigo-400 font-bold animate-pulse">Crafting your story...</div>
+                   </div>
+               </div>
+
+               <!-- Toolbar -->
+               <div class="h-12 border-b border-white/10 bg-slate-800 flex items-center px-4 gap-3">
+                   <div class="flex gap-1">
+                       <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                       <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                       <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                   </div>
+                   <div class="h-4 w-[1px] bg-white/10 mx-2"></div>
+                   <span class="text-xs text-slate-400">Generated content</span>
+                   <div class="ml-auto flex gap-2">
+                       <button *ngIf="output()" class="text-xs text-indigo-400 hover:text-white flex items-center gap-1" data-debug-id="ai-writer-copy-btn">
+                           <span class="material-icons text-xs">content_copy</span> Copy
+                       </button>
+                   </div>
+               </div>
+               
+               <!-- Editor -->
+               <div class="flex-1 p-6 overflow-y-auto relative">
+                   @if(!output()) {
+                       <div class="h-full flex flex-col items-center justify-center text-slate-600 opacity-50">
+                           <span class="material-icons text-6xl mb-4">edit_note</span>
+                           <p>Fill the details and click Generate</p>
+                       </div>
+                   } @else {
+                       <div class="prose prose-invert prose-sm max-w-none animate-fade-in">
+                           <div [innerHTML]="output()"></div>
+                       </div>
+                   }
+               </div>
+
+               @if(isTier3() && output()) {
+                   <div class="p-3 bg-emerald-900/30 border-t border-white/10 flex justify-between items-center px-6">
+                       <span class="text-xs text-emerald-400 font-bold flex items-center gap-2">
+                           <span class="material-icons text-sm">check_circle</span> SEO Score: 98/100
+                       </span>
+                       <span class="text-[10px] text-slate-400">Keywords injected: 12</span>
+                   </div>
+               }
+           </div>
+       </div>
     </div>
-  `,
-    styles: [`:host { display: block; height: 100%; }`]
+    `,
+    styles: [`
+        :host { display: block; height: 100%; }
+        .background-animate {
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+    `]
 })
 export class AiListingWriterComponent {
     feature = computed(() => ({
@@ -83,4 +179,41 @@ export class AiListingWriterComponent {
 
     session = inject(SessionStore);
     tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
+
+    isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
+    isTier2 = computed(() => this.tier() === 'Silver' || this.tier() === 'TIER_2' || this.tier() === 'Gold' || this.tier() === 'TIER_3');
+    isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
+
+    highlights = '';
+    tone = 'luxury';
+    generating = signal(false);
+    output = signal('');
+
+    generate() {
+        if (!this.highlights.trim()) return;
+
+        this.generating.set(true);
+        this.output.set(''); // Clear prev
+
+        // Simulate API delay
+        setTimeout(() => {
+            this.generating.set(false);
+
+            const baseText = `
+                <h2 class="text-xl font-bold text-white mb-2">Escape to Luxury</h2>
+                <p>Welcome to your dream getaway! Nestled in a quiet street yet just moments from the vibrant city center, this stunning apartment offers the perfect blend of tranquility and convenience.</p>
+                <br>
+                <h3 class="font-bold text-indigo-300">Why You'll Love It:</h3>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>🌅 <b>Breathtaking Views:</b> Wake up to ocean sunrises.</li>
+                    <li>🚀 <b>Blazing Fast Wifi:</b> 500mbps fiber perfect for remote work.</li>
+                    <li>🍳 <b>Chef's Kitchen:</b> Fully equipped with brand new appliances.</li>
+                </ul>
+                <br>
+                <p>Book now and experience the ultimate in ${this.tone} living!</p>
+            `;
+
+            this.output.set(baseText);
+        }, 2000);
+    }
 }

@@ -14,133 +14,195 @@ import { SessionStore } from '../../../../state/session.store';
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ feature().name }}</h1>
-          <p class="text-slate-400 mt-2">{{ feature().description }}</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">Co-Hosting Revenue Engine</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">Stop fighting over spreadsheets. Automate trust with transparent statements.</p>
         </div>
+         <!-- Tier Badge -->
          <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
                 'bg-slate-800 text-slate-400 border-slate-700': isTier0(),
                 'bg-indigo-500/20 text-indigo-200 border-indigo-500/30': !isTier0()
              }">
-             {{ isTier3() ? 'Auto-Payout Engine' : 'Split Calculator' }}
+             {{ isTier3() ? 'Multi-Owner Ledger' : 'Invoice Generator' }}
          </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 min-h-0">
-           
-           <!-- Setup Card -->
-           <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col">
-               <h3 class="text-xl font-bold text-white mb-6">Commission Rules</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 min-h-0">
+            <!-- COL 1: Inputs & Config -->
+            <div class="lg:col-span-1 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col overflow-y-auto custom-scrollbar">
+               <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">Booking Details</h3>
                <form [formGroup]="form" class="space-y-4">
                    <div>
-                       <label class="block text-xs font-medium text-slate-400 mb-1">Total Booking Gross (€)</label>
-                       <input type="number" formControlName="gross" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="comm-input-gross">
+                       <label class="block text-xs font-medium text-slate-400 mb-1">Booking Gross (€)</label>
+                       <div class="relative">
+                           <span class="absolute left-3 top-2.5 text-slate-500">€</span>
+                           <input type="number" formControlName="gross" class="w-full bg-black/20 border border-white/10 rounded-lg pl-7 pr-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all font-mono text-sm" data-debug-id="comm-input-gross">
+                       </div>
                    </div>
                    
-                   <div class="grid grid-cols-2 gap-4">
-                       <div>
-                           <label class="block text-xs font-medium text-slate-400 mb-1">Platform Fee (%)</label>
-                           <input type="number" formControlName="platformFee" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="comm-input-platformfee">
-                       </div>
-                       <div>
-                           <label class="block text-xs font-medium text-slate-400 mb-1">Your Commission (%)</label>
-                           <input type="number" formControlName="myCommission" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="comm-input-commission">
-                       </div>
-                   </div>
-
-                   <div class="pt-4 border-t border-white/10">
-                       <label class="block text-xs font-medium text-slate-400 mb-1">Deductible Expenses (Cleaning, Maintenance) (€)</label>
-                       <input type="number" formControlName="expenses" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="comm-input-expenses">
-                   </div>
-
-                   @if (isTier3()) {
-                       <div class="mt-4 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg flex items-center gap-3">
-                           <div class="w-8 h-8 bg-indigo-500 rounded flex items-center justify-center text-white font-bold">S</div>
-                           <div class="flex-1">
-                               <p class="text-xs text-white font-bold">Stripe Connect Active</p>
-                               <p class="text-[10px] text-slate-400">Payouts will be routed automatically.</p>
+                   <div class="p-3 bg-black/20 rounded-lg border border-white/5 space-y-3">
+                       <label class="block text-xs font-bold text-indigo-300 uppercase">Commission Rules</label>
+                       <div class="grid grid-cols-2 gap-3">
+                           <div>
+                               <label class="block text-[10px] text-slate-500 mb-1">Platform Fee (%)</label>
+                               <input type="number" formControlName="platformFee" class="w-full bg-slate-800 border border-white/10 rounded-md px-2 py-1.5 text-white text-xs text-center" data-debug-id="comm-input-platformfee">
                            </div>
-                           <label class="relative inline-flex items-center cursor-pointer">
-                              <input type="checkbox" value="" class="sr-only peer" checked data-debug-id="comm-stripe-toggle">
-                              <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                           </label>
+                           <div>
+                               <label class="block text-[10px] text-slate-500 mb-1">Mgmt Fee (%)</label>
+                               <input type="number" formControlName="myCommission" class="w-full bg-slate-800 border border-white/10 rounded-md px-2 py-1.5 text-white text-xs text-center" data-debug-id="comm-input-commission">
+                           </div>
                        </div>
-                   }
+                   </div>
+
+                   <div class="p-3 bg-black/20 rounded-lg border border-white/5 space-y-3">
+                       <label class="block text-xs font-bold text-rose-300 uppercase">Deductibles</label>
+                        <div>
+                           <label class="block text-[10px] text-slate-500 mb-1">Repairs / Maintenance (€)</label>
+                           <input type="number" formControlName="expenses" class="w-full bg-slate-800 border border-white/10 rounded-md px-2 py-1.5 text-white text-xs" data-debug-id="comm-input-expenses">
+                       </div>
+                       <!-- Todo: Add line item list for Tier 2+ -->
+                   </div>
+
+                   <!-- VISUAL: Distribution Pie Chart (CSS Conic Gradient) -->
+                   <div class="mt-4 pt-4 border-t border-white/10 flex items-center gap-4">
+                        <div class="relative w-16 h-16 rounded-full border-4 border-slate-800 shadow-xl"
+                            [style.background]="getPieConicGradient()">
+                        </div>
+                        <div class="flex-1 space-y-1">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
+                                <span class="text-[10px] text-slate-400">You (Mgmt)</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                <span class="text-[10px] text-slate-400">Owner</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+                                <span class="text-[10px] text-slate-400">Platform/Exp</span>
+                            </div>
+                        </div>
+                   </div>
                </form>
-           </div>
+            </div>
 
-           <!-- Result Statement -->
-           <div class="bg-white text-slate-900 rounded-2xl p-8 flex flex-col shadow-2xl relative overflow-hidden font-mono text-sm">
-               <!-- Receipt Header -->
-               <div class="border-b-2 border-slate-200 pb-4 mb-4 flex justify-between items-start">
-                   <div>
-                       <h4 class="font-bold text-lg">OWNER STATEMENT</h4>
-                       <p class="text-xs text-slate-500">Aug 2025 • Property #123</p>
-                   </div>
-                   <div class="text-right">
-                       <div class="text-xs font-bold bg-slate-200 px-2 py-1 rounded uppercase">
-                           {{ isTier3() ? 'PAID' : 'DRAFT' }}
-                       </div>
-                   </div>
-               </div>
+            <!-- COL 2: Output (Statement) -->
+            <div class="lg:col-span-1 flex flex-col gap-6">
+                <!-- Result Statement -->
+                <div class="bg-white text-slate-900 rounded-lg flex flex-col shadow-2xl relative overflow-hidden font-mono text-sm max-w-sm mx-auto w-full transform rotate-1 hover:rotate-0 transition-transform duration-300">
+                    <!-- Receipt Header -->
+                    <div class="bg-slate-100 border-b border-slate-300 p-6 flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-lg tracking-tight">STATEMENT</h4>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-wide">REF: #INV-2025-001</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[10px] font-bold bg-slate-900 text-white px-2 py-1 rounded">
+                                {{ isTier3() ? 'PAID' : 'DRAFT' }}
+                            </div>
+                        </div>
+                    </div>
 
-               <!-- Line Items -->
-               <div class="space-y-2 mb-6 flex-1">
-                   <div class="flex justify-between">
-                       <span>Booking Revenue</span>
-                       <span class="font-bold">{{ formValues().gross | currency:'EUR':'symbol':'1.2-2' }}</span>
-                   </div>
-                   <div class="flex justify-between text-rose-600">
-                       <span>Platform Fee ({{ formValues().platformFee }}%)</span>
-                       <span>-{{ getPlatformFee() | currency:'EUR':'symbol':'1.2-2' }}</span>
-                   </div>
-                   <div class="flex justify-between text-slate-500 italic pb-2 border-b border-dashed border-slate-300">
-                       <span>Net Platform</span>
-                       <span>{{ (formValues().gross - getPlatformFee()) | currency:'EUR':'symbol':'1.2-2' }}</span>
-                   </div>
-                   
-                   <div class="flex justify-between text-rose-600 pt-2">
-                       <span>Expenses</span>
-                       <span>-{{ formValues().expenses | currency:'EUR':'symbol':'1.2-2' }}</span>
-                   </div>
-                   <div class="flex justify-between text-indigo-600 font-bold">
-                       <span>Mgmt Commission ({{ formValues().myCommission }}%)</span>
-                       <span>-{{ getCommission() | currency:'EUR':'symbol':'1.2-2' }}</span>
-                   </div>
-               </div>
+                    <!-- Line Items -->
+                    <div class="p-6 space-y-3 flex-1">
+                        <div class="flex justify-between items-end border-b border-slate-100 pb-2">
+                            <span class="text-xs font-bold text-slate-700">GROSS REVENUE</span>
+                            <span class="font-bold text-slate-900">{{ formValues().gross | currency:'EUR':'symbol':'1.2-2' }}</span>
+                        </div>
+                        
+                        <div class="space-y-1 pt-2">
+                            <div class="flex justify-between text-xs text-rose-600">
+                                <span>Platform Fee</span>
+                                <span>-{{ getPlatformFee() | currency:'EUR':'symbol':'1.2-2' }}</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-rose-600">
+                                <span>Maintenance</span>
+                                <span>-{{ formValues().expenses | currency:'EUR':'symbol':'1.2-2' }}</span>
+                            </div>
+                             <div class="flex justify-between text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-1 rounded -mx-2">
+                                <span>Mgmt Commission</span>
+                                <span>-{{ getCommission() | currency:'EUR':'symbol':'1.2-2' }}</span>
+                            </div>
+                        </div>
 
-               <!-- Total -->
-               <div class="bg-slate-100 p-4 rounded-lg flex justify-between items-center border-t-2 border-slate-900">
-                   <span class="font-bold text-lg">NET TO OWNER</span>
-                   <span class="font-black text-2xl">{{ getNetOwner() | currency:'EUR':'symbol':'1.2-2' }}</span>
-               </div>
-               
-               @if (!isTier3()) {
-                   <button class="mt-6 w-full border-2 border-slate-900 text-slate-900 font-bold py-2 rounded hover:bg-slate-50 transition-colors uppercase" data-debug-id="comm-download-pdf-btn">
-                       Download PDF
-                   </button>
-               }
-           </div>
+                        <!-- Total -->
+                        <div class="pt-4 mt-4 border-t-2 border-slate-900 flex justify-between items-center">
+                            <span class="font-bold text-sm">NET PAYOUT</span>
+                            <span class="font-black text-xl text-emerald-600">{{ getNetOwner() | currency:'EUR':'symbol':'1.2-2' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teaser for PDF -->
+                @if (!isTier3()) {
+                    <button class="w-full max-w-sm mx-auto bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all" data-debug-id="comm-download-btn">
+                        <span class="material-icons text-sm">picture_as_pdf</span> Download Client PDF
+                    </button>
+                }
+            </div>
+
+            <!-- COL 3: Tier 3 Ledger -->
+            <div class="lg:col-span-1 flex flex-col gap-6">
+                <!-- Multi-Owner Ledger (Tier 3) -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex-1 relative overflow-hidden group">
+                     <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                         <span class="material-icons text-sm">account_balance_wallet</span> Owner Ledger
+                     </h3>
+
+                     @if (isTier3()) {
+                         <div class="space-y-3">
+                             <div class="p-3 bg-white/5 rounded-lg border border-white/5 flex justify-between items-center">
+                                 <div>
+                                     <div class="text-xs text-slate-300 font-bold">John Doe</div>
+                                     <div class="text-[10px] text-slate-500">2 Properties</div>
+                                 </div>
+                                 <div class="text-right">
+                                     <div class="text-xs font-mono text-emerald-400">+€2,450.00</div>
+                                     <div class="text-[10px] text-slate-500">Pending</div>
+                                 </div>
+                             </div>
+                             <div class="p-3 bg-white/5 rounded-lg border border-white/5 flex justify-between items-center opacity-50">
+                                 <div>
+                                     <div class="text-xs text-slate-300 font-bold">Jane Smith</div>
+                                     <div class="text-[10px] text-slate-500">1 Property</div>
+                                 </div>
+                                 <div class="text-right">
+                                     <div class="text-xs font-mono text-slate-400">€0.00</div>
+                                     <div class="text-[10px] text-emerald-500">Paid</div>
+                                 </div>
+                             </div>
+                             
+                             <div class="mt-6 pt-4 border-t border-white/10">
+                                 <button class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all" data-debug-id="comm-payout-btn">
+                                     <span class="material-icons text-sm">payments</span> Trigger Stripe Payout
+                                 </button>
+                             </div>
+                         </div>
+                     } @else {
+                         <div class="absolute inset-0 z-10 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+                             <span class="text-3xl mb-2">💎</span>
+                             <h3 class="text-sm font-bold text-white mb-2">Manage Multiple Owners?</h3>
+                             <p class="text-xs text-slate-400 mb-4">Track balances across 50+ owners and pay them in one click.</p>
+                             <div class="px-3 py-1 bg-amber-500/20 text-amber-300 rounded text-[10px] border border-amber-500/30">Gold Feature</div>
+                         </div>
+                     }
+                </div>
+
+                <!-- Coach -->
+                <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4">
+                     <div class="flex items-start gap-3">
+                        <span class="text-xl">⚖️</span>
+                        <div>
+                            <h4 class="font-bold text-indigo-300 text-sm">Contract Clarity</h4>
+                            <p class="text-xs text-indigo-200/80 mt-1">Disputes happen when "Net Revenue" is defined poorly. Our generator clearly separates 'Platform Fees' from 'Management Commission' to avoid lawsuits.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
       </div>
-
-       <!-- Coach -->
-       <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4">
-            <div class="flex items-start gap-3">
-               <span class="text-xl">🤝</span>
-               <div>
-                   <h4 class="font-bold text-indigo-300 text-sm">Transparency & Proofs</h4>
-                   <p class="text-xs text-indigo-200/80 mt-1">If you manage properties for others, "Hidden Fees" are a relationship killer. Always attach 'Expense Proofs' (receipts) to this statement to build trust.</p>
-               </div>
-           </div>
-       </div>
     </div>
   `,
-    styles: [`
-    :host {
-      display: block;
-      height: 100%;
-    }
-  `]
+    styles: [`:host { display: block; height: 100%; }`]
 })
 export class CommissionSplitterComponent {
     feature = input.required<Feature>();
@@ -170,9 +232,6 @@ export class CommissionSplitterComponent {
 
     getCommission() {
         const val = this.formValues();
-        // Commission usually on Gross, or Net Platform? Prompt doesn't specify deeply, but standard is Gross or Net-Platform.
-        // Let's assume standard agency model: Commission on Gross Rent (Platform fee is usually paid by guest or deducted before, but let's assume simplified "Management Fee on Revenue").
-        // Actually, fairer is usually Commission on (Gross - Platform).
         const netPlatform = (val.gross || 0) - this.getPlatformFee();
         return netPlatform * (val.myCommission / 100);
     }
@@ -181,5 +240,34 @@ export class CommissionSplitterComponent {
         const val = this.formValues();
         const netPlatform = (val.gross || 0) - this.getPlatformFee();
         return netPlatform - (val.expenses || 0) - this.getCommission();
+    }
+
+    getPieConicGradient() {
+        // Calculate percentages for pie chart
+        const gross = this.formValues().gross || 1; // avoid divide by zero
+        const platFee = this.getPlatformFee();
+        const expenses = this.formValues().expenses || 0;
+        const comm = this.getCommission();
+        const owner = this.getNetOwner();
+
+        const pPlat = (platFee / gross) * 100;
+        const pExp = (expenses / gross) * 100;
+        const pComm = (comm / gross) * 100;
+        const pOwner = (owner / gross) * 100;
+
+        // Colors: Rose (Plat+Exp), Indigo (Comm), Emerald (Owner)
+        // Segments:
+        // 1. Plat+Exp (Rose) 0 -> pPlat+pExp
+        // 2. Comm (Indigo) pPlat+pExp -> +pComm
+        // 3. Owner (Emerald) -> Rest
+
+        const stop1 = pPlat + pExp;
+        const stop2 = stop1 + pComm;
+
+        return `conic-gradient(
+            #f43f5e 0% ${stop1}%, 
+            #6366f1 ${stop1}% ${stop2}%, 
+            #10b981 ${stop2}% 100%
+        )`;
     }
 }

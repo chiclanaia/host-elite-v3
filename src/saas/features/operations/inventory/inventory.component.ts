@@ -12,36 +12,35 @@ interface Asset {
     warrantyExp?: string;
     imageUrl?: string;
     aiConfidence?: number;
+    quantity?: number;
 }
 
 @Component({
-    selector: 'exp-02-inventory',
+    selector: 'ops-02-inventory',
     standalone: true,
     imports: [CommonModule],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
-      <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">AI Vision Asset Register</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Computer-Vision driven asset documentation and damage protection.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">Smart Inventory & Protection</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">Asset tracking, warranty alerts, and theft protection evidence.</p>
         </div>
-        <div class="flex gap-2">
-            <div class="px-4 py-2 bg-pink-600/10 text-pink-400 rounded-lg border border-pink-600/30 text-xs font-mono flex items-center gap-2">
-                <span>👁️</span> AI Vision
-            </div>
-             <div class="px-4 py-2 bg-blue-500/10 text-blue-300 rounded-lg border border-blue-500/30 text-xs font-mono flex items-center gap-2">
-                <span>🛡️</span> Protection
-            </div>
+        <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
+             [ngClass]="{
+                'bg-slate-800 text-slate-400 border-slate-700': isTier0(),
+                'bg-emerald-500/20 text-emerald-300 border-emerald-500/30': !isTier0()
+             }">
+             {{ isTier3() ? 'AI Stock Scan' : (isTier2() ? 'Value Tracking' : 'Basic List') }}
         </div>
       </div>
 
-       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 overflow-hidden">
+       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 overflow-hidden min-h-0">
            
-           <!-- Left: Actions & AI Control -->
+           <!-- Actions & AI Control -->
            <div class="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2">
                 <!-- AI Scan Card (Tier 3) -->
-                <div class="bg-slate-900 rounded-xl border border-white/10 p-6 flex flex-col items-center justify-center text-center relative overflow-hidden group min-h-[250px]">
+                <div class="bg-slate-900 rounded-xl border border-white/10 p-6 flex flex-col items-center justify-center text-center relative overflow-hidden group min-h-[250px] shadow-2xl">
                     <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1556911220-e15b29be8c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')] bg-cover bg-center"></div>
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40"></div>
                     
@@ -94,18 +93,18 @@ interface Asset {
                 </div>
 
                 <!-- Coach Tip -->
-                <div class="p-4 bg-pink-900/20 border-l-4 border-pink-500 rounded-r-lg">
+                <div class="p-4 bg-emerald-900/20 border-l-4 border-emerald-500 rounded-r-lg mt-auto">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-lg">💡</span>
-                        <span class="text-pink-300 font-bold text-sm uppercase">Coach Tip</span>
+                        <span class="text-emerald-300 font-bold text-sm uppercase">Coach Tip</span>
                     </div>
                     <p class="text-slate-300 text-xs italic">
-                        "Evidence-based hospitality. You cannot claim what you haven't proved. Video evidence of proper condition *before* check-in is your only real defense."
+                        "Bulk Buying Power: Don't buy linens retail. Coordinate with 3 other hosts in your area to order hotel-grade sheets from hospitality wholesalers. You'll save 40%."
                     </p>
                 </div>
            </div>
 
-           <!-- Right: Visual Inventory & Tree Map -->
+           <!-- Assets & Viz -->
            <div class="lg:col-span-2 flex flex-col gap-6 overflow-hidden">
                
                <!-- Value Tree Map (Visual Requirement) -->
@@ -113,17 +112,17 @@ interface Asset {
                    <h3 class="text-white font-bold text-sm mb-4">Value Distribution (TreeMap)</h3>
                    <div class="flex h-32 w-full gap-1">
                        <!-- Living Room (Large) -->
-                       <div class="h-full bg-indigo-500/20 border border-indigo-500/50 hover:bg-indigo-500/30 transition-colors relative group" style="width: 45%" title="Living Room: €2,200">
+                       <div class="h-full bg-indigo-500/20 border border-indigo-500/50 hover:bg-indigo-500/30 transition-colors relative group cursor-pointer" style="width: 45%" title="Living Room: €2,200">
                            <span class="absolute top-2 left-2 text-[10px] text-indigo-300 font-bold">LIVING ROOM</span>
                            <span class="absolute bottom-2 right-2 text-xs text-white font-mono">€2.2k</span>
                        </div>
                        <div class="flex flex-col h-full gap-1" style="width: 30%">
                            <!-- Kitchen -->
-                           <div class="h-[60%] bg-emerald-500/20 border border-emerald-500/50 hover:bg-emerald-500/30 transition-colors relative" title="Kitchen: €1,500">
+                           <div class="h-[60%] bg-emerald-500/20 border border-emerald-500/50 hover:bg-emerald-500/30 transition-colors relative cursor-pointer" title="Kitchen: €1,500">
                                 <span class="absolute top-2 left-2 text-[10px] text-emerald-300 font-bold">KITCHEN</span>
                            </div>
                            <!-- Bedroom -->
-                           <div class="h-[40%] bg-amber-500/20 border border-amber-500/50 hover:bg-amber-500/30 transition-colors relative" title="Bedroom: €900">
+                           <div class="h-[40%] bg-amber-500/20 border border-amber-500/50 hover:bg-amber-500/30 transition-colors relative cursor-pointer" title="Bedroom: €900">
                                 <span class="absolute top-2 left-2 text-[10px] text-amber-300 font-bold">BEDROOM</span>
                            </div>
                        </div>
@@ -139,23 +138,22 @@ interface Asset {
                    <h3 class="text-white font-bold text-sm mb-4">Asset Gallery</h3>
                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto pr-2">
                        @for (asset of assets(); track asset.id) {
-                           <div class="bg-black/40 rounded-lg border border-white/5 overflow-hidden group relative">
+                           <div class="bg-black/40 rounded-lg border border-white/5 overflow-hidden group relative transition-all hover:bg-black/60 hover:border-indigo-500/30">
                                <!-- Image Placeholder -->
-                               <div class="h-32 w-full bg-slate-700 flex items-center justify-center text-4xl select-none">
-                                    {{ getIconForAsset(asset) }}
+                               <div class="h-32 w-full bg-slate-700/50 flex items-center justify-center text-4xl select-none relative">
+                                    <span class="z-10">{{ getIconForAsset(asset) }}</span>
+                                    <!-- Scanning Effect -->
+                                    @if (isTier3() && asset.aiConfidence) {
+                                      <div class="absolute inset-0 border-2 border-emerald-500/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                                          <div class="absolute top-0 left-0 bg-emerald-500 text-black text-[9px] font-bold px-1">AI MATCH {{asset.aiConfidence}}%</div>
+                                      </div>
+                                    }
                                </div>
                                
-                               <!-- AI Tags Overlay -->
-                               @if (isTier3() && asset.aiConfidence) {
-                                   <div class="absolute top-2 right-2 bg-emerald-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                                       {{ asset.aiConfidence }}% Match
-                                   </div>
-                               }
-
                                <div class="p-3">
                                    <div class="flex justify-between items-start">
                                        <div>
-                                           <div class="text-white text-xs font-bold">{{ asset.name }}</div>
+                                           <div class="text-white text-xs font-bold truncate pr-2">{{ asset.name }}</div>
                                            <div class="text-slate-500 text-[10px] uppercase">{{ asset.room }}</div>
                                        </div>
                                        <div class="text-emerald-400 font-mono text-xs">€{{ asset.value }}</div>
@@ -183,16 +181,19 @@ interface Asset {
     `,
     styles: [`:host { display: block; height: 100%; }`]
 })
-export class InventoryGeneratorComponent {
+export class InventoryComponent {
+    feature = computed(() => ({
+        id: 'OPS_02',
+        name: 'Inventory & Protection',
+        description: 'AI Visual Asset Register',
+    } as any));
+
     session = inject(SessionStore);
+    tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
 
-    tier = computed(() => {
-        const plan = this.session.userProfile()?.plan || 'TIER_0';
-        return plan === 'Freemium' ? 'TIER_0' : plan;
-    });
-
-    isTier2OrAbove = computed(() => ['TIER_2', 'TIER_3'].includes(this.tier()));
-    isTier3 = computed(() => this.tier() === 'TIER_3');
+    isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
+    isTier2 = computed(() => this.tier() === 'Silver' || this.tier() === 'TIER_2' || this.tier() === 'Gold' || this.tier() === 'TIER_3');
+    isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
 
     assets = signal<Asset[]>([
         { id: '1', name: 'Friheten Sofa', room: 'LIVING ROOM', value: 450, warrantyExp: '2026-12-01', aiConfidence: 98 },

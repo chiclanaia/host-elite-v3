@@ -56,7 +56,7 @@ import { GuestAiChatbotComponent } from './experience/guest-ai-chatbot/guest-ai-
 
 export const FEATURE_COMPONENTS: Record<string, Type<any>> = {
     // Finance (11)
-    'FIN_00': ProfitabilitySuiteComponent,
+    'FIN_00_CONSULT': ProfitabilitySuiteComponent,
     'FIN_01': RoiSimulatorComponent,
     'FIN_02': RenovationBudgetComponent,
     'FIN_03': LmnpTaxSimulatorComponent,
@@ -100,6 +100,7 @@ export const FEATURE_COMPONENTS: Record<string, Type<any>> = {
     'MKT_01': PhotoGuideComponent,
     'MKT_02': AiListingWriterComponent,
     'MKT_03': DirectBookingComponent,
+    'MKT_04': ListingOptimizationComponent, // Placeholder
 
     // Pricing (3)
     'PRI_01': YieldSetupComponent,

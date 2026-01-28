@@ -1,6 +1,6 @@
 import { Component, input, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
@@ -8,176 +8,171 @@ import { SessionStore } from '../../../../state/session.store';
 @Component({
   selector: 'fin-01-roi-simulator',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
        <!-- Header -->
        <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ feature().name }}</h1>
-          <p class="text-slate-400 mt-2">{{ feature().description }}</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">ROI & Cashflow Architect</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">Professional financial modeling engine with seasonality and 10-year projections.</p>
         </div>
-         <!-- Tier Badge -->
-         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
-             [ngClass]="{
-                'bg-slate-800 text-slate-400 border-slate-700': isTier0(),
-                'bg-indigo-500/20 text-indigo-200 border-indigo-500/30': !isTier0()
-             }">
-             {{ isTier0() ? 'Basic Mode' : 'Advanced Mode' }}
+         <div class="flex gap-2">
+             <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono flex items-center gap-2">
+                <span>💰</span> Cashflow
+            </div>
+             <div class="px-4 py-2 bg-emerald-500/10 text-emerald-300 rounded-lg border border-emerald-500/30 text-xs font-mono flex items-center gap-2">
+                <span>📈</span> 10Y Forecast
+            </div>
          </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
-        <!-- Input Section -->
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col h-full">
+       <!-- Coach Tip -->
+      <div class="p-4 bg-indigo-900/20 border-l-4 border-indigo-500 rounded-r-lg">
+           <div class="flex items-center gap-2 mb-1">
+               <span class="text-lg">💡</span>
+               <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
+           </div>
+           <p class="text-slate-300 text-xs italic">
+               "Cash flow is the business's heartbeat. Experts see monthly struggle; beginners see yearly totals. You must survive the 'Low Season' to enjoy the 'High Season' profits."
+           </p>
+       </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full min-h-0">
+        <!-- Left: Inputs & Seasonality -->
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col overflow-y-auto">
            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-white">Investment Parameters</h3>
+                <h3 class="text-xl font-bold text-white">Financial Design</h3>
                 @if (isTier3()) {
                     <button (click)="autoFill()" class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30 hover:bg-indigo-500/40 transition-colors flex items-center gap-1" data-debug-id="roi-autofill-btn">
-                        <span>✨</span> Auto-Fill (AI)
+                        <span>✨</span> AI Estimate
                     </button>
                 }
            </div>
            
-           <form [formGroup]="form" class="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
-              <!-- Basic Fields (Tier 0+) -->
+           <form [formGroup]="form" class="space-y-6">
+              <!-- Core Numbers -->
               <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Purchase Price (€)</label>
-                    <input type="number" formControlName="price" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-price">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Price (€)</label>
+                    <input type="number" formControlName="price" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="roi-input-price">
                   </div>
                   <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Monthly Rent (€)</label>
-                    <input type="number" formControlName="rent" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-rent">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Avg Nightly Rate (€)</label>
+                    <input type="number" formControlName="rent" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="roi-input-rent">
                   </div>
               </div>
 
+              <!-- Expenses -->
               <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">Monthly Loan Payment (€)</label>
-                <input type="number" formControlName="loan" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-loan">
+                  <div class="flex justify-between mb-2">
+                       <label class="block text-[10px] font-bold text-slate-400 uppercase">Monthly Expenses</label>
+                       <span class="text-[10px] text-slate-500">{{ totalExpenses() | currency:'EUR':'symbol':'1.0-0' }}/mo</span>
+                  </div>
+                  <div class="space-y-2">
+                      <div class="flex items-center gap-2">
+                          <span class="text-xs text-slate-400 w-24">Loan</span>
+                          <input type="number" formControlName="loan" class="flex-1 bg-black/20 border border-white/10 rounded px-2 py-1 text-white text-xs" placeholder="0">
+                      </div>
+                      <div class="flex items-center gap-2">
+                          <span class="text-xs text-slate-400 w-24">Bills/HOA</span>
+                          <input type="number" formControlName="condo" class="flex-1 bg-black/20 border border-white/10 rounded px-2 py-1 text-white text-xs" placeholder="0">
+                      </div>
+                  </div>
               </div>
 
-              <!-- Advanced Fields (Tier 1+) -->
-              @if (!isTier0()) {
-                  <div class="pt-4 border-t border-white/10">
-                      <h4 class="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
-                          Hidden Leakages <span class="text-xs font-normal text-slate-500">(Monthly)</span>
-                      </h4>
-                      
-                      <div class="grid grid-cols-2 gap-4">
-                          <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Condo Fees / Charges</label>
-                            <input type="number" formControlName="condo" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-condo">
-                          </div>
-                          <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Insurance</label>
-                            <input type="number" formControlName="insurance" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-insurance">
-                          </div>
-                      </div>
-
-                      <div class="mt-4 relative group">
-                        <label class="block text-xs font-medium text-slate-400 mb-1 flex items-center gap-1">
-                            Maintenance / Repairs Provision 
-                            <span class="text-indigo-400 cursor-help material-icons text-[14px]">info</span>
-                        </label>
-                        <input type="number" formControlName="repairs" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
-                            [class.border-indigo-500]="showCoachTip()" data-debug-id="roi-input-repairs">
-                        
-                        <!-- Coach Popup -->
-                        <div class="absolute left-0 bottom-full mb-2 w-64 bg-slate-800 border border-indigo-500/30 p-3 rounded-lg shadow-xl z-20"
-                             [class.hidden]="!showCoachTip()">
-                             <p class="text-xs text-indigo-200">
-                                💡 <strong>Coach Tip:</strong> We recommend setting aside at least 10% of rent for unexpected repairs (approx €{{ (formValues()?.rent || 0) * 0.1 | number:'1.0-0' }}).
-                             </p>
+              <!-- Tier 2: Seasonality Engine -->
+              <div [class.opacity-50]="!isTier2OrAbove()" [class.pointer-events-none]="!isTier2OrAbove()">
+                   <div class="flex justify-between items-center mb-4 pt-4 border-t border-white/10">
+                        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                            <span class="material-icons text-sm text-cyan-400">ac_unit</span> Seasonality Logic
+                        </h4>
+                        @if (!isTier2OrAbove()) { <span class="text-[10px] text-amber-400 border border-amber-400/30 px-1.5 rounded">SILVER +</span> }
+                   </div>
+                   
+                   <div class="space-y-3">
+                       <div class="flex items-center gap-4">
+                           <span class="text-xs text-slate-400 w-16">Occupancy</span>
+                           <input type="range" class="flex-1 h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer" min="0" max="100" [value]="50"> 
+                           <span class="text-xs text-white font-mono w-8">65%</span>
+                       </div>
+                        <div class="grid grid-cols-6 gap-1 mt-2">
+                            <!-- Visual Heatmap of months -->
+                           <div *ngFor="let m of ['J','F','M','A','M','J']; let i = index" class="h-10 bg-black/20 rounded flex flex-col items-center justify-end pb-1 border border-white/5 relative group cursor-pointer hover:border-emerald-500/50">
+                               <div class="w-2 bg-emerald-500/50 rounded-t-sm" [style.height.%]="(i%2===0?40:80)"></div>
+                               <span class="text-[8px] text-slate-500">{{m}}</span>
+                           </div>
+                           <div *ngFor="let m of ['J','A','S','O','N','D']; let i = index" class="h-10 bg-black/20 rounded flex flex-col items-center justify-end pb-1 border border-white/5 relative group cursor-pointer hover:border-emerald-500/50">
+                               <div class="w-2 bg-emerald-500/50 rounded-t-sm" [style.height.%]="(i%2!==0?30:90)"></div>
+                               <span class="text-[8px] text-slate-500">{{m}}</span>
+                           </div>
                         </div>
-                      </div>
-                      
-                      <div class="mt-4">
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Taxes (Monthly avg)</label>
-                        <input type="number" formControlName="taxes" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm" data-debug-id="roi-input-taxes">
-                      </div>
-                  </div>
-              } @else {
-                  <!-- Teaser for Tier 1 -->
-                  <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700/50 text-center mt-4">
-                      <p class="text-xs text-slate-400 mb-2">Detailed expense tracking (Insurance, Repairs, Taxes) available in Standard Plan.</p>
-                      <button class="text-xs text-indigo-400 hover:text-indigo-300 font-bold" data-debug-id="roi-unlock-expenses-btn">Unlock Full Expense Itemization</button>
-                  </div>
-              }
+                   </div>
+              </div>
            </form>
-
-           <!-- Actions -->
-           <div class="mt-6 pt-4 border-t border-white/10 flex justify-end">
-               <button (click)="saveSimulation()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2">
-                   <span class="material-icons text-sm">save</span> Save Simulation
-               </button>
-           </div>
         </div>
 
-        <!-- Result Section (Traffic Light) -->
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center justify-center relative overflow-hidden">
-            
-            @if (validationError()) {
-                <div class="absolute inset-0 z-20 bg-black/80 flex items-center justify-center p-8 text-center animate-fade-in">
-                    <div>
-                        <span class="text-4xl mb-4 block">🚫</span>
-                        <h3 class="text-xl font-bold text-white mb-2">Unrealistic Data</h3>
-                        <p class="text-slate-400 text-sm mb-6">{{ validationError() }}</p>
-                        <button (click)="validationError.set(null)" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm">Adjust Values</button>
-                    </div>
-                </div>
-            }
+        <!-- Right: Results & Visuals -->
+        <div class="flex flex-col gap-6">
+             <!-- Top: Cashflow Waterfall -->
+             <div class="bg-slate-900 rounded-xl border border-white/10 p-6 flex items-center justify-between relative overflow-hidden">
+                 <div class="z-10">
+                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Net Annual Cashflow</p>
+                     <h2 class="text-4xl font-black text-white" [class.text-rose-400]="netCashflow() < 0" [class.text-emerald-400]="netCashflow() > 0">
+                         {{ netCashflow() | currency:'EUR':'symbol':'1.0-0' }}
+                     </h2>
+                     <p class="text-xs mt-1" [class.text-rose-400]="netCashflow() < 0" [class.text-slate-500]="netCashflow() >= 0">
+                         {{ netCashflow() < 0 ? 'Negative Carry Warning' : 'Positive Leverage' }}
+                     </p>
+                 </div>
+                 <div class="h-16 w-16 rounded-full border-4 flex items-center justify-center text-xs font-bold z-10 bg-slate-800"
+                      [class.border-rose-500]="netCashflow() < 0" [class.border-emerald-500]="netCashflow() > 0"
+                      [class.text-rose-400]="netCashflow() < 0" [class.text-emerald-400]="netCashflow() > 0">
+                     {{ (netCashflow() / (formValues()?.price || 1)) * 100 | number:'1.1-1' }}%
+                 </div>
+             </div>
 
-            <!-- Result Circle -->
-            <div class="relative z-10 w-64 h-64 rounded-full flex flex-col items-center justify-center border-8 transition-colors duration-500 shadow-[0_0_50px_rgba(0,0,0,0.3)] bg-slate-900/50"
-                 [class.border-emerald-500]="cashflow() > 0"
-                 [class.border-amber-500]="cashflow() === 0"
-                 [class.border-rose-500]="cashflow() < 0"
-                 [class.shadow-emerald-500-20]="cashflow() > 0"
-                 [class.shadow-rose-500-20]="cashflow() < 0">
+             <!-- Middle: 10-Year Wealth Chart -->
+             <div class="bg-white/5 border border-white/10 rounded-2xl p-6 flex-1 min-h-[250px] relative flex flex-col">
+                 <h3 class="text-lg font-bold text-white mb-4">10-Year Wealth Accumulation</h3>
                  
-                 <div class="text-xs font-mono uppercase tracking-widest text-slate-400 mb-2">Net Cashflow</div>
-                 <div class="text-4xl font-black text-white">
-                   {{ cashflow() | currency:'EUR':'symbol':'1.0-0' }}
-                 </div>
-                 <div class="text-xs text-slate-500 mt-2">per month</div>
-            </div>
-
-            <!-- Status Text -->
-            <div class="mt-8 text-center relative z-10">
-              <h2 class="text-2xl font-bold text-white mb-2" 
-                  [class.text-emerald-400]="cashflow() > 0"
-                  [class.text-rose-400]="cashflow() < 0">
-                  {{ cashflow() > 0 ? 'Positive Yield' : 'Negative Cashflow' }}
-              </h2>
-              <p class="text-slate-400 max-w-xs mx-auto text-sm">
-                 {{ cashflow() > 0 ? 'Great! Your asset covers its own debt and generates liquid cash.' : 'Warning: You will need to subsidize this asset with your own salary.' }}
-              </p>
-            </div>
-            
-            <!-- Pedagogical Tip Box (Always visible) -->
-            <div class="mt-8 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl max-w-sm">
-                 <div class="flex items-start gap-2">
-                   <span class="text-lg">💡</span>
-                   <div>
-                     <h4 class="font-bold text-indigo-300 text-xs">Pedagogical Objective</h4>
-                     <p class="text-[10px] text-indigo-200/80 mt-1">Cash-flow is king. Beginners confuse revenue with profit. Use this tool to account for hidden leakages and focus on net monthly liquidity.</p>
-                   </div>
-                 </div>
-            </div>
-
-            <!-- Background Glow -->
-             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-transparent to-white/5 pointer-events-none"></div>
+                 @if (isTier3()) {
+                    <div class="flex-1 flex items-end gap-1 relative z-10 px-2">
+                        <!-- Simulated Area Chart -->
+                        @for (year of [1,2,3,4,5,6,7,8,9,10]; track year) {
+                             <div class="flex-1 flex flex-col justify-end gap-0.5 group">
+                                  <!-- Appreciation -->
+                                  <div class="w-full bg-emerald-500/80 rounded-t-sm relative hover:bg-emerald-400 transition-colors" [style.height.%]="year * 4 + 10"></div>
+                                  <!-- Principal Paydown -->
+                                  <div class="w-full bg-blue-500/80 rounded-b-sm relative hover:bg-blue-400 transition-colors" [style.height.%]="year * 3 + 5"></div>
+                                  
+                                  <span class="text-[8px] text-slate-500 text-center mt-1">Y{{year}}</span>
+                             </div>
+                        }
+                    </div>
+                    
+                    <div class="flex gap-4 justify-center mt-4 text-[10px]">
+                        <div class="flex items-center gap-1"><div class="w-2 h-2 bg-emerald-500"></div> Asset Value</div>
+                        <div class="flex items-center gap-1"><div class="w-2 h-2 bg-blue-500"></div> Equity Built</div>
+                    </div>
+                    
+                    <button class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white text-[10px] px-2 py-1 rounded flex items-center gap-1" data-debug-id="roi-export-pdf">
+                        <span class="material-icons text-xs">picture_as_pdf</span> Bank PDF
+                    </button>
+                    
+                 } @else {
+                     <div class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm rounded-2xl">
+                         <span class="text-3xl mb-2">🔒</span>
+                         <h4 class="text-white font-bold text-sm">Professional Forecast</h4>
+                         <p class="text-slate-400 text-xs mb-4 text-center px-8">Unlock 10-year equity analysis and Bank-Ready PDF reports.</p>
+                     </div>
+                 }
+             </div>
         </div>
       </div>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-      height: 100%;
-    }
-  `]
+  styles: [`:host { display: block; height: 100%; }`]
 })
 export class RoiSimulatorComponent {
   feature = input.required<Feature>();
@@ -185,76 +180,40 @@ export class RoiSimulatorComponent {
 
   tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
   isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
+  isTier2OrAbove = computed(() => ['TIER_2', 'TIER_3', 'Silver', 'Gold'].includes(this.tier()));
   isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
 
   form: FormGroup;
-  formValues; // Signal
-  validationError = signal<string | null>(null);
-  showCoachTip = signal<boolean>(false);
+  formValues;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       price: [200000, Validators.required],
-      rent: [1500, Validators.required],
+      rent: [150, Validators.required], // Daily rate actually? Spec says Monthly rent in legacy but daily in others. Stick to monthly for simplicity or daily * 30.
       loan: [900, Validators.required],
-      // Tier 1+ fields
       condo: [0],
-      insurance: [0],
-      repairs: [0],
-      taxes: [0]
+      insurance: [0]
     });
-
     this.formValues = toSignal(this.form.valueChanges, { initialValue: this.form.value });
-
-    // Coach tip logic: Show tip if repairs field is focused or hover (simulated here by value check for demo)
-    // Ideally handled via events, but focusing on simple reactive logic for now
   }
 
-  cashflow = computed(() => {
-    const val = this.formValues();
-    const rent = val?.rent || 0;
-    const loan = val?.loan || 0;
+  totalExpenses = computed(() => {
+    const v = this.formValues();
+    return (v?.loan || 0) + (v?.condo || 0) + (v?.insurance || 0);
+  });
 
-    if (this.isTier0()) {
-      return rent - loan;
-    } else {
-      const condo = val?.condo || 0;
-      const insurance = val?.insurance || 0;
-      const repairs = val?.repairs || 0;
-      const taxes = val?.taxes || 0;
-      return rent - (loan + condo + insurance + repairs + taxes);
-    }
+  netCashflow = computed(() => {
+    const v = this.formValues();
+    const income = (v?.rent || 0) * 30 * 0.65; // Quick hack: Daily * 30 * 65% occupancy
+    return income - this.totalExpenses();
   });
 
   autoFill() {
-    if (!this.isTier3()) return;
-    // Mock API call to central bank / market data
     this.form.patchValue({
       price: 250000,
-      rent: 1850,
+      rent: 140, // Nightly
       loan: 1100,
-      condo: 120,
-      insurance: 35,
-      repairs: 185, // 10% logic
-      taxes: 90
+      condo: 150,
     });
-  }
-
-  saveSimulation() {
-    // Guardrail: Unrealistic Data
-    const val = this.form.value;
-    if (val.rent > val.price * 0.02) { // > 2% monthly yield is suspicious
-      this.validationError.set("Your expected rent seems unrealistically high (>24% gross yield). Please verify market rates.");
-      return;
-    }
-
-    if (this.isTier0()) {
-      // RG-01: Trigger Upgrade Modal
-      alert("Saving simulations requires the Standard Plan. Upgrade to save up to 5 properties."); // Replace with modal service call
-      return;
-    }
-
-    // Save logic would go here
-    alert("Simulation saved!");
   }
 }

@@ -11,64 +11,114 @@ import { SessionStore } from '../../../../state/session.store';
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ feature().name }}</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">{{ feature().description }}</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">Spanish VUT Manager</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">Step-by-step "Vivienda de Uso Turístico" licensing wizard.</p>
         </div>
-        <div class="px-4 py-2 bg-yellow-500/10 text-yellow-300 rounded-lg border border-yellow-500/30 text-xs font-mono">
-           🇪🇸 Spanish Licensing
+        <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
+             [ngClass]="{
+                'bg-slate-800 text-slate-400 border-slate-700': isTier0(),
+                'bg-yellow-500/20 text-yellow-300 border-yellow-500/30': !isTier0()
+             }">
+             {{ isTier3() ? 'License Dashboard' : (isTier2() ? 'Regional Wizard' : 'Checklist') }}
         </div>
       </div>
 
-       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
-           <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
+       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">
+           <!-- Checklists & Logic -->
+           <div class="bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col overflow-y-auto">
                <h3 class="text-xl font-bold text-white mb-6">License Requirements</h3>
                
-               <div class="space-y-4">
-                   <div class="bg-white/5 p-4 rounded-lg flex items-start gap-3">
+               <div class="mb-6">
+                   <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Region (Comunidad Autónoma)</label>
+                   @if (isTier2()) {
+                       <select class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-3 text-white">
+                           <option>Andalucía (Junta)</option>
+                           <option>Madrid</option>
+                           <option>Catalunya (Generalitat)</option>
+                           <option>Valencia</option>
+                       </select>
+                   } @else {
+                       <div class="p-3 bg-white/5 rounded text-slate-400 text-xs italic border border-white/5">
+                           Unlock detailed regional rules (Andalucía, Madrid, etc.) on Silver Tier.
+                       </div>
+                   }
+               </div>
+
+               <div class="space-y-4 flex-1">
+                   <div class="bg-white/5 p-4 rounded-lg flex items-start gap-3 transition-colors hover:bg-white/10">
                        <input type="checkbox" checked class="mt-1 bg-transparent border-emerald-500 rounded text-emerald-500 focus:ring-0" data-debug-id="vut-check-cedula">
                        <div>
                            <div class="text-white font-bold text-sm">Cédula de Habitabilidad</div>
-                           <p class="text-xs text-slate-500">Valid occupancy certificate required.</p>
+                           <p class="text-xs text-slate-500">Valid occupancy certificate required (Max 15 years old in some zones).</p>
                        </div>
                    </div>
-                   <div class="bg-white/5 p-4 rounded-lg flex items-start gap-3">
+                   <div class="bg-white/5 p-4 rounded-lg flex items-start gap-3 transition-colors hover:bg-white/10">
                        <input type="checkbox" class="mt-1 bg-transparent border-slate-600 rounded text-emerald-500 focus:ring-0" data-debug-id="vut-check-occupation">
                        <div>
                            <div class="text-white font-bold text-sm">First Occupation License</div>
-                           <p class="text-xs text-slate-500">Must be registered with the town hall.</p>
+                           <p class="text-xs text-slate-500">"Licencia de Primera Ocupación" registered at Town Hall.</p>
                        </div>
                    </div>
                    
-                   @if (tier() === 'TIER_3') {
+                   @if (isTier3()) {
                        <div class="mt-6 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
                            <h4 class="text-indigo-300 font-bold mb-2 flex items-center gap-2">
-                               <span class="material-icons text-sm">upload_file</span> Statute Analyzer (AI)
+                               <span class="material-icons text-sm">gavel</span> Statute Analyzer (AI)
                            </h4>
-                           <p class="text-xs text-slate-400 mb-3">Upload your building's "Estatutos" PDF to check for hidden anti-Airbnb clauses.</p>
-                           <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-bold" data-debug-id="vut-upload-statutes-btn">Select PDF</button>
+                           <p class="text-xs text-slate-400 mb-3">Supreme Court (Tribunal Supremo) allows neighbors to ban Airbnb by 3/5 vote. Upload your "Estatutos" to check for bans.</p>
+                           <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-bold shadow-lg transition-all" data-debug-id="vut-upload-statutes-btn">Run AI Analysis</button>
                        </div>
                    }
                </div>
            </div>
            
-           <div class="bg-slate-900 rounded-xl border border-white/10 p-6 flex flex-col items-center justify-center text-center">
-               <div class="h-16 w-16 bg-white/5 rounded-full flex items-center justify-center mb-4">
-                   <span class="text-2xl">📋</span>
-               </div>
-               <h3 class="text-white font-bold mb-2">VUT Status: Pending</h3>
-               <p class="text-slate-500 text-sm max-w-xs">You need to complete the checklist and verify your building statutes before applying for a VUT number.</p>
-           </div>
-       </div>
-       
-       <!-- Coach -->
-       <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 mt-6">
-           <div class="flex items-start gap-3">
-              <span class="text-xl">🇪🇸</span>
-              <div>
-                  <h4 class="font-bold text-indigo-300 text-sm">Declaración Responsable</h4>
-                  <p class="text-xs text-indigo-200/80 mt-1">This legal concept is faster than a license. You declare, under oath, that you meet requirements and start renting immediately while they inspect.</p>
-              </div>
-           </div>
+           <!-- Visual Status -->
+           <div class="flex flex-col gap-6">
+                <div class="bg-slate-900 rounded-xl border border-white/10 p-6 flex flex-col items-center justify-center text-center relative overflow-hidden flex-1 group">
+                    <!-- VISUAL: License Plate -->
+                    <div class="relative w-64 h-20 bg-white rounded-lg border-4 border-slate-800 shadow-2xl flex items-center overflow-hidden transform transition-transform duration-500 group-hover:scale-105">
+                        <!-- Blue EU Strip -->
+                        <div class="h-full w-8 bg-blue-800 flex flex-col items-center justify-center pt-1">
+                             <div class="w-4 h-4 rounded-full border border-yellow-400 flex items-center justify-center">
+                                 <span class="text-[6px] text-yellow-400 font-bold">★</span>
+                             </div>
+                             <span class="text-white font-bold text-[10px] mt-1">E</span>
+                        </div>
+                        <!-- Number -->
+                        <div class="flex-1 flex items-center justify-center bg-white">
+                             <span class="text-3xl font-black text-slate-900 font-mono tracking-widest"
+                                   [class.blur-sm]="!isTier3()">
+                                 {{ isTier3() ? 'VFT/MA/12345' : 'PENDING' }}
+                             </span>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-white font-bold mt-8 mb-2">
+                        {{ isTier3() ? 'License Active & Valid' : 'VUT Status: Pending' }}
+                    </h3>
+                    
+                    @if (!isTier3()) {
+                        <p class="text-slate-500 text-xs max-w-xs">
+                            Complete all checks to generate your VUT application number.
+                        </p>
+                    } @else {
+                        <div class="flex gap-4 mt-4 text-xs font-mono text-emerald-400 bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20">
+                            <span class="flex items-center gap-1">● Guardia Civil Connected</span>
+                        </div>
+                    }
+                </div>
+
+                <!-- Coach -->
+                <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4">
+                   <div class="flex items-start gap-3">
+                      <span class="text-xl">⚠️</span>
+                      <div>
+                          <h4 class="font-bold text-indigo-300 text-sm">Barcelona Warning (PEUAT)</h4>
+                          <p class="text-xs text-indigo-200/80 mt-1">New licenses in Barcelona are currently FROZEN (Zone 1). Do not buy property without an existing, transferable HUTB license.</p>
+                      </div>
+                   </div>
+                </div>
+            </div>
        </div>
     </div>
   `,
@@ -83,4 +133,8 @@ export class VutLicenseComponent {
 
     session = inject(SessionStore);
     tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
+
+    isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
+    isTier2 = computed(() => this.tier() === 'Silver' || this.tier() === 'TIER_2' || this.tier() === 'Gold' || this.tier() === 'TIER_3');
+    isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
 }

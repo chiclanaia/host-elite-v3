@@ -1,30 +1,23 @@
 -- Update Features from specs.csv (Auto-generated)
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_00',
-        NULL,
-        'DIM_FINANCE',
-        'PH_1_INVEST',
-        'GLOBAL',
-        'Profitability Suite',
-        'Financial Intelligence Command Center',
-        'An advanced multi-dimensional financial hub. TIER 3 transforms it into a predictive command center.',
-        '1. Pedagogical Objective: Strategic vision over simple math. This suite teaches the ''Portfolio mindset,'' showing how macro-trends and micro-decisions intersect. 2. Behavior Matrix: TIER_0 (Beginner): Static Sandbox with sample data. TIER_1 (Bronze): Single-property live dashboard. TIER_2 (Silver): Multi-property consolidation (up to 5 assets) with historical trend tracking. TIER_3 (Gold): Unlimited Portfolio Command Center with ''Global Risk'' scoring and 10-year market cycle simulations. 3. User Journey & UI: Input: Financial goals and asset types. Logic: Aggregation of sub-modules. Output: Heat map showing ROI and Equity growth. Coach: ''Diversification'' tooltip. 4. Business Logic: RG-01: Tier 0 locks ''Consolidated View''. RG-02: TIER_2 enables ''Custom Tags'' for property grouping. RG-03: TIER_3 allows ''Stress Test'' simulations.',
-        'TIER_0 (Beginner): Static Sandbox with sample data. TIER_1 (Bronze): Single-property live dashboard. TIER_2 (Silver): Multi-property consolidation (up to 5 assets) with historical trend tracking. TIER_3 (Gold): Unlimited Portfolio Command Center with ''Global Risk'' scoring and 10-year market cycle simulations.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_00_CONSULT',
+    NULL,
+    'DIM_FINANCE',
+    'PH_1_INVEST',
+    'GLOBAL',
+    'Investment Thesis Advisor',
+    'Strategic consultative onboarding for investors',
+    'A multi-step consultative engine that evaluates the host''s fiscal residence vs. the target property''s location. TIER 3 acts as a Virtual Banker providing amenity-based price biasing and non-resident banking constraints.',
+    '1. Pedagogical Objective: Strategy precedes math. Beginners look for ''properties''; experts build ''theses''. This module coaches the user to define their Investor Profile (Tax Residency, Available Capital, Setting) before looking at assets. It teaches how residency-to-asset tax treaties and LTV (Loan-to-Value) limits are the primary drivers of cross-border success. 2. Behavior Matrix: TIER_0: Basic profile setup. TIER_1 (Bronze): Single-project thesis with regional price hints. TIER_2 (Silver): ''Asset Ecosystem'' selector (Urban, Ski, Coastal, Rural) with automated price adjustments. TIER_3 (Gold): Virtual Investment Banker. Integrates non-resident banking constraints (e.g., 60% LTV) and generates a ''Strategic Investment Thesis'' PDF. 3. User Journey & UI: Input: ''Where do you pay taxes?'' -> ''Select Ecosystem''. Logic: Cross-references residency-to-asset tax treaties. Output: ''Feasibility Radar Chart'' and Affordability Envelope. Coach: ''The Non-Resident Trap''—warning on equity requirements. 4. Business Logic: RG-01: TIER_3 for cross-border logic. RG-02: Trigger ''Amenity Bias'' logic based on ecosystem.
+
+Functional Specification: Consultative State-Machine. TIER_1: Lookup public price-per-sqm. TIER_2: Build a ''Weighted Ecosystem Engine'' applying coefficients (e.g., Ski Resort = +40% in Winter). TIER_3: Develop ''Lending Logic''. VISUAL REQUIREMENT: Generate a ''Feasibility Radar Chart'' scoring the project on 5 axes: Cashflow, Appreciation, Regulation, Financing, and Tax Efficiency. Output a LaTeX ''Strategic Thesis Report'' with visual ecosystem maps.',
+    'TIER_0: Basic profile setup. TIER_1 (Bronze): Single-project thesis with regional price hints. TIER_2 (Silver): ''Asset Ecosystem'' selector (Urban, Ski, Coastal, Rural) with automated price adjustments. TIER_3 (Gold): Virtual Investment Banker. Integrates non-resident banking constraints (e.g., 60% LTV) and generates a ''Strategic Investment Thesis'' PDF.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -33,32 +26,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_01',
-        'FIN_00',
-        'DIM_FINANCE',
-        'PH_1_INVEST',
-        'GLOBAL',
-        'ROI Simulator',
-        'Real-time Yield & Cashflow Engine',
-        'A high-precision engine calculating net cash flow with real-time adjustments.',
-        '1. Pedagogical Objective: Beginners confuse revenue with profit. This tool focuses on net monthly liquidity. 2. Behavior Matrix: TIER_0 (Beginner): 3-field manual simulator. TIER_1 (Bronze): Full expense itemization (fixed charges). TIER_2 (Silver): Sensitivity Analysis (Optimistic/Pessimistic scenarios) and 5-year projection. TIER_3 (Gold): Real-time Ingestion via public bank APIs and national rental indices. 3. User Journey & UI: Input: Price, Rent, Loan. Logic: Net Cash-flow = Rent - (Loan + Charges + Reserves). Output: ''Traffic Light'' visual. Coach: 10% maintenance provision alert. 4. Business Logic: RG-01: TIER_1 required to save simulations. RG-02: TIER_2 required for ''Scenario Comparison'' view. RG-03: TIER_3 auto-populates vacancy rates based on public regional stats.',
-        'TIER_0 (Beginner): 3-field manual simulator. TIER_1 (Bronze): Full expense itemization (fixed charges). TIER_2 (Silver): Sensitivity Analysis (Optimistic/Pessimistic scenarios) and 5-year projection. TIER_3 (Gold): Real-time Ingestion via public bank APIs and national rental indices.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_01',
+    'FIN_00_CONSULT',
+    'DIM_FINANCE',
+    'PH_1_INVEST',
+    'GLOBAL',
+    'ROI & Cashflow Architect',
+    'Professional financial modeling and reporting engine',
+    'A high-precision engine translating the Thesis into a detailed financial roadmap. TIER 3 generates ''Investor-Grade'' 10-year P&L reports and debt coverage analysis.',
+    '1. Pedagogical Objective: Cash flow is the business''s heartbeat. Experts see monthly struggle; beginners see yearly totals. This tool teaches ''Seasonal Liquidity'' and the importance of the Debt Coverage Ratio (DCR). 2. Behavior Matrix: TIER_0: Annual totals. TIER_1 (Bronze): Monthly cashflow grid for one unit. TIER_2 (Silver): Portfolio-wide Seasonality Modeling (e.g., High Winter for Ski). TIER_3 (Gold): Professional Analysis. Full 10-year projection including Exit IRR and bank-ready PDF reports. 3. User Journey & UI: Input: Expenses + Loan terms. Logic: Monthly cashflow with seasonal weights. Output: Dynamic ''Cashflow Waterfall'' and NPV charts. Coach: ''The Seasonal Buffer'' tip. 4. Business Logic: RG-01: TIER_3 for ''Investment Grade Report''. RG-02: Ingest ''Amenity Premium'' from FIN_00_CONSULT.
+
+Functional Specification: Professional P&L Engine. TIER_1: Annual math. TIER_2: Develop ''Seasonality Logic'' with monthly multipliers. TIER_3: Build a ''Bank-Ready PDF Engine''. VISUAL REQUIREMENT: Generate a ''Monthly Cashflow Heatmap'' (Red for negative months, Green for positive) to visually highlight liquidity gaps. Include a ''10-Year Wealth Accumulation'' Area Chart showing Debt Paydown vs. Asset Appreciation.',
+    'TIER_0: Annual totals. TIER_1 (Bronze): Monthly cashflow grid for one unit. TIER_2 (Silver): Portfolio-wide Seasonality Modeling (e.g., High Winter for Ski). TIER_3 (Gold): Professional Analysis. Full 10-year projection including Exit IRR and bank-ready PDF reports.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -67,32 +52,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_02',
-        'FIN_00',
-        'DIM_FINANCE',
-        'PH_1_INVEST',
-        'GLOBAL',
-        'Renovation Budget',
-        'Smart Capex & Furnishing Planner',
-        'A strategic Capex tool to prevent budget overruns.',
-        '1. Pedagogical Objective: Renovation creep kills profit. Teaches ''Dependency Management'' and budgeting. 2. Behavior Matrix: TIER_0 (Beginner): Generic room-by-room PDF. TIER_1 (Bronze): Interactive tracker for a single project. TIER_2 (Silver): Quote Comparison Engine (3 quotes per task) and variance tracking. TIER_3 (Gold): AI Quote Auditor comparing against public labor cost indices. 3. User Journey & UI: Input: Dimensions + Finish level. Logic: Dynamic total + 15% buffer. Output: Spend-per-room chart. Coach: Focus on ''Hero Amenities''. 4. Business Logic: RG-01: TIER_2 required for ''Vendor Management''. RG-02: TIER_3 triggers ''Cost Anomaly'' alerts.',
-        'TIER_0 (Beginner): Generic room-by-room PDF. TIER_1 (Bronze): Interactive tracker for a single project. TIER_2 (Silver): Quote Comparison Engine (3 quotes per task) and variance tracking. TIER_3 (Gold): AI Quote Auditor comparing against public labor cost indices.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'LEG_00',
+    NULL,
+    'DIM_LEGAL',
+    'PH_1_INVEST',
+    'GLOBAL',
+    'Compliance & Banking Sentinel',
+    'Strategic constraint and regulatory monitor',
+    'Monitors zoning, registration laws, and local banking restrictions. TIER 3 tracks municipal decree shifts and non-resident lending appetite.',
+    '1. Pedagogical Objective: Clear the hurdles early. You can''t buy what you can''t fund or register. This teaches the user to identify ''Deal-Killers'' (STR bans or Banking boycotts). 2. Behavior Matrix: TIER_0: Static STR law summary. TIER_1 (Bronze): City-level license check. TIER_2 (Silver): ''Banking Climate'' monitor. TIER_3 (Gold): ''Sentinel'' mode. Aggregates municipal decree changes and flags condo-level STR ban risks. 3. User Journey & UI: Input: City + Neighborhood. Logic: Geo-spatial check. Output: ''Regulatory Risk Gauge''. Coach: ''The Aparthotel Strategy''. 4. Business Logic: RG-01: TIER_2 for Banking insight. RG-02: TIER_3 for real-time gazette scraping.
+
+Functional Specification: Regulatory/Financial Constraint Service. TIER_1: Map portals. TIER_2: Implement ''Banking Appetite'' index. TIER_3: Build ''Gazette Scraper''. VISUAL REQUIREMENT: Display a ''Risk Heatmap'' overlay on a map interface. Color-code neighborhoods from Green (Safe/Unrestricted) to Red (Total Ban/Moratorium). Include a ''Banking Thermometer'' showing lender appetite for non-residents in that specific region.',
+    'TIER_0: Static STR law summary. TIER_1 (Bronze): City-level license check. TIER_2 (Silver): ''Banking Climate'' monitor. TIER_3 (Gold): ''Sentinel'' mode. Aggregates municipal decree changes and flags condo-level STR ban risks.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -101,32 +78,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_03',
-        'FIN_00',
-        'DIM_FINANCE',
-        'PH_1_INVEST',
-        'LOC_PROPERTY',
-        'LMNP Tax Simulator',
-        'French Fiscal Strategy Optimizer',
-        'Specialized French tax simulator (Micro-BIC vs. Réel).',
-        '1. Pedagogical Objective: Tax as a yield booster. Teaches the power of depreciation. 2. Behavior Matrix: TIER_0 (Beginner): Static theory guide. TIER_1 (Bronze): Annual comparison simulator. TIER_2 (Silver): Component-based depreciation (Amortissement par composants) and 5-year tax-loss carryforward. TIER_3 (Gold): 15-year roadmap with ''Regime Switch'' alerts. 3. User Journey & UI: Input: Price, fees, renos. Logic: Component-based depreciation rules. Output: Cumulative tax savings. Coach: ''Ghost Expense'' concept. 4. Business Logic: RG-01: French scope only. RG-02: TIER_2 required for component breakdown. RG-03: TIER_3 predicts the ''Fiscal Pivot'' year.',
-        'TIER_0 (Beginner): Static theory guide. TIER_1 (Bronze): Annual comparison simulator. TIER_2 (Silver): Component-based depreciation (Amortissement par composants) and 5-year tax-loss carryforward. TIER_3 (Gold): 15-year roadmap with ''Regime Switch'' alerts.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'LEG_08',
+    'LEG_00',
+    'DIM_LEGAL',
+    'PH_1_INVEST',
+    'LOC_PROPERTY',
+    'Non-Resident Admin Hub',
+    'Strategic guidance for cross-border administrative IDs',
+    'A high-level administrative consultant for obtaining mandatory foreign IDs. TIER 3 provides end-to-end partner tracking and document preparation.',
+    '1. Pedagogical Objective: Admin friction is the first deal-killer. Teaches the sequence of steps required for a foreigner to operate a business, preventing legal freezes. 2. Behavior Matrix: TIER_0: Document list. TIER_1 (Bronze): Interactive ''Admin Stepper''. TIER_2 (Silver): Multi-ID tracking and pre-filled letter templates. TIER_3 (Gold): Concierge Bridge with automated status polling. 3. User Journey & UI: Input: PII + Passport. Logic: Workflow automation. Output: Visual ''Application Timeline''. Coach: ''The Appointment Trap''. 4. Business Logic: RG-01: Non-residents only. RG-02: TIER_3 for partner polling.
+
+Functional Specification: Jurisdictional Stepper. TIER_1: 5-step milestone UI. TIER_2: PDF Pre-filler. TIER_3: Partner Bridge. VISUAL REQUIREMENT: Create a ''Process Timeline'' visual (like a subway map) showing exactly where the user is in the bureaucracy (e.g., ''Document Prep'' -> ''Notary'' -> ''Tax Office''). Use animated progress bars to reduce anxiety during long wait times.',
+    'TIER_0: Document list. TIER_1 (Bronze): Interactive ''Admin Stepper''. TIER_2 (Silver): Multi-ID tracking and pre-filled letter templates. TIER_3 (Gold): Concierge Bridge with automated status polling.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -135,32 +104,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_04',
-        'FIN_00',
-        'DIM_FINANCE',
-        'PH_1_INVEST',
-        'LOC_HOST',
-        'Section 24 Simulator',
-        'UK Interest Relief Decision Matrix',
-        'UK-specific interest relief analyzer.',
-        '1. Pedagogical Objective: Strategic structural shifts. Teaches the impact of high-rate tax on interest. 2. Behavior Matrix: TIER_0 (Beginner): Section 24 warning card. TIER_1 (Bronze): Basic tax impact calculator. TIER_2 (Silver): Multi-property Section 24 impact across a portfolio. TIER_3 (Gold): Individual vs. Ltd Co Decision Matrix with SDLT/CGT transition simulation. 3. User Journey & UI: Input: Global income, mortgage interest. Logic: Net benefit calculation. Output: Incorporation break-even point. Coach: LAYMAN explanation of HMRC rules. 4. Business Logic: RG-01: UK scope only. RG-02: TIER_3 requires full income profile.',
-        'TIER_0 (Beginner): Section 24 warning card. TIER_1 (Bronze): Basic tax impact calculator. TIER_2 (Silver): Multi-property Section 24 impact across a portfolio. TIER_3 (Gold): Individual vs. Ltd Co Decision Matrix with SDLT/CGT transition simulation.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_00',
+    NULL,
+    'DIM_OPS',
+    'PH_2_DESIGN',
+    'GLOBAL',
+    'Structural Asset Onboarding',
+    'Professional technical and operational property audit',
+    'Captures the ''Anatomy'' of the property to define maintenance and safety. TIER 3 provides a ''Technical Debt'' analysis for aging assets.',
+    '1. Pedagogical Objective: A property is a machine. Most hosts fail because they don''t understand the asset''s technical life-cycle. This teaches the host to audit ''invisible'' infrastructure. 2. Behavior Matrix: TIER_0: Basic counts. TIER_1 (Bronze): Technical Inventory (brands, serials). TIER_2 (Silver): Operational Health Audit with preventative schedules. TIER_3 (Gold): Technical Debt Sentinel. Calculates ''Deferred Maintenance'' cost. 3. User Journey & UI: Input: Technical walkthrough. Logic: Maintenance interval calculation. Output: ''System Health Dials''. Coach: ''The Boiler Rule''. 4. Business Logic: RG-01: TIER_1 for specs. RG-02: Mandatory ''Shut-off Valve'' photo.
+
+Functional Specification: Asset Anatomy structure. TIER_1: Hierarchical inventory. TIER_2: Predictive Failure algorithm. TIER_3: CapEx Forecaster. VISUAL REQUIREMENT: Generate a ''Technical Health Dashboard'' with circular dials for each major system (HVAC, Electrical, Plumbing). Green = Healthy, Red = End of Life. Include a ''CapEx Projection Bar Chart'' showing expected replacement costs over the next 5 years.',
+    'TIER_0: Basic counts. TIER_1 (Bronze): Technical Inventory (brands, serials). TIER_2 (Silver): Operational Health Audit with preventative schedules. TIER_3 (Gold): Technical Debt Sentinel. Calculates ''Deferred Maintenance'' cost.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -169,32 +130,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_09',
-        'FIN_00',
-        'DIM_FINANCE',
-        'PH_1_INVEST',
-        'LOC_PROPERTY',
-        'Non-Resident Tax Sim',
-        'Cross-Border Fiscal Compliance Agent',
-        'Calculates tax for international owners.',
-        '1. Pedagogical Objective: Global mindset, local compliance. Teaches ''Double Taxation'' protection. 2. Behavior Matrix: TIER_0 (Beginner): Directory of foreign tax rates. TIER_1 (Bronze): Basic liability estimator for one country. TIER_2 (Silver): Multi-country tax summary and Treaty eligibility check. TIER_3 (Gold): Automated form generator (e.g., ES Modelo 210) from financial data. 3. User Journey & UI: Input: Residency, Property location, Income. Logic: Apply Bilateral Treaty rules. Output: Quarterly tax due. Coach: ''Withholding Tax'' explanation. 4. Business Logic: RG-01: Check Treaty DB. RG-02: TIER_3 for form generation.',
-        'TIER_0 (Beginner): Directory of foreign tax rates. TIER_1 (Bronze): Basic liability estimator for one country. TIER_2 (Silver): Multi-country tax summary and Treaty eligibility check. TIER_3 (Gold): Automated form generator (e.g., ES Modelo 210) from financial data.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'EXP_01',
+    NULL,
+    'DIM_EXP',
+    'PH_2_DESIGN',
+    'GLOBAL',
+    'Amenity & Yield Biasing',
+    'Strategic asset procurement and yield uplift planner',
+    'Links amenities to rental premiums. TIER 3 provides ROI scores for amenities based on regional market data.',
+    '1. Pedagogical Objective: Strategic spending. Every Euro spent should increase Price or Occupancy. Teaches ''Value-Added Renovation''. 2. Behavior Matrix: TIER_0: Checklist. TIER_1 (Bronze): Cost tracker. TIER_2 (Silver): ''Yield Multiplier'' estimator (e.g., Pool impact). TIER_3 (Gold): Live procurement engine fetching public prices and mapping ''ADR Uplift'' to FIN_01. 3. User Journey & UI: Input: Hero Amenities. Logic: Cost vs. Revenue premium. Output: ''Amenity ROI'' Bar Charts. Coach: ''The Pool Premium''. 4. Business Logic: RG-01: TIER_3 for ROI logic. RG-02: Auto-update FIN_01 ADR.
+
+Functional Specification: Amenity-Yield Correlation. TIER_1: CRUD items. TIER_2: Revenue Multipliers. TIER_3: Public Price Scraper. VISUAL REQUIREMENT: Display ''ROI Bar Charts'' for each selected amenity. Show ''Cost to Install'' (Red bar) vs. ''1-Year Revenue Uplift'' (Green bar) side-by-side to visualize the payback period instantly.',
+    'TIER_0: Checklist. TIER_1 (Bronze): Cost tracker. TIER_2 (Silver): ''Yield Multiplier'' estimator (e.g., Pool impact). TIER_3 (Gold): Live procurement engine fetching public prices and mapping ''ADR Uplift'' to FIN_01.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -203,32 +156,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'LEG_00',
-        NULL,
-        'DIM_LEGAL',
-        'PH_1_INVEST',
-        'GLOBAL',
-        'Compliance Checker',
-        'Zoning & Regulatory Sentinel',
-        'Compliance engine verifying property legality.',
-        '1. Pedagogical Objective: Proactive safety. Teaches zoning laws. 2. Behavior Matrix: TIER_0 (Beginner): Generic law database. TIER_1 (Bronze): City-level compliance audit. TIER_2 (Silver): Address-specific zoning check and License application tracker. TIER_3 (Gold): ''Sentinel'' mode with automated public gazette monitoring and change alerts. 3. User Journey & UI: Input: Address. Logic: Geo-spatial check. Output: Legality Score. Coach: Moratoriums tooltip. 4. Business Logic: RG-01: TIER_3 for push alerts. RG-02: Zone restriction detection.',
-        'TIER_0 (Beginner): Generic law database. TIER_1 (Bronze): City-level compliance audit. TIER_2 (Silver): Address-specific zoning check and License application tracker. TIER_3 (Gold): ''Sentinel'' mode with automated public gazette monitoring and change alerts.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_02',
+    'FIN_00',
+    'DIM_FINANCE',
+    'PH_1_INVEST',
+    'GLOBAL',
+    'Renovation Budget',
+    'Smart Capex Planner',
+    'A strategic Capex tool to prevent budget overruns. TIER 3 uses public indices to detect quote anomalies.',
+    '1. Pedagogical Objective: Renovation creep kills profit. Teaches ''Dependency Management'' and budgeting. 2. Behavior Matrix: TIER_0: PDF list. TIER_1 (Bronze): Interactive tracker. TIER_2 (Silver): ''Vendor Matrix'' (3 quotes/item). TIER_3 (Gold): AI Quote Auditor comparing against public labor indices. 3. User Journey & UI: Input: Finish level. Logic: Dynamic total + buffer. Output: ''Spend Breakdown'' Donut Chart. Coach: ''Hero Amenities''. 4. Business Logic: RG-01: TIER_2 for multi-quote. RG-02: TIER_3 triggers alerts.
+
+Functional Specification: Budget manager. TIER_1: Task CRUD. TIER_2: Variance Dashboard. TIER_3: Anomaly Detection. VISUAL REQUIREMENT: Create a ''Budget vs. Actual'' Bullet Chart for every room. Use a large ''Donut Chart'' to show spend distribution (e.g., 40% Kitchen, 20% Bath, 10% Decor). Highlight ''Over-Budget'' segments in bright red.',
+    'TIER_0: PDF list. TIER_1 (Bronze): Interactive tracker. TIER_2 (Silver): ''Vendor Matrix'' (3 quotes/item). TIER_3 (Gold): AI Quote Auditor comparing against public labor indices.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -237,32 +182,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'LEG_01',
-        'LEG_00',
-        'DIM_LEGAL',
-        'PH_1_INVEST',
-        'GLOBAL',
-        'Regulatory Checklist',
-        'Adaptive Compliance Workflow',
-        'Interactive compliance management.',
-        '1. Pedagogical Objective: Administrative discipline. Teaches professional operation. 2. Behavior Matrix: TIER_0 (Beginner): PDF Checklist. TIER_1 (Bronze): Single-unit interactive tracker. TIER_2 (Silver): Portfolio-wide compliance dashboard with document expiry tracking. TIER_3 (Gold): One-Click Audit Export (ZIP) and automated renewal workflows. 3. User Journey & UI: Input: Documents. Logic: Expiry validation. Output: Audit-Ready badge. Coach: Public Liability tip. 4. Business Logic: RG-01: Lock Launch phase if items missing. RG-02: TIER_2 for expiry alerts.',
-        'TIER_0 (Beginner): PDF Checklist. TIER_1 (Bronze): Single-unit interactive tracker. TIER_2 (Silver): Portfolio-wide compliance dashboard with document expiry tracking. TIER_3 (Gold): One-Click Audit Export (ZIP) and automated renewal workflows.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'EXP_02',
+    'EXP_01',
+    'DIM_EXP',
+    'PH_2_DESIGN',
+    'GLOBAL',
+    'AI Vision Asset Register',
+    'Computer-Vision driven asset and damage protection coach',
+    'Inventory system using AI to document assets. TIER 3 uses 360° Computer Vision to value items and detect missing essentials.',
+    '1. Pedagogical Objective: Evidence-based hospitality. You cannot claim what you haven''t proved. Teaches ''Professional Standards of Evidence''. 2. Behavior Matrix: TIER_1 (Bronze): Mobile inventory. TIER_2 (Silver): Serial logging and warranty alerts. TIER_3 (Gold): AI Vision Agent identifying items from 360° photos. 3. User Journey & UI: Input: 360° photo. Logic: Image label detection. Output: Visual Asset Gallery. Coach: ''The Wear & Tear Rule''. 4. Business Logic: RG-01: Link to EXP_01. RG-02: TIER_3 for AI.
+
+Functional Specification: Asset tracking (YOLOv8). TIER_1: Manual tagging. TIER_2: Warranty Monitor. TIER_3: AI Vision Agent. VISUAL REQUIREMENT: Display a ''Visual Inventory Grid''—a gallery of detected items with price tags overlaid. Use a ''Value TreeMap'' to show which rooms hold the most expensive assets (e.g., Living Room = largest box due to TV/Sofa).',
+    'TIER_1 (Bronze): Mobile inventory. TIER_2 (Silver): Serial logging and warranty alerts. TIER_3 (Gold): AI Vision Agent identifying items from 360° photos.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -271,32 +208,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'LEG_02',
-        'LEG_00',
-        'DIM_LEGAL',
-        'PH_1_INVEST',
-        'LOC_PROPERTY',
-        'Zweckentfremdungsverbot',
-        'DE Anti-Misuse Ban Analyzer',
-        'Specific analyzer for German ''Misuse Ban'' laws.',
-        '1. Pedagogical Objective: Navigating bureaucracy. Teaches ''Primary Residence'' exceptions. 2. Behavior Matrix: TIER_0 (Beginner): German city warning text. TIER_1 (Bronze): Interactive zone map (Berlin/Munich). TIER_2 (Silver): Permit probability score and local ''Registration Number'' tracker. TIER_3 (Gold): Legal Drafting Assistant (Bescheid style) using open-source LLMs. 3. User Journey & UI: Input: Address + Intent. Logic: GIS mapping. Output: Permit probability. Coach: ''Primary Residence'' exception. 4. Business Logic: RG-01: DE scope only. RG-02: TIER_3 for legal drafts.',
-        'TIER_0 (Beginner): German city warning text. TIER_1 (Bronze): Interactive zone map (Berlin/Munich). TIER_2 (Silver): Permit probability score and local ''Registration Number'' tracker. TIER_3 (Gold): Legal Drafting Assistant (Bescheid style) using open-source LLMs.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_01',
+    NULL,
+    'DIM_OPS',
+    'PH_2_DESIGN',
+    'GLOBAL',
+    'Operations Critical Path Engine',
+    'Self-healing construction and setup timeline coach',
+    'Professional Gantt engine for property readiness. TIER 3 automatically re-calculates dependencies and shifts logistics.',
+    '1. Pedagogical Objective: Launching is a sequence. Teaches ''Dependency Management'' and ''Opportunity Cost''. 2. Behavior Matrix: TIER_1 (Bronze): Task list. TIER_2 (Silver): Portfolio timeline. TIER_3 (Gold): Self-healing Gantt Engine. 3. User Journey & UI: Input: Tasks. Logic: Critical Path Method (CPM). Output: Interactive Gantt with ''Risk Zones''. Coach: ''The Slack Factor''. 4. Business Logic: RG-01: Auto-reschedule. RG-02: TIER_3 for Gantt logic.
+
+Functional Specification: Timeline engine. TIER_1: CRUD. TIER_2: Conflict Detection. TIER_3: CPM Engine. VISUAL REQUIREMENT: Render a standard ''Gantt Chart'' but highlight the ''Critical Path'' in bold red lines. Visually shade the ''Slip Impact'' area—showing how many days the launch is delayed if the current task slips.',
+    'TIER_1 (Bronze): Task list. TIER_2 (Silver): Portfolio timeline. TIER_3 (Gold): Self-healing Gantt Engine.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -305,32 +234,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'LEG_08',
-        'LEG_00',
-        'DIM_LEGAL',
-        'PH_1_INVEST',
-        'LOC_PROPERTY',
-        'Foreign ID Assistant',
-        'International Admin Onboarding Agent',
-        'Step-by-step guide for non-residents (NIE/Siret).',
-        '1. Pedagogical Objective: Breaking the entry barrier. Teaches administrative sequences. 2. Behavior Matrix: TIER_0 (Beginner): Required docs list. TIER_1 (Bronze): Interactive ''Stepper'' for one ID type. TIER_2 (Silver): Multi-ID tracking and pre-filled letter templates for appointment requests. TIER_3 (Gold): Concierge Bridge with automated status polling for partner files. 3. User Journey & UI: Input: Personal PII. Logic: Country delta workflow. Output: Application tracker. Coach: ''What is a NIE?''. 4. Business Logic: RG-01: Non-residents only. RG-02: TIER_3 for status polling.',
-        'TIER_0 (Beginner): Required docs list. TIER_1 (Bronze): Interactive ''Stepper'' for one ID type. TIER_2 (Silver): Multi-ID tracking and pre-filled letter templates for appointment requests. TIER_3 (Gold): Concierge Bridge with automated status polling for partner files.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'MKT_04',
+    NULL,
+    'DIM_MKT',
+    'PH_3_LAUNCH',
+    'GLOBAL',
+    'Strategic Guest Avatar & Channel Mapping',
+    'Consultative persona-driven marketing and distribution strategy',
+    'Engine that defines the ''Guest Avatar'' to dictate marketing tone. TIER 3 uses local demand data to suggest the best persona.',
+    '1. Pedagogical Objective: Marketing is not ''one size fits all''. Teaches users to pick a ''Guest Avatar'' and align pillows, pricing, and OTAs. 2. Behavior Matrix: TIER_0: Guest types. TIER_1 (Bronze): ''Avatar Builder''. TIER_2 (Silver): ''Amenity Alignment''. TIER_3 (Gold): ''Channel Strategy Architect''. 3. User Journey & UI: Input: ''Who are you attracting?''. Logic: Correlation matrix. Output: ''Persona Radar Chart''. Coach: ''The Niche Riches''. 4. Business Logic: RG-01: TIER_2 for ''Amenity Bias''. RG-02: Link to MKT_02.
+
+Functional Specification: Hospitality Strategy Logic. TIER_1: Persona selection. TIER_2: Amenity Scorer. TIER_3: Channel Affinity. VISUAL REQUIREMENT: Generate a ''Persona Fit Radar Chart'' comparing the property''s current features against the ideal needs of the selected avatar (e.g., ''Work Setup'' axis is low for ''Families'' but high for ''Nomads''). Use a ''Venn Diagram'' to show channel overlap.',
+    'TIER_0: Guest types. TIER_1 (Bronze): ''Avatar Builder''. TIER_2 (Silver): ''Amenity Alignment''. TIER_3 (Gold): ''Channel Strategy Architect''.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -339,32 +260,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'EXP_01',
-        NULL,
-        'DIM_EXP',
-        'PH_2_DESIGN',
-        'GLOBAL',
-        'Essentials List',
-        'Dynamic Procurement Optimizer',
-        'Curated procurement list for high-conversion.',
-        '1. Pedagogical Objective: Invest in high-impact amenities. Teaches ''ADR Impact'' of items. 2. Behavior Matrix: TIER_0 (Beginner): Static PDF list. TIER_1 (Bronze): Interactive checklist with basic budget tracking. TIER_2 (Silver): Portfolio-wide inventory standards and room templates. TIER_3 (Gold): Live procurement engine with public price scraping and ROI impact scoring. 3. User Journey & UI: Input: Size + Level. Logic: Price-to-Value score. Output: Shopping cart with links. Coach: ''Coffee Rule''. 4. Business Logic: RG-01: Sync to FIN_02. RG-02: TIER_3 for price scraping.',
-        'TIER_0 (Beginner): Static PDF list. TIER_1 (Bronze): Interactive checklist with basic budget tracking. TIER_2 (Silver): Portfolio-wide inventory standards and room templates. TIER_3 (Gold): Live procurement engine with public price scraping and ROI impact scoring.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'MKT_00',
+    NULL,
+    'DIM_MKT',
+    'PH_3_LAUNCH',
+    'GLOBAL',
+    'Visual Psychology Auditor',
+    'AI-driven conversion and competitive intelligence auditor',
+    'Conversion auditor benchmarking listings. TIER 3 uses competitive intelligence to highlight ''Amenity Gaps''.',
+    '1. Pedagogical Objective: Perception drives the rate. Teaches ''Visual Psychology''. 2. Behavior Matrix: TIER_1 (Bronze): Manual audit. TIER_2 (Silver): ''Amenity Gap'' analysis. TIER_3 (Gold): AI Auditor benchmarking against top 10% properties. 3. User Journey & UI: Input: Listing URL. Logic: Benchmarking. Output: ''Conversion Probability Gauge''. Coach: ''The Hero Photo Rule''. 4. Business Logic: RG-01: Score < 60 warning. RG-02: TIER_3 for competitive scraping.
+
+Functional Specification: Conversion auditor. TIER_1: Static rules. TIER_2: Amenity Gap. TIER_3: Market Benchmark. VISUAL REQUIREMENT: Display a large ''Conversion Score Gauge'' (0-100). Below it, show a ''Gap Bar Chart'' comparing the user''s photo count and amenity count against the ''Market Leader Average'' (e.g., Your Pool Photos: 0 vs Market: 3).',
+    'TIER_1 (Bronze): Manual audit. TIER_2 (Silver): ''Amenity Gap'' analysis. TIER_3 (Gold): AI Auditor benchmarking against top 10% properties.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -373,32 +286,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'EXP_02',
-        NULL,
-        'DIM_EXP',
-        'PH_2_DESIGN',
-        'GLOBAL',
-        'Inventory Generator',
-        'Computer Vision Inventory Agent',
-        'Digital inventory for insurance and asset tracking.',
-        '1. Pedagogical Objective: Protect your assets. Teaches evidence-based reporting. 2. Behavior Matrix: TIER_0 (Beginner): Manual text table. TIER_1 (Bronze): Mobile-first photo inventory (10 items max). TIER_2 (Silver): Unlimited inventory with serial number logging and warranty alerts. TIER_3 (Gold): AI Vision Agent identifying items from a single 360° photo. 3. User Journey & UI: Input: Photo upload. Logic: Image label detection. Output: Digital Asset Register. Coach: ''Check-in Proof''. 4. Business Logic: RG-01: Detect safety equipment. RG-02: TIER_3 for AI detection.',
-        'TIER_0 (Beginner): Manual text table. TIER_1 (Bronze): Mobile-first photo inventory (10 items max). TIER_2 (Silver): Unlimited inventory with serial number logging and warranty alerts. TIER_3 (Gold): AI Vision Agent identifying items from a single 360° photo.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'MKT_02',
+    'MKT_04',
+    'DIM_MKT',
+    'PH_3_LAUNCH',
+    'GLOBAL',
+    'Avatar-Centric Copywriting Engine',
+    'AI-driven semantic content generator based on guest persona',
+    'Copywriting agent rewriting content for a specific guest avatar. TIER 3 adapts psychological triggers.',
+    '1. Pedagogical Objective: Copy is a sales conversation. Teaches ''Psychological Triggering''. 2. Behavior Matrix: TIER_1 (Bronze): Template generator. TIER_2 (Silver): Persona-based rewrites. TIER_3 (Gold): ''Cultural Localizer'' and auto-translate. 3. User Journey & UI: Input: Persona. Logic: Semantic mapping. Output: Multi-platform copy. Coach: ''The First Paragraph''. 4. Business Logic: RG-01: Link to MKT_04. RG-02: Auto-translate.
+
+Functional Specification: Copywriting Agent (LLM). TIER_1: Keywords. TIER_2: Tone templates. TIER_3: Ingest Guest Avatar. VISUAL REQUIREMENT: While text-based, show a ''Sentiment Analysis Cloud''—visualizing the most prominent emotions/keywords in the generated text (e.g., ''Cozy'', ''Safe'', ''Fast WiFi'') to confirm alignment with the avatar.',
+    'TIER_1 (Bronze): Template generator. TIER_2 (Silver): Persona-based rewrites. TIER_3 (Gold): ''Cultural Localizer'' and auto-translate.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -407,32 +312,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_01',
-        NULL,
-        'DIM_OPS',
-        'PH_2_DESIGN',
-        'GLOBAL',
-        'Construction Schedule',
-        'Critical Path Operations Engine',
-        'A timeline tool for property readiness.',
-        '1. Pedagogical Objective: Operations are a sequence. Teaches ''Dependency Management''. 2. Behavior Matrix: TIER_0 (Beginner): Opening countdown. TIER_1 (Bronze): Single-project task list. TIER_2 (Silver): Portfolio-wide timeline and team assignment. TIER_3 (Gold): Self-healing Gantt Engine with dependency logic and delay alerts. 3. User Journey & UI: Input: Task list + Relationships. Logic: Critical Path Calculation. Output: Interactive Gantt chart. Coach: ''The Slack Factor''. 4. Business Logic: RG-01: Auto-reschedule on delay. RG-02: TIER_3 for Gantt dependency logic.',
-        'TIER_0 (Beginner): Opening countdown. TIER_1 (Bronze): Single-project task list. TIER_2 (Silver): Portfolio-wide timeline and team assignment. TIER_3 (Gold): Self-healing Gantt Engine with dependency logic and delay alerts.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'MKT_01',
+    'MKT_00',
+    'DIM_MKT',
+    'PH_3_LAUNCH',
+    'GLOBAL',
+    'Photo Guide',
+    'AI Image Enhancement & Staging Suite',
+    'Pro-level photography guidance. TIER 3 corrects lighting and geometry using AI.',
+    '1. Pedagogical Objective: Sell the dream. High visuals increase ADR. 2. Behavior Matrix: TIER_0: Framing guides. TIER_1 (Bronze): Camera overlay. TIER_2 (Silver): ''Scenario Staging''. TIER_3 (Gold): AI Enhancement Engine. 3. User Journey & UI: Input: Raw photo. Logic: AI HDR. Output: ''Before/After'' slider. Coach: ''Golden Hour'' tip. 4. Business Logic: RG-01: Resolution check. RG-02: TIER_3 for AI.
+
+Functional Specification: Image processor. TIER_1: Overlays. TIER_2: Shot-List. TIER_3: AI Processing. VISUAL REQUIREMENT: Implement an interactive ''Before/After Slider'' for every enhanced image. Show a ''Quality Score'' badge (e.g., ''Lighting: A'', ''Sharpness: B'') overlaying the image metadata.',
+    'TIER_0: Framing guides. TIER_1 (Bronze): Camera overlay. TIER_2 (Silver): ''Scenario Staging''. TIER_3 (Gold): AI Enhancement Engine.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -441,32 +338,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'MKT_00',
-        NULL,
-        'DIM_MKT',
-        'PH_3_LAUNCH',
-        'GLOBAL',
-        'Listing Optimization',
-        'AI-Driven Conversion Auditor',
-        'Auditor for listing visibility.',
-        '1. Pedagogical Objective: Perception is reality. Teaches CTR optimization. 2. Behavior Matrix: TIER_0 (Beginner): 10 ''Pro-tips''. TIER_1 (Bronze): Manual audit checklist. TIER_2 (Silver): Competitor amenities gap analysis. TIER_3 (Gold): AI Auditor benchmarking against ''Top 10%'' local public listing data. 3. User Journey & UI: Input: Listing URL. Logic: Multi-factor scoring. Output: Performance Score (0-100). Coach: ''Hero Photo'' tooltip. 4. Business Logic: RG-01: Min score < 60 warning. RG-02: TIER_3 for competitor scraping.',
-        'TIER_0 (Beginner): 10 ''Pro-tips''. TIER_1 (Bronze): Manual audit checklist. TIER_2 (Silver): Competitor amenities gap analysis. TIER_3 (Gold): AI Auditor benchmarking against ''Top 10%'' local public listing data.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'MKT_03',
+    NULL,
+    'DIM_MKT',
+    'PH_6_SCALE',
+    'GLOBAL',
+    'Direct Booking Site',
+    'Conversion-Optimized Direct Booking Engine',
+    'Website builder for direct bookings. TIER 3 features a loyalty/referral module.',
+    '1. Pedagogical Objective: Take back control. Teaches ''Direct Traffic'' value. 2. Behavior Matrix: TIER_1 (Bronze): Single page. TIER_2 (Silver): Multi-property site. TIER_3 (Gold): High-Performance Engine with Loyalty. 3. User Journey & UI: Input: Domain. Logic: Availability pull. Output: Hosted site. Coach: ''The Billboard Effect''. 4. Business Logic: RG-01: Stripe required. RG-02: Auto SSL.
+
+Functional Specification: Booking SPA. TIER_1: Static page. TIER_2: Live Inventory. TIER_3: One-Click Checkout. VISUAL REQUIREMENT: Provide a ''Conversion Funnel'' dashboard for the site owner—visualizing ''Visitors'' -> ''Date Selectors'' -> ''Bookings'' as a funnel chart to identify drop-off points.',
+    'TIER_1 (Bronze): Single page. TIER_2 (Silver): Multi-property site. TIER_3 (Gold): High-Performance Engine with Loyalty.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -475,32 +364,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'MKT_01',
-        'MKT_00',
-        'DIM_MKT',
-        'PH_3_LAUNCH',
-        'GLOBAL',
-        'Photo Guide',
-        'AI Image Enhancement & Staging Suite',
-        'Pro-level photography guidance with AI enhancement.',
-        '1. Pedagogical Objective: Sell the dream. High visuals increase ADR. Teaches framing and lighting. 2. Behavior Matrix: TIER_0 (Beginner): Framing guides. TIER_1 (Bronze): Mobile camera overlay (Rule of Thirds). TIER_2 (Silver): ''Seasonality Staging'' advice and basic filter suite. TIER_3 (Gold): AI Enhancement Engine (HDR/Geometry correction) using open-source models. 3. User Journey & UI: Input: Raw photo. Logic: AI HDR + Lens correction. Output: Before/After view. Coach: ''Golden Hour'' tip. 4. Business Logic: RG-01: Resolution check. RG-02: TIER_3 for AI enhancement.',
-        'TIER_0 (Beginner): Framing guides. TIER_1 (Bronze): Mobile camera overlay (Rule of Thirds). TIER_2 (Silver): ''Seasonality Staging'' advice and basic filter suite. TIER_3 (Gold): AI Enhancement Engine (HDR/Geometry correction) using open-source models.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'PRI_01',
+    NULL,
+    'DIM_PRICING',
+    'PH_3_LAUNCH',
+    'GLOBAL',
+    'Yield Setup',
+    'Market-Adaptive Pricing Configurator',
+    'Initial pricing based on cost-plus. TIER 3 uses live neighborhood demand data.',
+    '1. Pedagogical Objective: Pricing as a strategy. Teaches the ''New Listing Boost''. 2. Behavior Matrix: TIER_0: Base calculator. TIER_1 (Bronze): Seasonal grid. TIER_2 (Silver): Portfolio-wide tiers. TIER_3 (Gold): Demand-Adaptive Setup. 3. User Journey & UI: Input: Costs. Logic: Cost-plus + Market delta. Output: ''Price Calendar'' Heatmap. Coach: 15% discount tip. 4. Business Logic: RG-01: Min price guardrail. RG-02: TIER_3 for market indices.
+
+Functional Specification: Pricing configurator. TIER_1: 12-month grid. TIER_2: Global Rules. TIER_3: Neighborhood data. VISUAL REQUIREMENT: Generate a ''Price Calendar Heatmap''—color-coding days from Cool Blue (Low Rate) to Hot Red (Peak Rate). Overlay a ''Market Demand Line'' to show correlation with local trends.',
+    'TIER_0: Base calculator. TIER_1 (Bronze): Seasonal grid. TIER_2 (Silver): Portfolio-wide tiers. TIER_3 (Gold): Demand-Adaptive Setup.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -509,32 +390,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'MKT_02',
-        'MKT_00',
-        'DIM_MKT',
-        'PH_3_LAUNCH',
-        'GLOBAL',
-        'AI Listing Writer',
-        'Semantic SEO Content Generator',
-        'Copywriting engine for high-conversion.',
-        '1. Pedagogical Objective: Copy that converts. Teaches ''Persona-Based Marketing''. 2. Behavior Matrix: TIER_0 (Beginner): Text templates. TIER_1 (Bronze): ''Mad-libs'' style generator. TIER_2 (Silver): Semantic SEO Keyword injection and platform-specific formatting. TIER_3 (Gold): Persona-Based LLM Generator (Luxury/Business/Family) with 10+ languages. 3. User Journey & UI: Input: Key features. Logic: Semantic mapping. Output: platform titles. Coach: ''The Hook'' tip. 4. Business Logic: RG-01: Multi-language TIER_3. RG-02: Mandatory disclosures.',
-        'TIER_0 (Beginner): Text templates. TIER_1 (Bronze): ''Mad-libs'' style generator. TIER_2 (Silver): Semantic SEO Keyword injection and platform-specific formatting. TIER_3 (Gold): Persona-Based LLM Generator (Luxury/Business/Family) with 10+ languages.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'PRI_02',
+    NULL,
+    'DIM_PRICING',
+    'PH_5_ANALYZE',
+    'GLOBAL',
+    'Yield Strategy Optimizer',
+    'AI-driven dynamic pricing and demand elasticity coach',
+    'Algorithm maximizing RevPAR. TIER 3 adjusts rates based on local public events.',
+    '1. Pedagogical Objective: Yield is about elasticity. Teaches the ''Revenue Curve''. 2. Behavior Matrix: TIER_1 (Bronze): Rule-based. TIER_2 (Silver): Event-based. TIER_3 (Gold): AI Dynamic Pricing with 20+ variables. 3. User Journey & UI: Input: Strategy. Logic: Elasticity Modeling. Output: ''Revenue Curve'' Chart. Coach: ''The Empty Night Myth''. 4. Business Logic: RG-01: TIER_3 for real-time. RG-02: Break-even floor.
+
+Functional Specification: Dynamic pricing. TIER_1: Triggers. TIER_2: Holiday API. TIER_3: Elasticity Model. VISUAL REQUIREMENT: Display a ''Price Elasticity Curve''—showing the user the projected trade-off between Price (Y-axis) and Occupancy Probability (X-axis). Highlight the ''Optimal Revenue Point'' on the curve.',
+    'TIER_1 (Bronze): Rule-based. TIER_2 (Silver): Event-based. TIER_3 (Gold): AI Dynamic Pricing with 20+ variables.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -543,32 +416,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'LEG_03',
-        NULL,
-        'DIM_LEGAL',
-        'PH_3_LAUNCH',
-        'LOC_PROPERTY',
-        'Cerfa Generator',
-        'French Administrative Automation Bot',
-        'Automated filler for French municipal declarations.',
-        '1. Pedagogical Objective: Compliance is vital. Teaches ''Residence Principale'' vs ''Secondaire''. 2. Behavior Matrix: TIER_0 (Beginner): Link to portal. TIER_1 (Bronze): Interactive form generating PDF Cerfa. TIER_2 (Silver): Multi-property declaration management and status tracking. TIER_3 (Gold): Digital Admin Proxy with direct portal submission. 3. User Journey & UI: Input: Host + Property data. Logic: Mappings to Cerfa 14004*04. Output: Signed PDF. Coach: Registration number explanation. 4. Business Logic: RG-01: France only. RG-02: TIER_3 for portal submission.',
-        'TIER_0 (Beginner): Link to portal. TIER_1 (Bronze): Interactive form generating PDF Cerfa. TIER_2 (Silver): Multi-property declaration management and status tracking. TIER_3 (Gold): Digital Admin Proxy with direct portal submission.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_02',
+    NULL,
+    'DIM_OPS',
+    'PH_4_OPS',
+    'GLOBAL',
+    'iCal Sync',
+    'Redundant Calendar Sync Engine',
+    'Basic calendar sync. TIER 3 syncs every 5 minutes with conflict alerts.',
+    '1. Pedagogical Objective: Trust is reliability. Teaches distribution foundations. 2. Behavior Matrix: TIER_0: 1-way. TIER_1 (Bronze): 2-way (1h). TIER_2 (Silver): Portfolio Sync (30m). TIER_3 (Gold): High-Frequency (5m). 3. User Journey & UI: Input: iCal URLs. Logic: Merge. Output: ''Unified Calendar'' Grid. Coach: API vs iCal. 4. Business Logic: RG-01: Failure alert. RG-02: TIER_3 high freq.
+
+Functional Specification: Sync service. TIER_1: Cron 60m. TIER_2: Conflict UI. TIER_3: Intelligent Polling. VISUAL REQUIREMENT: A ''Unified Calendar Grid'' is mandatory. Color-code bookings by source (Airbnb=Pink, Booking=Blue). Include a ''Sync Health Pulse'' visual—green dots indicating the last successful sync time for each channel.',
+    'TIER_0: 1-way. TIER_1 (Bronze): 2-way (1h). TIER_2 (Silver): Portfolio Sync (30m). TIER_3 (Gold): High-Frequency (5m).'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -577,32 +442,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'LEG_04',
-        NULL,
-        'DIM_LEGAL',
-        'PH_3_LAUNCH',
-        'LOC_PROPERTY',
-        'VUT License Assistant',
-        'Spanish Licensing Expert System',
-        'Guide for Spanish VUT licenses.',
-        '1. Pedagogical Objective: Due diligence. Teaches Building Statute checks. 2. Behavior Matrix: TIER_0 (Beginner): Regional guide. TIER_1 (Bronze): Interactive requirement checklist. TIER_2 (Silver): Province-specific document manager and fee calculator. TIER_3 (Gold): ''Statute Analyzer'' with AI-based prohibition detection in PDF docs. 3. User Journey & UI: Input: Province + Statutes PDF. Logic: Keyword extraction. Output: Licensability Report. Coach: Moratoriums explanation. 4. Business Logic: RG-01: Spain only. RG-02: TIER_3 for statute analysis.',
-        'TIER_0 (Beginner): Regional guide. TIER_1 (Bronze): Interactive requirement checklist. TIER_2 (Silver): Province-specific document manager and fee calculator. TIER_3 (Gold): ''Statute Analyzer'' with AI-based prohibition detection in PDF docs.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_03',
+    NULL,
+    'DIM_OPS',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Channel Manager',
+    'API-Direct Distribution Engine',
+    'Centralized hub. TIER 3 syncs content and pricing instantly.',
+    '1. Pedagogical Objective: Scale through automation. Teaches ''Single Source of Truth''. 2. Behavior Matrix: TIER_0: iCal. TIER_1 (Bronze): 1 API. TIER_2 (Silver): 3 APIs. TIER_3 (Gold): Unlimited API. 3. User Journey & UI: Input: API Keys. Logic: Push/pull. Output: ''Channel Mix'' Pie Chart. Coach: API benefits. 4. Business Logic: RG-01: TIER_2 for multi. RG-02: Markup logic.
+
+Functional Specification: Distribution engine. TIER_1: OAuth. TIER_2: Markup Rules. TIER_3: Content Sync. VISUAL REQUIREMENT: Show a ''Channel Distribution Pie Chart''—visualizing which platforms are generating the most revenue. Include ''Connection Status Lights'' (Green/Red) for each API link.',
+    'TIER_0: iCal. TIER_1 (Bronze): 1 API. TIER_2 (Silver): 3 APIs. TIER_3 (Gold): Unlimited API.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -611,32 +468,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'LEG_05',
-        NULL,
-        'DIM_LEGAL',
-        'PH_3_LAUNCH',
-        'LOC_PROPERTY',
-        'Impressum Generator',
-        'German Compliance Hosting Service',
-        'Generates and hosts German legal notices.',
-        '1. Pedagogical Objective: Professional identity. Teaches commercial transparency (§5 TMG). 2. Behavior Matrix: TIER_0 (Beginner): Impressum template. TIER_1 (Bronze): Dynamic generator with hosted URL. TIER_2 (Silver): Adaptive Impressum (Multi-host/Company support) and QR Code generator. TIER_3 (Gold): Automated legal update monitoring (EU/TMG updates). 3. User Journey & UI: Input: VAT + Contact data. Logic: Legal text generation. Output: Permalink URL. Coach: Why physical address is required. 4. Business Logic: RG-01: Germany only. RG-02: TIER_3 for legal triggers.',
-        'TIER_0 (Beginner): Impressum template. TIER_1 (Bronze): Dynamic generator with hosted URL. TIER_2 (Silver): Adaptive Impressum (Multi-host/Company support) and QR Code generator. TIER_3 (Gold): Automated legal update monitoring (EU/TMG updates).'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_03_AIRBNB',
+    'OPS_03',
+    'DIM_OPS',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Airbnb Connector',
+    'Official Airbnb API Agent',
+    'Real-time Airbnb connection. TIER 3 enables full automation.',
+    '1. Pedagogical Objective: Channel mastery. Teaches first-response ranking. 2. Behavior Matrix: TIER_1 (Bronze): Availability. TIER_2 (Silver): Messaging. TIER_3 (Gold): Content & Reviews. 3. User Journey & UI: Input: Login. Logic: Content map. Output: Sync status. Coach: Response time. 4. Business Logic: RG-01: Re-auth. RG-02: TIER_2 messaging.
+
+Functional Specification: Airbnb API. TIER_1: Push. TIER_2: Messaging. TIER_3: Reviews. VISUAL REQUIREMENT: Display ''Response Time Trends'' as a line graph to help the host improve their ranking metrics.',
+    'TIER_1 (Bronze): Availability. TIER_2 (Silver): Messaging. TIER_3 (Gold): Content & Reviews.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -645,32 +494,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'PRI_01',
-        NULL,
-        'DIM_PRICING',
-        'PH_3_LAUNCH',
-        'GLOBAL',
-        'Yield Setup',
-        'Market-Adaptive Pricing Configurator',
-        'Initial pricing based on cost-plus and market data.',
-        '1. Pedagogical Objective: Pricing as a strategy. Teaches the ''New Listing Boost''. 2. Behavior Matrix: TIER_0 (Beginner): Base price calculator. TIER_1 (Bronze): Seasonal price grid. TIER_2 (Silver): Comp-set benchmarking and ''Price-per-Occupancy'' targets. TIER_3 (Gold): Demand-Adaptive Setup with ''Launch Discount'' strategy and live neighborhood indices. 3. User Journey & UI: Input: Costs + Desired profit. Logic: Cost-plus + Market delta. Output: 12-month calendar. Coach: 15% discount for first 3 reviews. 4. Business Logic: RG-01: Min price guardrail. RG-02: TIER_3 for market indices.',
-        'TIER_0 (Beginner): Base price calculator. TIER_1 (Bronze): Seasonal price grid. TIER_2 (Silver): Comp-set benchmarking and ''Price-per-Occupancy'' targets. TIER_3 (Gold): Demand-Adaptive Setup with ''Launch Discount'' strategy and live neighborhood indices.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_03_BOOKING',
+    'OPS_03',
+    'DIM_OPS',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Booking.com Connector',
+    'Booking.com XML Specialist',
+    'Advanced XML connection. TIER 3 automates promotions and VCC.',
+    '1. Pedagogical Objective: Professional rigor. Teaches ''Rate Plans''. 2. Behavior Matrix: TIER_1 (Bronze): Availability. TIER_2 (Silver): Rate Plans. TIER_3 (Gold): Promotions & VCC. 3. User Journey & UI: Input: ID. Logic: Rate map. Output: Dashboard. Coach: Non-refundable tip. 4. Business Logic: RG-01: TIER_3 VCC.
+
+Functional Specification: Booking XML. TIER_1: Base rate. TIER_2: Overrides. TIER_3: Promotions. VISUAL REQUIREMENT: Show a ''Cancellation Rate'' bar chart comparing Flexible vs. Non-Refundable bookings to justify the strategy.',
+    'TIER_1 (Bronze): Availability. TIER_2 (Silver): Rate Plans. TIER_3 (Gold): Promotions & VCC.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -679,32 +520,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_02',
-        NULL,
-        'DIM_OPS',
-        'PH_4_OPS',
-        'GLOBAL',
-        'iCal Sync',
-        'Redundant Calendar Sync Engine',
-        'Basic calendar sync to prevent double bookings.',
-        '1. Pedagogical Objective: Trust is built on reliability. Teaches foundations of distribution. 2. Behavior Matrix: TIER_0 (Beginner): 1-way export. TIER_1 (Bronze): 2-way sync (1-hour refresh). TIER_2 (Silver): High-Frequency Sync (15m) and conflict resolution UI. TIER_3 (Gold): Near-real-time Sync (5m) with automated collision-detection and Push alerts. 3. User Journey & UI: Input: iCal URLs. Logic: Chronological merge. Output: Unified calendar. Coach: API vs iCal tip. 4. Business Logic: RG-01: Sync failure alert. RG-02: TIER_3 for high frequency.',
-        'TIER_0 (Beginner): 1-way export. TIER_1 (Bronze): 2-way sync (1-hour refresh). TIER_2 (Silver): High-Frequency Sync (15m) and conflict resolution UI. TIER_3 (Gold): Near-real-time Sync (5m) with automated collision-detection and Push alerts.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_03_VRBO',
+    'OPS_03',
+    'DIM_OPS',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Vrbo Connector',
+    'Vrbo Multi-Unit Distribution Agent',
+    'Direct connection for family bookings. TIER 3 optimizes for family filters.',
+    '1. Pedagogical Objective: Niche targeting. Teaches content adaptation. 2. Behavior Matrix: TIER_1 (Bronze): Basic. TIER_2 (Silver): Family optimization. TIER_3 (Gold): Content sync. 3. User Journey & UI: Input: Account. Logic: Content opt. Output: Health check. Coach: Kitchen photos. 4. Business Logic: RG-01: Age limits.
+
+Functional Specification: Vrbo API. TIER_1: Push. TIER_2: Family Mapper. TIER_3: Content Bridge. VISUAL REQUIREMENT: A ''Family Appeal Scorecard''—visually checking off Vrbo-specific amenities (Crib, Garden) with a score out of 100.',
+    'TIER_1 (Bronze): Basic. TIER_2 (Silver): Family optimization. TIER_3 (Gold): Content sync.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -713,32 +546,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_03',
-        NULL,
-        'DIM_OPS',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Channel Manager',
-        'API-Direct Distribution Engine',
-        'Centralized hub for property distribution.',
-        '1. Pedagogical Objective: Scale through automation. Teaches ''Single Source of Truth''. 2. Behavior Matrix: TIER_0 (Beginner): iCal Basic. TIER_1 (Bronze): API Connection for 1 platform. TIER_2 (Silver): API Connection for 3 platforms + Basic content/photo sync. TIER_3 (Gold): Unlimited API Distribution with advanced pricing rules and Instant Sync. 3. User Journey & UI: Input: API Keys. Logic: Direct API push/pull. Output: Sync Status Dashboard. Coach: Why API > iCal. 4. Business Logic: RG-01: TIER_2 for multi-channel. RG-02: ''Global Markup'' logic.',
-        'TIER_0 (Beginner): iCal Basic. TIER_1 (Bronze): API Connection for 1 platform. TIER_2 (Silver): API Connection for 3 platforms + Basic content/photo sync. TIER_3 (Gold): Unlimited API Distribution with advanced pricing rules and Instant Sync.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_04',
+    NULL,
+    'DIM_OPS',
+    'PH_4_OPS',
+    'LOC_PROPERTY',
+    'Police Connection',
+    'Automated Law Enforcement Reporter',
+    'Automated guest ID reporting. TIER 3 features mobile OCR scanning.',
+    '1. Pedagogical Objective: Legal peace of mind. Teaches ''Identity Management''. 2. Behavior Matrix: TIER_0: Links. TIER_1 (Bronze): CSV. TIER_2 (Silver): Check-in Portal. TIER_3 (Gold): API Submission. 3. User Journey & UI: Input: ID Scan. Logic: XML format. Output: Receipt. Coach: 24h rule. 4. Business Logic: RG-01: Non-reporting alert. RG-02: TIER_3 scan.
+
+Functional Specification: Compliance reporting. TIER_1: CSV. TIER_2: Guest Portal. TIER_3: API Bridge. VISUAL REQUIREMENT: A ''Compliance Consistency Graph'' (Line Chart)—showing the percentage of guests successfully reported within 24h over the last 6 months.',
+    'TIER_0: Links. TIER_1 (Bronze): CSV. TIER_2 (Silver): Check-in Portal. TIER_3 (Gold): API Submission.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -747,32 +572,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_03_AIRBNB',
-        'OPS_03',
-        'DIM_OPS',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Airbnb Connector',
-        'Official Airbnb API Agent',
-        'Real-time direct connection with Airbnb.',
-        '1. Pedagogical Objective: Channel-specific mastery. Teaches first-response ranking. 2. Behavior Matrix: TIER_1 (Bronze): Availability sync. TIER_2 (Silver): Guest Messaging and automated ''Saved Replies''. TIER_3 (Gold): Full Content Parity and AI-automated review response. 3. User Journey & UI: Input: Airbnb login. Logic: Content mapping. Output: Sync status. Coach: Response time importance. 4. Business Logic: RG-01: 90-day re-auth. RG-02: TIER_2 for messaging.',
-        'TIER_1 (Bronze): Availability sync. TIER_2 (Silver): Guest Messaging and automated ''Saved Replies''. TIER_3 (Gold): Full Content Parity and AI-automated review response.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_05',
+    NULL,
+    'DIM_OPS',
+    'PH_4_OPS',
+    'LOC_PROPERTY',
+    '90-Day Counter',
+    'Smart Regulatory Compliance Cap',
+    'Tracking London''s 90-day limit. TIER 3 blocks calendars automatically.',
+    '1. Pedagogical Objective: Respect local limits. Teaches ''Short vs Mid-term''. 2. Behavior Matrix: TIER_0: Manual. TIER_1 (Bronze): Automated counter. TIER_2 (Silver): Forecasting. TIER_3 (Gold): Auto-block. 3. User Journey & UI: Input: Booking data. Logic: Nights calc. Output: ''Capacity Gauge''. Coach: 30+ day tip. 4. Business Logic: RG-01: London only. RG-02: TIER_3 block.
+
+Functional Specification: Night counter. TIER_1: Aggregate. TIER_2: Strategy Alerts. TIER_3: Safety Switch. VISUAL REQUIREMENT: Display a ''Capacity Gauge'' (Donut Chart) showing ''Nights Used'' vs ''Nights Remaining''. Color code segments: Green (0-60), Orange (60-80), Red (80+).',
+    'TIER_0: Manual. TIER_1 (Bronze): Automated counter. TIER_2 (Silver): Forecasting. TIER_3 (Gold): Auto-block.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -781,32 +598,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_03_BOOKING',
-        'OPS_03',
-        'DIM_OPS',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Booking.com Connector',
-        'Booking.com XML Specialist',
-        'Advanced XML connection for professional management.',
-        '1. Pedagogical Objective: Professional rigor. Teaches ''Rate Plans'' and payment security. 2. Behavior Matrix: TIER_1 (Bronze): Availability sync. TIER_2 (Silver): Management of ''Flexible'' vs ''Non-refundable'' rates. TIER_3 (Gold): Automated Promotion management and VCC processing. 3. User Journey & UI: Input: Booking ID. Logic: Rate Plan mapping. Output: Policy dashboard. Coach: Non-refundable rates tip. 4. Business Logic: RG-01: TIER_3 for VCC capture.',
-        'TIER_1 (Bronze): Availability sync. TIER_2 (Silver): Management of ''Flexible'' vs ''Non-refundable'' rates. TIER_3 (Gold): Automated Promotion management and VCC processing.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_08',
+    NULL,
+    'DIM_OPS',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Task Automation',
+    'Event-Driven Operations Engine',
+    'Automation of cleaning. TIER 3 reschedules via Smart Locks.',
+    '1. Pedagogical Objective: Efficiency. Teaches ''Workflow Automation''. 2. Behavior Matrix: TIER_0: Manual. TIER_1 (Bronze): Triggers. TIER_2 (Silver): Contextual rules. TIER_3 (Gold): Smart Lock integration. 3. User Journey & UI: Input: Rules. Logic: Event->Action. Output: ''Operations Calendar''. Coach: Early Checkout. 4. Business Logic: RG-01: Sync OPS_09. RG-02: TIER_3 lock.
+
+Functional Specification: Rules engine. TIER_1: Simple trigger. TIER_2: Conditional. TIER_3: Smart Lock. VISUAL REQUIREMENT: An ''Operations Calendar View'' is essential. Color-code tasks by type (Cleaning=Blue, Maintenance=Orange). Show ''Conflict Alerts'' as visual warning icons on the calendar grid.',
+    'TIER_0: Manual. TIER_1 (Bronze): Triggers. TIER_2 (Silver): Contextual rules. TIER_3 (Gold): Smart Lock integration.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -815,32 +624,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_03_VRBO',
-        'OPS_03',
-        'DIM_OPS',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Vrbo Connector',
-        'Vrbo Multi-Unit Distribution Agent',
-        'Direct connection for family-oriented bookings.',
-        '1. Pedagogical Objective: Niche targeting. Teaches content adaptation for families. 2. Behavior Matrix: TIER_1 (Bronze): Basic sync. TIER_2 (Silver): Multi-unit grouping and family-amenity optimization. TIER_3 (Gold): Automated cross-platform content sync and guest vetting logic. 3. User Journey & UI: Input: Vrbo account. Logic: Content optimization. Output: Listing health check. Coach: Kitchen photos tip. 4. Business Logic: RG-01: Age limit sync.',
-        'TIER_1 (Bronze): Basic sync. TIER_2 (Silver): Multi-unit grouping and family-amenity optimization. TIER_3 (Gold): Automated cross-platform content sync and guest vetting logic.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_09',
+    'OPS_08',
+    'DIM_OPS',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Provider App',
+    'Field Operations Terminal',
+    'Mobile interface for staff. TIER 3 requires photo proof.',
+    '1. Pedagogical Objective: Remote quality. Teaches ''Evidence-Based Reporting''. 2. Behavior Matrix: TIER_0: Email. TIER_1 (Bronze): WebApp. TIER_2 (Silver): Checklists. TIER_3 (Gold): Photo Proof. 3. User Journey & UI: Input: Tap. Logic: Geofence. Output: Certificate. Coach: ''After'' photos. 4. Business Logic: RG-01: Min 3 photos. RG-02: TIER_3 low-stock.
+
+Functional Specification: Mobile PWA. TIER_1: Task view. TIER_2: Checklists. TIER_3: Photo Validation. VISUAL REQUIREMENT: A ''Photo Gallery Grid'' for every completed task. Allow the owner to swipe through ''Before'' and ''After'' images easily.',
+    'TIER_0: Email. TIER_1 (Bronze): WebApp. TIER_2 (Silver): Checklists. TIER_3 (Gold): Photo Proof.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -849,32 +650,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_04',
-        NULL,
-        'DIM_OPS',
-        'PH_4_OPS',
-        'LOC_PROPERTY',
-        'Police Connection',
-        'Automated Law Enforcement Reporter',
-        'Automated reporting of guest IDs (Spain/Italy/Portugal).',
-        '1. Pedagogical Objective: Legal peace of mind. Teaches ''Identity Management''. 2. Behavior Matrix: TIER_0 (Beginner): Police portal links. TIER_1 (Bronze): Manual CSV Export. TIER_2 (Silver): Automated ''Due Soon'' reminders and in-app ID collection portal. TIER_3 (Gold): Automated API Submission with mobile OCR scanning. 3. User Journey & UI: Input: Guest ID scan. Logic: XML formatting. Output: Submission receipt. Coach: 24-hour rule explanation. 4. Business Logic: RG-01: Non-reporting alert. RG-02: TIER_3 for mobile scan.',
-        'TIER_0 (Beginner): Police portal links. TIER_1 (Bronze): Manual CSV Export. TIER_2 (Silver): Automated ''Due Soon'' reminders and in-app ID collection portal. TIER_3 (Gold): Automated API Submission with mobile OCR scanning.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_10',
+    'OPS_08',
+    'DIM_OPS',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Ticketing System',
+    'Property Maintenance & Incident Tracker',
+    'Tracking maintenance. TIER 3 generates claim PDFs.',
+    '1. Pedagogical Objective: Close the loop. Teaches ''Asset Maintenance''. 2. Behavior Matrix: TIER_1 (Bronze): List. TIER_2 (Silver): Assigned tickets. TIER_3 (Gold): Claim Bridge. 3. User Journey & UI: Input: Report. Logic: Priority. Output: ''Ticket Funnel''. Coach: Wear vs Damage. 4. Business Logic: RG-01: Link photos. RG-02: TIER_3 claim.
+
+Functional Specification: Issue tracker. TIER_1: CRUD. TIER_2: Asset Linking. TIER_3: Resolution Agent. VISUAL REQUIREMENT: Display a ''Ticket Status Funnel'' (Open -> Assigned -> Resolved). Include a ''Maintenance Cost Bar Chart'' showing spend per month.',
+    'TIER_1 (Bronze): List. TIER_2 (Silver): Assigned tickets. TIER_3 (Gold): Claim Bridge.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -883,32 +676,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_05',
-        NULL,
-        'DIM_OPS',
-        'PH_4_OPS',
-        'LOC_PROPERTY',
-        '90-Day Counter',
-        'Smart Regulatory Compliance Cap',
-        'Automated tracking of London''s 90-day limit.',
-        '1. Pedagogical Objective: Respect local limits. Teaches ''Short vs Mid-term'' balance. 2. Behavior Matrix: TIER_0 (Beginner): Manual night counter. TIER_1 (Bronze): Automated counter from connected calendars. TIER_2 (Silver): ''Remaining Capacity'' forecasting and ''Switch to 30+'' strategy alerts. TIER_3 (Gold): Smart Cap with automated multi-channel calendar blocking. 3. User Journey & UI: Input: Booking data. Logic: Nights calculation. Output: Progress bar. Coach: 30+ day strategy tip. 4. Business Logic: RG-01: London scope only. RG-02: TIER_3 for auto-blocking.',
-        'TIER_0 (Beginner): Manual night counter. TIER_1 (Bronze): Automated counter from connected calendars. TIER_2 (Silver): ''Remaining Capacity'' forecasting and ''Switch to 30+'' strategy alerts. TIER_3 (Gold): Smart Cap with automated multi-channel calendar blocking.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_08',
+    NULL,
+    'DIM_FINANCE',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Concierge Payout Engine',
+    'Automated revenue reconciliation and investor transparency coach',
+    'Automated reconciliation. TIER 3 automates payouts.',
+    '1. Pedagogical Objective: Financial integrity. Teaches ''Net-to-Owner''. 2. Behavior Matrix: TIER_1 (Bronze): Calculator. TIER_2 (Silver): Monthly recon. TIER_3 (Gold): Stripe Payouts. 3. User Journey & UI: Input: %. Logic: Net calc. Output: ''Revenue Split'' Chart. Coach: Transparency premium. 4. Business Logic: RG-01: TIER_2 multi-owner. RG-02: TIER_3 auto-pay.
+
+Functional Specification: Reconciliation engine. TIER_1: Calc. TIER_2: Deductions. TIER_3: Stripe Connect. VISUAL REQUIREMENT: A ''Revenue Split Stacked Bar Chart''. Show ''Gross Revenue'' as the total bar, broken down into segments: ''Platform Fee'', ''Management Commission'', ''Cleaning Costs'', and ''Net Owner Payout''.',
+    'TIER_1 (Bronze): Calculator. TIER_2 (Silver): Monthly recon. TIER_3 (Gold): Stripe Payouts.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -917,32 +702,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_08',
-        NULL,
-        'DIM_OPS',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Task Automation',
-        'Event-Driven Operations Engine',
-        'Automation of cleaning and maintenance.',
-        '1. Pedagogical Objective: Efficiency through events. Teaches ''Workflow Automation''. 2. Behavior Matrix: TIER_0 (Beginner): Manual tasks. TIER_1 (Bronze): Basic triggers (e.g., ''Clean after Checkout''). TIER_2 (Silver): Complex logic (e.g., ''If guest < 2 nights, skip full laundry'') and provider assignment. TIER_3 (Gold): Intelligent Engine with Smart Lock integration and dynamic rescheduling. 3. User Journey & UI: Input: Rules. Logic: If $$Event$$ -> Action. Output: Automation log. Coach: Early Checkout tip. 4. Business Logic: RG-01: Sync with OPS_09. RG-02: TIER_3 for lock events.',
-        'TIER_0 (Beginner): Manual tasks. TIER_1 (Bronze): Basic triggers (e.g., ''Clean after Checkout''). TIER_2 (Silver): Complex logic (e.g., ''If guest < 2 nights, skip full laundry'') and provider assignment. TIER_3 (Gold): Intelligent Engine with Smart Lock integration and dynamic rescheduling.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'LEG_07',
+    NULL,
+    'DIM_LEGAL',
+    'PH_4_OPS',
+    'LOC_PROPERTY',
+    'Mandate Generator',
+    'Legal Property Management Contract Suite',
+    'Generates contracts. TIER 3 includes e-signatures.',
+    '1. Pedagogical Objective: Secure delegation. Teaches legal boundaries. 2. Behavior Matrix: TIER_1 (Bronze): Templates. TIER_2 (Silver): Variable generator. TIER_3 (Gold): e-Signature. 3. User Journey & UI: Input: Fees. Logic: Text gen. Output: Digital contract. Coach: Liability. 4. Business Logic: RG-01: Termination clause. RG-02: TIER_3 e-sign.
+
+Functional Specification: Doc generator. TIER_1: PDF. TIER_2: Dynamic clauses. TIER_3: e-Sign API. VISUAL REQUIREMENT: A ''Signature Status Tracker''—visual circles showing who has signed (Owner: Green, Manager: Green) and timestamp.',
+    'TIER_1 (Bronze): Templates. TIER_2 (Silver): Variable generator. TIER_3 (Gold): e-Signature.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -951,32 +728,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_09',
-        'OPS_08',
-        'DIM_OPS',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Provider App',
-        'Field Operations Terminal',
-        'Mobile-optimized interface for field staff.',
-        '1. Pedagogical Objective: Remote quality control. Teaches ''Evidence-Based Reporting''. 2. Behavior Matrix: TIER_0 (Beginner): Email notification. TIER_1 (Bronze): WebApp with basic task list. TIER_2 (Silver): Multi-provider access and detailed ''Room-by-Room'' checklists. TIER_3 (Gold): Field Terminal with mandatory ''Photo Proof'' and instant Inventory alerts. 3. User Journey & UI: Input: Tap to start. Logic: Geofenced check-in. Output: Cleanliness Certificate. Coach: ''After'' photos tip. 4. Business Logic: RG-01: Min 3 photos. RG-02: TIER_3 for low-stock button.',
-        'TIER_0 (Beginner): Email notification. TIER_1 (Bronze): WebApp with basic task list. TIER_2 (Silver): Multi-provider access and detailed ''Room-by-Room'' checklists. TIER_3 (Gold): Field Terminal with mandatory ''Photo Proof'' and instant Inventory alerts.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'EXP_03',
+    NULL,
+    'DIM_EXP',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Web Welcome Book',
+    'Interactive Guest Experience Portal',
+    'Digital welcome book. TIER 3 features Upsell Engine.',
+    '1. Pedagogical Objective: Automate the obvious. Teaches ''Front-loading''. 2. Behavior Matrix: TIER_0: Text. TIER_1 (Bronze): Interactive Guide. TIER_2 (Silver): Global Templates. TIER_3 (Gold): Upsell Store. 3. User Journey & UI: Input: WiFi. Logic: Status-aware. Output: PWA. Coach: First 5 mins. 4. Business Logic: RG-01: QR. RG-02: TIER_3 Stripe.
+
+Functional Specification: Guest PWA. TIER_1: HTML guide. TIER_2: Inheritance. TIER_3: Checkout. VISUAL REQUIREMENT: A ''Guest Interaction Heatmap'' for the host—showing which sections of the guide (e.g., ''WiFi'', ''Pool Rules'') are clicked the most.',
+    'TIER_0: Text. TIER_1 (Bronze): Interactive Guide. TIER_2 (Silver): Global Templates. TIER_3 (Gold): Upsell Store.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -985,32 +754,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_10',
-        'OPS_08',
-        'DIM_OPS',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Ticketing System',
-        'Property Maintenance & Incident Tracker',
-        'Systematic tracking of maintenance issues.',
-        '1. Pedagogical Objective: Close the loop on breakage. Teaches ''Asset Maintenance''. 2. Behavior Matrix: TIER_1 (Bronze): Basic incident list. TIER_2 (Silver): Assigned tickets with priority levels and cost tracking. TIER_3 (Gold): Damage-to-Claim bridge and automated security deposit claim generation. 3. User Journey & UI: Input: Report issue. Logic: Priority assignment. Output: Incident history. Coach: Wear and Tear vs Damage. 4. Business Logic: RG-01: Link photos to OPS_09. RG-02: TIER_3 for claim generation.',
-        'TIER_1 (Bronze): Basic incident list. TIER_2 (Silver): Assigned tickets with priority levels and cost tracking. TIER_3 (Gold): Damage-to-Claim bridge and automated security deposit claim generation.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'EXP_04',
+    NULL,
+    'DIM_EXP',
+    'PH_4_OPS',
+    'GLOBAL',
+    'Contextual Hospitality Agent',
+    'RAG-driven AI guest assistant for technical support',
+    'AI guest assistant. TIER 3 uses RAG on manuals.',
+    '1. Pedagogical Objective: Quality scales. Teaches ''Knowledge Base''. 2. Behavior Matrix: TIER_1 (Bronze): SMS triggers. TIER_2 (Silver): Rule-based FAQ. TIER_3 (Gold): Contextual RAG AI. 3. User Journey & UI: Input: Chat. Logic: Search. Output: Answer. Coach: Speed. 4. Business Logic: RG-01: Escalation. RG-02: Languages.
+
+Functional Specification: Conversational AI. TIER_1: Keywords. TIER_2: Inbox. TIER_3: RAG. VISUAL REQUIREMENT: Display a ''Topic Frequency Word Cloud''—visualizing what guests are asking about most often (e.g., ''Parking'', ''Heating'').',
+    'TIER_1 (Bronze): SMS triggers. TIER_2 (Silver): Rule-based FAQ. TIER_3 (Gold): Contextual RAG AI.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1019,32 +780,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_08',
-        NULL,
-        'DIM_FINANCE',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Commission Splitter',
-        'Concierge Revenue Distribution Engine',
-        'Automated revenue sharing for property managers.',
-        '1. Pedagogical Objective: Financial transparency. Teaches ''Net-to-Owner'' clarity. 2. Behavior Matrix: TIER_1 (Bronze): Manual % calculator per booking. TIER_2 (Silver): Automated monthly reconciliation for up to 3 owners. TIER_3 (Gold): Automated Distribution with Stripe Connect payouts and Whitelabel Reports. 3. User Journey & UI: Input: Commission %. Logic: Gross - Fees - Expenses = Net. Output: Statement of Account. Coach: Expense Proofs tip. 4. Business Logic: RG-01: TIER_2 for multi-owner. RG-02: TIER_3 for auto-payouts.',
-        'TIER_1 (Bronze): Manual % calculator per booking. TIER_2 (Silver): Automated monthly reconciliation for up to 3 owners. TIER_3 (Gold): Automated Distribution with Stripe Connect payouts and Whitelabel Reports.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_05',
+    NULL,
+    'DIM_FINANCE',
+    'PH_5_ANALYZE',
+    'GLOBAL',
+    'Occupancy Stats',
+    'Market-Relative Performance Dashboard',
+    'Occupancy tracking. TIER 3 benchmarks against comp-set.',
+    '1. Pedagogical Objective: Context. Teaches RevPAR. 2. Behavior Matrix: TIER_1 (Bronze): Personal charts. TIER_2 (Silver): YoY comparison. TIER_3 (Gold): Comp-set Benchmark. 3. User Journey & UI: Input: Booking data. Logic: RevPAR calc. Output: ''Market Radar''. Coach: RevPAR Myth. 4. Business Logic: RG-01: Confirmed only. RG-02: TIER_3 comp-set.
+
+Functional Specification: Analytics. TIER_1: Charts. TIER_2: Opportunity Gap. TIER_3: Public Data. VISUAL REQUIREMENT: A ''Market Performance Radar Chart'' comparing the user vs. the market average on 4 axes: Occupancy, ADR, Review Score, and Cancellations.',
+    'TIER_1 (Bronze): Personal charts. TIER_2 (Silver): YoY comparison. TIER_3 (Gold): Comp-set Benchmark.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1053,32 +806,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'LEG_07',
-        NULL,
-        'DIM_LEGAL',
-        'PH_4_OPS',
-        'LOC_PROPERTY',
-        'Mandate Generator',
-        'Legal Property Management Contract Suite',
-        'Generates legally binding management contracts.',
-        '1. Pedagogical Objective: Secure delegation. Teaches legal boundaries. 2. Behavior Matrix: TIER_1 (Bronze): Downloadable templates. TIER_2 (Silver): Variable-based generator for custom fee structures. TIER_3 (Gold): Mandate Generator with e-Signature integration and ''Legal Vault'' storage. 3. User Journey & UI: Input: Fees + Liability. Logic: Variable text generation. Output: Digital contract. Coach: Liability explanation. 4. Business Logic: RG-01: Termination clause mandatory. RG-02: TIER_3 for e-signature.',
-        'TIER_1 (Bronze): Downloadable templates. TIER_2 (Silver): Variable-based generator for custom fee structures. TIER_3 (Gold): Mandate Generator with e-Signature integration and ''Legal Vault'' storage.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_06',
+    NULL,
+    'DIM_FINANCE',
+    'PH_5_ANALYZE',
+    'LOC_PROPERTY',
+    'FEC Export',
+    'FR Standardized Accounting Exporter',
+    'French FEC generator. TIER 3 syncs software.',
+    '1. Pedagogical Objective: Digital Record Keeping. 2. Behavior Matrix: TIER_1 (Bronze): CSV. TIER_2 (Silver): Shadow ledger. TIER_3 (Gold): FEC Sync. 3. User Journey & UI: Input: Receipts. Logic: Double-entry. Output: FEC file. Coach: Mandatory FEC. 4. Business Logic: RG-01: France. RG-02: Zero balance.
+
+Functional Specification: Fiscal log. TIER_1: Flat file. TIER_2: Ledger. TIER_3: FEC. VISUAL REQUIREMENT: A ''Ledger Balance Scale''—visually showing Debit vs. Credit weight to confirm the books are balanced before export.',
+    'TIER_1 (Bronze): CSV. TIER_2 (Silver): Shadow ledger. TIER_3 (Gold): FEC Sync.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1087,32 +832,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'EXP_03',
-        NULL,
-        'DIM_EXP',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Web Welcome Book',
-        'Interactive Guest Experience Portal',
-        'Digital welcome book reducing inquiries.',
-        '1. Pedagogical Objective: Automate the obvious. Teaches ''Front-loading'' information. 2. Behavior Matrix: TIER_0 (Beginner): Text-only rules. TIER_1 (Bronze): Interactive Guide for 1 property. TIER_2 (Silver): Multi-property guides with shared ''Local Tips'' and neighborhood maps. TIER_3 (Gold): Experience Portal with ''Upsell Store'' and AI auto-translation. 3. User Journey & UI: Input: WiFi, Rules, Tips. Logic: Status-aware content. Output: PWA / QR Code. Coach: The first 5 mins tip. 4. Business Logic: RG-01: QR Code generation. RG-02: TIER_3 for Stripe upsells.',
-        'TIER_0 (Beginner): Text-only rules. TIER_1 (Bronze): Interactive Guide for 1 property. TIER_2 (Silver): Multi-property guides with shared ''Local Tips'' and neighborhood maps. TIER_3 (Gold): Experience Portal with ''Upsell Store'' and AI auto-translation.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_07',
+    NULL,
+    'DIM_FINANCE',
+    'PH_5_ANALYZE',
+    'LOC_HOST',
+    'MTD Export',
+    'UK HMRC Compliance Bridge',
+    'UK MTD exporter. TIER 3 direct submission.',
+    '1. Pedagogical Objective: Audit Trail. 2. Behavior Matrix: TIER_1 (Bronze): Excel. TIER_2 (Silver): Tax Tracker. TIER_3 (Gold): HMRC Bridge. 3. User Journey & UI: Input: Ledger. Logic: VAT calc. Output: Receipt. Coach: Digital Links. 4. Business Logic: RG-01: UK. RG-02: TIER_3 API.
+
+Functional Specification: HMRC Bridge. TIER_1: Export. TIER_2: Forecast. TIER_3: Submission. VISUAL REQUIREMENT: A ''Tax Liability Line Chart''—showing the accumulated VAT/Income Tax due over the quarter so the user can save appropriately.',
+    'TIER_1 (Bronze): Excel. TIER_2 (Silver): Tax Tracker. TIER_3 (Gold): HMRC Bridge.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1121,32 +858,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'EXP_04',
-        NULL,
-        'DIM_EXP',
-        'PH_4_OPS',
-        'GLOBAL',
-        'Guest AI Chatbot',
-        'Contextual AI Guest Assistant',
-        '24/7 AI support for guest questions.',
-        '1. Pedagogical Objective: 24/7 responsiveness. Teaches ''Knowledge Base'' management. 2. Behavior Matrix: TIER_1 (Bronze): Automated SMS triggers. TIER_2 (Silver): Rule-based FAQ triggers and ''Human Handover'' UI. TIER_3 (Gold): Contextual AI Assistant using RAG on property-specific PDF manuals and guides. 3. User Journey & UI: Input: Chat. Logic: Search within manuals. Output: Conversational answer. Coach: Speed of Response tip. 4. Business Logic: RG-01: Escalation if confidence < 80%. RG-02: 20+ languages.',
-        'TIER_1 (Bronze): Automated SMS triggers. TIER_2 (Silver): Rule-based FAQ triggers and ''Human Handover'' UI. TIER_3 (Gold): Contextual AI Assistant using RAG on property-specific PDF manuals and guides.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_10',
+    NULL,
+    'DIM_FINANCE',
+    'PH_5_ANALYZE',
+    'LOC_HOST',
+    'Double Tax Report',
+    'Consolidated Cross-Border Tax Summary',
+    'Double tax report. TIER 3 Filing Map.',
+    '1. Pedagogical Objective: Double Tax Treaties. 2. Behavior Matrix: TIER_1 (Bronze): Summary. TIER_2 (Silver): FTC Calc. TIER_3 (Gold): Filing Map. 3. User Journey & UI: Input: Residency. Logic: OECD rules. Output: Filing Guide. Coach: Treaty. 4. Business Logic: RG-01: Treaty check. RG-02: TIER_2 FTC.
+
+Functional Specification: Tax Advisor. TIER_1: Sum. TIER_2: Credit Formula. TIER_3: Filing Guide. VISUAL REQUIREMENT: A ''Tax Flow Sankey Diagram''—visualizing the flow of Gross Income -> Local Tax -> Repatriation -> Home Tax Credit -> Net Income.',
+    'TIER_1 (Bronze): Summary. TIER_2 (Silver): FTC Calc. TIER_3 (Gold): Filing Map.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1155,32 +884,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_05',
-        NULL,
-        'DIM_FINANCE',
-        'PH_5_ANALYZE',
-        'GLOBAL',
-        'Occupancy Stats',
-        'Market-Relative Performance Dashboard',
-        'Basic occupancy and revenue tracking.',
-        '1. Pedagogical Objective: Don''t celebrate in a vacuum. Teaches RevPAR. 2. Behavior Matrix: TIER_1 (Bronze): Personal occupancy charts. TIER_2 (Silver): Comparative year-on-year stats and ''Loss of Opportunity'' analysis. TIER_3 (Gold): Predictive Benchmarking against local Comp-set open data. 3. User Journey & UI: Input: Booking data. Logic: RevPAR = ADR x Occ%. Output: Market comparison graph. Coach: The RevPAR Myth. 4. Business Logic: RG-01: Confirmed bookings only. RG-02: TIER_3 for comp-set.',
-        'TIER_1 (Bronze): Personal occupancy charts. TIER_2 (Silver): Comparative year-on-year stats and ''Loss of Opportunity'' analysis. TIER_3 (Gold): Predictive Benchmarking against local Comp-set open data.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_03',
+    'FIN_00',
+    'DIM_FINANCE',
+    'PH_1_INVEST',
+    'LOC_PROPERTY',
+    'LMNP Tax Simulator',
+    'French Fiscal Strategy Optimizer',
+    'French tax simulator. TIER 3 15-year roadmap.',
+    '1. Pedagogical Objective: Depreciation power. 2. Behavior Matrix: TIER_0: Guide. TIER_1 (Bronze): Comparison. TIER_2 (Silver): Components. TIER_3 (Gold): 15-Year Roadmap. 3. User Journey & UI: Input: Price. Logic: Amortization. Output: ''Tax Free Runway'' Chart. Coach: Ghost Expense. 4. Business Logic: RG-01: France. RG-02: TIER_3 Pivot.
+
+Functional Specification: LMNP Logic. TIER_1: Compare. TIER_2: Components. TIER_3: Pivot Predictor. VISUAL REQUIREMENT: A ''Tax-Free Runway Bar Chart''—showing 15 years of future income. Green bars = Tax Free Income, Red bars = Taxable Income. Mark the ''Pivot Year'' clearly.',
+    'TIER_0: Guide. TIER_1 (Bronze): Comparison. TIER_2 (Silver): Components. TIER_3 (Gold): 15-Year Roadmap.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1189,32 +910,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_06',
-        NULL,
-        'DIM_FINANCE',
-        'PH_5_ANALYZE',
-        'LOC_PROPERTY',
-        'FEC Export',
-        'FR Standardized Accounting Exporter',
-        'French ''Fichier des Écritures Comptables'' (FEC) generator.',
-        '1. Pedagogical Objective: Accounting as a habit. Teaches ''Digital Record Keeping''. 2. Behavior Matrix: TIER_1 (Bronze): Annual CSV export. TIER_2 (Silver): Quarterly shadow ledger and VAT pre-calculation. TIER_3 (Gold): Standardized FEC Exporter with direct accounting software sync. 3. User Journey & UI: Input: Receipts + Income. Logic: Double-entry bridge. Output: .txt FEC file. Coach: Why FEC is mandatory. 4. Business Logic: RG-01: France only. RG-02: Zero balance required.',
-        'TIER_1 (Bronze): Annual CSV export. TIER_2 (Silver): Quarterly shadow ledger and VAT pre-calculation. TIER_3 (Gold): Standardized FEC Exporter with direct accounting software sync.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_04',
+    'FIN_00',
+    'DIM_FINANCE',
+    'PH_1_INVEST',
+    'LOC_HOST',
+    'Section 24 Simulator',
+    'UK Interest Relief Decision Matrix',
+    'UK tax analyzer. TIER 3 Incorporation simulation.',
+    '1. Pedagogical Objective: Structural shifts. 2. Behavior Matrix: TIER_0: Warning. TIER_1 (Bronze): Calc. TIER_2 (Silver): Portfolio agg. TIER_3 (Gold): Incorp Decision. 3. User Journey & UI: Input: Income. Logic: Tax delta. Output: ''Cross-over'' Chart. Coach: HMRC rules. 4. Business Logic: RG-01: UK. RG-02: TIER_3 Income.
+
+Functional Specification: UK Matrix. TIER_1: Relief. TIER_2: Portfolio. TIER_3: Structural Engine. VISUAL REQUIREMENT: A ''Cross-Over Line Chart''—plotting ''Personal Tax Bill'' vs. ''Corporate Tax Bill'' over increasing revenue. Highlight the exact £ point where Incorporation becomes cheaper.',
+    'TIER_0: Warning. TIER_1 (Bronze): Calc. TIER_2 (Silver): Portfolio agg. TIER_3 (Gold): Incorp Decision.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1223,32 +936,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_07',
-        NULL,
-        'DIM_FINANCE',
-        'PH_5_ANALYZE',
-        'LOC_HOST',
-        'MTD Export',
-        'UK HMRC Compliance Bridge',
-        'UK HMRC ''Making Tax Digital'' (MTD) compliant data exporter.',
-        '1. Pedagogical Objective: Compliance through digital links. Teaches ''Audit Trail''. 2. Behavior Matrix: TIER_1 (Bronze): Formatted spreadsheet export. TIER_2 (Silver): Quarterly tax liability tracker and ''Digital Link'' verification. TIER_3 (Gold): MTD Compliance Bridge with direct submission to HMRC API. 3. User Journey & UI: Input: Ledger data. Logic: Quarterly calculation. Output: HMRC receipt. Coach: Copy-pasting risk tip. 4. Business Logic: RG-01: UK only. RG-02: TIER_3 for API submission.',
-        'TIER_1 (Bronze): Formatted spreadsheet export. TIER_2 (Silver): Quarterly tax liability tracker and ''Digital Link'' verification. TIER_3 (Gold): MTD Compliance Bridge with direct submission to HMRC API.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'FIN_09',
+    'FIN_00',
+    'DIM_FINANCE',
+    'PH_1_INVEST',
+    'LOC_PROPERTY',
+    'Non-Resident Tax Sim',
+    'Cross-Border Fiscal Compliance Agent',
+    'Intl tax calc. TIER 3 form gen.',
+    '1. Pedagogical Objective: Double Taxation. 2. Behavior Matrix: TIER_0: Rates. TIER_1 (Bronze): Estimate. TIER_2 (Silver): Summary. TIER_3 (Gold): Form Mapper. 3. User Journey & UI: Input: Res. Logic: Treaty. Output: Summary. Coach: Withholding. 4. Business Logic: RG-01: Treaty DB. RG-02: TIER_3 Forms.
+
+Functional Specification: Fiscal Agent. TIER_1: Local calc. TIER_2: Treaty. TIER_3: Mapper. VISUAL REQUIREMENT: A ''Global Tax Map''—highlighting property countries in color. Hovering shows the specific ''Effective Tax Rate'' for the non-resident user in that country.',
+    'TIER_0: Rates. TIER_1 (Bronze): Estimate. TIER_2 (Silver): Summary. TIER_3 (Gold): Form Mapper.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1257,32 +962,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'FIN_10',
-        NULL,
-        'DIM_FINANCE',
-        'PH_5_ANALYZE',
-        'LOC_HOST',
-        'Double Tax Report',
-        'Consolidated Cross-Border Tax Summary',
-        'Report for declaring foreign income avoiding double taxation.',
-        '1. Pedagogical Objective: Global profit, home protection. Teaches Double Taxation Treaties. 2. Behavior Matrix: TIER_1 (Bronze): Income summary per country. TIER_2 (Silver): Detailed Foreign Tax Credit (FTC) calculation for the home country return. TIER_3 (Gold): Tax Treaty Advisor with ''Filing Map'' using public OECD/Treaty data. 3. User Journey & UI: Input: Residency + Property locations. Logic: Apply OECD rules. Output: Filing Guide. Coach: Treaty explanation. 4. Business Logic: RG-01: Flag if no treaty. RG-02: TIER_2 for FTC calculation.',
-        'TIER_1 (Bronze): Income summary per country. TIER_2 (Silver): Detailed Foreign Tax Credit (FTC) calculation for the home country return. TIER_3 (Gold): Tax Treaty Advisor with ''Filing Map'' using public OECD/Treaty data.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'LEG_03',
+    NULL,
+    'DIM_LEGAL',
+    'PH_3_LAUNCH',
+    'LOC_PROPERTY',
+    'Cerfa Generator',
+    'French Administrative Automation Bot',
+    'French admin bot. TIER 3 portal submission.',
+    '1. Pedagogical Objective: Compliance. 2. Behavior Matrix: TIER_0: Link. TIER_1 (Bronze): PDF. TIER_2 (Silver): Tracking. TIER_3 (Gold): Submission. 3. User Journey & UI: Input: Host data. Logic: Map. Output: Receipt. Coach: Reg Number. 4. Business Logic: RG-01: France. RG-02: TIER_3 portal.
+
+Functional Specification: PDF Map. TIER_1: Coords. TIER_2: Dashboard. TIER_3: Script. VISUAL REQUIREMENT: A ''Registration Status Traffic Light''—Red (Not Started), Orange (Submitted), Green (Approved/Number Issued).',
+    'TIER_0: Link. TIER_1 (Bronze): PDF. TIER_2 (Silver): Tracking. TIER_3 (Gold): Submission.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1291,32 +988,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'PRI_02',
-        NULL,
-        'DIM_PRICING',
-        'PH_5_ANALYZE',
-        'GLOBAL',
-        'RevPAR Optimizer',
-        'AI-Driven Dynamic Pricing Algorithm',
-        'Automated pricing algorithm maximizing total revenue.',
-        '1. Pedagogical Objective: Pricing as a living strategy. Teaches ''Demand Elasticity''. 2. Behavior Matrix: TIER_1 (Bronze): Rule-based pricing (e.g., ''Last minute discount''). TIER_2 (Silver): Event-based pricing (Public holidays/School holidays) and 1x daily sync. TIER_3 (Gold): AI Dynamic Pricing with 20+ public variables (Weather, Events) and 4x daily updates. 3. User Journey & UI: Input: Min/Max Price. Logic: Demand Elasticity Modeling. Output: Price Forecast. Coach: Empty night vs cheap sell. 4. Business Logic: RG-01: Unlimited sync TIER_3. RG-02: Never below ''Min Price''.',
-        'TIER_1 (Bronze): Rule-based pricing (e.g., ''Last minute discount''). TIER_2 (Silver): Event-based pricing (Public holidays/School holidays) and 1x daily sync. TIER_3 (Gold): AI Dynamic Pricing with 20+ public variables (Weather, Events) and 4x daily updates.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'LEG_04',
+    NULL,
+    'DIM_LEGAL',
+    'PH_3_LAUNCH',
+    'LOC_PROPERTY',
+    'VUT License Assistant',
+    'Spanish Licensing Expert System',
+    'Spanish license guide. TIER 3 Statute AI.',
+    '1. Pedagogical Objective: Due diligence. 2. Behavior Matrix: TIER_0: Guide. TIER_1 (Bronze): Checklist. TIER_2 (Silver): Fee Calc. TIER_3 (Gold): Statute AI. 3. User Journey & UI: Input: PDF. Logic: Keyword. Output: Report. Coach: Moratoriums. 4. Business Logic: RG-01: Spain. RG-02: TIER_3 AI.
+
+Functional Specification: Legal Analyzer. TIER_1: Tree. TIER_2: Fee. TIER_3: Scanner. VISUAL REQUIREMENT: A ''Risk Probability Gauge''—showing the likelihood of license rejection based on the analyzed statutes (Green = Low Risk, Red = High Risk).',
+    'TIER_0: Guide. TIER_1 (Bronze): Checklist. TIER_2 (Silver): Fee Calc. TIER_3 (Gold): Statute AI.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1325,32 +1014,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'MKT_03',
-        NULL,
-        'DIM_MKT',
-        'PH_6_SCALE',
-        'GLOBAL',
-        'Direct Booking Site',
-        'Conversion-Optimized Direct Booking Engine',
-        'Commission-free website builder for direct bookings.',
-        '1. Pedagogical Objective: Take back control. Teaches ''Direct Traffic'' value. 2. Behavior Matrix: TIER_1 (Bronze): Single property landing page with inquiry form. TIER_2 (Silver): Multi-property booking site with real-time calendar and ''Returning Guest'' discounts. TIER_3 (Gold): High-Performance Engine with Loyalty module, Referral tracking, and Whitelabel checkout. 3. User Journey & UI: Input: Logo + Domain. Logic: Real-time availability pull. Output: Hosted site. Coach: The Billboard Effect. 4. Business Logic: RG-01: Stripe required. RG-02: Auto SSL.',
-        'TIER_1 (Bronze): Single property landing page with inquiry form. TIER_2 (Silver): Multi-property booking site with real-time calendar and ''Returning Guest'' discounts. TIER_3 (Gold): High-Performance Engine with Loyalty module, Referral tracking, and Whitelabel checkout.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'LEG_05',
+    NULL,
+    'DIM_LEGAL',
+    'PH_3_LAUNCH',
+    'LOC_PROPERTY',
+    'Impressum Generator',
+    'German Compliance Hosting Service',
+    'German Impressum. TIER 3 auto-update.',
+    '1. Pedagogical Objective: Transparency. 2. Behavior Matrix: TIER_0: Template. TIER_1 (Bronze): Host URL. TIER_2 (Silver): QR. TIER_3 (Gold): Legal Trigger. 3. User Journey & UI: Input: Data. Logic: Gen. Output: URL. Coach: Address. 4. Business Logic: RG-01: Germany. RG-02: TIER_3 update.
+
+Functional Specification: Site Gen. TIER_1: HTML. TIER_2: QR. TIER_3: Sentinel. VISUAL REQUIREMENT: Show a ''Compliance Shield Icon'' that is Green when the legal text matches the latest database version, and Red if an update is pending.',
+    'TIER_0: Template. TIER_1 (Bronze): Host URL. TIER_2 (Silver): QR. TIER_3 (Gold): Legal Trigger.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1359,32 +1040,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_06',
-        NULL,
-        'DIM_OPS',
-        'PH_6_SCALE',
-        'GLOBAL',
-        'Team Management',
-        'Granular RBAC Operations Portal',
-        'Multi-user access control for delegating operations.',
-        '1. Pedagogical Objective: Delegation without risk. Teaches process isolation. 2. Behavior Matrix: TIER_1 (Bronze): 1 Co-host (Full access). TIER_2 (Silver): Preset roles (Cleaner, Accountant, Co-host) with restricted views. TIER_3 (Gold): Granular RBAC Portal with feature-level permissions and Security Audit Logging. 3. User Journey & UI: Input: Team email. Logic: Permission masking. Output: Activity log. Coach: Password sharing warning. 4. Business Logic: RG-01: Owner cannot be deleted. RG-02: TIER_3 for custom roles.',
-        'TIER_1 (Bronze): 1 Co-host (Full access). TIER_2 (Silver): Preset roles (Cleaner, Accountant, Co-host) with restricted views. TIER_3 (Gold): Granular RBAC Portal with feature-level permissions and Security Audit Logging.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'LEG_06',
+    NULL,
+    'DIM_LEGAL',
+    'PH_6_SCALE',
+    'LOC_HOST',
+    'Wealth Optimization Audit',
+    'Structural asset and succession strategy coach',
+    'Scaling advisor. TIER 3 Succession.',
+    '1. Pedagogical Objective: Legacy. 2. Behavior Matrix: TIER_1 (Bronze): Tax comp. TIER_2 (Silver): Wealth Proj. TIER_3 (Gold): Inheritance Sentinel. 3. User Journey & UI: Input: Family. Logic: Succession. Output: Roadmap. Coach: Inheritance Trap. 4. Business Logic: RG-01: TIER_3 logic. RG-02: Net Worth.
+
+Functional Specification: Wealth Sim. TIER_1: Compare. TIER_2: Equity. TIER_3: Succession. VISUAL REQUIREMENT: A ''Wealth Transfer Charts''. Chart A: ''Net Wealth Today''. Chart B: ''Net Wealth after Succession Tax'' (Personal). Chart C: ''Net Wealth after Succession Tax'' (Corporate). Show the delta clearly.',
+    'TIER_1 (Bronze): Tax comp. TIER_2 (Silver): Wealth Proj. TIER_3 (Gold): Inheritance Sentinel.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1393,32 +1066,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'OPS_07',
-        'OPS_06',
-        'DIM_OPS',
-        'PH_6_SCALE',
-        'GLOBAL',
-        'Investor Portal',
-        'Transparency & ROI Reporting Dashboard',
-        'Read-only portal for property owners.',
-        '1. Pedagogical Objective: Professionalism as a service. Teaches transparency. 2. Behavior Matrix: TIER_1 (Bronze): Monthly PDF reports. TIER_2 (Silver): Read-Only dashboard for 1 owner with live revenue stats. TIER_3 (Gold): Whitelabel Investor Portal with custom ROI commentary and portfolio performance narratives. 3. User Journey & UI: Input: Manager commentary. Logic: Operational noise filtering. Output: Investor view. Coach: Context over numbers. 4. Business Logic: RG-01: Read-only enforced. RG-02: Manager review mandatory.',
-        'TIER_1 (Bronze): Monthly PDF reports. TIER_2 (Silver): Read-Only dashboard for 1 owner with live revenue stats. TIER_3 (Gold): Whitelabel Investor Portal with custom ROI commentary and portfolio performance narratives.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_06',
+    NULL,
+    'DIM_OPS',
+    'PH_6_SCALE',
+    'GLOBAL',
+    'Team Management',
+    'Granular RBAC Operations Portal',
+    'Access control. TIER 3 RBAC.',
+    '1. Pedagogical Objective: Delegation. 2. Behavior Matrix: TIER_1 (Bronze): 1 Co-host. TIER_2 (Silver): Presets. TIER_3 (Gold): RBAC. 3. User Journey & UI: Input: Email. Logic: Mask. Output: Log. Coach: Passwords. 4. Business Logic: RG-01: Owner safe. RG-02: TIER_3 custom.
+
+Functional Specification: RBAC. TIER_1: View all. TIER_2: Presets. TIER_3: Matrix. VISUAL REQUIREMENT: An ''Activity Heatmap'' showing which team members are active at what times of day/week.',
+    'TIER_1 (Bronze): 1 Co-host. TIER_2 (Silver): Presets. TIER_3 (Gold): RBAC.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
@@ -1427,32 +1092,24 @@ SET parent_feature_id = EXCLUDED.parent_feature_id,
     detailed_description = EXCLUDED.detailed_description,
     dev_prompt = EXCLUDED.dev_prompt,
     behavior_matrix = EXCLUDED.behavior_matrix;
-INSERT INTO features (
-        id,
-        parent_feature_id,
-        dimension_id,
-        phase_id,
-        scope,
-        name,
-        description,
-        detailed_description,
-        dev_prompt,
-        behavior_matrix
-    )
+
+INSERT INTO features (id, parent_feature_id, dimension_id, phase_id, scope, name, description, detailed_description, dev_prompt, behavior_matrix)
 VALUES (
-        'LEG_06',
-        NULL,
-        'DIM_LEGAL',
-        'PH_6_SCALE',
-        'LOC_HOST',
-        'Company Audit',
-        'Structural Wealth Optimization Simulator',
-        'Simulation for transitioning to corporate ownership.',
-        '1. Pedagogical Objective: Long-term legacy. Teaches ''Succession'' and ''Exit taxes''. 2. Behavior Matrix: TIER_1 (Bronze): Basic IR vs IS calculator. TIER_2 (Silver): Multi-year wealth projection (10 years) including maintenance Capex. TIER_3 (Gold): Structural Wealth Optimization with 20-year exit strategy and Inheritance tax planning. 3. User Journey & UI: Input: Portfolio value. Logic: Wealth Impact simulation. Output: Transition Roadmap. Coach: ''The Trap'' warning. 4. Business Logic: RG-01: Country-specific tax rules. RG-02: Legal disclaimer mandatory.',
-        'TIER_1 (Bronze): Basic IR vs IS calculator. TIER_2 (Silver): Multi-year wealth projection (10 years) including maintenance Capex. TIER_3 (Gold): Structural Wealth Optimization with 20-year exit strategy and Inheritance tax planning.'
-    ) ON CONFLICT (id) DO
-UPDATE
-SET parent_feature_id = EXCLUDED.parent_feature_id,
+    'OPS_07',
+    'OPS_06',
+    'DIM_OPS',
+    'PH_6_SCALE',
+    'GLOBAL',
+    'Investor Portal',
+    'Transparency & ROI Reporting Dashboard',
+    'Owner portal. TIER 3 Whitelabel.',
+    '1. Pedagogical Objective: Professionalism. 2. Behavior Matrix: TIER_1 (Bronze): PDF. TIER_2 (Silver): Dashboard. TIER_3 (Gold): Whitelabel. 3. User Journey & UI: Input: Commentary. Logic: Filter. Output: View. Coach: Context. 4. Business Logic: RG-01: Read-only. RG-02: Review.
+
+Functional Specification: Dashboard. TIER_1: Email. TIER_2: Login. TIER_3: Whitelabel. VISUAL REQUIREMENT: High-level ''KPI Cards'' (Revenue, Occupancy, Net Payout) at the top. Below, a ''Performance Trend Line'' comparing this year vs. last year.',
+    'TIER_1 (Bronze): PDF. TIER_2 (Silver): Dashboard. TIER_3 (Gold): Whitelabel.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    parent_feature_id = EXCLUDED.parent_feature_id,
     dimension_id = EXCLUDED.dimension_id,
     phase_id = EXCLUDED.phase_id,
     scope = EXCLUDED.scope,
