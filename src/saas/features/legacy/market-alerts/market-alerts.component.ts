@@ -21,7 +21,7 @@ import { CalendarService } from '../calendar-tool/calendar.service';
           </h2>
           <p class="text-sm text-slate-400 mt-1">{{ 'EVENTS.Subtitle' | translate }}</p>
         </div>
-        <button (click)="close.emit()" 
+        <button (click)="close.emit()" data-debug-id="tool-back-btn"
           title="Close" aria-label="Close"
           class="text-slate-400 hover:text-white transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -25,7 +25,7 @@ interface FaqItem {
                 </h2>
                 <p class="text-slate-400 text-sm mt-1">{{ 'TOOL.ai_msg_desc' | translate }}</p>
             </div>
-            <button (click)="close.emit()" [title]="'COMMON.Close' | translate" class="text-slate-400 hover:text-white transition-colors">
+            <button (click)="close.emit()" data-debug-id="tool-back-btn" [title]="'COMMON.Close' | translate" class="text-slate-400 hover:text-white transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>

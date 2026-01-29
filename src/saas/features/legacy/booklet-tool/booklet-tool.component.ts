@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal, effect } from '@angular/core';
+import { Component, computed, inject, input, signal, effect, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BookletContentConfigComponent } from './booklet-content-config.component';
@@ -24,6 +24,7 @@ import { GeminiService } from '../../../../services/gemini.service';
 })
 export class BookletToolComponent {
     propertyName = input.required<string>();
+    close = output<void>();
 
     bookletService = inject(WelcomeBookletService); // Make public for template access
     private geminiService = inject(GeminiService);

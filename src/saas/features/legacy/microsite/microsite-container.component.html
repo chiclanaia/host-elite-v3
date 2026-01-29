@@ -21,6 +21,7 @@
                  I'll add an @Output close = new EventEmitter<void>(); in TS next step if needed. 
                  For now, let's just emit a simple event. -->
             <button (click)="close.emit()" [attr.aria-label]="'COMMON.Close' | translate" title="Fermer"
+                data-debug-id="tool-back-btn"
                 class="text-slate-300 hover:text-white bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-6 h-6">

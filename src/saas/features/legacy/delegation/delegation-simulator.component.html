@@ -8,8 +8,9 @@
             </h2>
             <p class="text-sm text-slate-400 mt-1">Simulateur de Rentabilité : Direct vs Conciergerie</p>
         </div>
-        <button (click)="close.emit()" class="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            [attr.aria-label]="'COMMON.Close' | translate" title="Close">
+        <button (click)="close.emit()" data-debug-id="tool-back-btn"
+            class="p-2 hover:bg-white/10 rounded-lg transition-colors" [attr.aria-label]="'COMMON.Close' | translate"
+            title="Close">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>

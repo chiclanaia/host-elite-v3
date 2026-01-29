@@ -12,6 +12,7 @@ import { MtdExportComponent } from './finance/mtd-export/mtd-export.component';
 import { CommissionSplitterComponent } from './finance/commission-splitter/commission-splitter.component';
 import { NonResidentTaxComponent } from './finance/non-resident-tax/non-resident-tax.component';
 import { DoubleTaxReportComponent } from './finance/double-tax-report/double-tax-report.component';
+import { SmartLedgerComponent } from './finance/smart-ledger/smart-ledger.component';
 
 // Legal
 import { ComplianceCheckerComponent } from './legal/compliance-checker/compliance-checker.component';
