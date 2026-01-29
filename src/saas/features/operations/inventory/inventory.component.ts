@@ -1,7 +1,9 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 interface Asset {
     id: string;
@@ -18,13 +20,15 @@ interface Asset {
 @Component({
     selector: 'ops-02-inventory',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Smart Inventory & Protection</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Asset tracking, warranty alerts, and theft protection evidence.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'INV.SmartInventoryProtection' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'INV.AssetTrackingWarrantyAlertsAnd' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -52,7 +56,7 @@ interface Asset {
                             <span class="text-2xl text-white">📸</span>
                         </div>
                         <h3 class="text-white font-bold mb-1">360° AI Scan</h3>
-                        <p class="text-slate-400 text-xs mb-4">Detect valuable assets automatically.</p>
+                        <p class="text-slate-400 text-xs mb-4">{{ 'INV.DetectValuableAssetsAutomatically' | translate }}</p>
                         
                         @if (!isTier3()) {
                             <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-[10px] font-bold uppercase tracking-wider">
@@ -72,11 +76,11 @@ interface Asset {
                     @if (isTier2OrAbove()) {
                          <div class="space-y-3">
                             <div class="flex justify-between items-center text-xs">
-                                <span class="text-slate-400">Total Covered Value</span>
+                                <span class="text-slate-400">{{ 'INV.TotalCoveredValue' | translate }}</span>
                                 <span class="text-emerald-400 font-mono">€4,250</span>
                             </div>
                             <div class="flex justify-between items-center text-xs">
-                                <span class="text-slate-400">Expiring < 30 days</span>
+                                <span class="text-slate-400">{{ 'INV.Expiring' | translate }}< 30 days</span>
                                 <span class="text-amber-400 font-bold">2 items</span>
                             </div>
                             <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden mt-2">
@@ -86,8 +90,8 @@ interface Asset {
                          </div>
                     } @else {
                         <div class="text-center py-4">
-                            <p class="text-slate-500 text-xs italic mb-2">Track expiration dates & receipts.</p>
-                            <button class="px-3 py-1 bg-white/10 text-white text-[10px] rounded hover:bg-white/20">Upgrade to Silver</button>
+                            <p class="text-slate-500 text-xs italic mb-2">{{ 'INV.TrackExpirationDatesReceipts' | translate }}</p>
+                            <button class="px-3 py-1 bg-white/10 text-white text-[10px] rounded hover:bg-white/20">{{ 'INV.UpgradeToSilver' | translate }}</button>
                         </div>
                     }
                 </div>
@@ -96,7 +100,7 @@ interface Asset {
                 <div class="p-4 bg-emerald-900/20 border-l-4 border-emerald-500 rounded-r-lg mt-auto">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-lg">💡</span>
-                        <span class="text-emerald-300 font-bold text-sm uppercase">Coach Tip</span>
+                        <span class="text-emerald-300 font-bold text-sm uppercase">{{ 'INV.CoachTip' | translate }}</span>
                     </div>
                     <p class="text-slate-300 text-xs italic">
                         "Bulk Buying Power: Don't buy linens retail. Coordinate with 3 other hosts in your area to order hotel-grade sheets from hospitality wholesalers. You'll save 40%."
@@ -109,33 +113,31 @@ interface Asset {
                
                <!-- Value Tree Map (Visual Requirement) -->
                <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
-                   <h3 class="text-white font-bold text-sm mb-4">Value Distribution (TreeMap)</h3>
+                   <h3 class="text-white font-bold text-sm mb-4">{{ 'INV.ValueDistributionTreemap' | translate }}</h3>
                    <div class="flex h-32 w-full gap-1">
                        <!-- Living Room (Large) -->
-                       <div class="h-full bg-indigo-500/20 border border-indigo-500/50 hover:bg-indigo-500/30 transition-colors relative group cursor-pointer" style="width: 45%" title="Living Room: €2,200">
-                           <span class="absolute top-2 left-2 text-[10px] text-indigo-300 font-bold">LIVING ROOM</span>
+                       <div class="h-full bg-indigo-500/20 border border-indigo-500/50 hover:bg-indigo-500/30 transition-colors relative group cursor-pointer" style="width: 45%" title="{{ \'INV.LivingRoom2200\' | translate }}">
+                           <span class="absolute top-2 left-2 text-[10px] text-indigo-300 font-bold">{{ 'I.LivingRoom' | translate }}</span>
                            <span class="absolute bottom-2 right-2 text-xs text-white font-mono">€2.2k</span>
                        </div>
                        <div class="flex flex-col h-full gap-1" style="width: 30%">
                            <!-- Kitchen -->
-                           <div class="h-[60%] bg-emerald-500/20 border border-emerald-500/50 hover:bg-emerald-500/30 transition-colors relative cursor-pointer" title="Kitchen: €1,500">
-                                <span class="absolute top-2 left-2 text-[10px] text-emerald-300 font-bold">KITCHEN</span>
+                           <div class="h-[60%] bg-emerald-500/20 border border-emerald-500/50 hover:bg-emerald-500/30 transition-colors relative cursor-pointer" title="{{ \'INV.Kitchen1500\' | translate }}">
+                                <span class="absolute top-2 left-2 text-[10px] text-emerald-300 font-bold">{{ 'I.Kitchen' | translate }}</span>
                            </div>
                            <!-- Bedroom -->
-                           <div class="h-[40%] bg-amber-500/20 border border-amber-500/50 hover:bg-amber-500/30 transition-colors relative cursor-pointer" title="Bedroom: €900">
-                                <span class="absolute top-2 left-2 text-[10px] text-amber-300 font-bold">BEDROOM</span>
+                           <div class="h-[40%] bg-amber-500/20 border border-amber-500/50 hover:bg-amber-500/30 transition-colors relative cursor-pointer" title="{{ \'INV.Bedroom900\' | translate }}">
+                                <span class="absolute top-2 left-2 text-[10px] text-amber-300 font-bold">{{ 'I.Bedroom' | translate }}</span>
                            </div>
                        </div>
                        <!-- Others -->
-                       <div class="h-full bg-slate-700/30 border border-slate-600/50 flex items-center justify-center text-slate-500 text-[10px]" style="width: 25%">
-                           Others
-                       </div>
+                       <div class="h-full bg-slate-700/30 border border-slate-600/50 flex items-center justify-center text-slate-500 text-[10px]" style="width: 25%">{{ 'INV.Others' | translate }}</div>
                    </div>
                </div>
 
                <!-- Visual Inventory Grid -->
                <div class="flex-1 bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col overflow-hidden">
-                   <h3 class="text-white font-bold text-sm mb-4">Asset Gallery</h3>
+                   <h3 class="text-white font-bold text-sm mb-4">{{ 'INV.AssetGallery' | translate }}</h3>
                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto pr-2">
                        @for (asset of assets(); track asset.id) {
                            <div class="bg-black/40 rounded-lg border border-white/5 overflow-hidden group relative transition-all hover:bg-black/60 hover:border-indigo-500/30">
@@ -171,7 +173,7 @@ interface Asset {
                        <!-- Add New (Empty) -->
                        <div class="h-full min-h-[150px] border-2 border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-slate-500 hover:text-white hover:border-white/30 cursor-pointer transition-colors" data-debug-id="add-asset-btn">
                            <span class="text-2xl mb-2">+</span>
-                           <span class="text-xs">Add Item</span>
+                           <span class="text-xs">{{ 'INV.AddItem' | translate }}</span>
                        </div>
                    </div>
                </div>
@@ -182,10 +184,11 @@ interface Asset {
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class InventoryComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'OPS_02',
-        name: 'Inventory & Protection',
-        description: 'AI Visual Asset Register',
+        name: this.translate.instant('INVE.Title'),
+        description: this.translate.instant('INVE.Description'),
     } as any));
 
     session = inject(SessionStore);

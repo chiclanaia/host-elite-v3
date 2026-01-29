@@ -4,27 +4,28 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'fin-04-section-24-simulator',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">UK Tax Shield (Section 24)</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">The "Tenant Tax" Simulator. Determine if you should incorporate (SPV) or stay personal.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'SEC24.UkTaxShieldSection24' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'SEC24.TheTenantTaxSimulatorDetermine' | translate }}</p>
         </div>
         
          <div class="flex gap-2">
              <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono flex items-center gap-2">
-                <span>🇬🇧</span> UK Landlord
-            </div>
+                <span>🇬🇧</span>{{ 'SEC24.UkLandlord' | translate }}</div>
              <div class="px-4 py-2 bg-rose-500/10 text-rose-300 rounded-lg border border-rose-500/30 text-xs font-mono flex items-center gap-2">
-                <span>🛡️</span> Sec. 24
-            </div>
+                <span>🛡️</span>{{ 'SEC24.Sec24' | translate }}</div>
          </div>
       </div>
 
@@ -34,17 +35,17 @@ import { SessionStore } from '../../../../state/session.store';
               <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-xl border border-slate-700">
                 <span class="text-4xl">🇬🇧</span>
               </div>
-              <h3 class="text-2xl font-bold text-white mb-2">The 'Tenant Tax' (Section 24)</h3>
-              <p class="text-slate-400 max-w-lg mb-6">Since 2020, UK landlords cannot deduct mortgage interest from rental income. This implies that you might pay tax even if you make NO profit.</p>
+              <h3 class="text-2xl font-bold text-white mb-2">{{ 'SEC24.TheTenantTaxSection24' | translate }}</h3>
+              <p class="text-slate-400 max-w-lg mb-6">{{ 'SEC24.Since2020UkLandlordsCannot' | translate }}</p>
               
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl text-left">
                    <div class="p-4 bg-slate-800 rounded-lg border-l-4 border-rose-500 shadow-lg">
-                      <h4 class="font-bold text-white flex justify-between">Personal Name <span class="text-xs bg-rose-900 text-rose-200 px-2 py-0.5 rounded-full">High Risk</span></h4>
-                      <p class="text-xs text-slate-400 mt-1">Taxed on TURNOVER, not profit. Higher Rate payers effectively lose 20% tax credit cap.</p>
+                      <h4 class="font-bold text-white flex justify-between">{{ 'SEC24.PersonalName' | translate }}<span class="text-xs bg-rose-900 text-rose-200 px-2 py-0.5 rounded-full">{{ 'SEC24.HighRisk' | translate }}</span></h4>
+                      <p class="text-xs text-slate-400 mt-1">{{ 'SEC24.TaxedOnTurnoverNotProfit' | translate }}</p>
                   </div>
                    <div class="p-4 bg-slate-800 rounded-lg border-l-4 border-emerald-500 shadow-lg">
-                      <h4 class="font-bold text-white flex justify-between">Ltd Company (SPV) <span class="text-xs bg-emerald-900 text-emerald-200 px-2 py-0.5 rounded-full">Safe Haven</span></h4>
-                      <p class="text-xs text-slate-400 mt-1">Interest is fully deductible (Corporation Tax). More admin, but typically more tax efficient.</p>
+                      <h4 class="font-bold text-white flex justify-between">{{ 'SEC24.LtdCompanySpv' | translate }}<span class="text-xs bg-emerald-900 text-emerald-200 px-2 py-0.5 rounded-full">{{ 'SEC24.SafeHaven' | translate }}</span></h4>
+                      <p class="text-xs text-slate-400 mt-1">{{ 'SEC24.InterestIsFullyDeductibleCorporation' | translate }}</p>
                   </div>
               </div>
           </div>
@@ -56,45 +57,38 @@ import { SessionStore } from '../../../../state/session.store';
                <!-- Inputs -->
                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col overflow-y-auto custom-scrollbar">
                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                       <span class="material-icons text-slate-400">tune</span> Scenario Parameters
-                   </h3>
+                       <span class="material-icons text-slate-400">tune</span>{{ 'SEC24.ScenarioParameters' | translate }}</h3>
                    <form [formGroup]="form" class="space-y-6">
                        <div class="grid grid-cols-2 gap-4">
                            <div>
-                               <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Rental Income (£)</label>
+                               <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'SEC24.RentalIncome' | translate }}</label>
                                <input type="number" formControlName="income" class="w-full bg-black/40 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="sec24-input-income">
                            </div>
                             <div>
-                               <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Mortgage Interest (£)</label>
+                               <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'SEC24.MortgageInterest' | translate }}</label>
                                <input type="number" formControlName="interest" class="w-full bg-black/40 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="sec24-input-interest">
                            </div>
                        </div>
                        
                        <div>
-                           <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Total Operating Exp. (£)</label>
+                           <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'SEC24.TotalOperatingExp' | translate }}</label>
                            <input type="number" formControlName="expenses" class="w-full bg-black/40 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="sec24-input-expenses">
                        </div>
                        
                        <div class="p-4 bg-black/20 rounded-xl border border-white/5">
-                            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-2">Personal Tax Band</label>
+                            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-2">{{ 'SEC24.PersonalTaxBand' | translate }}</label>
                            <div class="flex gap-2">
                                <label class="flex-1 cursor-pointer">
                                    <input type="radio" formControlName="taxBand" value="20" class="peer sr-only">
-                                   <div class="text-center p-2 rounded-lg border border-slate-600 peer-checked:bg-indigo-600 peer-checked:border-indigo-500 peer-checked:text-white text-slate-400 text-xs transition-all">
-                                       Basic (20%)
-                                   </div>
+                                   <div class="text-center p-2 rounded-lg border border-slate-600 peer-checked:bg-indigo-600 peer-checked:border-indigo-500 peer-checked:text-white text-slate-400 text-xs transition-all">{{ 'SEC24.Basic20' | translate }}</div>
                                </label>
                                <label class="flex-1 cursor-pointer">
                                    <input type="radio" formControlName="taxBand" value="40" class="peer sr-only">
-                                   <div class="text-center p-2 rounded-lg border border-slate-600 peer-checked:bg-indigo-600 peer-checked:border-indigo-500 peer-checked:text-white text-slate-400 text-xs transition-all">
-                                       Higher (40%)
-                                   </div>
+                                   <div class="text-center p-2 rounded-lg border border-slate-600 peer-checked:bg-indigo-600 peer-checked:border-indigo-500 peer-checked:text-white text-slate-400 text-xs transition-all">{{ 'SEC24.Higher40' | translate }}</div>
                                </label>
                                <label class="flex-1 cursor-pointer">
                                    <input type="radio" formControlName="taxBand" value="45" class="peer sr-only">
-                                   <div class="text-center p-2 rounded-lg border border-slate-600 peer-checked:bg-indigo-600 peer-checked:border-indigo-500 peer-checked:text-white text-slate-400 text-xs transition-all">
-                                       Add. (45%)
-                                   </div>
+                                   <div class="text-center p-2 rounded-lg border border-slate-600 peer-checked:bg-indigo-600 peer-checked:border-indigo-500 peer-checked:text-white text-slate-400 text-xs transition-all">{{ 'SEC24.Add45' | translate }}</div>
                                </label>
                            </div>
                        </div>
@@ -102,22 +96,21 @@ import { SessionStore } from '../../../../state/session.store';
                        @if (isTier3()) {
                            <div class="mt-6 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
                                 <label class="block text-xs font-bold text-indigo-300 mb-2 flex items-center gap-2">
-                                    <span class="material-icons text-sm">trending_up</span> Stress Test: Rate Spike
-                                </label>
+                                    <span class="material-icons text-sm">trending_up</span>{{ 'SEC24.StressTestRateSpike' | translate }}</label>
                                 <input type="range" min="0" max="100" class="w-full accent-indigo-500" [value]="stressFactor" (input)="updateStress($event)" data-debug-id="sec24-stress-slider">
                                 <div class="flex justify-between text-[10px] text-indigo-200 mt-1">
-                                    <span>Current</span>
+                                    <span>{{ 'SEC24.Current' | translate }}</span>
                                     <span>+{{stressFactor}}% Rate</span>
                                 </div>
                                 @if (stressFactor > 0) {
-                                  <p class="text-xs text-indigo-200 mt-2 bg-indigo-500/20 p-2 rounded text-center">New Interest Load: <strong>£{{ getStressedInterest() | number:'1.0-0' }}</strong></p>
+                                  <p class="text-xs text-indigo-200 mt-2 bg-indigo-500/20 p-2 rounded text-center">{{ 'SEC24.NewInterestLoad' | translate }}<strong>£{{ getStressedInterest() | number:'1.0-0' }}</strong></p>
                                 }
                            </div>
                        } @else {
                            <div class="mt-6 p-4 bg-black/20 border border-white/5 rounded-xl opacity-60">
                                 <div class="flex justify-between items-center mb-2">
-                                    <label class="text-xs font-bold text-slate-500">Stress Test Calculator</label>
-                                    <span class="text-[10px] border border-amber-500/50 text-amber-500 px-1.5 rounded">GOLD</span>
+                                    <label class="text-xs font-bold text-slate-500">{{ 'SEC24.StressTestCalculator' | translate }}</label>
+                                    <span class="text-[10px] border border-amber-500/50 text-amber-500 px-1.5 rounded">{{ 'S2S.Gold' | translate }}</span>
                                 </div>
                                 <div class="h-1 bg-slate-700 rounded-full w-full"></div>
                                 <p class="text-[10px] text-slate-500 mt-2">Simulate interest rate spikes (e.g. 5% -> 8%) to see break-even points.</p>
@@ -130,7 +123,7 @@ import { SessionStore } from '../../../../state/session.store';
                         <div class="flex items-start gap-3">
                            <span class="text-xl">👩‍⚖️</span>
                            <div>
-                               <h4 class="font-bold text-indigo-300 text-sm">Advisor Note</h4>
+                               <h4 class="font-bold text-indigo-300 text-sm">{{ 'SEC24.AdvisorNote' | translate }}</h4>
                                <p class="text-xs text-indigo-200/80 mt-1">Incorporating incurs higher mortgage rates (~1-1.5%) and accountancy fees. Don't rush to SPV unless the tax saving > £2k/year.</p>
                            </div>
                        </div>
@@ -141,7 +134,7 @@ import { SessionStore } from '../../../../state/session.store';
                <div class="flex flex-col gap-6">
                    <!-- Comparison -->
                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex-1 flex flex-col justify-center">
-                       <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-8 text-center">Net Profit Analysis</h3>
+                       <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-8 text-center">{{ 'SEC24.NetProfitAnalysis' | translate }}</h3>
                        
                        <div class="flex items-end justify-center gap-8 h-64 w-full px-8 pb-4">
                            <!-- Personal Bar -->
@@ -155,7 +148,7 @@ import { SessionStore } from '../../../../state/session.store';
                                         {{ results().personalNet | currency:'GBP':'symbol':'1.0-0' }}
                                     </span>
                                </div>
-                               <div class="mt-3 text-xs font-bold text-slate-400">Personal</div>
+                               <div class="mt-3 text-xs font-bold text-slate-400">{{ 'SEC24.Personal' | translate }}</div>
                                
                                <!-- Tooltip -->
                                <div class="absolute bottom-full mb-8 invisible group-hover:visible bg-black/90 p-2 rounded text-[10px] text-white whitespace-nowrap z-10">
@@ -181,7 +174,7 @@ import { SessionStore } from '../../../../state/session.store';
                                         </div>
                                     }
                                </div>
-                               <div class="mt-3 text-xs font-bold text-slate-400">Ltd (SPV)</div>
+                               <div class="mt-3 text-xs font-bold text-slate-400">{{ 'SEC24.LtdSpv' | translate }}</div>
                                
                                <!-- Tooltip -->
                                <div class="absolute bottom-full mb-8 invisible group-hover:visible bg-black/90 p-2 rounded text-[10px] text-white whitespace-nowrap z-10">
@@ -194,8 +187,8 @@ import { SessionStore } from '../../../../state/session.store';
                            <div class="mt-8 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-4 animate-pulse">
                                <span class="text-3xl">🚨</span>
                                <div>
-                                   <div class="text-rose-300 font-bold text-sm">INSOLVENCY RISK</div>
-                                   <div class="text-rose-200/70 text-xs">Section 24 is causing a fake profit tax while you are making a real loss.</div>
+                                   <div class="text-rose-300 font-bold text-sm">{{ 'S2S.InsolvencyRisk' | translate }}</div>
+                                   <div class="text-rose-200/70 text-xs">{{ 'SEC24.Section24IsCausingA' | translate }}</div>
                                </div>
                            </div>
                        }

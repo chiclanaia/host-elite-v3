@@ -37,22 +37,16 @@ import { FormsModule } from '@angular/forms';
             <!-- Controls (Tier Dependent) -->
             <div class="bg-slate-800/50 rounded-xl p-4 border border-white/5 flex flex-wrap gap-4 items-center">
                 <button class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-sm transition-colors shadow-lg flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /></svg>
-                    New Transaction
-                </button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /></svg>{{ 'LEDGER.NewTransaction' | translate }}</button>
                 
                 @if (currentTier() >= 1) {
                     <button class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-bold text-sm transition-colors flex items-center gap-2 border border-white/10">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                        Import CSV
-                    </button>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>{{ 'LEDGER.ImportCsv' | translate }}</button>
                 }
 
                 @if (currentTier() >= 2) {
                     <button class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-bold text-sm transition-colors flex items-center gap-2 border border-white/10 relative group">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" /><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" /></svg>
-                        Link Bank (Plaid)
-                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" /><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" /></svg>{{ 'LEDGER.LinkBankPlaid' | translate }}<span class="absolute -top-1 -right-1 flex h-3 w-3">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
                         </span>
@@ -65,29 +59,29 @@ import { FormsModule } from '@angular/forms';
                 <table class="w-full text-left text-sm text-slate-400">
                     <thead class="bg-white/5 text-xs uppercase font-bold text-slate-500 sticky top-0 backdrop-blur-md">
                         <tr>
-                            <th class="px-4 py-3">Date</th>
-                            <th class="px-4 py-3">Description</th>
-                            <th class="px-4 py-3">Category</th>
-                            <th class="px-4 py-3 text-right">Amount</th>
-                            <th class="px-4 py-3 text-center">Receipt</th>
+                            <th class="px-4 py-3">{{ 'LEDGER.Date' | translate }}</th>
+                            <th class="px-4 py-3">{{ 'LEDGER.Description' | translate }}</th>
+                            <th class="px-4 py-3">{{ 'LEDGER.Category' | translate }}</th>
+                            <th class="px-4 py-3 text-right">{{ 'LEDGER.Amount' | translate }}</th>
+                            <th class="px-4 py-3 text-center">{{ 'LEDGER.Receipt' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5">
                         <tr class="hover:bg-white/5 transition-colors group cursor-pointer">
-                            <td class="px-4 py-3">Today</td>
-                            <td class="px-4 py-3 font-medium text-white">Airbnb Payout HFK...99</td>
-                            <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 text-xs">Revenue</span></td>
+                            <td class="px-4 py-3">{{ 'LEDGER.Today' | translate }}</td>
+                            <td class="px-4 py-3 font-medium text-white">{{ 'LEDGER.AirbnbPayoutHfk99' | translate }}</td>
+                            <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 text-xs">{{ 'LEDGER.Revenue' | translate }}</span></td>
                             <td class="px-4 py-3 text-right text-green-400 font-bold">+$1,240.00</td>
                             <td class="px-4 py-3 text-center">
                                 @if (currentTier() >= 3) {
-                                    <span class="text-purple-400 text-[10px] border border-purple-500/30 px-1 rounded bg-purple-900/30">AI MATCHED</span>
+                                    <span class="text-purple-400 text-[10px] border border-purple-500/30 px-1 rounded bg-purple-900/30">{{ 'SL.AiMatched' | translate }}</span>
                                 }
                             </td>
                         </tr>
                         <tr class="hover:bg-white/5 transition-colors group cursor-pointer">
-                            <td class="px-4 py-3">Yesterday</td>
-                            <td class="px-4 py-3 font-medium text-white">Plumber Fix</td>
-                            <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 text-xs">Maintenance</span></td>
+                            <td class="px-4 py-3">{{ 'LEDGER.Yesterday' | translate }}</td>
+                            <td class="px-4 py-3 font-medium text-white">{{ 'LEDGER.PlumberFix' | translate }}</td>
+                            <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 text-xs">{{ 'LEDGER.Maintenance' | translate }}</span></td>
                             <td class="px-4 py-3 text-right text-red-400 font-bold">-$150.00</td>
                             <td class="px-4 py-3 text-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto text-slate-600 group-hover:text-blue-400 transition-colors" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
@@ -104,8 +98,8 @@ import { FormsModule } from '@angular/forms';
                  @if (currentTier() === 0) {
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div class="bg-slate-900/90 p-6 rounded-2xl border border-white/10 text-center shadow-2xl pointer-events-auto max-w-sm">
-                            <h3 class="text-white font-bold mb-2">Unlock Automation</h3>
-                            <p class="text-slate-400 text-xs mb-4">Connect your bank and scan receipts automatically with Silver tier.</p>
+                            <h3 class="text-white font-bold mb-2">{{ 'LEDGER.UnlockAutomation' | translate }}</h3>
+                            <p class="text-slate-400 text-xs mb-4">{{ 'LEDGER.ConnectYourBankAndScan' | translate }}</p>
                         </div>
                     </div>
                 }
@@ -118,9 +112,7 @@ import { FormsModule } from '@angular/forms';
             <!-- Visual Requirement: Cashflow Pulse Chart -->
             <div class="bg-slate-800 rounded-xl p-5 border border-white/10 shadow-lg relative overflow-hidden group">
                  <h3 class="text-sm font-bold text-slate-300 mb-4 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" /></svg>
-                    Cashflow Pulse
-                </h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" /></svg>{{ 'LEDGER.CashflowPulse' | translate }}</h3>
                 
                 <!-- Mock Chart Visual -->
                 <div class="h-32 flex items-end justify-between gap-1 px-2">
@@ -140,8 +132,8 @@ import { FormsModule } from '@angular/forms';
                 </svg>
 
                 <div class="mt-4 flex justify-between text-xs text-slate-500 font-mono">
-                    <span>Oct 01</span>
-                    <span>Today</span>
+                    <span>{{ 'LEDGER.Oct01' | translate }}</span>
+                    <span>{{ 'LEDGER.Today' | translate }}</span>
                 </div>
             </div>
 
@@ -153,28 +145,21 @@ import { FormsModule } from '@angular/forms';
 
                 <div class="relative z-10">
                     <h3 class="text-sm font-bold text-purple-300 mb-2 flex items-center gap-2">
-                        <span class="pulse-dot bg-purple-500"></span>
-                        AI Reconciliation Agent
-                    </h3>
+                        <span class="pulse-dot bg-purple-500"></span>{{ 'LEDGER.AiReconciliationAgent' | translate }}</h3>
                     
                     @if (currentTier() >= 3) {
                         <div class="text-xs text-slate-400 space-y-3">
-                            <p>Auto-matching Airbnb Payouts...</p>
+                            <p>{{ 'LEDGER.AutomatchingAirbnbPayouts' | translate }}</p>
                             <div class="bg-black/30 rounded p-2 font-mono text-green-400 text-[10px]">
                                 > Match Found: Booking #B8892<br>
-                                > Gross: $2000 -> Net: $1850<br>
-                                > Fee: $150 (Auto-Deducted)
-                            </div>
-                            <button class="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded font-bold text-xs transition-colors">
-                                View Audit Trail
-                            </button>
+                                > Gross: $2000 ->{{ 'LEDGER.Net1850' | translate }}<br>
+                                >{{ 'LEDGER.Fee150Autodeducted' | translate }}</div>
+                            <button class="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded font-bold text-xs transition-colors">{{ 'LEDGER.ViewAuditTrail' | translate }}</button>
                         </div>
                     } @else {
-                        <div class="text-xs text-slate-500 mb-3">
-                            Eliminate manual data entry. Our AI agent matches payouts to bookings and fees automatically.
-                        </div>
+                        <div class="text-xs text-slate-500 mb-3">{{ 'LEDGER.EliminateManualDataEntryOur' | translate }}</div>
                         <div class="bg-purple-900/20 border border-purple-500/30 rounded p-2 text-center">
-                            <span class="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Gold Feature</span>
+                            <span class="text-[10px] font-bold text-purple-400 uppercase tracking-wider">{{ 'LEDGER.GoldFeature' | translate }}</span>
                         </div>
                     }
                 </div>
@@ -187,7 +172,7 @@ import { FormsModule } from '@angular/forms';
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-blue-300 uppercase tracking-wide mb-1">Coach: The Deductible Rule</h4>
+                        <h4 class="text-xs font-bold text-blue-300 uppercase tracking-wide mb-1">{{ 'LEDGER.CoachTheDeductibleRule' | translate }}</h4>
                         <p class="text-xs text-slate-400 leading-relaxed">
                             "Fiscal hygiene prevents audits. Always separate Personal vs. Business expenses. If in doubt, ask: 'Did this expense generate revenue?'"
                         </p>

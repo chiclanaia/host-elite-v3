@@ -4,18 +4,21 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'fin-03-lmnp-tax-simulator',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">French Tax Optimizer</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Comparateur Micro-BIC vs Régime Réel (LMNP). Unlock hidden cashflow with amortization.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'LMNP.FrenchTaxOptimizer' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'LMNP.ComparateurMicrobicVsRgimeRel' | translate }}</p>
         </div>
         
         <div class="flex gap-2">
@@ -23,8 +26,7 @@ import { SessionStore } from '../../../../state/session.store';
                 <span>🇫🇷</span> Fiscalité
             </div>
              <div class="px-4 py-2 bg-emerald-500/10 text-emerald-300 rounded-lg border border-emerald-500/30 text-xs font-mono flex items-center gap-2">
-                <span>📉</span> Tax Shield
-            </div>
+                <span>📉</span>{{ 'LMNP.TaxShield' | translate }}</div>
          </div>
       </div>
 
@@ -35,22 +37,20 @@ import { SessionStore } from '../../../../state/session.store';
                   <div class="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-xl border border-slate-700">
                     <span class="text-5xl">🇫🇷</span>
                   </div>
-                  <h3 class="text-2xl font-bold text-white mb-2">Micro-BIC vs Réel</h3>
+                  <h3 class="text-2xl font-bold text-white mb-2">{{ 'LMNP.MicrobicVsRel' | translate }}</h3>
                   <p class="text-slate-400 max-w-sm">In France, choosing the 'Réel' regime allows you to deduct not just expenses, but also 'Amortization' of the walls, furniture, and works.</p>
               </div>
               <div class="flex flex-col gap-4">
                   <div class="p-4 bg-slate-800 rounded-lg border-l-4 border-indigo-500 shadow-lg">
-                      <h4 class="font-bold text-white flex justify-between">Micro-BIC <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded-full">Simple</span></h4>
-                      <p class="text-xs text-slate-400 mt-1">Flat 50% abatement. You are taxed on the other 50%, regardless of your real costs.</p>
+                      <h4 class="font-bold text-white flex justify-between">Micro-BIC <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded-full">{{ 'LMNP.Simple' | translate }}</span></h4>
+                      <p class="text-xs text-slate-400 mt-1">{{ 'LMNP.Flat50AbatementYouAre' | translate }}</p>
                   </div>
                    <div class="p-4 bg-slate-800 rounded-lg border-l-4 border-emerald-500 shadow-lg relative overflow-hidden">
-                       <div class="absolute top-0 right-0 p-1 bg-emerald-500 text-white text-[10px] font-bold rounded-bl">RECOMMENDED</div>
-                      <h4 class="font-bold text-white">Régime Réel</h4>
+                       <div class="absolute top-0 right-0 p-1 bg-emerald-500 text-white text-[10px] font-bold rounded-bl">{{ 'LTS.Recommended' | translate }}</div>
+                      <h4 class="font-bold text-white">{{ 'LMNP.RgimeRel' | translate }}</h4>
                       <p class="text-xs text-slate-400 mt-1">Deduct ALL real expenses + Amortization (structure, works, furniture). Often results in 0€ tax for 10+ years.</p>
                   </div>
-                  <button class="mt-4 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-indigo-500/25" data-debug-id="lmnp-start-simulator-btn">
-                      Start Simulator
-                  </button>
+                  <button class="mt-4 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-indigo-500/25" data-debug-id="lmnp-start-simulator-btn">{{ 'LMNP.StartSimulator' | translate }}</button>
               </div>
           </div>
       } 
@@ -62,47 +62,45 @@ import { SessionStore } from '../../../../state/session.store';
                <div class="flex flex-col gap-6">
                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col overflow-y-auto custom-scrollbar">
                        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                           <span class="material-icons text-slate-400">edit_note</span> Property Details
-                       </h3>
+                           <span class="material-icons text-slate-400">edit_note</span>{{ 'LMNP.PropertyDetails' | translate }}</h3>
                        <form [formGroup]="form" class="space-y-4">
                            <div class="grid grid-cols-2 gap-4">
                                <div>
-                                   <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Total Price (€)</label>
+                                   <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'LMNP.TotalPrice' | translate }}</label>
                                    <input type="number" formControlName="price" class="w-full bg-black/40 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="lmnp-input-price">
                                </div>
                                <div>
-                                   <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Rental Income/Yr (€)</label>
+                                   <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'LMNP.RentalIncomeyr' | translate }}</label>
                                    <input type="number" formControlName="income" class="w-full bg-black/40 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="lmnp-input-income">
                                </div>
                            </div>
                            
                            <div class="p-4 bg-black/20 rounded-xl border border-white/5">
-                                <h4 class="text-xs font-bold text-indigo-300 mb-3 uppercase tracking-wider">Amortizable Assets</h4>
+                                <h4 class="text-xs font-bold text-indigo-300 mb-3 uppercase tracking-wider">{{ 'LMNP.AmortizableAssets' | translate }}</h4>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Furniture Value (€)</label>
+                                        <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'LMNP.FurnitureValue' | translate }}</label>
                                         <input type="number" formControlName="furniture" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-xs" data-debug-id="lmnp-input-furniture">
                                         <div class="text-[10px] text-slate-500 mt-1">7yr Linear</div>
                                     </div>
                                      <div>
-                                        <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Renovation Works (€)</label>
+                                        <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'LMNP.RenovationWorks' | translate }}</label>
                                         <input type="number" formControlName="works" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-xs" data-debug-id="lmnp-input-works">
                                         <div class="text-[10px] text-slate-500 mt-1">10yr Linear</div>
                                     </div>
                                 </div>
                                 @if (!isTier2OrAbove()) {
                                     <div class="mt-2 flex items-center gap-2 text-[10px] text-amber-500/80">
-                                        <span class="material-icons text-xs">lock</span> Advanced Component Depreciation (Roof, Facade) locked
-                                    </div>
+                                        <span class="material-icons text-xs">lock</span>{{ 'LMNP.AdvancedComponentDepreciationRoofFacade' | translate }}</div>
                                 }
                            </div>
                            
                            <div>
-                               <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Real Expenses (Annual) (€)</label>
+                               <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'LMNP.RealExpensesAnnual' | translate }}</label>
                                <div class="relative">
                                     <input type="number" formControlName="expenses" class="w-full bg-black/40 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="lmnp-input-expenses">
                                     @if(formValues().expenses === 0) {
-                                       <span class="absolute right-3 top-2.5 text-xs text-amber-500 italic">Auto-estimating 25%</span>
+                                       <span class="absolute right-3 top-2.5 text-xs text-amber-500 italic">{{ 'LMNP.Autoestimating25' | translate }}</span>
                                     }
                                </div>
                            </div>
@@ -114,7 +112,7 @@ import { SessionStore } from '../../../../state/session.store';
                          <div class="flex items-start gap-3">
                             <span class="text-xl">👻</span>
                             <div>
-                                <h4 class="font-bold text-indigo-300 text-sm">The 'Ghost' Expense</h4>
+                                <h4 class="font-bold text-indigo-300 text-sm">{{ 'LMNP.TheGhostExpense' | translate }}</h4>
                                 <p class="text-xs text-indigo-200/80 mt-1">Amortization is a 'paper expense'. You don't pay cash for it now, but it lowers your taxable profit to zero. This is the secret to tax-free rental income.</p>
                             </div>
                         </div>
@@ -125,7 +123,7 @@ import { SessionStore } from '../../../../state/session.store';
                <div class="flex flex-col gap-6">
                    <!-- Waterfall Comparison -->
                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-                       <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">Tax Base Calculation</h3>
+                       <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">{{ 'LMNP.TaxBaseCalculation' | translate }}</h3>
                        
                        <div class="flex items-end gap-2 h-40 mb-4 px-4">
                            <!-- Micro Base -->
@@ -133,7 +131,7 @@ import { SessionStore } from '../../../../state/session.store';
                                 <div class="w-full bg-rose-500/20 border border-rose-500/50 rounded-t relative transition-all group-hover:bg-rose-500/30" style="height: 50%">
                                     <div class="absolute top-2 left-0 right-0 text-center text-xs font-bold text-white">{{ results().microBicTaxable | currency:'EUR':'symbol':'1.0-0' }}</div>
                                 </div>
-                                <div class="mt-2 text-[10px] text-slate-400 uppercase font-bold">Micro-BIC Base</div>
+                                <div class="mt-2 text-[10px] text-slate-400 uppercase font-bold">{{ 'LMNP.MicrobicBase' | translate }}</div>
                            </div>
 
                            <div class="text-slate-600 font-bold mb-8">VS</div>
@@ -149,21 +147,20 @@ import { SessionStore } from '../../../../state/session.store';
                                        }
                                    </div>
                                     <!-- Amortization -->
-                                   <div class="w-full bg-indigo-500/50 border-x border-t border-indigo-500/30 transition-all cursor-help" [style.height.%]="getReelHeight('amortization')" title="Amortization (Ghost Expense)">
-                                       <div class="text-center text-[10px] text-indigo-200 pt-1">Amort.</div>
+                                   <div class="w-full bg-indigo-500/50 border-x border-t border-indigo-500/30 transition-all cursor-help" [style.height.%]="getReelHeight('amortization')" title="{{ \'LMNP.AmortizationGhostExpense\' | translate }}">
+                                       <div class="text-center text-[10px] text-indigo-200 pt-1">{{ 'LMNP.Amort' | translate }}</div>
                                    </div>
                                    <!-- Real Expenses -->
                                    <div class="w-full bg-slate-600/50 border-x border-t border-slate-500/30 rounded-b transition-all" [style.height.%]="getReelHeight('expenses')">
-                                       <div class="text-center text-[10px] text-slate-400 pt-1">Exp.</div>
+                                       <div class="text-center text-[10px] text-slate-400 pt-1">{{ 'LMNP.Exp' | translate }}</div>
                                    </div>
                                </div>
-                               <div class="mt-2 text-[10px] text-slate-400 uppercase font-bold">Réel Base</div>
+                               <div class="mt-2 text-[10px] text-slate-400 uppercase font-bold">{{ 'LMNP.RelBase' | translate }}</div>
                            </div>
                        </div>
                        
                        <div class="text-center pt-4 border-t border-white/10">
-                            <p class="text-sm text-white">
-                                Annual Tax Savings: <strong class="text-emerald-400">{{ (results().microBicTaxable - results().reelTaxable) * 0.3 | currency:'EUR':'symbol':'1.0-0' }}</strong>
+                            <p class="text-sm text-white">{{ 'LMNP.AnnualTaxSavings' | translate }}<strong class="text-emerald-400">{{ (results().microBicTaxable - results().reelTaxable) * 0.3 | currency:'EUR':'symbol':'1.0-0' }}</strong>
                                 <span class="text-xs text-slate-500 ml-1">(est. at 30% TMI)</span>
                             </p>
                        </div>
@@ -177,8 +174,7 @@ import { SessionStore } from '../../../../state/session.store';
                            </h3> 
                            @if(isTier3()) {
                                <button class="text-[10px] bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded flex items-center gap-1 transition-colors" data-debug-id="lmnp-export-fec">
-                                   <span class="material-icons text-[10px]">receipt_long</span> Export FEC
-                               </button>
+                                   <span class="material-icons text-[10px]">receipt_long</span>{{ 'LMNP.ExportFec' | translate }}</button>
                            }
                        </div>
 
@@ -187,9 +183,9 @@ import { SessionStore } from '../../../../state/session.store';
                                 <table class="w-full text-xs text-left">
                                     <thead class="text-slate-500 border-b border-white/10 sticky top-0 bg-[#1e293b]">
                                         <tr>
-                                            <th class="pb-2 pl-2">Year</th>
-                                            <th class="pb-2">Amortization</th>
-                                            <th class="pb-2 text-right pr-2">Taxable Base</th>
+                                            <th class="pb-2 pl-2">{{ 'LMNP.Year' | translate }}</th>
+                                            <th class="pb-2">{{ 'LMNP.Amortization' | translate }}</th>
+                                            <th class="pb-2 text-right pr-2">{{ 'LMNP.TaxableBase' | translate }}</th>
                                         </tr>
                                     </thead>
                                     <tbody class="text-slate-300">
@@ -209,8 +205,8 @@ import { SessionStore } from '../../../../state/session.store';
                            <div class="absolute inset-0 bg-black/60 z-10 flex items-center justify-center p-4 text-center backdrop-blur-[1px]">
                                <div>
                                    <span class="text-2xl mb-2 block">🔒</span>
-                                   <p class="text-xs text-indigo-200 mb-2 font-bold">Standard Feature</p>
-                                   <p class="text-[10px] text-slate-400">Unlock the 10-year Amortization Engine details.</p>
+                                   <p class="text-xs text-indigo-200 mb-2 font-bold">{{ 'LMNP.StandardFeature' | translate }}</p>
+                                   <p class="text-[10px] text-slate-400">{{ 'LMNP.UnlockThe10yearAmortizationEngine' | translate }}</p>
                                </div>
                            </div>
                        }

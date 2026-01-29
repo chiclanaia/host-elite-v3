@@ -34,6 +34,10 @@ export class TranslationService {
         return translation;
     }
 
+    instant(key: string, params?: Record<string, string | number>): string {
+        return this.translate(key, params);
+    }
+
     // Debug Support
     debugMode = signal(false); // Forced true for dev
 

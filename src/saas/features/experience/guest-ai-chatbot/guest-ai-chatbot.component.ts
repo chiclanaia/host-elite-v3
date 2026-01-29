@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 interface ChatMessage {
     id: string;
@@ -15,19 +16,20 @@ interface ChatMessage {
 @Component({
     selector: 'exp-04-chatbot',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Contextual Hospitality Agent</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">RAG-driven AI guest assistant for technical support and inquiries.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'GUEST_AI_C.ContextualHospitalityAgent' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'GUEST_AI_C.RagdrivenAiGuestAssistantFor' | translate }}</p>
         </div>
         <div class="flex gap-2">
              <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono flex items-center gap-2">
-                <span>🤖</span> RAG Bot
-            </div>
+                <span>🤖</span>{{ 'GUEST_AI_C.RagBot' | translate }}</div>
         </div>
       </div>
 
@@ -35,9 +37,7 @@ interface ChatMessage {
             <!-- Left: Chat Interface -->
             <div class="flex-1 flex flex-col border-r border-white/10 relative">
                 <!-- Tier 1 Indicator -->
-                <div *ngIf="!isTier2OrAbove()" class="absolute top-0 left-0 w-full bg-amber-500/10 border-b border-amber-500/20 p-2 text-center text-[10px] text-amber-300 font-bold z-10">
-                    SMS MODE (Tier 1) - Manual Replies Only
-                </div>
+                <div *ngIf="!isTier2OrAbove()" class="absolute top-0 left-0 w-full bg-amber-500/10 border-b border-amber-500/20 p-2 text-center text-[10px] text-amber-300 font-bold z-10">{{ 'GUEST_AI_C.SmsModeTier1Manual' | translate }}</div>
 
                 <div class="flex-1 p-6 space-y-4 overflow-y-auto bg-slate-900/50 pt-10">
                     @for (msg of messages(); track msg.id) {
@@ -80,13 +80,13 @@ interface ChatMessage {
 
             <!-- Right: Knowledge & Insights -->
             <div class="w-full lg:w-80 bg-slate-800 p-6 flex flex-col gap-6 overflow-y-auto">
-                <h3 class="text-white font-bold">Knowledge Base</h3>
+                <h3 class="text-white font-bold">{{ 'GUEST_AI_C.KnowledgeBase' | translate }}</h3>
 
                 <!-- Coach Tip -->
                 <div class="p-4 bg-indigo-900/20 border-l-4 border-indigo-500 rounded-r-lg">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-lg">💡</span>
-                        <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
+                        <span class="text-indigo-300 font-bold text-sm uppercase">{{ 'GUEST_AI_C.CoachTip' | translate }}</span>
                     </div>
                     <p class="text-slate-300 text-xs italic">
                         "Speed Wins. Replying under 5 mins increases booking conversion by 400%. If you sleep, the bot handles it."
@@ -96,16 +96,16 @@ interface ChatMessage {
                 <!-- Topic Frequency Word Cloud (Requirement) -->
                 @if (isTier3()) {
                     <div class="bg-black/20 p-4 rounded-xl border border-white/5">
-                        <h4 class="text-xs text-slate-400 font-bold uppercase mb-3">Topic Frequency (WordCloud)</h4>
+                        <h4 class="text-xs text-slate-400 font-bold uppercase mb-3">{{ 'GUEST_AI_C.TopicFrequencyWordcloud' | translate }}</h4>
                         <div class="flex flex-wrap gap-2 justify-center">
-                            <span class="text-emerald-400 text-lg font-bold">WiFi</span>
-                            <span class="text-slate-300 text-xs">Parking</span>
-                            <span class="text-indigo-400 text-sm font-bold">Heating</span>
-                            <span class="text-slate-400 text-[10px]">Keys</span>
-                            <span class="text-pink-400 text-md font-bold">Checkout</span>
-                            <span class="text-slate-300 text-xs">Pool</span>
-                            <span class="text-amber-400 text-sm">Late</span>
-                            <span class="text-slate-500 text-[10px]">Noise</span>
+                            <span class="text-emerald-400 text-lg font-bold">{{ 'GUEST_AI_C.Wifi' | translate }}</span>
+                            <span class="text-slate-300 text-xs">{{ 'GUEST_AI_C.Parking' | translate }}</span>
+                            <span class="text-indigo-400 text-sm font-bold">{{ 'GUEST_AI_C.Heating' | translate }}</span>
+                            <span class="text-slate-400 text-[10px]">{{ 'GUEST_AI_C.Keys' | translate }}</span>
+                            <span class="text-pink-400 text-md font-bold">{{ 'GUEST_AI_C.Checkout' | translate }}</span>
+                            <span class="text-slate-300 text-xs">{{ 'GUEST_AI_C.Pool' | translate }}</span>
+                            <span class="text-amber-400 text-sm">{{ 'GUEST_AI_C.Late' | translate }}</span>
+                            <span class="text-slate-500 text-[10px]">{{ 'GUEST_AI_C.Noise' | translate }}</span>
                         </div>
                     </div>
                 }
@@ -115,16 +115,16 @@ interface ChatMessage {
                     <div class="p-3 bg-black/20 rounded border border-white/5 flex items-center gap-3">
                         <span class="material-icons text-slate-500">description</span>
                         <div class="flex-1">
-                            <div class="text-white text-xs font-bold">House Manual.pdf</div>
-                            <div class="text-[10px] text-emerald-400">Indexed (RAG)</div>
+                            <div class="text-white text-xs font-bold">{{ 'GUEST_AI_C.HouseManualpdf' | translate }}</div>
+                            <div class="text-[10px] text-emerald-400">{{ 'GUEST_AI_C.IndexedRag' | translate }}</div>
                         </div>
                     </div>
                     @if (isTier2OrAbove()) {
                          <div class="p-3 bg-black/20 rounded border border-white/5 flex items-center gap-3">
                             <span class="material-icons text-slate-500">wifi</span>
                             <div class="flex-1">
-                                <div class="text-white text-xs font-bold">Wifi & Access</div>
-                                <div class="text-[10px] text-emerald-400">Fixed Reply</div>
+                                <div class="text-white text-xs font-bold">{{ 'GUEST_AI_C.WifiAccess' | translate }}</div>
+                                <div class="text-[10px] text-emerald-400">{{ 'GUEST_AI_C.FixedReply' | translate }}</div>
                             </div>
                         </div>
                     }
@@ -138,11 +138,11 @@ interface ChatMessage {
                 
                 @if (isTier3()) {
                     <div class="mt-auto">
-                        <div class="text-[10px] uppercase font-bold text-slate-500 mb-2">Confidence Threshold</div>
+                        <div class="text-[10px] uppercase font-bold text-slate-500 mb-2">{{ 'GUEST_AI_C.ConfidenceThreshold' | translate }}</div>
                         <input type="range" class="w-full h-1 bg-slate-600 rounded appearance-none" value="80" data-debug-id="chatbot-confidence-slider">
                         <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-                            <span>Lax</span>
-                            <span>Strict (80%)</span>
+                            <span>{{ 'GUEST_AI_C.Lax' | translate }}</span>
+                            <span>{{ 'GUEST_AI_C.Strict80' | translate }}</span>
                         </div>
                     </div>
                 }

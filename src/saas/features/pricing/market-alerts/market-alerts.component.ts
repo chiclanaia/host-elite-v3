@@ -1,8 +1,10 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 interface Competitor {
     name: string;
@@ -14,13 +16,15 @@ interface Competitor {
 @Component({
     selector: 'pri-03-market-alerts',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Market Intelligence Radar</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Spy on your neighbors. Legally.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'MALERT.MarketIntelligenceRadar' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'MALERT.SpyOnYourNeighborsLegally' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -36,7 +40,7 @@ interface Competitor {
            <!-- Left: Alerts Config -->
            <div class="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2">
                <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
-                   <h3 class="text-white font-bold mb-4">Watchlist Triggers</h3>
+                   <h3 class="text-white font-bold mb-4">{{ 'MALERT.WatchlistTriggers' | translate }}</h3>
                    
                    <div class="space-y-3">
                        <!-- Price Spike -->
@@ -46,7 +50,7 @@ interface Competitor {
                                    <div class="h-8 w-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
                                        <span class="material-icons text-sm">trending_up</span>
                                    </div>
-                                   <span class="text-sm font-bold text-white">Price Surge</span>
+                                   <span class="text-sm font-bold text-white">{{ 'MALERT.PriceSurge' | translate }}</span>
                                </div>
                                <div class="h-4 w-8 bg-emerald-500 rounded-full relative cursor-pointer" data-debug-id="market-alert-toggle-price"><div class="absolute right-1 top-1 h-2 w-2 rounded-full bg-white"></div></div>
                            </div>
@@ -60,11 +64,11 @@ interface Competitor {
                                    <div class="h-8 w-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center">
                                        <span class="material-icons text-sm">trending_down</span>
                                    </div>
-                                   <span class="text-sm font-bold text-white">Undercut Warning</span>
+                                   <span class="text-sm font-bold text-white">{{ 'MALERT.UndercutWarning' | translate }}</span>
                                </div>
                                <div class="h-4 w-8 bg-slate-600 rounded-full relative cursor-pointer" data-debug-id="market-alert-toggle-undercut"><div class="absolute left-1 top-1 h-2 w-2 rounded-full bg-slate-400"></div></div>
                            </div>
-                           <p class="text-[10px] text-slate-500">Alert me if similar listings drop below €80</p>
+                           <p class="text-[10px] text-slate-500">{{ 'MALERT.AlertMeIfSimilarListings' | translate }}</p>
                        </div>
 
                        <!-- Event Watch (Tier 3) -->
@@ -74,7 +78,7 @@ interface Competitor {
                                    <div class="h-8 w-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center">
                                        <span class="material-icons text-sm">event</span>
                                    </div>
-                                   <span class="text-sm font-bold text-white">Event Detection</span>
+                                   <span class="text-sm font-bold text-white">{{ 'MALERT.EventDetection' | translate }}</span>
                                </div>
                                @if(isTier3()) {
                                    <div class="h-4 w-8 bg-emerald-500 rounded-full relative cursor-pointer" data-debug-id="market-alert-toggle-event"><div class="absolute right-1 top-1 h-2 w-2 rounded-full bg-white"></div></div>
@@ -82,7 +86,7 @@ interface Competitor {
                                    <span class="material-icons text-slate-600 text-xs">lock</span>
                                }
                            </div>
-                           <p class="text-[10px] text-slate-500">Scan Ticketmaster/Eventbrite for +50k attendees</p>
+                           <p class="text-[10px] text-slate-500">{{ 'MALERT.ScanTicketmastereventbriteFor50kAttendees' | translate }}</p>
                        </div>
                    </div>
                </div>
@@ -91,7 +95,7 @@ interface Competitor {
                <div class="p-4 bg-red-500/10 border-l-4 border-red-500 rounded-r-lg mt-auto">
                    <div class="flex items-center gap-2 mb-1">
                        <span class="text-lg">💡</span>
-                       <span class="text-red-300 font-bold text-sm uppercase">Coach Tip</span>
+                       <span class="text-red-300 font-bold text-sm uppercase">{{ 'MALERT.CoachTip' | translate }}</span>
                    </div>
                    <p class="text-slate-300 text-xs italic">
                        "Don't Blink. During the Taylor Swift tour, hosts who updated rates 6 months out made 300% more. Tier 3 'Event Detection' catches these spikes early."
@@ -103,11 +107,11 @@ interface Competitor {
            <div class="lg:col-span-2 bg-slate-900 rounded-xl border border-white/10 p-8 flex flex-col relative overflow-hidden">
                
                <div class="flex justify-between items-center mb-6">
-                   <h3 class="text-white font-bold text-lg">Competitor Pulse</h3>
+                   <h3 class="text-white font-bold text-lg">{{ 'MALERT.CompetitorPulse' | translate }}</h3>
                    @if(isTier3()) {
                        <div class="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full animate-pulse">
                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                           <span class="text-xs text-emerald-400 font-mono">LIVE SCRAPER</span>
+                           <span class="text-xs text-emerald-400 font-mono">{{ 'MA.LiveScraper' | translate }}</span>
                        </div>
                    }
                </div>
@@ -145,11 +149,11 @@ interface Competitor {
                
                <div class="grid grid-cols-2 gap-4 mt-6">
                    <div class="text-center">
-                        <div class="text-xs text-slate-500 uppercase mb-1">Market Avg Price</div>
+                        <div class="text-xs text-slate-500 uppercase mb-1">{{ 'MALERT.MarketAvgPrice' | translate }}</div>
                         <div class="text-xl font-mono text-white">€112</div>
                    </div>
                    <div class="text-center">
-                        <div class="text-xs text-slate-500 uppercase mb-1">Market Occupancy</div>
+                        <div class="text-xs text-slate-500 uppercase mb-1">{{ 'MALERT.MarketOccupancy' | translate }}</div>
                         <div class="text-xl font-mono text-white">68%</div>
                    </div>
                </div>
@@ -161,10 +165,11 @@ interface Competitor {
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class MarketAlertsComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'PRI_02',
-        name: 'Market Alerts',
-        description: 'Real-time Competitor Intelligence',
+        name: this.translate.instant('MARKALER.Title'),
+        description: this.translate.instant('MARKALER.Description'),
     } as any));
 
     session = inject(SessionStore);

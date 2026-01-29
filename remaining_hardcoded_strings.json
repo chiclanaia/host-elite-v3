@@ -1,0 +1,250 @@
+{
+  "inventory-generator": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/experience/inventory-generator/inventory-generator.component.ts",
+    "strings": [
+      "BEDROOM",
+      "KITCHEN",
+      "LIVING ROOM"
+    ]
+  },
+  "essentials-list": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/experience/essentials-list/essentials-list.component.ts",
+    "strings": [
+      "M5 13l4 4L19 7"
+    ]
+  },
+  "welcome-book": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/operations/welcome-book/welcome-book.component.ts",
+    "strings": [
+      "EN, FR, ES, DE, IT"
+    ]
+  },
+  "calendar-tool": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legacy/calendar-tool/components/calendar-tool.component.ts",
+    "strings": [
+      "M12 4v16m8-8H4",
+      "M6 18L18 6M6 6l12 12"
+    ]
+  },
+  "calendar-view": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legacy/calendar-tool/components/calendar-view.component.ts",
+    "strings": [
+      "M6 18L18 6M6 6l12 12"
+    ]
+  },
+  "calendar-sidebar": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legacy/calendar-tool/components/calendar-sidebar.component.ts",
+    "strings": [
+      "M12 4v16m8-8H4",
+      "M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+    ]
+  },
+  "ai-message-assistant": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legacy/ai-message-assistant/ai-message-assistant.component.ts",
+    "strings": [
+      "M6 18L18 6M6 6l12 12"
+    ]
+  },
+  "market-alerts": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/pricing/market-alerts/market-alerts.component.ts",
+    "strings": [
+      "LIVE SCRAPER"
+    ]
+  },
+  "construction-schedule": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/operations/construction-schedule/construction-schedule.component.ts",
+    "strings": [
+      "Slack Time"
+    ]
+  },
+  "maintenance-tracker": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/operations/maintenance-tracker/maintenance-tracker.component.ts",
+    "strings": [
+      "Damage",
+      "Wear & Tear"
+    ]
+  },
+  "house-manual": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/operations/house-manual/house-manual.component.ts",
+    "strings": [
+      "How-To",
+      "PDF (2.4 MB)"
+    ]
+  },
+  "inventory": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/operations/inventory/inventory.component.ts",
+    "strings": [
+      "BEDROOM",
+      "KITCHEN",
+      "LIVING ROOM"
+    ]
+  },
+  "ninety-day-counter": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/operations/ninety-day-counter/ninety-day-counter.component.ts",
+    "strings": [
+      "Short-term"
+    ]
+  },
+  "investor-portal": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/operations/investor-portal/investor-portal.component.ts",
+    "strings": [
+      "Boosted reviews"
+    ]
+  },
+  "photo-guide": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/marketing/photo-guide/photo-guide.component.ts",
+    "strings": [
+      "ACTIVE"
+    ]
+  },
+  "ai-listing-writer": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/marketing/ai-listing-writer/ai-listing-writer.component.ts",
+    "strings": [
+      "Family friendly",
+      "Self check-in",
+      "Near convention center",
+      "ACTIVE"
+    ]
+  },
+  "renovation-budget": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/renovation-budget/renovation-budget.component.ts",
+    "strings": [
+      "Bedroom",
+      "Living Room",
+      "Standard",
+      "Plumbing Labor",
+      "Premium",
+      "Luxury",
+      "Kitchen",
+      "Bathroom"
+    ]
+  },
+  "non-resident-tax": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/non-resident-tax/non-resident-tax.component.ts",
+    "strings": [
+      "IRNR",
+      "M 100 150 Q 200 50 300 100"
+    ]
+  },
+  "section-24-simulator": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/section-24-simulator/section-24-simulator.component.ts",
+    "strings": [
+      "INSOLVENCY RISK",
+      "GOLD"
+    ]
+  },
+  "fec-exporter": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/fec-exporter/fec-exporter.component.ts",
+    "strings": [
+      "START EXPORT",
+      "Readiness Score"
+    ]
+  },
+  "lmnp-tax-simulator": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/lmnp-tax-simulator/lmnp-tax-simulator.component.ts",
+    "strings": [
+      "Micro-BIC",
+      "RECOMMENDED"
+    ]
+  },
+  "smart-ledger": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/smart-ledger/smart-ledger.component.ts",
+    "strings": [
+      "AI MATCHED",
+      "M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z",
+      "M0,100 Q50,50 100,20 T200,80 T300,40"
+    ]
+  },
+  "mtd-export": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/mtd-export/mtd-export.component.ts",
+    "strings": [
+      "Q4 2024",
+      "Q1 2025",
+      "Q3 2025",
+      "Q2 2025"
+    ]
+  },
+  "double-tax-report": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/double-tax-report/double-tax-report.component.ts",
+    "strings": [
+      "CLAIM FOR FOREIGN TAX CREDIT RELIEF:",
+      "DETAILS:"
+    ]
+  },
+  "occupancy-stats": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/occupancy-stats/occupancy-stats.component.ts",
+    "strings": [
+      "AI SUGGESTED",
+      "TOO HIGH!"
+    ]
+  },
+  "commission-splitter": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/finance/commission-splitter/commission-splitter.component.ts",
+    "strings": [
+      "Net Revenue",
+      "GROSS REVENUE",
+      "NET PAYOUT",
+      "STATEMENT"
+    ]
+  },
+  "company-audit": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legal/company-audit/company-audit.component.ts",
+    "strings": [
+      "SCI IS"
+    ]
+  },
+  "zweckentfremdung": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legal/zweckentfremdung/zweckentfremdung.component.ts",
+    "strings": [
+      "HIGH RISK",
+      "Commercial Misuse"
+    ]
+  },
+  "cerfa-generator": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legal/cerfa-generator/cerfa-generator.component.ts",
+    "strings": [
+      "Classified"
+    ]
+  },
+  "foreign-id": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legal/foreign-id/foreign-id.component.ts",
+    "strings": [
+      "AB123456"
+    ]
+  },
+  "vut-license": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legal/vut-license/vut-license.component.ts",
+    "strings": [
+      "Estatutos"
+    ]
+  },
+  "regulatory-checklist": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legal/regulatory-checklist/regulatory-checklist.component.ts",
+    "strings": [
+      "Audit Ready",
+      "AI VALIDATED"
+    ]
+  },
+  "compliance-checker": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legal/compliance-checker/compliance-checker.component.ts",
+    "strings": [
+      "SAFE ZONE",
+      "Green Zone",
+      "Discussion on limiting keys per building"
+    ]
+  },
+  "mandate-generator": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/legal/mandate-generator/mandate-generator.component.ts",
+    "strings": [
+      "BETWEEN:",
+      "Digital",
+      "AND:"
+    ]
+  },
+  "yield-setup": {
+    "path": "/Users/josebermudez/Hote excellence/hote-exception-v2/src/saas/features/pricing/yield-setup/yield-setup.component.ts",
+    "strings": [
+      "M0,80 Q50,90 100,60 T200,40 T300,80 T400,20 T500,50 T600,10"
+    ]
+  }
+}

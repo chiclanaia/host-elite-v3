@@ -4,25 +4,27 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormsModule } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
   selector: 'fin-01-roi-simulator',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule,
+    TranslatePipe
+  ],
   template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
        <!-- Header -->
        <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">ROI & Cashflow Architect</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Professional financial modeling engine with seasonality and 10-year projections.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'ROI.RoiCashflowArchitect' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'ROI.ProfessionalFinancialModelingEngineWith' | translate }}</p>
         </div>
          <div class="flex gap-2">
              <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono flex items-center gap-2">
-                <span>💰</span> Cashflow
-            </div>
+                <span>💰</span>{{ 'ROI.Cashflow' | translate }}</div>
              <div class="px-4 py-2 bg-emerald-500/10 text-emerald-300 rounded-lg border border-emerald-500/30 text-xs font-mono flex items-center gap-2">
-                <span>📈</span> 10Y Forecast
+                <span>📈</span> {{ 'ROI.10yForecast' | translate }}
             </div>
          </div>
       </div>
@@ -31,10 +33,10 @@ import { SessionStore } from '../../../../state/session.store';
       <div class="p-4 bg-indigo-900/20 border-l-4 border-indigo-500 rounded-r-lg">
            <div class="flex items-center gap-2 mb-1">
                <span class="text-lg">💡</span>
-               <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
+               <span class="text-indigo-300 font-bold text-sm uppercase">{{ 'ROI.CoachTip' | translate }}</span>
            </div>
            <p class="text-slate-300 text-xs italic">
-               "Cash flow is the business's heartbeat. Experts see monthly struggle; beginners see yearly totals. You must survive the 'Low Season' to enjoy the 'High Season' profits."
+               "{{ 'ROI.CoachTipText' | translate }}"
            </p>
        </div>
 
@@ -42,11 +44,10 @@ import { SessionStore } from '../../../../state/session.store';
         <!-- Left: Inputs & Seasonality -->
         <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col overflow-y-auto">
            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-white">Financial Design</h3>
+                <h3 class="text-xl font-bold text-white">{{ 'ROI.FinancialDesign' | translate }}</h3>
                 @if (isTier3()) {
                     <button (click)="autoFill()" class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30 hover:bg-indigo-500/40 transition-colors flex items-center gap-1" data-debug-id="roi-autofill-btn">
-                        <span>✨</span> AI Estimate
-                    </button>
+                        <span>✨</span>{{ 'ROI.AiEstimate' | translate }}</button>
                 }
            </div>
            
@@ -54,11 +55,11 @@ import { SessionStore } from '../../../../state/session.store';
               <!-- Core Numbers -->
               <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Price (€)</label>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">{{ 'ROI.Price' | translate }}</label>
                     <input type="number" formControlName="price" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="roi-input-price">
                   </div>
                   <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Avg Nightly Rate (€)</label>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">{{ 'ROI.AvgNightlyRate' | translate }}</label>
                     <input type="number" formControlName="rent" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="roi-input-rent">
                   </div>
               </div>
@@ -66,16 +67,16 @@ import { SessionStore } from '../../../../state/session.store';
               <!-- Expenses -->
               <div>
                   <div class="flex justify-between mb-2">
-                       <label class="block text-[10px] font-bold text-slate-400 uppercase">Monthly Expenses</label>
+                       <label class="block text-[10px] font-bold text-slate-400 uppercase">{{ 'ROI.MonthlyExpenses' | translate }}</label>
                        <span class="text-[10px] text-slate-500">{{ totalExpenses() | currency:'EUR':'symbol':'1.0-0' }}/mo</span>
                   </div>
                   <div class="space-y-2">
                       <div class="flex items-center gap-2">
-                          <span class="text-xs text-slate-400 w-24">Loan</span>
+                          <span class="text-xs text-slate-400 w-24">{{ 'ROI.Loan' | translate }}</span>
                           <input type="number" formControlName="loan" class="flex-1 bg-black/20 border border-white/10 rounded px-2 py-1 text-white text-xs" placeholder="0">
                       </div>
                       <div class="flex items-center gap-2">
-                          <span class="text-xs text-slate-400 w-24">Bills/HOA</span>
+                          <span class="text-xs text-slate-400 w-24">{{ 'ROI.Billshoa' | translate }}</span>
                           <input type="number" formControlName="condo" class="flex-1 bg-black/20 border border-white/10 rounded px-2 py-1 text-white text-xs" placeholder="0">
                       </div>
                   </div>
@@ -85,14 +86,13 @@ import { SessionStore } from '../../../../state/session.store';
               <div [class.opacity-50]="!isTier2OrAbove()" [class.pointer-events-none]="!isTier2OrAbove()">
                    <div class="flex justify-between items-center mb-4 pt-4 border-t border-white/10">
                         <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                            <span class="material-icons text-sm text-cyan-400">ac_unit</span> Seasonality Logic
-                        </h4>
+                            <span class="material-icons text-sm text-cyan-400">ac_unit</span>{{ 'ROI.SeasonalityLogic' | translate }}</h4>
                         @if (!isTier2OrAbove()) { <span class="text-[10px] text-amber-400 border border-amber-400/30 px-1.5 rounded">SILVER +</span> }
                    </div>
                    
                    <div class="space-y-3">
                        <div class="flex items-center gap-4">
-                           <span class="text-xs text-slate-400 w-16">Occupancy</span>
+                           <span class="text-xs text-slate-400 w-16">{{ 'ROI.Occupancy' | translate }}</span>
                            <input type="range" class="flex-1 h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer" min="0" max="100" [value]="50"> 
                            <span class="text-xs text-white font-mono w-8">65%</span>
                        </div>
@@ -117,7 +117,7 @@ import { SessionStore } from '../../../../state/session.store';
              <!-- Top: Cashflow Waterfall -->
              <div class="bg-slate-900 rounded-xl border border-white/10 p-6 flex items-center justify-between relative overflow-hidden">
                  <div class="z-10">
-                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Net Annual Cashflow</p>
+                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">{{ 'ROI.NetAnnualCashflow' | translate }}</p>
                      <h2 class="text-4xl font-black text-white" [class.text-rose-400]="netCashflow() < 0" [class.text-emerald-400]="netCashflow() > 0">
                          {{ netCashflow() | currency:'EUR':'symbol':'1.0-0' }}
                      </h2>
@@ -134,7 +134,7 @@ import { SessionStore } from '../../../../state/session.store';
 
              <!-- Middle: 10-Year Wealth Chart -->
              <div class="bg-white/5 border border-white/10 rounded-2xl p-6 flex-1 min-h-[250px] relative flex flex-col">
-                 <h3 class="text-lg font-bold text-white mb-4">10-Year Wealth Accumulation</h3>
+                 <h3 class="text-lg font-bold text-white mb-4">{{ 'ROI.10YearWealthAccumulation' | translate }}</h3>
                  
                  @if (isTier3()) {
                     <div class="flex-1 flex items-end gap-1 relative z-10 px-2">
@@ -152,19 +152,18 @@ import { SessionStore } from '../../../../state/session.store';
                     </div>
                     
                     <div class="flex gap-4 justify-center mt-4 text-[10px]">
-                        <div class="flex items-center gap-1"><div class="w-2 h-2 bg-emerald-500"></div> Asset Value</div>
-                        <div class="flex items-center gap-1"><div class="w-2 h-2 bg-blue-500"></div> Equity Built</div>
+                        <div class="flex items-center gap-1"><div class="w-2 h-2 bg-emerald-500"></div>{{ 'ROI.AssetValue' | translate }}</div>
+                        <div class="flex items-center gap-1"><div class="w-2 h-2 bg-blue-500"></div>{{ 'ROI.EquityBuilt' | translate }}</div>
                     </div>
                     
                     <button class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white text-[10px] px-2 py-1 rounded flex items-center gap-1" data-debug-id="roi-export-pdf">
-                        <span class="material-icons text-xs">picture_as_pdf</span> Bank PDF
-                    </button>
+                        <span class="material-icons text-xs">picture_as_pdf</span>{{ 'ROI.BankPdf' | translate }}</button>
                     
                  } @else {
                      <div class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm rounded-2xl">
                          <span class="text-3xl mb-2">🔒</span>
-                         <h4 class="text-white font-bold text-sm">Professional Forecast</h4>
-                         <p class="text-slate-400 text-xs mb-4 text-center px-8">Unlock 10-year equity analysis and Bank-Ready PDF reports.</p>
+                         <h4 class="text-white font-bold text-sm">{{ 'ROI.ProfessionalForecast' | translate }}</h4>
+                         <p class="text-slate-400 text-xs mb-4 text-center px-8">{{ 'ROI.Unlock10yearEquityAnalysisAnd' | translate }}</p>
                      </div>
                  }
              </div>

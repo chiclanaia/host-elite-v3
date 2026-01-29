@@ -1,7 +1,9 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 interface Ticket {
     id: string;
@@ -17,13 +19,15 @@ interface Ticket {
 @Component({
     selector: 'ops-05-maintenance',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Maintenance Commander</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Track defects, assign contractors, and protect your asset value.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'MAINTENANC.MaintenanceCommander' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'MAINTENANC.TrackDefectsAssignContractorsAnd' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -41,18 +45,17 @@ interface Ticket {
                <!-- Health Status -->
                <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
                    <h3 class="text-white font-bold mb-4 flex items-center gap-2">
-                       <span class="material-icons text-emerald-400">health_and_safety</span> Asset Health
-                   </h3>
+                       <span class="material-icons text-emerald-400">health_and_safety</span>{{ 'MAINTENANC.AssetHealth' | translate }}</h3>
                    <div class="flex items-center gap-4 mb-4">
                        <div class="w-16 h-16 rounded-full border-4 border-emerald-500 flex items-center justify-center text-xl font-bold text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                            94%
                        </div>
                        <div>
-                           <div class="text-sm text-slate-300">Operational</div>
+                           <div class="text-sm text-slate-300">{{ 'MAINTENANC.Operational' | translate }}</div>
                            <div class="text-xs text-slate-500">2 Minor Issues</div>
                        </div>
                    </div>
-                   <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Recent Cost</div>
+                   <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-2">{{ 'MAINTENANC.RecentCost' | translate }}</div>
                    <div class="h-16 w-full flex items-end gap-1 border-b border-slate-700 pb-1">
                        <div class="w-1/6 bg-indigo-900/50 h-[20%] rounded-t"></div>
                        <div class="w-1/6 bg-indigo-900/50 h-[40%] rounded-t"></div>
@@ -69,7 +72,7 @@ interface Ticket {
                 <div class="p-4 bg-indigo-500/10 border-l-4 border-indigo-500 rounded-r-lg mt-auto">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-lg">💡</span>
-                        <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
+                        <span class="text-indigo-300 font-bold text-sm uppercase">{{ 'MAINTENANC.CoachTip' | translate }}</span>
                     </div>
                     <p class="text-slate-300 text-xs italic">
                         "Wear & Tear vs Damage: A worn carpet is your cost. A red wine stain is the guest's cost. Tag tickets correctly to win Airbnb resolution claims."
@@ -88,12 +91,11 @@ interface Ticket {
                                    (click)="filter.set('open')">Open ({{ openCount() }})</button>
                            <button class="px-3 py-1.5 text-slate-400 text-xs hover:text-white transition-colors"
                                    [class.text-white]="filter() === 'closed'"
-                                   (click)="filter.set('closed')">Closed</button>
+                                   (click)="filter.set('closed')">{{ 'MAINTENANC.Closed' | translate }}</button>
                        </div>
                        <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg flex items-center gap-2 transition-transform active:scale-95 shadow-lg shadow-indigo-500/20" 
                                data-debug-id="maint-new-ticket-btn">
-                           <span class="material-icons text-sm">add</span> New Issue
-                       </button>
+                           <span class="material-icons text-sm">add</span>{{ 'MAINTENANC.NewIssue' | translate }}</button>
                    </div>
 
                    <!-- List -->
@@ -143,8 +145,7 @@ interface Ticket {
                                     <div class="mt-3 pl-[3.5rem] flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button class="px-3 py-1.5 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 rounded text-[10px] flex items-center gap-1 font-bold"
                                                 (click)="assignTicket(ticket.id)">
-                                            <span class="material-icons text-[10px]">auto_fix_high</span> Auto-Dispatch to Plumber
-                                        </button>
+                                            <span class="material-icons text-[10px]">auto_fix_high</span>{{ 'MAINTENANC.AutodispatchToPlumber' | translate }}</button>
                                     </div>
                                }
                            </div>
@@ -165,10 +166,11 @@ interface Ticket {
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class MaintenanceComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'OPS_05',
-        name: 'Maintenance Tracker',
-        description: 'Issue & Contractor Management',
+        name: this.translate.instant('MAIN.Title'),
+        description: this.translate.instant('MAIN.Description'),
     } as any));
 
     session = inject(SessionStore);

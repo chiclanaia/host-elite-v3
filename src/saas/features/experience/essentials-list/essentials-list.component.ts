@@ -1,7 +1,9 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 interface Amenity {
     id: string;
@@ -18,22 +20,22 @@ interface Amenity {
 @Component({
     selector: 'exp-01-essentials-list',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Amenity & Yield Biasing</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Strategic asset procurement linked to rental premiums.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'ESSENTIALS.AmenityYieldBiasing' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'ESSENTIALS.StrategicAssetProcurementLinkedTo' | translate }}</p>
         </div>
         <div class="flex gap-2">
              <div class="px-4 py-2 bg-emerald-500/10 text-emerald-300 rounded-lg border border-emerald-500/30 text-xs font-mono flex items-center gap-2">
-                <span>💰</span> Yield Optimizer
-            </div>
+                <span>💰</span>{{ 'ESSENTIALS.YieldOptimizer' | translate }}</div>
              <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono flex items-center gap-2">
-                <span>🛒</span> Procurement
-            </div>
+                <span>🛒</span>{{ 'ESSENTIALS.Procurement' | translate }}</div>
         </div>
       </div>
 
@@ -55,15 +57,14 @@ interface Amenity {
                </div>
                
                <div *ngIf="isTier2OrAbove()" class="text-xs text-slate-400 italic">
-                   <span class="text-emerald-400 font-bold">Silver Tier Active:</span> ROI Multipliers Visible
-               </div>
+                   <span class="text-emerald-400 font-bold">{{ 'ESSENTIALS.SilverTierActive' | translate }}</span>{{ 'ESSENTIALS.RoiMultipliersVisible' | translate }}</div>
            </div>
 
            <!-- Coach Tip -->
            <div class="mb-6 p-4 bg-indigo-900/20 border-l-4 border-indigo-500 rounded-r-lg">
                 <div class="flex items-center gap-2 mb-1">
                     <span class="text-lg">💡</span>
-                    <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip: The Pool Premium</span>
+                    <span class="text-indigo-300 font-bold text-sm uppercase">{{ 'ESSENTIALS.CoachTipThePoolPremium' | translate }}</span>
                 </div>
                 <p class="text-slate-300 text-xs italic">
                     "Every Euro spent should increase Price or Occupancy. Installing a Hot Tub (€6k) typically yields a +15% ADR uplift, paying for itself in 9 months."
@@ -80,7 +81,7 @@ interface Amenity {
                            <div class="flex justify-between items-start mb-2">
                                <h4 class="text-white font-bold truncate" [title]="item.name">{{ item.name }}</h4>
                                @if (item.must_have) {
-                                   <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold uppercase tracking-wider">Essential</span>
+                                   <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold uppercase tracking-wider">{{ 'ESSENTIALS.Essential' | translate }}</span>
                                }
                            </div>
                            <p class="text-xs text-slate-500 mb-4">Item #{{ item.id }}</p>
@@ -103,7 +104,7 @@ interface Amenity {
                                     </div>
                                </div>
                                <div class="flex justify-between text-[10px] uppercase font-mono text-slate-500">
-                                   <span>Cost</span>
+                                   <span>{{ 'ESSENTIALS.Cost' | translate }}</span>
                                    <span>1Y Uplift</span>
                                </div>
                                <div class="text-center mt-1">
@@ -117,12 +118,10 @@ interface Amenity {
                            <!-- Tier 3: Live Procurement -->
                            <div class="pt-3 border-t border-white/5 flex items-center justify-between">
                                <div>
-                                   <span class="text-[10px] text-slate-500 block">Best Public Price</span>
+                                   <span class="text-[10px] text-slate-500 block">{{ 'ESSENTIALS.BestPublicPrice' | translate }}</span>
                                    <span class="text-emerald-400 font-mono font-bold">€{{ item.public_price }}</span>
                                </div>
-                               <button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs rounded font-bold transition-colors" [attr.data-debug-id]="'buy-' + item.id">
-                                   Auto-Buy
-                               </button>
+                               <button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs rounded font-bold transition-colors" [attr.data-debug-id]="'buy-' + item.id">{{ 'ESSENTIALS.Autobuy' | translate }}</button>
                            </div>
                        } @else {
                            <!-- Tier 0/1: Checklist -->
@@ -133,7 +132,7 @@ interface Amenity {
                                         <div class="w-4 h-4 border-2 border-slate-600 rounded peer-checked:bg-emerald-500 peer-checked:border-emerald-500 transition-colors"></div>
                                         <svg class="absolute w-3 h-3 text-white top-0.5 left-0.5 opacity-0 peer-checked:opacity-100 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                     </div>
-                                    <span class="text-xs text-slate-400 group-hover/check:text-white transition-colors">Mark as Acquired</span>
+                                    <span class="text-xs text-slate-400 group-hover/check:text-white transition-colors">{{ 'ESSENTIALS.MarkAsAcquired' | translate }}</span>
                                 </label>
                             </div>
                        }
@@ -145,10 +144,10 @@ interface Amenity {
            @if (!isTier2OrAbove()) {
                <div class="mt-4 p-4 border border-indigo-500/30 rounded-lg bg-gradient-to-r from-indigo-900/50 to-indigo-800/20 flex justify-between items-center">
                    <div>
-                       <h4 class="text-white font-bold text-sm">Unlock ROI Analysis</h4>
-                       <p class="text-indigo-200 text-xs">Upgrade to Silver to see "Yield Multipliers" and calculated Payback Periods for every amenity.</p>
+                       <h4 class="text-white font-bold text-sm">{{ 'ESSENTIALS.UnlockRoiAnalysis' | translate }}</h4>
+                       <p class="text-indigo-200 text-xs">{{ 'ESSENTIALS.UpgradeToSilverToSee' | translate }}</p>
                    </div>
-                   <button class="px-4 py-2 bg-white text-indigo-900 font-bold text-xs rounded hover:bg-indigo-50 transition-colors" data-debug-id="upgrade-trigger">Unlock Silver</button>
+                   <button class="px-4 py-2 bg-white text-indigo-900 font-bold text-xs rounded hover:bg-indigo-50 transition-colors" data-debug-id="upgrade-trigger">{{ 'ESSENTIALS.UnlockSilver' | translate }}</button>
                </div>
            }
        </div>
@@ -157,6 +156,7 @@ interface Amenity {
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class EssentialsListComponent {
+    translate = inject(TranslationService);
     session = inject(SessionStore);
 
     // Tiers Logic
@@ -173,7 +173,7 @@ export class EssentialsListComponent {
     activeCategory = signal<string>('Kitchen');
 
     amenities = signal<Amenity[]>([
-        { id: '1', name: 'Nespresso Machine', category: 'Kitchen', cost: 120, yield_uplift: 300, roi_months: 4.8, must_have: true, acquired: false, public_price: 99 },
+        { id: '1', name: this.translate.instant('ESSELIST.Title'), category: 'Kitchen', cost: 120, yield_uplift: 300, roi_months: 4.8, must_have: true, acquired: false, public_price: 99 },
         { id: '2', name: '4-Slice Toaster', category: 'Kitchen', cost: 40, yield_uplift: 50, roi_months: 9.6, must_have: true, acquired: true, public_price: 34.99 },
         { id: '3', name: 'Hot Tub (Inflatable)', category: 'Outdoor', cost: 600, yield_uplift: 1500, roi_months: 4.8, must_have: false, acquired: false, public_price: 549 },
         { id: '4', name: 'BBQ Grill', category: 'Outdoor', cost: 250, yield_uplift: 400, roi_months: 7.5, must_have: false, acquired: false, public_price: 229 },

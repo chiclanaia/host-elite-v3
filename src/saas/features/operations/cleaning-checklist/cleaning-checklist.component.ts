@@ -1,7 +1,9 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 interface CleaningTask {
     id: string;
@@ -14,13 +16,15 @@ interface CleaningTask {
 @Component({
     selector: 'ops-03-cleaning',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Turnover Master</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Standardize your cleaning process and guarantee 5-star reviews.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'CLEAN.TurnoverMaster' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'CLEAN.StandardizeYourCleaningProcessAnd' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -36,7 +40,7 @@ interface CleaningTask {
            <!-- Workflow Selector -->
            <div class="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2">
                 <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
-                    <h3 class="text-white font-bold mb-4">Cleaning Zones</h3>
+                    <h3 class="text-white font-bold mb-4">{{ 'CLEAN.CleaningZones' | translate }}</h3>
                     <div class="space-y-2">
                         @for (zone of zones; track zone.id) {
                             <button class="w-full p-4 rounded-lg border flex items-center justify-between group transition-all"
@@ -73,7 +77,7 @@ interface CleaningTask {
                 <div class="p-4 bg-indigo-500/10 border-l-4 border-indigo-500 rounded-r-lg mt-auto">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-lg">💡</span>
-                        <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
+                        <span class="text-indigo-300 font-bold text-sm uppercase">{{ 'CLEAN.CoachTip' | translate }}</span>
                     </div>
                     <p class="text-slate-300 text-xs italic">
                         "The Hair Rule: One loose hair on the bed pillows equals a 3-star review on cleanliness. Always use a lint roller as the final step before leaving."
@@ -129,8 +133,7 @@ interface CleaningTask {
                                                 </button>
                                                 @if(task.completed) {
                                                     <span class="text-[10px] text-emerald-400 flex items-center gap-1">
-                                                        <span class="material-icons text-[10px]">verified</span> Verified by AI
-                                                    </span>
+                                                        <span class="material-icons text-[10px]">verified</span>{{ 'CLEAN.VerifiedByAi' | translate }}</span>
                                                 }
                                             </div>
                                         }
@@ -155,10 +158,11 @@ interface CleaningTask {
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class CleaningChecklistComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'OPS_03',
-        name: 'Cleaning Checklist',
-        description: 'Professional Turnover Standards',
+        name: this.translate.instant('CLEACHEC.Title'),
+        description: this.translate.instant('CLEACHEC.Description'),
     } as any));
 
     session = inject(SessionStore);

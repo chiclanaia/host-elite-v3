@@ -2,17 +2,20 @@ import { Component, input, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'fin-06-fec-exporter',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Audit-Proof Exporter (FEC)</h1>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'FEC.AuditproofExporterFec' | translate }}</h1>
           <p class="text-slate-400 mt-2 max-w-2xl">France demands the 'Fichier des Écritures Comptables' (FEC). One mistake, and your accounts are rejected.</p>
         </div>
          <!-- Tier Badge -->
@@ -30,7 +33,7 @@ import { SessionStore } from '../../../../state/session.store';
            
            <!-- COL 1: Audit Readiness Score (Visual) -->
            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center justify-center relative overflow-hidden">
-               <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">Audit Readiness</h3>
+               <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">{{ 'FEC.AuditReadiness' | translate }}</h3>
                
                <!-- Gauge Chart (CSS) -->
                <div class="relative w-48 h-24 overflow-hidden mb-4">
@@ -47,7 +50,7 @@ import { SessionStore } from '../../../../state/session.store';
                @if (isTier3()) {
                    <div class="mt-8 w-full">
                        <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-                           <span>Receipts Match</span>
+                           <span>{{ 'FEC.ReceiptsMatch' | translate }}</span>
                            <span class="text-emerald-400">100%</span>
                        </div>
                        <div class="w-full h-1 bg-slate-700 rounded-full mb-4 overflow-hidden">
@@ -55,7 +58,7 @@ import { SessionStore } from '../../../../state/session.store';
                        </div>
                        
                        <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-                           <span>VAT Sequencing</span>
+                           <span>{{ 'FEC.VatSequencing' | translate }}</span>
                            <span class="text-amber-400">98%</span>
                        </div>
                        <div class="w-full h-1 bg-slate-700 rounded-full mb-4 overflow-hidden">
@@ -68,43 +71,41 @@ import { SessionStore } from '../../../../state/session.store';
            <!-- COL 2: Transaction Tagging (Tier 2 Action) -->
            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col relative overflow-hidden">
                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                   <span class="material-icons text-indigo-400">label</span> Smart Tagger
-               </h3>
+                   <span class="material-icons text-indigo-400">label</span>{{ 'FEC.SmartTagger' | translate }}</h3>
                
                <div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
                    <!-- Item 1 -->
                    <div class="p-3 bg-black/20 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-colors group">
                        <div class="flex justify-between items-start mb-2">
-                           <span class="text-xs text-slate-300 font-medium">Leroy Merlin - Kitchen</span>
+                           <span class="text-xs text-slate-300 font-medium">{{ 'FEC.LeroyMerlinKitchen' | translate }}</span>
                            <span class="text-xs text-slate-500">-€450.00</span>
                        </div>
                        <div class="flex gap-2">
-                           <button class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 rounded text-[10px] text-white">Renovation</button>
-                           <button class="px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded text-[10px] text-slate-300">Furniture</button>
+                           <button class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 rounded text-[10px] text-white">{{ 'FEC.Renovation' | translate }}</button>
+                           <button class="px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded text-[10px] text-slate-300">{{ 'FEC.Furniture' | translate }}</button>
                        </div>
                    </div>
                    
                    <!-- Item 2 -->
                    <div class="p-3 bg-black/20 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-colors">
                        <div class="flex justify-between items-start mb-2">
-                           <span class="text-xs text-slate-300 font-medium">Uber Eats (Misc)</span>
+                           <span class="text-xs text-slate-300 font-medium">{{ 'FEC.UberEatsMisc' | translate }}</span>
                            <span class="text-xs text-slate-500">-€25.00</span>
                        </div>
                        <div class="flex gap-2">
-                           <button class="px-2 py-1 bg-rose-600/20 text-rose-300 hover:bg-rose-600/30 rounded text-[10px] border border-rose-500/30">Reject (Personal)</button>
+                           <button class="px-2 py-1 bg-rose-600/20 text-rose-300 hover:bg-rose-600/30 rounded text-[10px] border border-rose-500/30">{{ 'FEC.RejectPersonal' | translate }}</button>
                        </div>
                    </div>
 
                    <!-- Item 3 -->
                    <div class="p-3 bg-black/20 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-colors">
                        <div class="flex justify-between items-start mb-2">
-                           <span class="text-xs text-slate-300 font-medium">EDF Energy</span>
+                           <span class="text-xs text-slate-300 font-medium">{{ 'FEC.EdfEnergy' | translate }}</span>
                            <span class="text-xs text-slate-500">-€85.00</span>
                        </div>
                        <div class="flex gap-2 items-center">
                            <div class="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded text-[10px] border border-emerald-500/30 flex items-center gap-1">
-                               <span class="material-icons text-[10px]">check</span> Auto-Tagged: Utilities
-                           </div>
+                               <span class="material-icons text-[10px]">check</span>{{ 'FEC.AutotaggedUtilities' | translate }}</div>
                        </div>
                    </div>
                </div>
@@ -112,9 +113,9 @@ import { SessionStore } from '../../../../state/session.store';
                @if (isTier0()) {
                    <div class="absolute inset-0 z-10 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
                        <span class="text-3xl mb-2">🤖</span>
-                       <h3 class="text-sm font-bold text-white mb-2">Automate Your Books</h3>
-                       <p class="text-xs text-slate-400 mb-4">Let AI categorize your bank feed automatically.</p>
-                       <div class="px-3 py-1 bg-indigo-600 rounded text-[10px] font-bold text-white">Silver Feature</div>
+                       <h3 class="text-sm font-bold text-white mb-2">{{ 'FEC.AutomateYourBooks' | translate }}</h3>
+                       <p class="text-xs text-slate-400 mb-4">{{ 'FEC.LetAiCategorizeYourBank' | translate }}</p>
+                       <div class="px-3 py-1 bg-indigo-600 rounded text-[10px] font-bold text-white">{{ 'FEC.SilverFeature' | translate }}</div>
                    </div>
                }
            </div>
@@ -131,12 +132,12 @@ import { SessionStore } from '../../../../state/session.store';
                                <span class="material-icons text-white/80">file_download</span>
                                <span class="text-xs font-mono bg-black/20 px-2 py-0.5 rounded text-white/70">.txt</span>
                            </div>
-                           <h3 class="text-2xl font-bold text-white">Generate FEC</h3>
-                           <p class="text-indigo-200 text-xs mt-1">Fiscal Year 2024</p>
+                           <h3 class="text-2xl font-bold text-white">{{ 'FEC.GenerateFec' | translate }}</h3>
+                           <p class="text-indigo-200 text-xs mt-1">{{ 'FEC.FiscalYear2024' | translate }}</p>
                        </div>
                        
                        <div class="flex items-center justify-between mt-4">
-                           <span class="text-xs font-bold text-white bg-black/20 px-3 py-1.5 rounded-lg group-hover:bg-white group-hover:text-indigo-600 transition-colors">START EXPORT</span>
+                           <span class="text-xs font-bold text-white bg-black/20 px-3 py-1.5 rounded-lg group-hover:bg-white group-hover:text-indigo-600 transition-colors">{{ 'FE.StartExport' | translate }}</span>
                            @if (isExporting()) {
                                <span class="material-icons animate-spin text-white">sync</span>
                            }
@@ -149,9 +150,8 @@ import { SessionStore } from '../../../../state/session.store';
                     <div class="flex items-start gap-3 h-full">
                        <span class="text-xl">⚖️</span>
                        <div>
-                           <h4 class="font-bold text-indigo-300 text-sm">The Cost of Messy Books</h4>
-                           <p class="text-xs text-indigo-200/80 mt-1 leading-relaxed">
-                               A rejected FEC file during a tax audit triggers an <strong>automatic taxation on turnover</strong> (not profit) plus a 40% penalty. 
+                           <h4 class="font-bold text-indigo-300 text-sm">{{ 'FEC.TheCostOfMessyBooks' | translate }}</h4>
+                           <p class="text-xs text-indigo-200/80 mt-1 leading-relaxed">{{ 'FEC.ARejectedFecFileDuring' | translate }}<strong>automatic taxation on turnover</strong> (not profit) plus a 40% penalty. 
                                Ensure your "Readiness Score" is 100% before exporting.
                            </p>
                        </div>

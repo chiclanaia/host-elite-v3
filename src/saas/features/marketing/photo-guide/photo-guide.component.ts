@@ -1,19 +1,23 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'mkt-01-photo-guide',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">AI Photo Studio</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Turn amateur phone shots into architectural digest masterpieces.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'PHOTO.AiPhotoStudio' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'PHOTO.TurnAmateurPhoneShotsInto' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -29,13 +33,13 @@ import { FormsModule } from '@angular/forms';
            <!-- Left: Controls & Tips -->
            <div class="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2">
                <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
-                   <h3 class="text-white font-bold mb-4">Enhancement Suite</h3>
+                   <h3 class="text-white font-bold mb-4">{{ 'PHOTO.EnhancementSuite' | translate }}</h3>
                    
                    <!-- Filters -->
                    <div class="space-y-4">
                        <div>
                            <div class="flex justify-between text-xs text-slate-400 mb-1">
-                               <span>Brightness</span>
+                               <span>{{ 'PHOTO.Brightness' | translate }}</span>
                                <span>{{ brightness() }}%</span>
                            </div>
                            <input type="range" [(ngModel)]="brightness" min="80" max="150" class="w-full h-1 bg-slate-600 rounded appearance-none" [disabled]="isTier0()">
@@ -44,8 +48,8 @@ import { FormsModule } from '@angular/forms';
                        @if(isTier3()) {
                            <div>
                                <div class="flex justify-between text-xs text-slate-400 mb-1">
-                                   <span>AI Blue Sky</span>
-                                   <span class="text-indigo-400 font-bold">ACTIVE</span>
+                                   <span>{{ 'PHOTO.AiBlueSky' | translate }}</span>
+                                   <span class="text-indigo-400 font-bold">{{ 'PG.Active' | translate }}</span>
                                </div>
                                <div class="flex gap-2">
                                    <button (click)="weatherMode.set('sunny')" 
@@ -67,7 +71,7 @@ import { FormsModule } from '@angular/forms';
                            
                            <div>
                                <div class="flex justify-between text-xs text-slate-400 mb-2 mt-4">
-                                   <span>Privacy Blur (Faces/License Plates)</span>
+                                   <span>{{ 'PHOTO.PrivacyBlurFaceslicensePlates' | translate }}</span>
                                </div>
                                <button (click)="toggleBlur()" class="w-full py-2 border border-dashed border-slate-500 rounded text-xs text-slate-400 hover:text-white hover:border-white transition-colors" [class.bg-emerald-500-20]="blurActive()" data-debug-id="photo-toggle-blur">
                                    {{ blurActive() ? '✅ Blur Active' : 'Apply AI Blur' }}
@@ -75,8 +79,8 @@ import { FormsModule } from '@angular/forms';
                            </div>
                        } @else {
                            <div class="p-3 bg-black/20 rounded border border-white/5 text-center mt-4">
-                               <p class="text-[10px] text-slate-400 mb-2">Upgrade to Gold for Weather Swapping & Privacy Blur.</p>
-                               <button class="bg-indigo-600 text-white text-[10px] px-3 py-1 rounded hover:bg-indigo-500">Upgrade</button>
+                               <p class="text-[10px] text-slate-400 mb-2">{{ 'PHOTO.UpgradeToGoldForWeather' | translate }}</p>
+                               <button class="bg-indigo-600 text-white text-[10px] px-3 py-1 rounded hover:bg-indigo-500">{{ 'PHOTO.Upgrade' | translate }}</button>
                            </div>
                        }
                    </div>
@@ -86,7 +90,7 @@ import { FormsModule } from '@angular/forms';
                 <div class="p-4 bg-pink-500/10 border-l-4 border-pink-500 rounded-r-lg mt-auto">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-lg">💡</span>
-                        <span class="text-pink-300 font-bold text-sm uppercase">Coach Tip</span>
+                        <span class="text-pink-300 font-bold text-sm uppercase">{{ 'PHOTO.CoachTip' | translate }}</span>
                     </div>
                     <p class="text-slate-300 text-xs italic">
                         "Vertical is King. 70% of bookings happen on mobile. Ensure your 'Hero' shot (cover photo) is cropped to 4:5 ratio for maximum screen real estate."
@@ -99,10 +103,10 @@ import { FormsModule } from '@angular/forms';
                <div class="flex-1 bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col relative overflow-hidden select-none">
                    
                    <div class="flex justify-between items-center mb-4">
-                       <h3 class="text-white font-bold text-lg">Live Preview</h3>
+                       <h3 class="text-white font-bold text-lg">{{ 'PHOTO.LivePreview' | translate }}</h3>
                        <div class="flex gap-2">
-                            <span class="text-[10px] uppercase font-bold text-slate-500 bg-black/30 px-2 py-1 rounded">Before</span>
-                            <span class="text-[10px] uppercase font-bold text-indigo-400 bg-indigo-500/20 px-2 py-1 rounded">After (AI)</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-500 bg-black/30 px-2 py-1 rounded">{{ 'PHOTO.Before' | translate }}</span>
+                            <span class="text-[10px] uppercase font-bold text-indigo-400 bg-indigo-500/20 px-2 py-1 rounded">{{ 'PHOTO.AfterAi' | translate }}</span>
                        </div>
                    </div>
 
@@ -137,13 +141,13 @@ import { FormsModule } from '@angular/forms';
                        </div>
                        
                        <!-- Labels -->
-                       <div class="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur pointer-events-none">Original</div>
+                       <div class="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur pointer-events-none">{{ 'PHOTO.Original' | translate }}</div>
                        <div class="absolute top-4 right-4 bg-indigo-600/80 text-white text-xs px-2 py-1 rounded backdrop-blur pointer-events-none" 
-                            [style.opacity]="sliderPos() > 10 ? 1 : 0">Enhanced</div>
+                            [style.opacity]="sliderPos() > 10 ? 1 : 0">{{ 'PHOTO.Enhanced' | translate }}</div>
                             
                    </div>
                    
-                   <p class="text-center text-slate-500 text-xs mt-4">Drag slider to compare</p>
+                   <p class="text-center text-slate-500 text-xs mt-4">{{ 'PHOTO.DragSliderToCompare' | translate }}</p>
                </div>
            </div>
        </div>
@@ -152,10 +156,11 @@ import { FormsModule } from '@angular/forms';
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class PhotoGuideComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'MKT_01',
-        name: 'Photo Guide',
-        description: 'AI Image Enhancement & Staging Suite',
+        name: this.translate.instant('PHOTGUID.Title'),
+        description: this.translate.instant('PHOTGUID.Description'),
     } as any));
 
     session = inject(SessionStore);

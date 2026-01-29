@@ -25,7 +25,7 @@
                         <div class="relative flex items-start">
                             <div class="flex h-6 items-center">
                                 <input [id]="question.id" [formControlName]="question.id" type="checkbox"
-                                    title="Question"
+                                    [title]="'COMMON.Question' | translate"
                                     class="h-5 w-5 rounded border-slate-500 bg-white/10 text-blue-500 focus:ring-blue-500 cursor-pointer">
                             </div>
                             <div class="ml-3 text-sm leading-6">
@@ -40,8 +40,8 @@
                                 class="block text-xs font-bold text-indigo-300 mb-1 uppercase tracking-wide">{{
                                 question.sub_question_config.label_key | translate }}</label>
                             <input [type]="question.sub_question_config.type" [id]="question.sub_question_config.id"
-                                [formControlName]="question.sub_question_config.id" placeholder="Details"
-                                title="Details"
+                                [formControlName]="question.sub_question_config.id"
+                                [placeholder]="'COMMON.Details' | translate" [title]="'COMMON.Details' | translate"
                                 class="block w-full text-sm rounded-lg border-white/20 bg-black/30 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-indigo-500 p-2.5 shadow-inner">
                         </div>
                         }
@@ -83,7 +83,7 @@
                     {{ dim.name | translate }}
                 </h2>
                 <span class="px-3 py-1 bg-white/5 rounded-full text-xs font-mono text-slate-400 border border-white/5">
-                    {{ dim.features.length }} Features
+                    {{ dim.features.length }} {{ 'COMMON.Features' | translate }}
                 </span>
             </div>
 
@@ -134,7 +134,7 @@
                                     d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
                                     clip-rule="evenodd" />
                             </svg>
-                            Locked
+                            {{ 'COMMON.Locked' | translate }}
                         </span>
                         }
                         @if (store.showPlanBadges() || (feature.required_tier && feature.required_tier !== 'TIER_0' &&
@@ -149,10 +149,10 @@
                 <div class="relative z-10">
                     <h3 class="text-lg font-bold text-white mb-2 group-hover:text-[#D4AF37] transition-colors line-clamp-1"
                         [attr.data-debug-id]="'feature-card-title-' + feature.id">
-                        {{ feature.name }}
+                        {{ ('FEATURE.' + feature.id.trim().toUpperCase() + '.Title') | translate }}
                     </h3>
                     <p class="text-[11px] text-slate-400 line-clamp-2 leading-relaxed mb-4 h-[2.5em]">
-                        {{ feature.description || 'No description available.' }}
+                        {{ ('FEATURE.' + feature.id.trim().toUpperCase() + '.Desc') | translate }}
                     </p>
 
 
@@ -162,9 +162,9 @@
                         [class]="isFeatureLocked(feature) ? 'text-slate-600' : 'text-[#D4AF37] group-hover:text-white'"
                         [attr.data-debug-id]="'feature-card-action-' + feature.id">
                         @if (isFeatureLocked(feature)) {
-                        <span>Upgrade Required</span>
+                        <span>{{ 'COMMON.UpgradeRequired' | translate }}</span>
                         } @else {
-                        <span>Open Tool &rarr;</span>
+                        <span>{{ 'COMMON.OpenTool' | translate }} &rarr;</span>
                         }
                     </div>
                 </div>
@@ -177,7 +177,7 @@
 
     @if (phaseDimensions().length === 0) {
     <div class="text-center py-20 text-slate-500">
-        <p>Aucune fonctionnalité disponible pour cette phase.</p>
+        <p>{{ 'COMMON.NoFeaturesPhase' | translate }}</p>
     </div>
     }
 </div>
@@ -242,9 +242,10 @@
     </app-property-audit>
     } @else {
     <div class="p-8 text-center text-white/50 bg-white/5 rounded-2xl border border-white/10">
-        <p class="text-xl font-bold mb-2">Composant non trouvé pour cet ID</p>
+        <p class="text-xl font-bold mb-2">{{ 'COMMON.ToolNotFound' | translate }}</p>
         <p class="font-mono text-sm">{{ activeToolId() }}</p>
-        <button (click)="closeTool()" class="mt-4 px-6 py-2 bg-slate-700 rounded-lg hover:bg-slate-600">Retour</button>
+        <button (click)="closeTool()" class="mt-4 px-6 py-2 bg-slate-700 rounded-lg hover:bg-slate-600">{{ 'COMMON.Back'
+            | translate }}</button>
     </div>
     }
 </div>

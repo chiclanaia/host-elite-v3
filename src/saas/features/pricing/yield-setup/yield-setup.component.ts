@@ -1,19 +1,23 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'pri-01-yield-setup',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Yield Strategy Engine</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Dynamic pricing rules to maximize RevPAR.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'YIELD.YieldStrategyEngine' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'YIELD.DynamicPricingRulesToMaximize' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -30,16 +34,16 @@ import { FormsModule } from '@angular/forms';
            <div class="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2">
                <!-- Baseline Costs -->
                <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
-                   <h3 class="text-white font-bold mb-4">Baseline Strategy</h3>
+                   <h3 class="text-white font-bold mb-4">{{ 'YIELD.BaselineStrategy' | translate }}</h3>
                    <div class="space-y-4">
                        <div>
-                           <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Break-Even Price</label>
+                           <label class="block text-slate-400 text-xs uppercase font-bold mb-2">{{ 'YIELD.BreakevenPrice' | translate }}</label>
                            <div class="text-2xl font-mono text-white">€85.00</div>
-                           <p class="text-[10px] text-slate-500">Fixed costs + Cleaning / 30 nights</p>
+                           <p class="text-[10px] text-slate-500">{{ 'YIELD.FixedCostsCleaning30Nights' | translate }}</p>
                        </div>
                        <div>
                            <div class="flex justify-between text-xs text-slate-400 mb-2">
-                               <span>Minimum Margin</span>
+                               <span>{{ 'YIELD.MinimumMargin' | translate }}</span>
                                <span class="text-emerald-400 font-bold">+{{ margin() }}%</span>
                            </div>
                            <input type="range" [(ngModel)]="margin" min="0" max="100" class="w-full h-1 bg-slate-600 rounded appearance-none" [disabled]="isTier0()">
@@ -50,8 +54,7 @@ import { FormsModule } from '@angular/forms';
                <!-- Advanced Rules (Tier 2) -->
                <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
                    <h3 class="text-white font-bold mb-4 flex items-center gap-2">
-                       <span class="material-icons text-indigo-400">tune</span> Smart Adjustments
-                   </h3>
+                       <span class="material-icons text-indigo-400">tune</span>{{ 'YIELD.SmartAdjustments' | translate }}</h3>
                    
                    @if (isTier2()) {
                        <div class="space-y-3">
@@ -59,8 +62,8 @@ import { FormsModule } from '@angular/forms';
                                <div class="flex items-center gap-3">
                                    <input type="checkbox" checked class="rounded border-slate-600 text-indigo-500 focus:ring-0 bg-transparent">
                                    <div>
-                                       <div class="text-sm text-white font-bold">Orphan Night Filler</div>
-                                       <div class="text-[10px] text-slate-400">Discount 1-night gaps by 15%</div>
+                                       <div class="text-sm text-white font-bold">{{ 'YIELD.OrphanNightFiller' | translate }}</div>
+                                       <div class="text-[10px] text-slate-400">{{ 'YIELD.Discount1nightGapsBy15' | translate }}</div>
                                    </div>
                                </div>
                            </label>
@@ -68,7 +71,7 @@ import { FormsModule } from '@angular/forms';
                                <div class="flex items-center gap-3">
                                    <input type="checkbox" class="rounded border-slate-600 text-indigo-500 focus:ring-0 bg-transparent">
                                    <div>
-                                       <div class="text-sm text-white font-bold">Last Minute Deal</div>
+                                       <div class="text-sm text-white font-bold">{{ 'YIELD.LastMinuteDeal' | translate }}</div>
                                        <div class="text-[10px] text-slate-400">-10% within 48h arrival</div>
                                    </div>
                                </div>
@@ -76,8 +79,8 @@ import { FormsModule } from '@angular/forms';
                        </div>
                    } @else {
                        <div class="p-4 bg-indigo-900/10 rounded-lg text-center border border-indigo-500/20">
-                           <p class="text-indigo-300 text-xs mb-2">Unlock Smart Rules with Silver</p>
-                           <button class="text-[10px] bg-indigo-600 text-white px-3 py-1 rounded">Upgrade Now</button>
+                           <p class="text-indigo-300 text-xs mb-2">{{ 'YIELD.UnlockSmartRulesWithSilver' | translate }}</p>
+                           <button class="text-[10px] bg-indigo-600 text-white px-3 py-1 rounded">{{ 'YIELD.UpgradeNow' | translate }}</button>
                        </div>
                    }
                </div>
@@ -86,7 +89,7 @@ import { FormsModule } from '@angular/forms';
                <div class="p-4 bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg mt-auto">
                    <div class="flex items-center gap-2 mb-1">
                        <span class="text-lg">💡</span>
-                       <span class="text-emerald-300 font-bold text-sm uppercase">Coach Tip</span>
+                       <span class="text-emerald-300 font-bold text-sm uppercase">{{ 'YIELD.CoachTip' | translate }}</span>
                    </div>
                    <p class="text-slate-300 text-xs italic">
                        "Kill the Orphans. 'Orphan nights' (1-2 day gaps) wreck occupancy. Tier 2 'Orphan Filler' automatically discounts these hard-to-sell dates."
@@ -101,13 +104,13 @@ import { FormsModule } from '@angular/forms';
                    <h3 class="text-white font-bold text-lg">12-Month Demand Forecast</h3>
                    <div class="flex gap-4 text-xs">
                        <div class="flex items-center gap-2">
-                           <div class="w-3 h-3 bg-slate-700 rounded-sm"></div> <span class="text-slate-400">Low</span>
+                           <div class="w-3 h-3 bg-slate-700 rounded-sm"></div> <span class="text-slate-400">{{ 'YIELD.Low' | translate }}</span>
                        </div>
                        <div class="flex items-center gap-2">
-                           <div class="w-3 h-3 bg-emerald-500 rounded-sm"></div> <span class="text-slate-400">Good</span>
+                           <div class="w-3 h-3 bg-emerald-500 rounded-sm"></div> <span class="text-slate-400">{{ 'YIELD.Good' | translate }}</span>
                        </div>
                        <div class="flex items-center gap-2">
-                           <div class="w-3 h-3 bg-amber-500 rounded-sm"></div> <span class="text-slate-400">High</span>
+                           <div class="w-3 h-3 bg-amber-500 rounded-sm"></div> <span class="text-slate-400">{{ 'YIELD.High' | translate }}</span>
                        </div>
                    </div>
                </div>
@@ -129,16 +132,16 @@ import { FormsModule } from '@angular/forms';
 
                    <!-- Bars -->
                    <div class="w-full bg-slate-700 hover:bg-slate-600 transition-all rounded-t relative group" style="height: 40%">
-                       <div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">Jan: €95</div>
+                       <div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">{{ 'YIELD.Jan95' | translate }}</div>
                    </div>
                    <div class="w-full bg-slate-700 hover:bg-slate-600 transition-all rounded-t relative group" style="height: 35%"></div>
                    <div class="w-full bg-slate-700 hover:bg-slate-600 transition-all rounded-t relative group" style="height: 45%"></div>
                    <div class="w-full bg-emerald-600 hover:bg-emerald-500 transition-all rounded-t relative group" style="height: 60%">
-                       <div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">Apr: €120</div>
+                       <div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">{{ 'YIELD.Apr120' | translate }}</div>
                    </div>
                    <div class="w-full bg-slate-700 hover:bg-slate-600 transition-all rounded-t relative group" style="height: 55%"></div>
                    <div class="w-full bg-amber-500 hover:bg-amber-400 transition-all rounded-t relative group" style="height: 80%">
-                       <div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">Jun: €180</div>
+                       <div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">{{ 'YIELD.Jun180' | translate }}</div>
                    </div>
                    <div class="w-full bg-amber-500 hover:bg-amber-400 transition-all rounded-t relative group" style="height: 90%"></div>
                    <div class="w-full bg-amber-500 hover:bg-amber-400 transition-all rounded-t relative group" style="height: 95%"></div>
@@ -146,23 +149,23 @@ import { FormsModule } from '@angular/forms';
                    <div class="w-full bg-slate-700 hover:bg-slate-600 transition-all rounded-t relative group" style="height: 50%"></div>
                    <div class="w-full bg-slate-700 hover:bg-slate-600 transition-all rounded-t relative group" style="height: 40%"></div>
                    <div class="w-full bg-emerald-600 hover:bg-emerald-500 transition-all rounded-t relative group" style="height: 70%">
-                       <div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">Dec: €140</div>
+                       <div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">{{ 'YIELD.Dec140' | translate }}</div>
                    </div>
                </div>
                
                <div class="flex justify-between text-xs text-slate-500 mt-4 px-2 uppercase font-mono tracking-widest">
-                   <span>Jan</span>
-                   <span>Feb</span>
-                   <span>Mar</span>
-                   <span>Apr</span>
-                   <span>May</span>
-                   <span>Jun</span>
-                   <span>Jul</span>
-                   <span>Aug</span>
-                   <span>Sep</span>
-                   <span>Oct</span>
-                   <span>Nov</span>
-                   <span>Dec</span>
+                   <span>{{ 'YIELD.Jan' | translate }}</span>
+                   <span>{{ 'YIELD.Feb' | translate }}</span>
+                   <span>{{ 'YIELD.Mar' | translate }}</span>
+                   <span>{{ 'YIELD.Apr' | translate }}</span>
+                   <span>{{ 'YIELD.May' | translate }}</span>
+                   <span>{{ 'YIELD.Jun' | translate }}</span>
+                   <span>{{ 'YIELD.Jul' | translate }}</span>
+                   <span>{{ 'YIELD.Aug' | translate }}</span>
+                   <span>{{ 'YIELD.Sep' | translate }}</span>
+                   <span>{{ 'YIELD.Oct' | translate }}</span>
+                   <span>{{ 'YIELD.Nov' | translate }}</span>
+                   <span>{{ 'YIELD.Dec' | translate }}</span>
                </div>
            </div>
        </div>
@@ -171,10 +174,11 @@ import { FormsModule } from '@angular/forms';
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class YieldSetupComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'PRI_01',
-        name: 'Yield Setup',
-        description: 'Market-Adaptive Pricing Configurator',
+        name: this.translate.instant('YIELSETU.Title'),
+        description: this.translate.instant('YIELSETU.Description'),
     } as any));
 
     session = inject(SessionStore);

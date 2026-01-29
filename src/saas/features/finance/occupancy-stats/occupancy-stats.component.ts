@@ -2,18 +2,21 @@ import { Component, input, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'fin-05-occupancy-stats',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Occupancy Optimizer</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Stop leaving money on the table. Optimize your rates to hit the "Golden Zone" (85-92% Occupancy).</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'OCC.OccupancyOptimizer' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'OCC.StopLeavingMoneyOnThe' | translate }}</p>
         </div>
          <!-- Tier Badge -->
          <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
@@ -29,33 +32,31 @@ import { SessionStore } from '../../../../state/session.store';
        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Occupancy Rate -->
             <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm relative overflow-hidden group">
-                 <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Occupancy Rate (30d)</h3>
+                 <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">{{ 'OCC.OccupancyRate30d' | translate }}</h3>
                  <div class="flex items-baseline gap-2">
                      <span class="text-4xl font-black text-white" [class.text-rose-400]="occupancyRate() > 95" [class.text-emerald-400]="occupancyRate() >= 85 && occupancyRate() <= 95">{{ occupancyRate() }}%</span>
-                     <span class="text-xs text-slate-400" *ngIf="occupancyRate() > 95">TOO HIGH!</span>
+                     <span class="text-xs text-slate-400" *ngIf="occupancyRate() > 95">{{ 'OS.TooHigh' | translate }}</span>
                  </div>
                  <div class="w-full bg-slate-700 rounded-full h-1.5 mt-4 overflow-hidden">
                      <div class="bg-indigo-500 h-full transition-all duration-1000" [style.width.%]="occupancyRate()"></div>
                  </div>
                  <!-- Tooltip -->
-                 <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 px-2 py-1 rounded text-[10px] text-white">
-                     Target: 85-92%
-                 </div>
+                 <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 px-2 py-1 rounded text-[10px] text-white">{{ 'OCC.Target8592' | translate }}</div>
             </div>
 
             <!-- Smart Pricing (Tier 2+) -->
             <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm relative overflow-hidden">
                  <div class="flex justify-between items-start mb-2">
-                     <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Next 7 Days ADR</h3>
+                     <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ 'OCC.Next7DaysAdr' | translate }}</h3>
                      @if (!isTier0()) {
-                         <span class="text-[10px] bg-indigo-500 text-white px-1.5 py-0.5 rounded">AI SUGGESTED</span>
+                         <span class="text-[10px] bg-indigo-500 text-white px-1.5 py-0.5 rounded">{{ 'OS.AiSuggested' | translate }}</span>
                      }
                  </div>
                  
                  @if (isTier0()) {
                      <div class="flex flex-col items-center justify-center h-20 text-center opacity-50">
                          <span class="material-icons text-2xl mb-1">lock</span>
-                         <span class="text-xs">Unlock Basic Plan</span>
+                         <span class="text-xs">{{ 'OCC.UnlockBasicPlan' | translate }}</span>
                      </div>
                  } @else {
                      <div class="flex items-baseline gap-2">
@@ -64,30 +65,27 @@ import { SessionStore } from '../../../../state/session.store';
                              <span class="material-icons text-xs">trending_up</span> +12%
                          </span>
                      </div>
-                     <p class="text-[10px] text-slate-400 mt-2">
-                         Demand is spiking for next weekend. Recommended: <strong>raise prices by €15</strong>.
+                     <p class="text-[10px] text-slate-400 mt-2">{{ 'OCC.DemandIsSpikingForNext' | translate }}<strong>raise prices by €15</strong>.
                      </p>
                  }
             </div>
 
             <!-- Revenue Loss Forensics (Tier 3) -->
             <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm relative overflow-hidden" [class.border-rose-500]="isTier3() && lostRevenue > 0">
-                 <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Revenue Opportunity</h3>
+                 <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">{{ 'OCC.RevenueOpportunity' | translate }}</h3>
                  
                  @if (isTier3()) {
                      <div class="flex items-baseline gap-2">
                          <span class="text-4xl font-black text-rose-400">-€{{ lostRevenue }}</span>
                      </div>
-                     <p class="text-[10px] text-rose-200/80 mt-2">
-                         Missed revenue last month due to under-pricing weekends.
-                     </p>
+                     <p class="text-[10px] text-rose-200/80 mt-2">{{ 'OCC.MissedRevenueLastMonthDue' | translate }}</p>
                      <div class="absolute -bottom-4 -right-4 text-9xl text-rose-500/10 pointer-events-none rotate-12">
                          ⚠
                      </div>
                  } @else {
                      <div class="flex flex-col items-center justify-center h-20 text-center opacity-50">
                          <span class="material-icons text-2xl mb-1">lock</span>
-                         <span class="text-xs">Unlock Forensics (Gold)</span>
+                         <span class="text-xs">{{ 'OCC.UnlockForensicsGold' | translate }}</span>
                      </div>
                  }
             </div>
@@ -97,25 +95,24 @@ import { SessionStore } from '../../../../state/session.store';
        <div class="flex-1 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm relative overflow-hidden flex flex-col">
            <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                    <span class="material-icons text-indigo-400">calendar_month</span> Occupancy Heatmap
-                </h3>
+                    <span class="material-icons text-indigo-400">calendar_month</span>{{ 'OCC.OccupancyHeatmap' | translate }}</h3>
                 <div class="flex gap-4 text-[10px] uppercase font-bold text-slate-500">
-                    <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-slate-800 border border-slate-700"></div> Empty</span>
-                    <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-indigo-500/40"></div> Low Rate</span>
-                    <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-indigo-500"></div> High Rate</span>
-                    <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-rose-500"></div> Sold Out (Too Cheap?)</span>
+                    <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-slate-800 border border-slate-700"></div>{{ 'OCC.Empty' | translate }}</span>
+                    <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-indigo-500/40"></div>{{ 'OCC.LowRate' | translate }}</span>
+                    <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-indigo-500"></div>{{ 'OCC.HighRate' | translate }}</span>
+                    <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-rose-500"></div>{{ 'OCC.SoldOutTooCheap' | translate }}</span>
                 </div>
            </div>
 
            <div class="grid grid-cols-7 gap-1 h-full min-h-[300px]">
                <!-- Days Header -->
-               <div class="text-center text-xs text-slate-500 font-bold py-2">Mon</div>
-               <div class="text-center text-xs text-slate-500 font-bold py-2">Tue</div>
-               <div class="text-center text-xs text-slate-500 font-bold py-2">Wed</div>
-               <div class="text-center text-xs text-slate-500 font-bold py-2">Thu</div>
-               <div class="text-center text-xs text-slate-500 font-bold py-2">Fri</div>
-               <div class="text-center text-xs text-slate-500 font-bold py-2">Sat</div>
-               <div class="text-center text-xs text-slate-500 font-bold py-2">Sun</div>
+               <div class="text-center text-xs text-slate-500 font-bold py-2">{{ 'OCC.Mon' | translate }}</div>
+               <div class="text-center text-xs text-slate-500 font-bold py-2">{{ 'OCC.Tue' | translate }}</div>
+               <div class="text-center text-xs text-slate-500 font-bold py-2">{{ 'OCC.Wed' | translate }}</div>
+               <div class="text-center text-xs text-slate-500 font-bold py-2">{{ 'OCC.Thu' | translate }}</div>
+               <div class="text-center text-xs text-slate-500 font-bold py-2">{{ 'OCC.Fri' | translate }}</div>
+               <div class="text-center text-xs text-slate-500 font-bold py-2">{{ 'OCC.Sat' | translate }}</div>
+               <div class="text-center text-xs text-slate-500 font-bold py-2">{{ 'OCC.Sun' | translate }}</div>
 
                <!-- Calendar Grid -->
                @for (day of calendarDays; track day.date) {
@@ -142,8 +139,8 @@ import { SessionStore } from '../../../../state/session.store';
                    <div class="p-4 bg-indigo-600 rounded-full shadow-lg shadow-indigo-500/50 mb-4 animate-bounce">
                        <span class="material-icons text-3xl text-white">visibility_off</span>
                    </div>
-                   <h3 class="text-2xl font-bold text-white mb-2">Blind Pricing?</h3>
-                   <p class="text-slate-300 max-w-md mb-6">You are flying blind without a visual demand calendar. Upgrade to see which dates are selling too fast (underpriced) or not at all (overpriced).</p>
+                   <h3 class="text-2xl font-bold text-white mb-2">{{ 'OCC.BlindPricing' | translate }}</h3>
+                   <p class="text-slate-300 max-w-md mb-6">{{ 'OCC.YouAreFlyingBlindWithout' | translate }}</p>
                </div>
            }
        </div>
@@ -154,11 +151,8 @@ import { SessionStore } from '../../../../state/session.store';
                 <span class="text-2xl">🎓</span>
             </div>
             <div>
-                <h4 class="font-bold text-indigo-300 text-sm">The 80% Occupancy Rule</h4>
-                <p class="text-xs text-indigo-200/80 mt-1 leading-relaxed">
-                    Many hosts celebrate 100% occupancy. <strong>This is a mistake.</strong> It usually means you left money on the table. 
-                    Aim for 80-92%. The empty nights are just proof that you pushed the price as high as the market could bear.
-                </p>
+                <h4 class="font-bold text-indigo-300 text-sm">{{ 'OCC.The80OccupancyRule' | translate }}</h4>
+                <p class="text-xs text-indigo-200/80 mt-1 leading-relaxed">{{ 'OCC.ManyHostsCelebrate100Occupancy' | translate }}<strong>{{ 'OCC.ThisIsAMistake' | translate }}</strong>{{ 'OCC.ItUsuallyMeansYouLeft' | translate }}</p>
             </div>
        </div>
     </div>

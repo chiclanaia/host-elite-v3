@@ -1,19 +1,23 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'pri-03-revpar',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">RevPAR Speedometer</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Revenue Per Available Room optimization engine.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'REVPAR.RevparSpeedometer' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'REVPAR.RevenuePerAvailableRoomOptimization' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -29,15 +33,15 @@ import { FormsModule } from '@angular/forms';
            <!-- Left: Rules & Toggles -->
            <div class="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2">
                <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
-                   <h3 class="text-white font-bold mb-4">Optimization Rules</h3>
+                   <h3 class="text-white font-bold mb-4">{{ 'REVPAR.OptimizationRules' | translate }}</h3>
                    
                    <div class="space-y-3">
                        <label class="flex items-center justify-between p-3 bg-slate-900 rounded-lg border border-white/5 cursor-pointer hover:border-amber-500/50 transition-colors">
                            <div class="flex items-center gap-3">
                                <input type="checkbox" checked class="rounded border-slate-600 text-amber-500 focus:ring-0 bg-transparent">
                                <div>
-                                   <div class="text-sm text-white font-bold">Gap Filler</div>
-                                   <div class="text-[10px] text-slate-400">Sell 1-night gaps at -10%</div>
+                                   <div class="text-sm text-white font-bold">{{ 'REVPAR.GapFiller' | translate }}</div>
+                                   <div class="text-[10px] text-slate-400">{{ 'REVPAR.Sell1nightGapsAt10' | translate }}</div>
                                </div>
                            </div>
                        </label>
@@ -46,8 +50,8 @@ import { FormsModule } from '@angular/forms';
                            <div class="flex items-center gap-3">
                                <input type="checkbox" checked class="rounded border-slate-600 text-amber-500 focus:ring-0 bg-transparent">
                                <div>
-                                   <div class="text-sm text-white font-bold">Last Minute Boost</div>
-                                   <div class="text-[10px] text-slate-400">Increase visibility 48h out</div>
+                                   <div class="text-sm text-white font-bold">{{ 'REVPAR.LastMinuteBoost' | translate }}</div>
+                                   <div class="text-[10px] text-slate-400">{{ 'REVPAR.IncreaseVisibility48hOut' | translate }}</div>
                                </div>
                            </div>
                        </label>
@@ -59,7 +63,7 @@ import { FormsModule } from '@angular/forms';
                                    <div class="h-4 w-4 rounded-full border border-slate-600 flex items-center justify-center">
                                        <div *ngIf="isTier3()" class="h-2 w-2 bg-emerald-500 rounded-full"></div>
                                    </div>
-                                   <span class="text-sm font-bold text-white">Event Auto-Surge</span>
+                                   <span class="text-sm font-bold text-white">{{ 'REVPAR.EventAutosurge' | translate }}</span>
                                </div>
                                <span *ngIf="!isTier3()" class="text-[10px] text-slate-500 border border-slate-700 rounded px-1">PRO</span>
                            </div>
@@ -70,16 +74,16 @@ import { FormsModule } from '@angular/forms';
 
                 <!-- Simulation Config -->
                 <div class="bg-slate-800 rounded-xl border border-white/10 p-6">
-                    <h3 class="text-white font-bold mb-4 text-sm">Sensitivity Analysis</h3>
+                    <h3 class="text-white font-bold mb-4 text-sm">{{ 'REVPAR.SensitivityAnalysis' | translate }}</h3>
                     <div>
                         <div class="flex justify-between text-xs text-slate-400 mb-2">
-                            <span>Aggression Level</span>
-                            <span class="text-amber-400 font-bold">High</span>
+                            <span>{{ 'REVPAR.AggressionLevel' | translate }}</span>
+                            <span class="text-amber-400 font-bold">{{ 'REVPAR.High' | translate }}</span>
                         </div>
                         <input type="range" class="w-full h-1 bg-slate-600 rounded appearance-none" min="1" max="5" value="4">
                         <div class="flex justify-between text-[10px] text-slate-500 mt-1">
-                            <span>Safe</span>
-                            <span>Risky</span>
+                            <span>{{ 'REVPAR.Safe' | translate }}</span>
+                            <span>{{ 'REVPAR.Risky' | translate }}</span>
                         </div>
                     </div>
                 </div>
@@ -88,7 +92,7 @@ import { FormsModule } from '@angular/forms';
                <div class="p-4 bg-amber-500/10 border-l-4 border-amber-500 rounded-r-lg mt-auto">
                    <div class="flex items-center gap-2 mb-1">
                        <span class="text-lg">💡</span>
-                       <span class="text-amber-300 font-bold text-sm uppercase">Coach Tip</span>
+                       <span class="text-amber-300 font-bold text-sm uppercase">{{ 'REVPAR.CoachTip' | translate }}</span>
                    </div>
                    <p class="text-slate-300 text-xs italic">
                        "RevPAR is King. It's better to sell a €100 room at €80 than let it sit empty (€0). Our 'Gap Filler' rule ensures zero vacancy."
@@ -100,7 +104,7 @@ import { FormsModule } from '@angular/forms';
            <div class="lg:col-span-2 bg-slate-900 rounded-xl border border-white/10 p-8 flex flex-col relative overflow-hidden">
                
                <div class="flex justify-between items-center mb-6">
-                   <h3 class="text-white font-bold text-lg">Daily Performance Pulse</h3>
+                   <h3 class="text-white font-bold text-lg">{{ 'REVPAR.DailyPerformancePulse' | translate }}</h3>
                    @if(isTier3()) {
                        <button class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded shadow-lg animate-pulse" data-debug-id="revpar-autopilot-btn">
                            ✨ Auto-Pilot Active
@@ -122,7 +126,7 @@ import { FormsModule } from '@angular/forms';
                    </div>
 
                    <div class="text-center z-10 -mt-4">
-                       <div class="text-sm text-slate-400 uppercase font-bold mb-1">Current RevPAR</div>
+                       <div class="text-sm text-slate-400 uppercase font-bold mb-1">{{ 'REVPAR.CurrentRevpar' | translate }}</div>
                        <div class="text-5xl font-mono text-white font-bold mb-2">€{{ currentRevPar() }}</div>
                        <div class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded text-xs font-bold border border-emerald-500/30">
                            ↑ 14% vs Market Avg
@@ -133,7 +137,7 @@ import { FormsModule } from '@angular/forms';
                <!-- Key Metrics -->
                <div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/10">
                    <div class="text-center border-r border-white/10">
-                       <div class="text-xs text-slate-500 uppercase mb-1">Occ Rate</div>
+                       <div class="text-xs text-slate-500 uppercase mb-1">{{ 'REVPAR.OccRate' | translate }}</div>
                        <div class="text-xl font-bold text-white">82%</div>
                    </div>
                    <div class="text-center border-r border-white/10">
@@ -141,7 +145,7 @@ import { FormsModule } from '@angular/forms';
                        <div class="text-xl font-bold text-white">€145</div>
                    </div>
                    <div class="text-center">
-                       <div class="text-xs text-slate-500 uppercase mb-1">Proj. Rev</div>
+                       <div class="text-xs text-slate-500 uppercase mb-1">{{ 'REVPAR.ProjRev' | translate }}</div>
                        <div class="text-xl font-bold text-emerald-400">€3,520</div>
                    </div>
                </div>
@@ -152,10 +156,11 @@ import { FormsModule } from '@angular/forms';
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class RevparOptimizerComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'PRI_03',
-        name: 'RevPAR Optimizer',
-        description: 'AI-Driven Dynamic Pricing Algorithm',
+        name: this.translate.instant('REVPOPTI.Title'),
+        description: this.translate.instant('REVPOPTI.Description'),
     } as any));
 
     session = inject(SessionStore);

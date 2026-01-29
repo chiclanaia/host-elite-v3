@@ -30,7 +30,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
            
            <!-- Title -->
            <span class="text-[10px] font-bold uppercase tracking-wider leading-none text-center">
-             {{ phase.name }}
+             {{ ('PHASE.' + phase.id) | translate }}
            </span>
         </a>
       }

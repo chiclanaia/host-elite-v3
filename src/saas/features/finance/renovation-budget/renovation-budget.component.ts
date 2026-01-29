@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 interface Room {
     type: string;
@@ -15,23 +16,23 @@ interface Room {
 @Component({
     selector: 'fin-02-renovation-budget',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Smart Capex Planner</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Strategic renovation budgeting to prevent cost overruns and maximize ADR.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'RENOV.SmartCapexPlanner' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'RENOV.StrategicRenovationBudgetingToPrevent' | translate }}</p>
         </div>
         
         <div class="flex gap-2">
              <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono flex items-center gap-2">
-                <span>🏗️</span> Construction
-            </div>
+                <span>🏗️</span>{{ 'RENOV.Construction' | translate }}</div>
              <div class="px-4 py-2 bg-emerald-500/10 text-emerald-300 rounded-lg border border-emerald-500/30 text-xs font-mono flex items-center gap-2">
-                <span>💶</span> ROI Focused
-            </div>
+                <span>💶</span>{{ 'RENOV.RoiFocused' | translate }}</div>
          </div>
       </div>
 
@@ -41,12 +42,11 @@ interface Room {
               <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-xl border border-slate-700">
                 <span class="text-4xl">📋</span>
               </div>
-              <h3 class="text-2xl font-bold text-white mb-2">Renovation Checklist</h3>
-              <p class="text-slate-400 max-w-md mb-8">Access our professional room-by-room renovation checklist. Upgrade to unlock the interactive cost calculator and AI Quote Auditor.</p>
+              <h3 class="text-2xl font-bold text-white mb-2">{{ 'RENOV.RenovationChecklist' | translate }}</h3>
+              <p class="text-slate-400 max-w-md mb-8">{{ 'RENOV.AccessOurProfessionalRoombyroomRenovation' | translate }}</p>
               
               <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-lg hover:shadow-indigo-500/25 group" data-debug-id="renovation-download-pdf-btn">
-                  <span class="material-icons group-hover:-translate-y-1 transition-transform">download</span> Download PDF Guide
-              </button>
+                  <span class="material-icons group-hover:-translate-y-1 transition-transform">download</span>{{ 'RENOV.DownloadPdfGuide' | translate }}</button>
           </div>
       } 
       
@@ -59,10 +59,9 @@ interface Room {
                    <!-- Main List -->
                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col flex-1 overflow-hidden">
                       <div class="flex justify-between items-center mb-6">
-                          <h3 class="text-xl font-bold text-white">Room Budget Planner</h3>
+                          <h3 class="text-xl font-bold text-white">{{ 'RENOV.RoomBudgetPlanner' | translate }}</h3>
                           <button (click)="addRoom()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 transition-colors" data-debug-id="renovation-add-room-btn">
-                              <span class="material-icons text-xs">add</span> Add Room
-                          </button>
+                              <span class="material-icons text-xs">add</span>{{ 'RENOV.AddRoom' | translate }}</button>
                       </div>
 
                       <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
@@ -70,30 +69,30 @@ interface Room {
                               <div class="bg-black/20 rounded-xl p-4 border border-white/5 relative group hover:border-white/10 transition-colors">
                                   <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                                       <div class="md:col-span-1">
-                                          <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Room Type</label>
+                                          <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'RENOV.RoomType' | translate }}</label>
                                           <select [ngModel]="room.type" (ngModelChange)="updateRoom($index, 'type', $event)" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-xs font-bold" [attr.data-debug-id]="'renovation-room-type-' + $index">
-                                              <option value="Living Room">Living Room</option>
-                                              <option value="Kitchen">Kitchen</option>
-                                              <option value="Bathroom">Bathroom</option>
-                                              <option value="Bedroom">Bedroom</option>
+                                              <option value="Living Room">{{ 'RENOV.LivingRoom' | translate }}</option>
+                                              <option value="Kitchen">{{ 'RENOV.Kitchen' | translate }}</option>
+                                              <option value="Bathroom">{{ 'RENOV.Bathroom' | translate }}</option>
+                                              <option value="Bedroom">{{ 'RENOV.Bedroom' | translate }}</option>
                                           </select>
                                       </div>
                                       <div>
-                                          <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Area (m²)</label>
+                                          <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'RENOV.AreaM' | translate }}</label>
                                           <input type="number" [ngModel]="room.area" (ngModelChange)="updateRoom($index, 'area', $event)" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-xs" [attr.data-debug-id]="'renovation-room-area-' + $index">
                                       </div>
                                        <div>
-                                          <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Finish Level</label>
+                                          <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'RENOV.FinishLevel' | translate }}</label>
                                           <select [ngModel]="room.finish" (ngModelChange)="updateRoom($index, 'finish', $event)" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-white text-xs" [attr.data-debug-id]="'renovation-room-finish-' + $index">
-                                              <option value="Standard">Standard</option>
-                                              <option value="Premium">Premium</option>
-                                              <option value="Luxury">Luxury</option>
+                                              <option value="Standard">{{ 'RENOV.Standard' | translate }}</option>
+                                              <option value="Premium">{{ 'RENOV.Premium' | translate }}</option>
+                                              <option value="Luxury">{{ 'RENOV.Luxury' | translate }}</option>
                                           </select>
                                       </div>
                                       
                                       <!-- Bullet Chart (Budget vs Actual) - Simulated Inputs -->
                                       <div>
-                                           <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Actual Spend</label>
+                                           <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">{{ 'RENOV.ActualSpend' | translate }}</label>
                                             <div class="relative">
                                                 <input type="number" [ngModel]="room.actual" (ngModelChange)="updateRoom($index, 'actual', $event)" class="w-full bg-black/40 border border-slate-700 rounded px-2 py-1.5 text-white text-xs font-mono" placeholder="0">
                                                 <!-- Bullet Bar Background for Visual Context -->
@@ -102,7 +101,7 @@ interface Room {
                                       </div>
 
                                       <div class="text-right">
-                                          <div class="text-[10px] text-slate-500 uppercase">Budget</div>
+                                          <div class="text-[10px] text-slate-500 uppercase">{{ 'RENOV.Budget' | translate }}</div>
                                           <div class="font-bold text-emerald-400 text-sm font-mono">{{ room.budget | currency:'EUR':'symbol':'1.0-0' }}</div>
                                       </div>
                                   </div>
@@ -118,22 +117,21 @@ interface Room {
                     <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm" [class.opacity-50]="!isTier2OrAbove()" [class.pointer-events-none]="!isTier2OrAbove()">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <span class="material-icons text-indigo-400 text-sm">handshake</span> Vendor Matrix (3 Quotes)
-                            </h3>
+                                <span class="material-icons text-indigo-400 text-sm">handshake</span>{{ 'RENOV.VendorMatrix3Quotes' | translate }}</h3>
                              @if (!isTier2OrAbove()) { <span class="text-[10px] text-amber-400 border border-amber-400/30 px-1.5 rounded">SILVER +</span> }
                         </div>
                         <div class="grid grid-cols-3 gap-4 text-xs text-center">
                             <div class="p-3 bg-black/20 rounded border border-white/5">
-                                <span class="block text-slate-400 mb-1">Vendor A</span>
-                                <input type="text" placeholder="€ Quote" class="w-full bg-transparent text-center border-b border-white/20 focus:border-indigo-500 outline-none text-white">
+                                <span class="block text-slate-400 mb-1">{{ 'RENOV.VendorA' | translate }}</span>
+                                <input type="text" placeholder="{{ \'RENOV.Quote\' | translate }}" class="w-full bg-transparent text-center border-b border-white/20 focus:border-indigo-500 outline-none text-white">
                             </div>
                              <div class="p-3 bg-black/20 rounded border border-white/5">
-                                <span class="block text-slate-400 mb-1">Vendor B</span>
-                                <input type="text" placeholder="€ Quote" class="w-full bg-transparent text-center border-b border-white/20 focus:border-indigo-500 outline-none text-white">
+                                <span class="block text-slate-400 mb-1">{{ 'RENOV.VendorB' | translate }}</span>
+                                <input type="text" placeholder="{{ \'RENOV.Quote\' | translate }}" class="w-full bg-transparent text-center border-b border-white/20 focus:border-indigo-500 outline-none text-white">
                             </div>
                              <div class="p-3 bg-indigo-500/10 rounded border border-indigo-500/30">
-                                <span class="block text-indigo-300 font-bold mb-1">Vendor C (Best)</span>
-                                <input type="text" placeholder="€ Quote" class="w-full bg-transparent text-center border-b border-indigo-500/50 focus:border-indigo-500 outline-none text-white font-bold">
+                                <span class="block text-indigo-300 font-bold mb-1">{{ 'RENOV.VendorCBest' | translate }}</span>
+                                <input type="text" placeholder="{{ \'RENOV.Quote\' | translate }}" class="w-full bg-transparent text-center border-b border-indigo-500/50 focus:border-indigo-500 outline-none text-white font-bold">
                             </div>
                         </div>
                     </div>
@@ -143,7 +141,7 @@ interface Room {
               <div class="flex flex-col gap-6">
                   <!-- Spend Breakdown Donut -->
                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center">
-                      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 self-start">Spend Distribution</h3>
+                      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 self-start">{{ 'RENOV.SpendDistribution' | translate }}</h3>
                       
                       <!-- CSS Conic Gradient Donut -->
                       <div class="w-40 h-40 rounded-full relative mb-6"
@@ -154,7 +152,7 @@ interface Room {
                            )">
                            <!-- Center Hole -->
                            <div class="absolute inset-0 m-8 bg-slate-900 rounded-full flex flex-col items-center justify-center border border-white/10">
-                               <span class="text-[10px] text-slate-500">Total Budget</span>
+                               <span class="text-[10px] text-slate-500">{{ 'RENOV.TotalBudget' | translate }}</span>
                                <span class="text-lg font-bold text-white">{{ totalBudget() | currency:'EUR':'symbol':'1.0-0' }}</span>
                            </div>
                       </div>
@@ -170,7 +168,7 @@ interface Room {
                               <span>{{ bathShare() | number:'1.0-0' }}%</span>
                           </div>
                           <div class="flex justify-between text-amber-400">
-                              <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-amber-500"></div> Other</span>
+                              <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-amber-500"></div>{{ 'RENOV.Other' | translate }}</span>
                               <span>{{ 100 - kitchenShare() - bathShare() | number:'1.0-0' }}%</span>
                           </div>
                       </div>
@@ -179,13 +177,12 @@ interface Room {
                    <!-- AI Quote Auditor (Tier 3) -->
                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm relative overflow-hidden group">
                        <h3 class="text-white font-bold flex items-center gap-2 mb-4">
-                           <span class="material-icons text-indigo-400">psychology</span> AI Quote Auditor
-                       </h3>
+                           <span class="material-icons text-indigo-400">psychology</span>{{ 'RENOV.AiQuoteAuditor' | translate }}</h3>
                        
                        @if (isTier3()) {
                            <div class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center hover:bg-white/5 transition-colors cursor-pointer" (click)="triggerAudit()" data-debug-id="renovation-audit-upload-area">
                                <span class="material-icons text-slate-500 text-3xl mb-2">upload_file</span>
-                               <p class="text-xs text-slate-400">Drop contractor PDF here to compare against market prices.</p>
+                               <p class="text-xs text-slate-400">{{ 'RENOV.DropContractorPdfHereTo' | translate }}</p>
                            </div>
                            
                            @if (auditResult()) {
@@ -193,7 +190,7 @@ interface Room {
                                    <div class="flex items-start gap-2">
                                        <span class="text-rose-400">⚠️</span>
                                        <div>
-                                           <h5 class="text-xs font-bold text-rose-200">Price Anomaly Detected</h5>
+                                           <h5 class="text-xs font-bold text-rose-200">{{ 'RENOV.PriceAnomalyDetected' | translate }}</h5>
                                            <p class="text-[10px] text-rose-200/70">"Plumbing Labor" quoted at €85/hr. Market average for this region is €55-65/hr.</p>
                                        </div>
                                    </div>
@@ -203,8 +200,8 @@ interface Room {
                            <div class="absolute inset-0 bg-black/60 z-10 flex items-center justify-center p-4 text-center backdrop-blur-[1px]">
                                <div>
                                    <span class="text-2xl mb-2 block">🔒</span>
-                                   <p class="text-xs text-indigo-200 mb-2 font-bold">Expert Tier</p>
-                                   <p class="text-[10px] text-slate-400">Detect anomalies in contractor quotes using AI.</p>
+                                   <p class="text-xs text-indigo-200 mb-2 font-bold">{{ 'RENOV.ExpertTier' | translate }}</p>
+                                   <p class="text-[10px] text-slate-400">{{ 'RENOV.DetectAnomaliesInContractorQuotes' | translate }}</p>
                                </div>
                            </div>
                        }
@@ -215,7 +212,7 @@ interface Room {
                         <div class="flex items-start gap-3">
                            <span class="text-xl">🏆</span>
                            <div>
-                               <h4 class="font-bold text-indigo-300 text-sm">Pro Tip</h4>
+                               <h4 class="font-bold text-indigo-300 text-sm">{{ 'RENOV.ProTip' | translate }}</h4>
                                <p class="text-xs text-indigo-200/80 mt-1">Renovation creep kills profit. Focus budget on 'Hero Amenities' (Kitchen/Bath). Bedrooms have diminishing returns beyond basic comfort.</p>
                            </div>
                        </div>

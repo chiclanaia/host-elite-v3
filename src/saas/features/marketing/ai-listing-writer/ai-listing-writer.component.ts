@@ -1,19 +1,23 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'mkt-02-ai-listing-writer',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">AI Copywriter & SEO</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Description generator trained on 1M+ high-performing listings.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'AILISTING.AiCopywriterSeo' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'AILISTING.DescriptionGeneratorTrainedOn1m' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -28,18 +32,18 @@ import { SessionStore } from '../../../../state/session.store';
            
            <!-- Left: Input Configuration -->
            <div class="bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col gap-6 overflow-y-auto">
-               <h3 class="text-white font-bold text-lg">Listing Parameters</h3>
+               <h3 class="text-white font-bold text-lg">{{ 'AILISTING.ListingParameters' | translate }}</h3>
                
                <div class="space-y-4">
                    <div>
-                       <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Key USPs</label>
-                       <textarea [(ngModel)]="highlights" rows="3" class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm focus:border-indigo-500 outline-none placeholder:text-slate-600" placeholder="e.g. Ocean view, 500mbps Wifi, Brand new kitchen..." data-debug-id="ai-writer-highlights-input"></textarea>
+                       <label class="block text-slate-400 text-xs uppercase font-bold mb-2">{{ 'AILISTING.KeyUsps' | translate }}</label>
+                       <textarea [(ngModel)]="highlights" rows="3" class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm focus:border-indigo-500 outline-none placeholder:text-slate-600" placeholder="{{ \'AILISTING.EgOceanView500mbpsWifi\' | translate }}" data-debug-id="ai-writer-highlights-input"></textarea>
                    </div>
                    
                    @if (isTier2()) {
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Vibe / Tone</label>
+                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">{{ 'AILISTING.VibeTone' | translate }}</label>
                             <select [(ngModel)]="tone" class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm outline-none">
                                 <option value="luxury">💎 Luxury & Elegant</option>
                                 <option value="cozy">🧸 Cozy & Family</option>
@@ -48,11 +52,11 @@ import { SessionStore } from '../../../../state/session.store';
                             </select>
                         </div>
                         <div>
-                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Length</label>
+                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">{{ 'AILISTING.Length' | translate }}</label>
                             <select class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm outline-none">
-                                <option>Compact (200 words)</option>
-                                <option>Standard (400 words)</option>
-                                <option>Storytelling (800 words)</option>
+                                <option>{{ 'AILISTING.Compact200Words' | translate }}</option>
+                                <option>{{ 'AILISTING.Standard400Words' | translate }}</option>
+                                <option>{{ 'AILISTING.Storytelling800Words' | translate }}</option>
                             </select>
                         </div>
                     </div>
@@ -62,9 +66,8 @@ import { SessionStore } from '../../../../state/session.store';
                        <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
                            <div class="flex justify-between items-center mb-3">
                                <label class="text-emerald-300 text-xs uppercase font-bold flex items-center gap-2">
-                                   <span class="material-icons text-sm">vpn_key</span> SEO Injection
-                               </label>
-                               <span class="text-[10px] text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">ACTIVE</span>
+                                   <span class="material-icons text-sm">vpn_key</span>{{ 'AILISTING.SeoInjection' | translate }}</label>
+                               <span class="text-[10px] text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">{{ 'ALW.Active' | translate }}</span>
                            </div>
                            <div class="flex flex-wrap gap-2">
                                <span class="px-2 py-1 bg-black/30 rounded border border-white/10 text-[10px] text-slate-300">"Near convention center"</span>
@@ -83,12 +86,10 @@ import { SessionStore } from '../../../../state/session.store';
                        
                        @if(generating()) {
                            <div class="flex items-center justify-center gap-2">
-                               <span class="material-icons animate-spin">auto_awesome</span> Writing...
-                           </div>
+                               <span class="material-icons animate-spin">auto_awesome</span>{{ 'AILISTING.Writing' | translate }}</div>
                        } @else {
                            <span class="flex items-center justify-center gap-2 text-lg">
-                               <span class="material-icons">auto_fix_high</span> Generate Magic
-                           </span>
+                               <span class="material-icons">auto_fix_high</span>{{ 'AILISTING.GenerateMagic' | translate }}</span>
                        }
                    </button>
                </div>
@@ -97,7 +98,7 @@ import { SessionStore } from '../../../../state/session.store';
                <div class="p-4 bg-indigo-500/10 border-l-4 border-indigo-500 rounded-r-lg mt-auto">
                    <div class="flex items-center gap-2 mb-1">
                        <span class="text-lg">💡</span>
-                       <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
+                       <span class="text-indigo-300 font-bold text-sm uppercase">{{ 'AILISTING.CoachTip' | translate }}</span>
                    </div>
                    <p class="text-slate-300 text-xs italic">
                        "Micro-Struggle: Guests skim. Use bullet points for amenities. Our AI automatically structures your description with emojis for 50% better readability."
@@ -111,7 +112,7 @@ import { SessionStore } from '../../../../state/session.store';
                <div *ngIf="generating()" class="absolute inset-0 bg-black/80 z-20 flex items-center justify-center backdrop-blur-sm">
                    <div class="text-center">
                        <div class="text-6xl mb-4 animate-bounce">🧙‍♂️</div>
-                       <div class="text-indigo-400 font-bold animate-pulse">Crafting your story...</div>
+                       <div class="text-indigo-400 font-bold animate-pulse">{{ 'AILISTING.CraftingYourStory' | translate }}</div>
                    </div>
                </div>
 
@@ -123,11 +124,10 @@ import { SessionStore } from '../../../../state/session.store';
                        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
                    </div>
                    <div class="h-4 w-[1px] bg-white/10 mx-2"></div>
-                   <span class="text-xs text-slate-400">Generated content</span>
+                   <span class="text-xs text-slate-400">{{ 'AILISTING.GeneratedContent' | translate }}</span>
                    <div class="ml-auto flex gap-2">
                        <button *ngIf="output()" class="text-xs text-indigo-400 hover:text-white flex items-center gap-1" data-debug-id="ai-writer-copy-btn">
-                           <span class="material-icons text-xs">content_copy</span> Copy
-                       </button>
+                           <span class="material-icons text-xs">content_copy</span>{{ 'AILISTING.Copy' | translate }}</button>
                    </div>
                </div>
                
@@ -136,7 +136,7 @@ import { SessionStore } from '../../../../state/session.store';
                    @if(!output()) {
                        <div class="h-full flex flex-col items-center justify-center text-slate-600 opacity-50">
                            <span class="material-icons text-6xl mb-4">edit_note</span>
-                           <p>Fill the details and click Generate</p>
+                           <p>{{ 'AILISTING.FillTheDetailsAndClick' | translate }}</p>
                        </div>
                    } @else {
                        <div class="prose prose-invert prose-sm max-w-none animate-fade-in">
@@ -150,7 +150,7 @@ import { SessionStore } from '../../../../state/session.store';
                        <span class="text-xs text-emerald-400 font-bold flex items-center gap-2">
                            <span class="material-icons text-sm">check_circle</span> SEO Score: 98/100
                        </span>
-                       <span class="text-[10px] text-slate-400">Keywords injected: 12</span>
+                       <span class="text-[10px] text-slate-400">{{ 'AILISTING.KeywordsInjected12' | translate }}</span>
                    </div>
                }
            </div>
@@ -171,10 +171,11 @@ import { SessionStore } from '../../../../state/session.store';
     `]
 })
 export class AiListingWriterComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'MKT_02',
-        name: 'AI Listing Writer',
-        description: 'Semantic SEO Content Generator',
+        name: this.translate.instant('AILISTWRIT.Title'),
+        description: this.translate.instant('AILISTWRIT.Description'),
     } as any));
 
     session = inject(SessionStore);

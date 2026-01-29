@@ -1,8 +1,10 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 interface ChatMessage {
     id: string;
@@ -15,14 +17,16 @@ interface ChatMessage {
 @Component({
     selector: 'ops-06-guest-chatbot',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Contextual Hospitality Agent</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">RAG-driven AI guest assistant for technical support and inquiries.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'GCHAT.ContextualHospitalityAgent' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'GCHAT.RagdrivenAiGuestAssistantFor' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -37,9 +41,7 @@ interface ChatMessage {
             <!-- Left: Chat Interface -->
             <div class="flex-1 flex flex-col border-r border-white/10 relative">
                 <!-- Tier 1 Indicator -->
-                <div *ngIf="!isTier2OrAbove()" class="absolute top-0 left-0 w-full bg-amber-500/10 border-b border-amber-500/20 p-2 text-center text-[10px] text-amber-300 font-bold z-10">
-                    SMS MODE (Tier 1) - Manual Replies Only
-                </div>
+                <div *ngIf="!isTier2OrAbove()" class="absolute top-0 left-0 w-full bg-amber-500/10 border-b border-amber-500/20 p-2 text-center text-[10px] text-amber-300 font-bold z-10">{{ 'GCHAT.SmsModeTier1Manual' | translate }}</div>
 
                 <div class="flex-1 p-6 space-y-4 overflow-y-auto bg-slate-900/50 pt-10">
                     @for (msg of messages(); track msg.id) {
@@ -82,13 +84,13 @@ interface ChatMessage {
 
             <!-- Right: Knowledge & Insights -->
             <div class="w-full lg:w-80 bg-slate-800 p-6 flex flex-col gap-6 overflow-y-auto">
-                <h3 class="text-white font-bold">Knowledge Base</h3>
+                <h3 class="text-white font-bold">{{ 'GCHAT.KnowledgeBase' | translate }}</h3>
 
                 <!-- Coach Tip -->
                 <div class="p-4 bg-indigo-900/20 border-l-4 border-indigo-500 rounded-r-lg">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-lg">💡</span>
-                        <span class="text-indigo-300 font-bold text-sm uppercase">Coach Tip</span>
+                        <span class="text-indigo-300 font-bold text-sm uppercase">{{ 'GCHAT.CoachTip' | translate }}</span>
                     </div>
                     <p class="text-slate-300 text-xs italic">
                         "Speed Wins. Replying under 5 mins increases booking conversion by 400%. If you sleep, the bot handles it."
@@ -98,17 +100,17 @@ interface ChatMessage {
                 <!-- Topic Frequency Word Cloud (Requirement) -->
                 @if (isTier3()) {
                     <div class="bg-black/20 p-4 rounded-xl border border-white/5">
-                        <h4 class="text-xs text-slate-400 font-bold uppercase mb-3 text-center">Topic Frequency (WordCloud)</h4>
+                        <h4 class="text-xs text-slate-400 font-bold uppercase mb-3 text-center">{{ 'GCHAT.TopicFrequencyWordcloud' | translate }}</h4>
                         <div class="flex flex-wrap gap-2 justify-center items-center h-48 relative overflow-hidden">
                              <!-- Simple CSS Word Cloud Simulation -->
-                            <span class="text-emerald-400 text-2xl font-bold animate-pulse">WiFi</span>
-                            <span class="text-slate-300 text-xs absolute top-2 right-4">Parking</span>
-                            <span class="text-indigo-400 text-lg font-bold absolute bottom-4 left-4">Heating</span>
-                            <span class="text-slate-400 text-[10px] absolute top-8 left-2">Keys</span>
-                            <span class="text-pink-400 text-xl font-bold">Checkout</span>
-                            <span class="text-slate-300 text-xs absolute bottom-10 right-2">Pool</span>
-                            <span class="text-amber-400 text-sm absolute top-4 left-1/2">Late</span>
-                            <span class="text-slate-500 text-[10px] absolute bottom-2 right-1/2">Noise</span>
+                            <span class="text-emerald-400 text-2xl font-bold animate-pulse">{{ 'GCHAT.Wifi' | translate }}</span>
+                            <span class="text-slate-300 text-xs absolute top-2 right-4">{{ 'GCHAT.Parking' | translate }}</span>
+                            <span class="text-indigo-400 text-lg font-bold absolute bottom-4 left-4">{{ 'GCHAT.Heating' | translate }}</span>
+                            <span class="text-slate-400 text-[10px] absolute top-8 left-2">{{ 'GCHAT.Keys' | translate }}</span>
+                            <span class="text-pink-400 text-xl font-bold">{{ 'GCHAT.Checkout' | translate }}</span>
+                            <span class="text-slate-300 text-xs absolute bottom-10 right-2">{{ 'GCHAT.Pool' | translate }}</span>
+                            <span class="text-amber-400 text-sm absolute top-4 left-1/2">{{ 'GCHAT.Late' | translate }}</span>
+                            <span class="text-slate-500 text-[10px] absolute bottom-2 right-1/2">{{ 'GCHAT.Noise' | translate }}</span>
                         </div>
                     </div>
                 }
@@ -118,16 +120,16 @@ interface ChatMessage {
                     <div class="p-3 bg-black/20 rounded border border-white/5 flex items-center gap-3">
                         <span class="material-icons text-slate-500">description</span>
                         <div class="flex-1">
-                            <div class="text-white text-xs font-bold">House Manual.pdf</div>
-                            <div class="text-[10px] text-emerald-400">Indexed (RAG)</div>
+                            <div class="text-white text-xs font-bold">{{ 'GCHAT.HouseManualpdf' | translate }}</div>
+                            <div class="text-[10px] text-emerald-400">{{ 'GCHAT.IndexedRag' | translate }}</div>
                         </div>
                     </div>
                     @if (isTier2OrAbove()) {
                          <div class="p-3 bg-black/20 rounded border border-white/5 flex items-center gap-3">
                             <span class="material-icons text-slate-500">wifi</span>
                             <div class="flex-1">
-                                <div class="text-white text-xs font-bold">Wifi & Access</div>
-                                <div class="text-[10px] text-emerald-400">Fixed Reply</div>
+                                <div class="text-white text-xs font-bold">{{ 'GCHAT.WifiAccess' | translate }}</div>
+                                <div class="text-[10px] text-emerald-400">{{ 'GCHAT.FixedReply' | translate }}</div>
                             </div>
                         </div>
                     }
@@ -141,11 +143,11 @@ interface ChatMessage {
                 
                 @if (isTier3()) {
                     <div class="mt-auto">
-                        <div class="text-[10px] uppercase font-bold text-slate-500 mb-2">Confidence Threshold</div>
+                        <div class="text-[10px] uppercase font-bold text-slate-500 mb-2">{{ 'GCHAT.ConfidenceThreshold' | translate }}</div>
                         <input type="range" class="w-full h-1 bg-slate-600 rounded appearance-none" value="80" data-debug-id="chatbot-confidence-slider">
                         <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-                            <span>Lax</span>
-                            <span>Strict (80%)</span>
+                            <span>{{ 'GCHAT.Lax' | translate }}</span>
+                            <span>{{ 'GCHAT.Strict80' | translate }}</span>
                         </div>
                     </div>
                 }
@@ -156,10 +158,11 @@ interface ChatMessage {
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class GuestChatbotComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'OPS_06',
-        name: 'Guest AI Chatbot',
-        description: 'Auto-Responder & Concierge',
+        name: this.translate.instant('GUESCHAT.Title'),
+        description: this.translate.instant('GUESCHAT.Description'),
     } as any));
 
     session = inject(SessionStore);

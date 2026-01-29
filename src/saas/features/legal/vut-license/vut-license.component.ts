@@ -1,18 +1,22 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'leg-04-vut-license',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Spanish VUT Manager</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Step-by-step "Vivienda de Uso Turístico" licensing wizard.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'VUT.SpanishVutManager' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'VUT.StepbystepViviendaDeUsoTurstico' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -26,16 +30,16 @@ import { SessionStore } from '../../../../state/session.store';
        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">
            <!-- Checklists & Logic -->
            <div class="bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col overflow-y-auto">
-               <h3 class="text-xl font-bold text-white mb-6">License Requirements</h3>
+               <h3 class="text-xl font-bold text-white mb-6">{{ 'VUT.LicenseRequirements' | translate }}</h3>
                
                <div class="mb-6">
-                   <label class="block text-slate-400 text-xs uppercase font-bold mb-2">Region (Comunidad Autónoma)</label>
+                   <label class="block text-slate-400 text-xs uppercase font-bold mb-2">{{ 'VUT.RegionComunidadAutnoma' | translate }}</label>
                    @if (isTier2()) {
                        <select class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-3 text-white">
-                           <option>Andalucía (Junta)</option>
-                           <option>Madrid</option>
-                           <option>Catalunya (Generalitat)</option>
-                           <option>Valencia</option>
+                           <option>{{ 'VUT.AndalucaJunta' | translate }}</option>
+                           <option>{{ 'VUT.Madrid' | translate }}</option>
+                           <option>{{ 'VUT.CatalunyaGeneralitat' | translate }}</option>
+                           <option>{{ 'VUT.Valencia' | translate }}</option>
                        </select>
                    } @else {
                        <div class="p-3 bg-white/5 rounded text-slate-400 text-xs italic border border-white/5">
@@ -48,14 +52,14 @@ import { SessionStore } from '../../../../state/session.store';
                    <div class="bg-white/5 p-4 rounded-lg flex items-start gap-3 transition-colors hover:bg-white/10">
                        <input type="checkbox" checked class="mt-1 bg-transparent border-emerald-500 rounded text-emerald-500 focus:ring-0" data-debug-id="vut-check-cedula">
                        <div>
-                           <div class="text-white font-bold text-sm">Cédula de Habitabilidad</div>
-                           <p class="text-xs text-slate-500">Valid occupancy certificate required (Max 15 years old in some zones).</p>
+                           <div class="text-white font-bold text-sm">{{ 'VUT.CdulaDeHabitabilidad' | translate }}</div>
+                           <p class="text-xs text-slate-500">{{ 'VUT.ValidOccupancyCertificateRequiredMax' | translate }}</p>
                        </div>
                    </div>
                    <div class="bg-white/5 p-4 rounded-lg flex items-start gap-3 transition-colors hover:bg-white/10">
                        <input type="checkbox" class="mt-1 bg-transparent border-slate-600 rounded text-emerald-500 focus:ring-0" data-debug-id="vut-check-occupation">
                        <div>
-                           <div class="text-white font-bold text-sm">First Occupation License</div>
+                           <div class="text-white font-bold text-sm">{{ 'VUT.FirstOccupationLicense' | translate }}</div>
                            <p class="text-xs text-slate-500">"Licencia de Primera Ocupación" registered at Town Hall.</p>
                        </div>
                    </div>
@@ -63,10 +67,9 @@ import { SessionStore } from '../../../../state/session.store';
                    @if (isTier3()) {
                        <div class="mt-6 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
                            <h4 class="text-indigo-300 font-bold mb-2 flex items-center gap-2">
-                               <span class="material-icons text-sm">gavel</span> Statute Analyzer (AI)
-                           </h4>
+                               <span class="material-icons text-sm">gavel</span>{{ 'VUT.StatuteAnalyzerAi' | translate }}</h4>
                            <p class="text-xs text-slate-400 mb-3">Supreme Court (Tribunal Supremo) allows neighbors to ban Airbnb by 3/5 vote. Upload your "Estatutos" to check for bans.</p>
-                           <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-bold shadow-lg transition-all" data-debug-id="vut-upload-statutes-btn">Run AI Analysis</button>
+                           <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-bold shadow-lg transition-all" data-debug-id="vut-upload-statutes-btn">{{ 'VUT.RunAiAnalysis' | translate }}</button>
                        </div>
                    }
                </div>
@@ -98,9 +101,7 @@ import { SessionStore } from '../../../../state/session.store';
                     </h3>
                     
                     @if (!isTier3()) {
-                        <p class="text-slate-500 text-xs max-w-xs">
-                            Complete all checks to generate your VUT application number.
-                        </p>
+                        <p class="text-slate-500 text-xs max-w-xs">{{ 'VUT.CompleteAllChecksToGenerate' | translate }}</p>
                     } @else {
                         <div class="flex gap-4 mt-4 text-xs font-mono text-emerald-400 bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20">
                             <span class="flex items-center gap-1">● Guardia Civil Connected</span>
@@ -113,8 +114,8 @@ import { SessionStore } from '../../../../state/session.store';
                    <div class="flex items-start gap-3">
                       <span class="text-xl">⚠️</span>
                       <div>
-                          <h4 class="font-bold text-indigo-300 text-sm">Barcelona Warning (PEUAT)</h4>
-                          <p class="text-xs text-indigo-200/80 mt-1">New licenses in Barcelona are currently FROZEN (Zone 1). Do not buy property without an existing, transferable HUTB license.</p>
+                          <h4 class="font-bold text-indigo-300 text-sm">{{ 'VUT.BarcelonaWarningPeuat' | translate }}</h4>
+                          <p class="text-xs text-indigo-200/80 mt-1">{{ 'VUT.NewLicensesInBarcelonaAre' | translate }}</p>
                       </div>
                    </div>
                 </div>
@@ -125,10 +126,11 @@ import { SessionStore } from '../../../../state/session.store';
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class VutLicenseComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'LEG_04',
-        name: 'VUT License Assistant',
-        description: 'Spanish Licensing Expert System',
+        name: this.translate.instant('VUTLICE.Title'),
+        description: this.translate.instant('VUTLICE.Description'),
     } as any));
 
     session = inject(SessionStore);

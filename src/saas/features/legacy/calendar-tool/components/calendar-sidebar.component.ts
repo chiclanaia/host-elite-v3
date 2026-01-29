@@ -109,7 +109,7 @@ import { TranslatePipe } from '../../../../../pipes/translate.pipe';
                     @if (addForm.get('type')?.value === 'external') {
                         <div>
                             <input type="text" formControlName="url" 
-                                placeholder="https://airbnb.com/calendar/..."
+                                placeholder="{{ \'CALENDAR_S.Httpsairbnbcomcalendar\' | translate }}"
                                 class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder-white/20">
                             <p class="text-[10px] text-white/30 mt-1 pl-1">{{ 'CALENDAR.InternalSyncHelp' | translate }}</p>
                         </div>

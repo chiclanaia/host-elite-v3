@@ -1,18 +1,22 @@
+import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
     selector: 'ops-01-house-manual',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule,
+    TranslatePipe
+  ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">Digital House Manual</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">Stop answering "How do I use the oven?" at 10 PM.</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'MANUAL.DigitalHouseManual' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'MANUAL.StopAnsweringHowDoI' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -27,7 +31,7 @@ import { SessionStore } from '../../../../state/session.store';
            <!-- Device List -->
            <div class="lg:col-span-1 bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col overflow-y-auto">
                <div class="flex justify-between items-center mb-6">
-                   <h3 class="text-xl font-bold text-white">Appliances</h3>
+                   <h3 class="text-xl font-bold text-white">{{ 'MANUAL.Appliances' | translate }}</h3>
                    <button class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20" data-debug-id="add-device-btn">
                        <span class="material-icons text-sm">add</span>
                    </button>
@@ -65,7 +69,7 @@ import { SessionStore } from '../../../../state/session.store';
                         <div class="flex items-start gap-3">
                            <span class="text-xl">💡</span>
                            <div>
-                               <h4 class="font-bold text-indigo-300 text-sm">QR Codes on Devices</h4>
+                               <h4 class="font-bold text-indigo-300 text-sm">{{ 'MANUAL.QrCodesOnDevices' | translate }}</h4>
                                <p class="text-xs text-indigo-200/80 mt-1">Stick a QR code directly on the washing machine. Guests scan it and instantly see your 30s "How-To" video. Zero confusion.</p>
                            </div>
                        </div>
@@ -82,8 +86,8 @@ import { SessionStore } from '../../../../state/session.store';
                    <div class="w-24 h-24 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(99,102,241,0.1)]">
                        <span class="material-icons text-5xl text-indigo-400">coffee_maker</span>
                    </div>
-                   <h2 class="text-3xl font-bold text-white mb-2">Nespresso Magimix</h2>
-                   <p class="text-slate-400 mb-8 max-w-md">Model M190 • Serial #8293-A</p>
+                   <h2 class="text-3xl font-bold text-white mb-2">{{ 'MANUAL.NespressoMagimix' | translate }}</h2>
+                   <p class="text-slate-400 mb-8 max-w-md">{{ 'MANUAL.ModelM190Serial8293a' | translate }}</p>
 
                    <div class="grid grid-cols-2 gap-4 w-full max-w-lg">
                         <!-- Manual Action -->
@@ -92,8 +96,8 @@ import { SessionStore } from '../../../../state/session.store';
                                <span class="material-icons text-slate-300 group-hover:text-white">description</span>
                            </div>
                            <div>
-                               <div class="font-bold text-slate-200 text-sm">View Manual</div>
-                               <div class="text-[10px] text-slate-500">PDF (2.4 MB)</div>
+                               <div class="font-bold text-slate-200 text-sm">{{ 'MANUAL.ViewManual' | translate }}</div>
+                               <div class="text-[10px] text-slate-500">{{ 'HM.Pdf24Mb' | translate }}</div>
                            </div>
                        </button>
 
@@ -104,7 +108,7 @@ import { SessionStore } from '../../../../state/session.store';
                            @if(!isTier3()) {
                                <div class="absolute inset-0 bg-slate-900/80 flex items-center justify-center z-20 backdrop-blur-[1px]">
                                    <span class="material-icons text-xs text-slate-500 mr-1">lock</span>
-                                   <span class="text-[10px] text-slate-400 font-bold uppercase">Gold</span>
+                                   <span class="text-[10px] text-slate-400 font-bold uppercase">{{ 'MANUAL.Gold' | translate }}</span>
                                </div>
                            }
                            
@@ -112,7 +116,7 @@ import { SessionStore } from '../../../../state/session.store';
                                <span class="material-icons text-slate-300 group-hover:text-white">play_arrow</span>
                            </div>
                            <div class="z-10">
-                               <div class="font-bold text-slate-200 text-sm">Video Guide</div>
+                               <div class="font-bold text-slate-200 text-sm">{{ 'MANUAL.VideoGuide' | translate }}</div>
                                <div class="text-[10px] text-slate-500">00:45 • Tutorial</div>
                            </div>
                        </button>
@@ -122,9 +126,8 @@ import { SessionStore } from '../../../../state/session.store';
                        <div class="mt-12 p-4 bg-indigo-900/20 border border-indigo-500/30 rounded-lg max-w-lg w-full">
                            <div class="flex justify-between items-center mb-4">
                                <h4 class="text-indigo-300 font-bold text-sm flex items-center gap-2">
-                                   <span class="material-icons text-sm">qr_code</span> Generated QR Sticker
-                               </h4>
-                               <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded" data-debug-id="ops01-print-qr">Print Sticker</button>
+                                   <span class="material-icons text-sm">qr_code</span>{{ 'MANUAL.GeneratedQrSticker' | translate }}</h4>
+                               <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded" data-debug-id="ops01-print-qr">{{ 'MANUAL.PrintSticker' | translate }}</button>
                            </div>
                            <div class="flex gap-4">
                                <div class="w-24 h-24 bg-white p-2 rounded">
@@ -133,8 +136,8 @@ import { SessionStore } from '../../../../state/session.store';
                                    </div>
                                </div>
                                <div class="flex-1 text-xs text-slate-400 text-left">
-                                   <p class="mb-2">Scan to open: <span class="text-indigo-400">guide.hote.io/v/92KsL</span></p>
-                                   <p>Print this label and attach it to the Nespresso machine. Guests can scan without downloading any app.</p>
+                                   <p class="mb-2">{{ 'MANUAL.ScanToOpen' | translate }}<span class="text-indigo-400">guide.hote.io/v/92KsL</span></p>
+                                   <p>{{ 'MANUAL.PrintThisLabelAndAttach' | translate }}</p>
                                </div>
                            </div>
                        </div>
@@ -147,10 +150,11 @@ import { SessionStore } from '../../../../state/session.store';
     styles: [`:host { display: block; height: 100%; }`]
 })
 export class HouseManualComponent {
+    translate = inject(TranslationService);
     feature = computed(() => ({
         id: 'OPS_01',
-        name: 'House Manual',
-        description: 'Digital Appliance Guides & Technical Docs',
+        name: this.translate.instant('HOUSMANU.Title'),
+        description: this.translate.instant('HOUSMANU.Description'),
     } as any));
 
     session = inject(SessionStore);

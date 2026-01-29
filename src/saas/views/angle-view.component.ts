@@ -125,6 +125,8 @@ export class PhaseViewComponent implements OnInit {
     constructor() {
         effect(() => {
             this.activeToolId.set(null);
+            this.activeFeature.set(null);
+            this.activeFeatureComponent.set(null);
             this.loadPropertyData();
             const currentProp = this.view().propertyName;
             if (currentProp && this.bookletService.propertyName() !== currentProp) {
