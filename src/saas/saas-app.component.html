@@ -77,11 +77,9 @@
         </header>
 
         <!-- Horizontal Angles Menu (Floating Pill Style) -->
-        @if (userRole() !== 'admin') {
         <div class="py-4 z-30 flex justify-center flex-shrink-0">
             <saas-phases-menu [activeView]="activeView()" (viewChange)="onViewChange($event)"></saas-phases-menu>
         </div>
-        }
 
         <!-- Scrollable Content -->
         <main class="flex-1 overflow-y-auto p-8 custom-scrollbar">

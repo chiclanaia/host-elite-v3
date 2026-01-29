@@ -21,6 +21,9 @@ export const ui = {
     'COMMON.Unlock': 'Desbloquear',
     'COMMON.OpenTool': 'Abrir herramienta',
     'COMMON.SectionNotFound': 'Sección no encontrada',
+    'COMMON.Back': 'Volver',
+    'COMMON.PropertyAudit': 'Auditoría de Propiedad',
+
     'COMMON.AiGenerated': '¡Contenido generado por IA!',
     'COMMON.AuditSaved': '¡Auditoría guardada con éxito!',
     'COMMON.GenError': 'Error al generar el contenido.',

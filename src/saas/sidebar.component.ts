@@ -119,6 +119,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 
                             <div class="space-y-1 mt-1">
                                 @for(subView of prop.subViews; track subView.id) {
+                                    <!-- Hide Widget Library -->
+                                    @if (subView.id !== 'widget-library') {
                                     <a (click)="isLocked(subView) ? null : changeView(subView, prop.name)"
                                     class="group flex items-center justify-between px-3 py-2 text-sm font-medium rounded-r-lg cursor-pointer transition-all relative"
                                     [class]="activeView().id === subView.id && activeView().propertyName === prop.name 
@@ -145,6 +147,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                                         }
                                     </div>
                                     </a>
+                                    }
                                 }
                             </div>
                         </div>
@@ -162,7 +165,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                 </div>
             </div>
 
-            <!-- Training Menu -->
+            <!-- Training Menu (HIDDEN) -->
+            <!--
             <div class="pt-6">
                 <div class="px-3 pb-3">
                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ 'SIDEBAR.Academy' | translate }}</span>
@@ -190,7 +194,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                             </span>
                         }
                     }
-                    <!-- Lock Icon -->
+                    < - - Lock Icon - - >
                     @if (isLocked(view)) {
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-slate-600 ml-2"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
                     }
@@ -198,6 +202,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                 }
                 </div>
             </div>
+            -->
 
             <!-- Support -->
             <div class="pt-6">

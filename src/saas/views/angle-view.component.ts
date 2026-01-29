@@ -25,21 +25,9 @@ import { TranslationService } from '../../services/translation.service';
 
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
-import { OnboardingService } from '../../services/onboarding.service';
+import { OnboardingService, OnboardingQuestion } from '../../services/onboarding.service';
 
-interface OnboardingQuestion {
-    id: string;
-    question_key: string;
-    level: 'Bronze' | 'Silver' | 'Gold' | 'TIER_1' | 'TIER_2' | 'TIER_3';
-    order_index: number;
-    has_sub_question: boolean;
-    sub_question_config?: {
-        id: string;
-        label_key: string;
-        type: 'text' | 'url' | 'number';
-        placeholder?: string;
-    }
-}
+
 
 @Component({
     selector: 'saas-angle-view',
@@ -241,58 +229,89 @@ export class PhaseViewComponent implements OnInit {
         return 'Free';
     }
 
-    // --- Legacy Audit / Onboarding Logic ---
+    // --- Property Audit / Onboarding Logic ---
 
-    async openLegacyAudit(dimensionId: string) {
+    async openPropertyAudit(dimensionId: string) {
         try {
             const propertyId = this.currentPropertyId();
             if (!propertyId) return;
 
+            console.log("Opening Property Audit for dimension:", dimensionId);
+
             // Map dimension ID if necessary? 
             // The DB dimensions are 'MKT', 'EXP', 'OPS', etc.
-            // The legacy audit expects 'DIM_MKT', 'DIM_EXP', etc.
+            // The property audit expects 'DIM_MKT', 'DIM_EXP', etc.
             let legacyDimId = dimensionId;
             if (!dimensionId.startsWith('DIM_')) {
-                // Try to guess mapping. 
-                // DB: Marketing -> MKT. Legacy: DIM_MKT.
-                // Actually the DB seeds for app_dimensions have ids like 'Marketing', 'Experience'.
-                // Wait, check types.ts or DB seed.
-                // In create_features_system.sql: ('Marketing', 'Marketing'), ('Finance', 'Finance')...
-                // The legacy IDs were 'DIM_MKT'. 
-                // I might need a mapping here too.
-
                 const map: Record<string, string> = {
-                    'Marketing': 'DIM_MKT',
-                    'Experience': 'DIM_EXP',
-                    'Operations': 'DIM_OPS', // Or 'Logement'?
-                    'Pricing': 'DIM_PRICING',
-                    'Legal': 'DIM_LEGAL',
-                    'Mindset': 'mindset',
-                    'Finance': 'DIM_FINANCE'
+                    'Marketing': 'DIM_MKT', 'marketing': 'DIM_MKT', 'MKT': 'DIM_MKT',
+                    'Experience': 'DIM_EXP', 'experience': 'DIM_EXP', 'EXP': 'DIM_EXP',
+                    'Operations': 'DIM_OPS', 'operations': 'DIM_OPS', 'OPS': 'DIM_OPS',
+                    'Pricing': 'DIM_PRICING', 'pricing': 'DIM_PRICING', 'PRI': 'DIM_PRICING',
+                    'Legal': 'DIM_LEGAL', 'legal': 'DIM_LEGAL', 'LEG': 'DIM_LEGAL',
+                    'Mindset': 'mindset', 'mindset': 'mindset',
+                    'Finance': 'DIM_FINANCE', 'finance': 'DIM_FINANCE', 'FIN': 'DIM_FINANCE'
                 };
-                legacyDimId = map[dimensionId] || dimensionId;
+                legacyDimId = map[dimensionId] || map[dimensionId.charAt(0).toUpperCase() + dimensionId.slice(1)] || dimensionId;
             }
+            console.log("Mapped to Legacy ID:", legacyDimId);
 
             // Load questions
-            let questions = await this.onboardingService.getQuestionsByDimension(legacyDimId);
+            let questions: OnboardingQuestion[] = [];
+            try {
+                questions = await this.onboardingService.getQuestionsByDimension(legacyDimId);
+            } catch (err) {
+                console.warn(`[PropertyAudit] DB fetch failed for ${legacyDimId}, falling back to synthetic generation.`, err);
+                questions = [];
+            }
 
-            // Legacy synthetic questions logic for OPS
-            if (legacyDimId === 'DIM_OPS' && questions.length < 40) {
+            // Property synthetic questions logic for All Dimensions
+            // We map the dimension ID to the translation key prefix and the expected count.
+            const syntheticConfigs: Record<string, { prefix: string, count: number }> = {
+                'DIM_MKT': { prefix: 'AUDIT.marketing_q', count: 10 },
+                'DIM_EXP': { prefix: 'AUDIT.experience_q', count: 10 },
+                'DIM_OPS': { prefix: 'AUDIT.operations_q', count: 10 },
+                'DIM_PRICING': { prefix: 'AUDIT.pricing_q', count: 10 },
+                'DIM_LEGAL': { prefix: 'AUDIT.legal_q', count: 10 }
+            };
+
+            const config = syntheticConfigs[legacyDimId];
+
+            if (config && questions.length < config.count) {
                 const existingKeys = new Set(questions.map(q => q.question_key));
-                for (let i = 1; i <= 40; i++) {
-                    const key = `AUDIT.accomodation_q${i}`;
+                for (let i = 1; i <= config.count; i++) {
+                    const key = `${config.prefix}${i}`;
+                    const subKey = `${key}_sub`;
+
+                    // Check if sub-question exists in translations
+                    // translate() returns the key itself if not found, so specific check needed
+                    const translatedSub = this.translationService.translate(subKey);
+                    const hasSub = translatedSub && translatedSub !== subKey;
+
                     if (!existingKeys.has(key)) {
                         questions.push({
-                            id: `synthetic_${i}`,
-                            dimension: legacyDimId, // Type mismatch fix might be needed if strictly typed
+                            id: `synthetic_${legacyDimId}_${i}`,
                             question_key: key,
-                            level: i <= 10 ? 'Bronze' : (i <= 20 ? 'Silver' : 'Gold'),
+                            level: i <= 3 ? 'Bronze' : (i <= 6 ? 'Silver' : 'Gold'), // Generic tiering
                             order_index: i,
-                            has_sub_question: false
+                            has_sub_question: hasSub,
+                            sub_question_config: hasSub ? {
+                                id: `synthetic_${legacyDimId}_${i}_sub`,
+                                label_key: subKey,
+                                type: 'text',
+                                placeholder: '...'
+                            } : undefined,
+                            dimension_id: legacyDimId // Ensure dimension is set
                         } as any);
                     }
                 }
                 questions.sort((a, b) => a.order_index - b.order_index);
+            } else if (legacyDimId === 'DIM_OPS' && questions.length < 40 && !config) {
+                // Fallback for the old specific logic if it was intended for Accommodation (unlikely here but keeping safe)
+                // The old code generated 40 questions for OPS using accomodation_q. 
+                // If that was the intent of "Property Audit" in OPS phase, we might have a conflict with above.
+                // Given the translation file has separate operations_q (10) and accomodation_q (40),
+                // and PropertyAuditComponent handles accomodation_q, we assume Phase Audit = operations_q.
             }
 
             if (!questions || questions.length === 0) {
@@ -304,7 +323,17 @@ export class PhaseViewComponent implements OnInit {
             }
 
             this.currentQuestions.set(questions);
-            const answersMap = await this.onboardingService.getAnswers(propertyId, legacyDimId);
+
+            let answersMap = new Map<string, any>();
+            try {
+                // If we are using synthetic questions (because DB fetch failed), 
+                // getAnswers will likely fail too if it tries to fetch questions again.
+                // We should ideally have a way to fetch answers without fetching questions,
+                // but for now, we just suppress the error to ensure the modal opens.
+                answersMap = await this.onboardingService.getAnswers(propertyId, legacyDimId);
+            } catch (err) {
+                console.warn("[LegacyAudit] Failed to load existing answers:", err);
+            }
             const formControls = questions.reduce((acc, q) => {
                 const answer = answersMap.get(q.id);
                 acc[q.id] = [answer ? answer.answer : false];
@@ -332,6 +361,24 @@ export class PhaseViewComponent implements OnInit {
         const propertyId = this.currentPropertyId();
         const questions = this.currentQuestions();
 
+        console.log('Attempting to save onboarding...');
+        console.log('Form Valid:', form?.valid);
+        console.log('Form Value:', form?.value);
+        console.log('Property ID:', propertyId);
+        console.log('Questions Count:', questions.length);
+
+        if (!form?.valid) {
+            console.warn('Cannot save: Form is invalid.');
+            // Log invalid controls
+            Object.keys(form.controls).forEach(key => {
+                if (form.get(key)?.invalid) {
+                    console.log(`Invalid control: ${key}`, form.get(key)?.errors);
+                }
+            });
+            alert("Form is invalid. Please check all fields."); // Temporary alert for user feedback
+            return;
+        }
+
         if (form?.valid && propertyId && questions.length > 0) {
             try {
                 const formValues = form.value;
@@ -340,6 +387,9 @@ export class PhaseViewComponent implements OnInit {
                     answer: formValues[q.id],
                     sub_answer: q.sub_question_config ? formValues[q.sub_question_config.id] : undefined
                 }));
+
+                // Ensure questions exist in DB (if they were synthetic)
+                await this.onboardingService.ensureQuestions(questions);
 
                 await this.onboardingService.saveAnswers(propertyId, answersToSave);
                 this.saveMessage.set(this.translationService.translate('COMMON.AuditSaved'));

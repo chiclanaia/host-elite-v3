@@ -35,7 +35,7 @@ export class TranslationService {
     }
 
     // Debug Support
-    debugMode = signal(true); // Forced true for dev
+    debugMode = signal(false); // Forced true for dev
 
     toggleDebugMode() {
         const newValue = !this.debugMode();

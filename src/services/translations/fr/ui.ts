@@ -27,6 +27,8 @@ export const ui = {
     'COMMON.Unlock': 'Débloquer',
     'COMMON.OpenTool': 'Ouvrir l\'outil',
     'COMMON.SectionNotFound': 'Section non trouvée',
+    'COMMON.Back': 'Retour',
+    'COMMON.PropertyAudit': 'Audit de Propriété',
 
     'NOTIF.Title': 'Notifications',
     'NOTIF.Empty': 'Aucune notification pour le moment.',

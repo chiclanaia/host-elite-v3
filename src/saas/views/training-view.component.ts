@@ -382,7 +382,7 @@ export class TrainingViewComponent implements OnInit {
 
         // Build question_id -> angle mapping
         const questionMap = new Map<string, string>();
-        questions.forEach(q => questionMap.set(q.id, q.dimension));
+        questions.forEach(q => questionMap.set(q.id, q.dimension_id));
         this.questionToAngleMap.set(questionMap);
     }
 

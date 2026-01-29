@@ -3,7 +3,7 @@ import { SupabaseService } from './supabase.service';
 
 export interface OnboardingQuestion {
     id: string;
-    dimension: string;
+    dimension_id: string;
     question_key: string;
     level: 'Bronze' | 'Silver' | 'Gold' | 'TIER_1' | 'TIER_2' | 'TIER_3';
     order_index: number;
@@ -39,7 +39,7 @@ export class OnboardingService {
         const { data, error } = await this.supabase.supabase
             .from('onboarding_questions')
             .select('*')
-            .eq('angle', dimension)
+            .eq('dimension_id', dimension)
             .order('order_index', { ascending: true });
 
         if (error) {
@@ -51,13 +51,13 @@ export class OnboardingService {
     }
 
     /**
-     * Get all questions (not filtered by angle)
+     * Get all questions (not filtered by dimension)
      */
     async getAllQuestions(): Promise<OnboardingQuestion[]> {
         const { data, error } = await this.supabase.supabase
             .from('onboarding_questions')
             .select('*')
-            .order('angle', { ascending: true })
+            .order('dimension_id', { ascending: true })
             .order('order_index', { ascending: true });
 
         if (error) {
@@ -81,6 +81,10 @@ export class OnboardingService {
         const questions = await this.getQuestionsByDimension(dimension);
         const questionIds = questions.map(q => q.id);
 
+        if (questionIds.length === 0) {
+            return new Map<string, OnboardingAnswer>();
+        }
+
         // Then get answers for these questions
         const { data, error } = await this.supabase.supabase
             .from('onboarding_answers')
@@ -101,6 +105,33 @@ export class OnboardingService {
         });
 
         return answersMap;
+    }
+
+    /**
+     * Ensure questions exist in the database (for synthetic questions)
+     */
+    async ensureQuestions(questions: OnboardingQuestion[]): Promise<void> {
+        if (!questions || questions.length === 0) return;
+
+        const questionsToUpsert = questions.map(q => ({
+            id: q.id,
+            dimension_id: q.dimension_id,
+            question_key: q.question_key,
+            level: q.level,
+            order_index: q.order_index,
+            has_sub_question: q.has_sub_question,
+            sub_question_config: q.sub_question_config || null
+        }));
+
+        const { error } = await this.supabase.supabase
+            .from('onboarding_questions')
+            .upsert(questionsToUpsert, {
+                onConflict: 'id'
+            });
+
+        if (error) {
+            console.error('Error seeding questions:', error);
+        }
     }
 
     /**

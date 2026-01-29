@@ -102,7 +102,7 @@ export class PropertyAuditComponent implements OnInit {
                     if (!existingKeys.has(key)) {
                         qs.push({
                             id: `synthetic_${i}`,
-                            dimension: 'DIM_OPS',
+                            dimension_id: 'DIM_OPS',
                             question_key: key,
                             level: i <= 10 ? 'Bronze' : (i <= 20 ? 'Silver' : 'Gold'),
                             order_index: i,
