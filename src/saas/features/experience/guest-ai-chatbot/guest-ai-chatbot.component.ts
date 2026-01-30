@@ -1,7 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
+import { GeminiService } from '../../../../services/gemini.service';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
@@ -17,8 +18,8 @@ interface ChatMessage {
     selector: 'exp-04-chatbot',
     standalone: true,
     imports: [CommonModule, FormsModule,
-    TranslatePipe
-  ],
+        TranslatePipe
+    ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
@@ -39,37 +40,48 @@ interface ChatMessage {
                 <!-- Tier 1 Indicator -->
                 <div *ngIf="!isTier2OrAbove()" class="absolute top-0 left-0 w-full bg-amber-500/10 border-b border-amber-500/20 p-2 text-center text-[10px] text-amber-300 font-bold z-10">{{ 'GUEST_AI_C.SmsModeTier1Manual' | translate }}</div>
 
-                <div class="flex-1 p-6 space-y-4 overflow-y-auto bg-slate-900/50 pt-10">
+                <div #chatContainer class="flex-1 p-6 space-y-4 overflow-y-auto bg-slate-900/50 pt-10 scroll-smooth">
                     @for (msg of messages(); track msg.id) {
                         <div class="flex" [class.justify-end]="msg.sender === 'user'" [class.justify-start]="msg.sender === 'bot'">
                             @if (msg.sender === 'bot') {
-                                <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold mr-2 mt-auto">AI</div>
+                                <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold mr-2 mt-auto shadow-lg shadow-indigo-500/20">AI</div>
                             }
-                            <div class="max-w-[80%] p-3 text-sm shadow-md"
+                            <div class="max-w-[80%] p-3 text-sm shadow-xl transition-all hover:scale-[1.02]"
                                  [class.bg-indigo-600]="msg.sender === 'user' && !msg.isSms"
                                  [class.bg-slate-700]="msg.sender === 'bot' && !msg.isSms"
                                  [class.bg-emerald-600]="msg.sender === 'user' && msg.isSms"
                                  [class.bg-slate-600]="msg.sender === 'bot' && msg.isSms"
-                                 [class.rounded-l-xl]="msg.sender === 'user'"
-                                 [class.rounded-tr-xl]="msg.sender === 'user'"
-                                 [class.rounded-r-xl]="msg.sender === 'bot'"
-                                 [class.rounded-tl-xl]="msg.sender === 'bot'"
+                                 [class.rounded-l-2xl]="msg.sender === 'user'"
+                                 [class.rounded-tr-2xl]="msg.sender === 'user'"
+                                 [class.rounded-r-2xl]="msg.sender === 'bot'"
+                                 [class.rounded-tl-2xl]="msg.sender === 'bot'"
                                  [class.text-white]="true">
-                                {{ msg.text }}
+                                <div class="whitespace-pre-wrap">{{ msg.text }}</div>
                                 <div class="text-[9px] opacity-50 mt-1 text-right">{{ msg.timestamp | date:'shortTime' }}</div>
                             </div>
                              @if (msg.sender === 'user') {
-                                <div class="h-8 w-8 rounded-full bg-slate-500 flex items-center justify-center text-white text-xs font-bold ml-2 mt-auto">G</div>
+                                <div class="h-8 w-8 rounded-full bg-slate-600 flex items-center justify-center text-white text-xs font-bold ml-2 mt-auto shadow-lg">G</div>
                             }
+                        </div>
+                    }
+                    
+                    @if (isTyping()) {
+                        <div class="flex justify-start animate-pulse">
+                            <div class="h-8 w-8 rounded-full bg-indigo-500/50 flex items-center justify-center text-white text-xs font-bold mr-2">...</div>
+                            <div class="bg-slate-700/50 rounded-r-xl rounded-tl-xl p-3 flex gap-1 items-center">
+                                <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+                            </div>
                         </div>
                     }
                 </div>
                 
                 <div class="p-4 border-t border-white/10 bg-slate-800">
                     <div class="relative">
-                        <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" type="text" 
+                        <input #chatInput [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" type="text" 
                                [placeholder]="isTier3() ? 'Ask AI or Train...' : 'Type SMS reply...'" 
-                               class="w-full bg-black/30 border border-white/10 rounded-full px-6 py-3 text-white focus:ring-2 focus:ring-indigo-500" 
+                               class="w-full bg-black/30 border border-white/10 rounded-full px-6 py-3 text-white focus:ring-2 focus:ring-indigo-500 transition-all shadow-inner" 
                                data-debug-id="chatbot-train-input">
                         <button (click)="sendMessage()" class="absolute right-2 top-1.5 h-9 w-9 bg-indigo-600 rounded-full flex items-center justify-center text-white hover:bg-indigo-500" data-debug-id="chatbot-train-btn">
                             <span class="material-icons text-sm">arrow_upward</span>
@@ -152,8 +164,15 @@ interface ChatMessage {
     `,
     styles: [`:host { display: block; height: 100%; }`]
 })
-export class GuestAiChatbotComponent {
+export class GuestAiChatbotComponent implements AfterViewChecked {
+    @ViewChild('chatContainer') private chatContainer!: ElementRef;
+    @ViewChild('chatInput') private chatInput!: ElementRef;
+
     session = inject(SessionStore);
+    gemini = inject(GeminiService);
+
+    propertyDetails = input<any>();
+    isTyping = signal(false);
 
     tier = computed(() => {
         const plan = this.session.userProfile()?.plan || 'TIER_0';
@@ -165,38 +184,54 @@ export class GuestAiChatbotComponent {
 
     newMessage = '';
     messages = signal<ChatMessage[]>([
-        { id: '1', sender: 'user', text: 'What is the WiFi password?', timestamp: new Date(Date.now() - 3600000), isSms: false },
-        { id: '2', sender: 'bot', text: 'The WiFi network is "Sunset_Guest" and the password is "Welcome2024!".', timestamp: new Date(Date.now() - 3590000), isSms: false },
+        { id: '1', sender: 'bot', text: 'Hello! I am your AI concierge. How can I help you with your stay today?', timestamp: new Date(Date.now() - 3600000), isSms: false },
     ]);
 
-    sendMessage() {
-        if (!this.newMessage.trim()) return;
+    ngAfterViewChecked() {
+        this.scrollToBottom();
+    }
+
+    private scrollToBottom(): void {
+        try {
+            this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+        } catch (err) { }
+    }
+
+    async sendMessage() {
+        if (!this.newMessage.trim() || this.isTyping()) return;
 
         const isSms = !this.isTier2OrAbove();
+        const userTxt = this.newMessage;
+        this.newMessage = '';
 
         // Add User Message
         this.messages.update(msgs => [...msgs, {
             id: Date.now().toString(),
-            sender: 'user', // In real app this would be swapped, but for training UI we act as host? Or Simulator?
-            // Actually spec says "Train AI", so maybe we are chatting AS guest? 
-            // Lets assume we are simulating conversation
-            text: this.newMessage,
+            sender: 'user',
+            text: userTxt,
             timestamp: new Date(),
             isSms
         }]);
 
-        const userTxt = this.newMessage;
-        this.newMessage = '';
+        if (isSms) return; // Manual mode only for Tier 1
 
-        // Simulate Bot Reply
-        setTimeout(() => {
+        this.isTyping.set(true);
+
+        try {
             let reply = "I don't know that yet.";
+
             if (this.isTier3()) {
-                reply = `(RAG AI): Based on the manual, here is the answer to "${userTxt}"...`;
-            } else if (this.isTier2OrAbove()) {
-                reply = "(Auto-Reply): This is a preset response.";
+                // RAG AI Mode
+                const context = this.buildPropertyContext();
+                reply = await this.gemini.getConciergeResponse(
+                    this.propertyDetails()?.name || 'This Property',
+                    context,
+                    userTxt
+                );
             } else {
-                return; // Manual only
+                // Tier 2: Static Auto-Reply simulation
+                reply = "Hello! I am the automated assistant. How can I help you today?";
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
 
             this.messages.update(msgs => [...msgs, {
@@ -204,8 +239,34 @@ export class GuestAiChatbotComponent {
                 sender: 'bot',
                 text: reply,
                 timestamp: new Date(),
-                isSms
+                isSms: false
             }]);
-        }, 1000);
+        } catch (error) {
+            console.error('Chatbot error:', error);
+        } finally {
+            this.isTyping.set(false);
+            setTimeout(() => this.chatInput?.nativeElement?.focus(), 100);
+        }
+    }
+
+    private buildPropertyContext(): string {
+        const p = this.propertyDetails();
+        if (!p) return 'No property data available.';
+
+        return `
+            Property Name: ${p.name}
+            Address: ${p.address}
+            Listing Title: ${p.listing_title}
+            Description: ${p.listing_description}
+            
+            INSTRUCTIONS & RULES:
+            - WiFi: ${p.wifi_code || 'Check house manual'}
+            - Arrival: ${p.arrival_instructions || 'N/A'}
+            - House Rules: ${p.house_rules_text || 'Standard rules apply'}
+            - Emergency Contact: ${p.emergency_contact_info || 'N/A'}
+            
+            EQUIPMENT:
+            ${(p.property_equipments || []).map((e: any) => `- ${e.name}`).join('\n')}
+        `.trim();
     }
 }

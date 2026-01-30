@@ -1,0 +1,31 @@
+export const ph3 = {
+    // Guest AI Chatbot
+    'GUEST_AI_C.ContextualHospitalityAgent': 'Agente de Hospitalidad Contextual',
+    'GUEST_AI_C.RagdrivenAiGuestAssistantFor': 'Asistente de huéspedes por IA impulsado por RAG para propietarios.',
+    'GUEST_AI_C.RagBot': 'RAG + Gemini 1.5 Pro',
+    'GUEST_AI_C.SmsModeTier1Manual': 'MODO SMS (Nivel 1 - Manual)',
+    'GUEST_AI_C.KnowledgeBase': 'Base de Conocimientos',
+    'GUEST_AI_C.CoachTip': 'Consejo del Coach',
+    'GUEST_AI_C.TopicFrequencyWordcloud': 'Nube de Palabras de Frecuencia',
+    'GUEST_AI_C.Wifi': 'WiFi',
+    'GUEST_AI_C.Parking': 'Aparcamiento',
+    'GUEST_AI_C.Heating': 'Calefacción',
+    'GUEST_AI_C.Keys': 'Llaves',
+    'GUEST_AI_C.Checkout': 'Salida',
+    'GUEST_AI_C.Pool': 'Piscina',
+    'GUEST_AI_C.Late': 'Llegada Tarde',
+    'GUEST_AI_C.Noise': 'Ruido',
+    'GUEST_AI_C.HouseManualpdf': 'Manual_Casa.pdf',
+    'GUEST_AI_C.IndexedRag': 'Indexado (RAG)',
+    'GUEST_AI_C.WifiAccess': 'Acceso WiFi',
+    'GUEST_AI_C.FixedReply': 'Respuesta Fija',
+    'GUEST_AI_C.ConfidenceThreshold': 'Umbral de Confianza',
+    'GUEST_AI_C.Lax': 'Laxo',
+    'GUEST_AI_C.Strict80': 'Estricto (80%)',
+
+    // Compliance Sentinel
+    'COMPLY.SentinelTitle': 'Centinela Legislativo',
+    'COMPLY.SentinelDesc': 'Monitoreo en tiempo real de gaceta municipales y leyes locales.',
+    'COMPLY.NoActiveBans': 'No se detectaron prohibiciones activas',
+    'COMPLY.SentinelIsScanning': 'Escaneando gacetas municipales...',
+};

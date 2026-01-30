@@ -10,6 +10,7 @@ import { visibility } from './fr/visibility';
 import { listing } from './fr/listing';
 import { assistant } from './fr/assistant';
 import { calendar } from './fr/calendar';
+import { ph3 } from './fr/ph3_features';
 
 export const fr = {
     ...ui,
@@ -23,5 +24,6 @@ export const fr = {
     ...visibility,
     ...listing,
     ...assistant,
-    ...calendar
+    ...calendar,
+    ...ph3
 };

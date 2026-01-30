@@ -196,7 +196,8 @@
             {{ 'COMMON.Back' | translate }}
         </button>
         <div class="flex-1 min-h-0">
-            <ng-container *ngComponentOutlet="ComponentClass; inputs: { feature: activeFeature() }"></ng-container>
+            <ng-container
+                *ngComponentOutlet="ComponentClass; inputs: { feature: activeFeature(), propertyDetails: propertyDetails() }"></ng-container>
         </div>
     </div>
     } @else if (activeToolId() === 'microsite') {

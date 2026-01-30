@@ -614,4 +614,109 @@ export class GeminiService {
       throw error;
     }
   }
+  async auditRenovationQuote(roomType: string, area: number, amount: number, finishLevel: string): Promise<{
+    isReasonable: boolean;
+    marketAverage: number;
+    score: number;
+    observations: string;
+    tips: string[];
+  }> {
+    await this.ensureClient();
+    const lang = this.translationService.currentLang();
+
+    const prompt = `
+        You are a Construction Cost Auditor specialized in short-term rental renovations.
+        
+        AUDIT REQUEST:
+        - Room Type: ${roomType}
+        - Area: ${area} sqm
+        - Quote Amount: ${amount} EUR
+        - Target Finish: ${finishLevel}
+        
+        TASK:
+        1. Compare this quote to European market averages (taking Finish Level into account).
+        2. Determine if it is reasonable or overpriced.
+        3. Provide a score (0-100) where 100 is excellent value.
+        4. Give specific observations and 3 tips to reduce costs.
+
+        RESPONSE FORMAT (JSON ONLY):
+        {
+          "isReasonable": boolean,
+          "marketAverage": number (total budget estimate),
+          "score": number,
+          "observations": "Short summary in ${lang}",
+          "tips": ["Tip 1 in ${lang}", "Tip 2", "Tip 3"]
+        }
+    `;
+
+    try {
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+      });
+      const response = await result.response;
+      return JSON.parse(this.cleanJson(response.text()));
+    } catch (error) {
+      console.error('Error auditing renovation quote:', error);
+      return {
+        isReasonable: true,
+        marketAverage: area * 600,
+        score: 70,
+        observations: "Audit unavailable (Service Error). Mock average used.",
+        tips: ["Compare with at least 3 vendors", "Review material list", "Negotiate labor costs"]
+      };
+    }
+  }
+
+  async checkCompliance(address: string, city: string): Promise<{
+    riskScore: number;
+    riskLevel: string;
+    riskStatus: string;
+    description: string;
+    recommendations: string[];
+  }> {
+    await this.ensureClient();
+    const lang = this.translationService.currentLang();
+
+    const prompt = `
+        You are a Legal Compliance Expert specialized in Short-Term Rental (STR) regulations and municipal zoning.
+        
+        TASK: Analyze the compliance risk for a potential Airbnb at the following location.
+        - Address: ${address}
+        - City: ${city}
+
+        INSTRUCTIONS:
+        1. Research or use your knowledge about STR laws in this city (e.g., Paris, Barcelona, London, NYC, etc.).
+        2. Determine the "Risk Score" (0-100), where 100 is "Banned/Forbidden" and 0 is "Fully Permitted".
+        3. Define "Risk Level" (e.g., Critical Risk, High Risk, Moderate Risk, Safe Zone).
+        4. Define "Risk Status" (e.g., Prohibited, Restricted, Registration Required, Permitted).
+        5. Provide a detailed description of the current regulations in ${lang}.
+        6. List 3 specific actionable recommendations (e.g., get registration number, tax duties) in ${lang}.
+
+        RESPONSE FORMAT (JSON ONLY):
+        {
+          "riskScore": number,
+          "riskLevel": "string",
+          "riskStatus": "string",
+          "description": "string",
+          "recommendations": ["string", "string", "string"]
+        }
+    `;
+
+    try {
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+      });
+      const response = await result.response;
+      return JSON.parse(this.cleanJson(response.text()));
+    } catch (error) {
+      console.error('Error checking compliance:', error);
+      return {
+        riskScore: 50,
+        riskLevel: 'Moderate Risk',
+        riskStatus: 'Unknown',
+        description: 'Unable to perform real-time scan. Please check local municipal website.',
+        recommendations: ['Check for registration requirements', 'Verify tax obligations', 'Consult a legal expert']
+      };
+    }
+  }
 }

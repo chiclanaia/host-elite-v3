@@ -1,16 +1,18 @@
 import { TranslationService } from '../../../../services/translation.service';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { HostRepository } from '../../../../services/host-repository.service';
+import { ComplianceRule } from '../../../../types';
+import { GeminiService } from '../../../../services/gemini.service';
 
 @Component({
     selector: 'leg-00-compliance-checker',
     standalone: true,
-    imports: [CommonModule,
-    TranslatePipe
-  ],
+    imports: [CommonModule, TranslatePipe, FormsModule],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
@@ -70,8 +72,10 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                 <h3 class="text-xl font-bold text-white mb-6">{{ 'COMPLY.ZoningDetective' | translate }}</h3>
                 
                 <div class="flex gap-2 mb-8">
-                    <input type="text" placeholder="{{ \'COMPLY.EnterPropertyAddress\' | translate }}" class="flex-1 bg-black/30 border border-white/20 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none text-sm placeholder:text-slate-600" data-debug-id="compliance-address-input">
-                    <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors text-sm" data-debug-id="compliance-check-btn">{{ 'COMPLY.Scan' | translate }}</button>
+                    <input type="text" [(ngModel)]="address" placeholder="{{ 'COMPLY.EnterPropertyAddress' | translate }}" class="flex-1 bg-black/30 border border-white/20 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none text-sm placeholder:text-slate-600" data-debug-id="compliance-address-input">
+                    <button (click)="scanAddress()" [disabled]="isScanning()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors text-sm disabled:opacity-50" data-debug-id="compliance-check-btn">
+                        {{ isScanning() ? '...' : ('COMPLY.Scan' | translate) }}
+                    </button>
                 </div>
                 
                 <!-- VISUAL: Risk Gauge -->
@@ -79,12 +83,19 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                     <div class="relative w-48 h-24 overflow-hidden mb-4">
                          <div class="absolute inset-0 bg-slate-800 rounded-t-full"></div>
                          <div class="absolute inset-4 bg-[#1e293b] rounded-t-full z-10"></div> <!-- Mask -->
-                         <div class="absolute bottom-0 left-1/2 w-1 h-[90%] bg-emerald-500 origin-bottom transform -rotate-45 z-20 transition-transform duration-1000 shadow-[0_0_10px_2px_rgba(16,185,129,0.5)]"></div>
+                         <div class="absolute bottom-0 left-1/2 w-1 h-[90%] bg-emerald-500 origin-bottom transform z-20 transition-transform duration-1000 shadow-[0_0_10px_2px_rgba(16,185,129,0.5)]"
+                              [style.transform]="getGaugeRotation()"
+                              [style.backgroundColor]="riskColor()"></div>
                     </div>
-                    <div class="text-2xl font-black text-white mb-1">{{ 'CC.SafeZone' | translate }}</div>
-                    <div class="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-[10px] border border-emerald-500/30 font-bold uppercase tracking-wider">{{ 'COMPLY.Permitted' | translate }}</div>
+                    <div class="text-2xl font-black text-white mb-1" [style.color]="riskColor()">{{ riskLevel() }}</div>
+                    <div class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border"
+                         [style.backgroundColor]="riskColor() + '20'"
+                         [style.borderColor]="riskColor() + '40'"
+                         [style.color]="riskColor()">
+                         {{ riskStatus() }}
+                    </div>
                     <p class="text-xs text-slate-400 mt-4 text-center max-w-xs">
-                        This address appears to be in a "Green Zone" for short-term rentals. Registration is required but likely approved.
+                        {{ riskDescription() }}
                     </p>
                 </div>
              </div>
@@ -107,22 +118,25 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                      </div>
 
                      @if (isTier3()) {
-                         <div class="space-y-3 overflow-y-auto custom-scrollbar pr-2 h-48">
-                             <div class="p-3 bg-white/5 rounded-lg border-l-2 border-emerald-500">
-                                 <div class="flex justify-between items-start mb-1">
-                                     <span class="text-xs text-white font-bold">{{ 'COMPLY.NoActiveBans' | translate }}</span>
-                                     <span class="text-[10px] text-slate-500">10m ago</span>
+                          <div class="space-y-3 overflow-y-auto custom-scrollbar pr-2 h-48">
+                             @for (alert of sentinelAlerts(); track alert.id) {
+                                 <div class="p-3 bg-white/5 rounded-lg border-l-2"
+                                      [class.border-emerald-500]="alert.severity === 'safe'"
+                                      [class.border-amber-500]="alert.severity === 'warning'"
+                                      [class.border-red-500]="alert.severity === 'critical'">
+                                     <div class="flex justify-between items-start mb-1">
+                                         <span class="text-xs text-white font-bold">{{ alert.title }}</span>
+                                         <span class="text-[10px] text-slate-500">{{ alert.time }}</span>
+                                     </div>
+                                     <p class="text-[10px] text-slate-400">{{ alert.desc }}</p>
                                  </div>
-                                 <p class="text-[10px] text-slate-400">{{ 'COMPLY.ScanningMunicipalGazettesClean' | translate }}</p>
-                             </div>
-                             <div class="p-3 bg-white/5 rounded-lg border-l-2 border-amber-500 opacity-60">
-                                 <div class="flex justify-between items-start mb-1">
-                                     <span class="text-xs text-white font-bold">{{ 'COMPLY.Proposal291Detected' | translate }}</span>
-                                     <span class="text-[10px] text-slate-500">2d ago</span>
+                             } @empty {
+                                 <div class="flex flex-col items-center justify-center h-full text-slate-500 gap-2">
+                                     <span class="material-icons text-2xl">radar</span>
+                                     <p class="text-[10px]">{{ 'COMPLY.SentinelIsScanning' | translate }}</p>
                                  </div>
-                                 <p class="text-[10px] text-slate-400">"Discussion on limiting keys per building" - Low Risk.</p>
-                             </div>
-                         </div>
+                             }
+                          </div>
                      } @else {
                          <div class="absolute inset-0 z-10 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
                              <span class="text-3xl mb-2">📡</span>
@@ -132,37 +146,193 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                          </div>
                      }
                  </div>
-                 
-                 <!-- Coach -->
-                 <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4">
-                      <div class="flex items-start gap-3">
-                         <span class="text-xl">⚖️</span>
-                         <div>
-                             <h4 class="font-bold text-indigo-300 text-sm">{{ 'COMPLY.TheNonretroactiveRule' | translate }}</h4>
-                             <p class="text-xs text-indigo-200/80 mt-1">{{ 'COMPLY.MostNewBansCannotApply' | translate }}</p>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-          </div>
-      }
-    </div>
-  `,
+                                  <!-- Coach -->
+                  <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4">
+                       <div class="flex flex-col gap-3">
+                          <h4 class="font-bold text-indigo-300 text-sm flex items-center gap-2">
+                              <span class="material-icons text-sm">balance</span>
+                              {{ 'COMPLY.TheNonretroactiveRule' | translate }}
+                          </h4>
+                          <ul class="space-y-2">
+                              @for (rec of recommendations(); track rec) {
+                                  <li class="text-xs text-indigo-200/80 flex items-start gap-2">
+                                      <span class="text-indigo-400">•</span> {{ rec }}
+                                  </li>
+                              } @empty {
+                                  <li class="text-xs text-indigo-200/80 italic"> {{ 'COMPLY.MostNewBansCannotApply' | translate }} </li>
+                              }
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+           </div>
+       }
+     </div>
+   `,
     styles: [`:host { display: block; height: 100%; }`]
 })
-export class ComplianceCheckerComponent {
+export class ComplianceCheckerComponent implements OnInit, OnChanges {
+    feature = input.required<Feature>();
+    propertyDetails = input<any>();
     translate = inject(TranslationService);
-    feature = computed(() => {
-        return {
-            id: 'LEG_00',
-            name: this.translate.instant('COMPCHEC.Title'),
-            description: this.translate.instant('COMPCHEC.Description'),
-            behavior_matrix: 'TIER_0: Generic DB. TIER_3: Sentinel.'
-        } as any;
-    });
-
     session = inject(SessionStore);
+    repository = inject(HostRepository);
+    gemini = inject(GeminiService);
+
     tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
     isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
     isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
+
+    address = '';
+    isScanning = signal(false);
+
+    ngOnInit() {
+        this.updateFromProperty();
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['propertyDetails'] && !changes['propertyDetails'].firstChange) {
+            this.updateFromProperty();
+        }
+    }
+
+    private updateFromProperty() {
+        const prop = this.propertyDetails();
+        if (prop?.address) {
+            this.address = prop.address;
+            if (this.isTier3()) {
+                this.sentinelAlerts.set([]); // Reset for new property
+                this.refreshSentinel();
+            }
+        }
+    }
+
+    sentinelAlerts = signal<any[]>([]);
+
+    async refreshSentinel() {
+        if (!this.isTier3() || !this.address) return;
+
+        const cityMatch = this.address.match(/([a-zA-Z\s]+),?\s*[0-9]*/);
+        const cityCandidate = cityMatch ? cityMatch[1].trim() : this.address;
+
+        // Simulate background legislative scan
+        setTimeout(() => {
+            this.sentinelAlerts.set([
+                {
+                    id: 1,
+                    title: this.translate.instant('COMPLY.NoActiveBans'),
+                    time: '10m ago',
+                    desc: `Scanning municipal gazettes for ${cityCandidate}... All clean.`,
+                    severity: 'safe'
+                },
+                {
+                    id: 2,
+                    title: 'Proposal 291 Detected',
+                    time: '2d ago',
+                    desc: `"Discussion on limiting keys per building" in ${cityCandidate} - Monitoring.`,
+                    severity: 'warning'
+                }
+            ]);
+        }, 1200);
+    }
+
+    // Result signals
+    riskScore = signal(0); // 0 (Safe) to 100 (Banned)
+    riskLevel = signal('Ready');
+    riskStatus = signal('Idle');
+    riskDescription = signal('Enter an address to perform a zoning detective scan.');
+    riskColor = signal('#94a3b8');
+
+    recommendations = signal<string[]>([]);
+
+    async scanAddress() {
+        if (!this.address || this.isScanning()) return;
+
+        this.isScanning.set(true);
+        this.riskStatus.set('Scanning...');
+        this.riskDescription.set('Cross-referencing municipal gazettes and zoning maps...');
+        this.riskColor.set('#6366f1');
+
+        // Extract city from address
+        const cityMatch = this.address.match(/([a-zA-Z\s]+),?\s*[0-9]*/);
+        const cityCandidate = cityMatch ? cityMatch[1].trim() : this.address;
+
+        try {
+            if (this.isTier3()) {
+                // Real-time AI Scan for Gold Tier
+                const aiResult = await this.gemini.checkCompliance(this.address, cityCandidate);
+                this.riskScore.set(aiResult.riskScore);
+                this.riskLevel.set(aiResult.riskLevel);
+                this.riskStatus.set(aiResult.riskStatus);
+                this.riskDescription.set(aiResult.description);
+                this.recommendations.set(aiResult.recommendations || []);
+
+                // Add a sentinel alert about the manual scan
+                this.sentinelAlerts.update(alerts => [
+                    {
+                        id: Date.now(),
+                        title: 'Manual Scan Performed',
+                        time: 'Just now',
+                        desc: `AI-Deep-Dive completed for ${cityCandidate}. Risk level: ${aiResult.riskLevel}.`,
+                        severity: aiResult.riskScore > 50 ? 'warning' : 'safe'
+                    },
+                    ...alerts.slice(0, 4)
+                ]);
+
+                if (aiResult.riskScore >= 90) this.riskColor.set('#f43f5e');
+                else if (aiResult.riskScore >= 60) this.riskColor.set('#f59e0b');
+                else this.riskColor.set('#10b981');
+            } else {
+                // Static Database Lookup for Silver Tier
+                const match = await this.repository.getComplianceRuleForCity(cityCandidate);
+                if (match) {
+                    this.riskScore.set(match.risk_level);
+                    this.updateRiskStatus(match);
+                    this.recommendations.set([
+                        `Verify ${match.mandatory_req} requirements`,
+                        `Check ${match.limit_days} days annual limit`,
+                        'Consult local tax advisor'
+                    ]);
+                } else {
+                    this.riskScore.set(10);
+                    this.riskLevel.set('Safe Zone');
+                    this.riskStatus.set('Permitted');
+                    this.riskDescription.set('No active bans found for this specific area. Basic registration may still be required.');
+                    this.riskColor.set('#10b981');
+                    this.recommendations.set(['Check municipal registration website']);
+                }
+            }
+        } catch (error) {
+            console.error('Scan failed', error);
+            this.riskStatus.set('Scan Failed');
+            this.riskDescription.set('Unable to complete compliance scan. Please try again.');
+        } finally {
+            this.isScanning.set(false);
+        }
+    }
+
+    private updateRiskStatus(match: ComplianceRule) {
+        if (match.risk_level >= 90) {
+            this.riskLevel.set('Critical Risk');
+            this.riskStatus.set('Prohibited');
+            this.riskColor.set('#f43f5e');
+            this.riskDescription.set(`${match.city} has a strict moratorium or ban. Short-term rentals are virtually impossible for new entrants.`);
+        } else if (match.risk_level >= 60) {
+            this.riskLevel.set('High Risk');
+            this.riskStatus.set('Restricted');
+            this.riskColor.set('#f59e0b');
+            this.riskDescription.set(`${match.city} requires complex permits (e.g., separate entrance or 90-day cap) that are strictly enforced.`);
+        } else {
+            this.riskLevel.set('Safe Zone');
+            this.riskStatus.set('Permitted');
+            this.riskColor.set('#10b981');
+            this.riskDescription.set(`${match.city} allows STR with a ${match.mandatory_req}. Annual limit: ${match.limit_days} days.`);
+        }
+    }
+
+    getGaugeRotation() {
+        // -90deg is 0 risk, 90deg is 100 risk
+        const rotation = (this.riskScore() / 100) * 180 - 90;
+        return `rotate(${rotation}deg)`;
+    }
 }

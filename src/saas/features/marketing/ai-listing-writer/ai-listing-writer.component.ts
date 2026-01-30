@@ -5,13 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { GeminiService } from '../../../../services/gemini.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { marked } from 'marked';
 
 @Component({
     selector: 'mkt-02-ai-listing-writer',
     standalone: true,
     imports: [CommonModule, FormsModule,
-    TranslatePipe
-  ],
+        TranslatePipe
+    ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
@@ -139,9 +142,9 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                            <p>{{ 'AILISTING.FillTheDetailsAndClick' | translate }}</p>
                        </div>
                    } @else {
-                       <div class="prose prose-invert prose-sm max-w-none animate-fade-in">
-                           <div [innerHTML]="output()"></div>
-                       </div>
+                        <div class="prose prose-invert prose-sm max-w-none animate-fade-in shadow-inner">
+                            <div [innerHTML]="output()"></div>
+                        </div>
                    }
                </div>
 
@@ -172,6 +175,9 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 })
 export class AiListingWriterComponent {
     translate = inject(TranslationService);
+    gemini = inject(GeminiService);
+    sanitizer = inject(DomSanitizer);
+
     feature = computed(() => ({
         id: 'MKT_02',
         name: this.translate.instant('AILISTWRIT.Title'),
@@ -188,33 +194,26 @@ export class AiListingWriterComponent {
     highlights = '';
     tone = 'luxury';
     generating = signal(false);
-    output = signal('');
+    output = signal<SafeHtml>('');
 
-    generate() {
+    async generate() {
         if (!this.highlights.trim()) return;
 
         this.generating.set(true);
-        this.output.set(''); // Clear prev
+        this.output.set('');
 
-        // Simulate API delay
-        setTimeout(() => {
+        try {
+            const prompt = `Tone: ${this.tone}. Highlights: ${this.highlights}. Generate a professional Airbnb description with emojis. Use Markdown.`;
+            const text = await this.gemini.generateMarketingDescription(prompt);
+
+            // Parse markdown and sanitize
+            const html = await marked.parse(text);
+            this.output.set(this.sanitizer.bypassSecurityTrustHtml(html));
+        } catch (error) {
+            console.error('AI Generation failed', error);
+            this.output.set(this.sanitizer.bypassSecurityTrustHtml('<p class="text-rose-400 font-bold">Error generating content. Please check your AI configuration.</p>'));
+        } finally {
             this.generating.set(false);
-
-            const baseText = `
-                <h2 class="text-xl font-bold text-white mb-2">Escape to Luxury</h2>
-                <p>Welcome to your dream getaway! Nestled in a quiet street yet just moments from the vibrant city center, this stunning apartment offers the perfect blend of tranquility and convenience.</p>
-                <br>
-                <h3 class="font-bold text-indigo-300">Why You'll Love It:</h3>
-                <ul class="list-disc pl-5 space-y-1">
-                    <li>🌅 <b>Breathtaking Views:</b> Wake up to ocean sunrises.</li>
-                    <li>🚀 <b>Blazing Fast Wifi:</b> 500mbps fiber perfect for remote work.</li>
-                    <li>🍳 <b>Chef's Kitchen:</b> Fully equipped with brand new appliances.</li>
-                </ul>
-                <br>
-                <p>Book now and experience the ultimate in ${this.tone} living!</p>
-            `;
-
-            this.output.set(baseText);
-        }, 2000);
+        }
     }
 }

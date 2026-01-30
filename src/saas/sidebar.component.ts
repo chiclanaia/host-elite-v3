@@ -111,49 +111,70 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 
                     <!-- Sub-views for the currently active property -->
                     @if(selectedProperty(); as prop) {
-                    <!-- Sub-views grouped by Phases -->
-                    @if(selectedProperty(); as prop) {
                         <div class="pl-2 mt-3 ml-2 space-y-4">
                             <!-- Property Label (Concise) -->
-                            <p class="px-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 truncate opacity-60">{{ prop.name }}</p>
+                            <div class="px-3 flex items-center justify-between group/label">
+                                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 truncate opacity-60">{{ prop.name }}</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600 group-hover/label:text-[#D4AF37] transition-colors cursor-pointer" (click)="togglePropertyDropdown()">
+                                    <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
+                                    <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
+                                </svg>
+                            </div>
 
-                            <div class="space-y-1 mt-1">
-                                @for(subView of prop.subViews; track subView.id) {
-                                    <!-- Hide Widget Library -->
-                                    @if (subView.id !== 'widget-library') {
-                                    <a (click)="isLocked(subView) ? null : changeView(subView, prop.name)"
-                                    class="group flex items-center justify-between px-3 py-2 text-sm font-medium rounded-r-lg cursor-pointer transition-all relative"
-                                    [class]="activeView().id === subView.id && activeView().propertyName === prop.name 
-                                        ? 'text-white bg-white/5 border-l-2 border-[#D4AF37] -ml-[1px]' 
-                                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'"
-                                    [class.opacity-50]="isLocked(subView)"
-                                    [class.cursor-not-allowed]="isLocked(subView)"
-                                    [attr.data-debug-id]="'nav-subview-' + subView.id">
-                                    
-                                    <div class="flex items-center min-w-0">
-                                        <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors" 
-                                              [class]="activeView().id === subView.id && activeView().propertyName === prop.name ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-slate-400'"
-                                              [innerHTML]="getIcon(subView.icon)"></span>
-                                        <span class="truncate">{{ subView.title.startsWith('NAV.') ? (subView.title | translate) : subView.title }}</span>
-                                    </div>
+                            <div class="space-y-6 mt-1">
+                                <!-- Management Tools -->
+                                <div class="space-y-1">
+                                    @for(subView of prop.subViews; track subView.id) {
+                                        @if (subView.id === 'manage-property' || subView.id === 'welcome-booklet') {
+                                        <a (click)="isLocked(subView) ? null : changeView(subView, prop.name)"
+                                        class="group flex items-center justify-between px-3 py-2 text-sm font-medium rounded-r-lg cursor-pointer transition-all relative"
+                                        [class]="activeView().id === subView.id && activeView().propertyName === prop.name 
+                                            ? 'text-white bg-white/5 border-l-2 border-[#D4AF37] -ml-[1px]' 
+                                            : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'"
+                                        [class.opacity-50]="isLocked(subView)"
+                                        [class.cursor-not-allowed]="isLocked(subView)"
+                                        [attr.data-debug-id]="'nav-subview-' + subView.id">
+                                        
+                                        <div class="flex items-center min-w-0">
+                                            <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors" 
+                                                  [class]="activeView().id === subView.id && activeView().propertyName === prop.name ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-slate-400'"
+                                                  [innerHTML]="getIcon(subView.icon)"></span>
+                                            <span class="truncate">{{ (subView.title.startsWith('NAV.') ? (subView.title | translate) : subView.title) }}</span>
+                                        </div>
 
-                                    <!-- Tier Indicator Circle / Lock -->
-                                    <div class="flex items-center space-x-2 ml-2">
-                                        @if (isLocked(subView)) {
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
+                                        <div class="flex items-center space-x-2 ml-2">
+                                            @if (isLocked(subView)) {
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-slate-600"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
+                                            }
+                                        </div>
+                                        </a>
                                         }
-                                        @if (subView.requiredTier) {
-                                            <span class="w-2 h-2 rounded-full shadow-sm" [class]="getTierIndicatorClass(subView.requiredTier)"></span>
-                                        }
-                                    </div>
-                                    </a>
                                     }
-                                }
+                                </div>
+
+                                <!-- Phases Section -->
+                                <div class="space-y-1">
+                                    <p class="px-3 text-[9px] font-bold text-slate-600 uppercase tracking-widest mb-2 opacity-80">{{ 'SIDEBAR.Phases' | translate }}</p>
+                                    @for(phase of store.phases(); track phase.id) {
+                                        <a (click)="changeView({id: phase.id, title: phase.name, icon: 'dashboard'}, prop.name)"
+                                        class="group flex items-center justify-between px-3 py-2 text-sm font-medium rounded-r-lg cursor-pointer transition-all relative"
+                                        [class]="activeView().id === phase.id && activeView().propertyName === prop.name 
+                                            ? 'text-white bg-white/5 border-l-2 border-[#D4AF37] -ml-[1px]' 
+                                            : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'"
+                                        [attr.data-debug-id]="'nav-phase-' + phase.id">
+                                        
+                                        <div class="flex items-center min-w-0">
+                                            <span class="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0 transition-colors"
+                                                  [class]="activeView().id === phase.id && activeView().propertyName === prop.name ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-slate-400'"
+                                                  [innerHTML]="getIcon('dashboard')"></span>
+                                            <span class="truncate">{{ ( 'PHASE.' + phase.id | translate ) }}</span>
+                                        </div>
+                                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500 font-bold border border-white/5">PH{{ phase.sort_order }}</span>
+                                        </a>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    }
-                    }
-
                     } @else {
                         <!-- No property state -->
                         <button (click)="createProperty()" class="w-full flex items-center justify-center px-3 py-3 text-sm font-bold rounded-lg cursor-pointer transition-colors bg-[#D4AF37] text-slate-900 hover:bg-yellow-500 shadow-lg"
@@ -162,11 +183,11 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                             {{ 'SIDEBAR.CreateFirst' | translate }}
                         </button>
                     }
+                    }
                 </div>
             </div>
 
         }
-        
 
         <!-- Support -->
         <div class="pt-6">
@@ -300,8 +321,8 @@ export class SidebarComponent {
     logout = output<void>();
     openSettings = output<void>();
 
+    public store = inject(SessionStore); // Injected to resolve badges and phases
     private sanitizer: DomSanitizer = inject(DomSanitizer);
-    private store = inject(SessionStore); // Injected to resolve badges
 
     constructor() {
         console.log('[Sidebar] Component initialized');

@@ -1,0 +1,31 @@
+export const ph3 = {
+    // Guest AI Chatbot
+    'GUEST_AI_C.ContextualHospitalityAgent': 'Contextual Hospitality Agent',
+    'GUEST_AI_C.RagdrivenAiGuestAssistantFor': 'RAG-driven AI guest assistant for property owners.',
+    'GUEST_AI_C.RagBot': 'RAG + Gemini 1.5 Pro',
+    'GUEST_AI_C.SmsModeTier1Manual': 'SMS MODE (Tier 1 - Manual)',
+    'GUEST_AI_C.KnowledgeBase': 'Knowledge Base',
+    'GUEST_AI_C.CoachTip': 'Coach Tip',
+    'GUEST_AI_C.TopicFrequencyWordcloud': 'Topic Frequency Wordcloud',
+    'GUEST_AI_C.Wifi': 'WiFi',
+    'GUEST_AI_C.Parking': 'Parking',
+    'GUEST_AI_C.Heating': 'Heating',
+    'GUEST_AI_C.Keys': 'Keys',
+    'GUEST_AI_C.Checkout': 'Checkout',
+    'GUEST_AI_C.Pool': 'Pool',
+    'GUEST_AI_C.Late': 'Late Arrival',
+    'GUEST_AI_C.Noise': 'Noise',
+    'GUEST_AI_C.HouseManualpdf': 'House_Manual.pdf',
+    'GUEST_AI_C.IndexedRag': 'Indexed (RAG)',
+    'GUEST_AI_C.WifiAccess': 'WiFi Access',
+    'GUEST_AI_C.FixedReply': 'Fixed Reply',
+    'GUEST_AI_C.ConfidenceThreshold': 'Confidence Threshold',
+    'GUEST_AI_C.Lax': 'Lax',
+    'GUEST_AI_C.Strict80': 'Strict (80%)',
+
+    // Compliance Sentinel
+    'COMPLY.SentinelTitle': 'Legislative Sentinel',
+    'COMPLY.SentinelDesc': 'Real-time monitoring of municipal gazettes and local laws.',
+    'COMPLY.NoActiveBans': 'No active bans detected',
+    'COMPLY.SentinelIsScanning': 'Scanning municipal gazettes...',
+};

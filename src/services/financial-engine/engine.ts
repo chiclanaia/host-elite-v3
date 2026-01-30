@@ -167,7 +167,21 @@ export class FinancialCalculator {
                 // const taxResult = taxStrategy.calculate(taxContext);
                 // We don't have a field for "Annual Tax" in output extended yet globally, 
                 // but we can deduct it from Cash Flow calculations (projections).
+
+                // Quick estimation for PDF display (refined logic should use taxStrategy.calculate)
+                // Assuming simplified flat tax for demo if detailed strategy not invoked
+                const taxableIncome = Math.max(0, output.noi - year1Interest - (output.taxDepreciation || 0));
+                // default 20% validation
+                output.yearlyTax = taxableIncome * (input.taxRate ? input.taxRate / 100 : 0.20);
             }
+
+            // Yields
+            const totalInvested = input.purchasePrice + (input.renovationCosts || 0) + (input.furnitureCosts || 0) + (input.notaryFees || 0);
+            if (totalInvested > 0) {
+                output.grossYield = (annualGrossRevenue / totalInvested) * 100;
+                output.netYield = (output.noi / totalInvested) * 100;
+            }
+            output.yearlyExpenses = annualCosts;
 
             // Cash on Cash Return
             const preTaxCashFlow = output.noi - annualDebtService; // Cents

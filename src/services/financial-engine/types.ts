@@ -143,6 +143,10 @@ export interface FinancialOutput {
     noi?: number; // Net Operating Income (Annual) in cents
     capRate?: number; // percentage
     cashOnCashReturn?: number; // percentage
+    grossYield?: number; // percentage
+    netYield?: number; // percentage
+    yearlyTax?: number; // in cents
+    yearlyExpenses?: number; // in cents
     taxDepreciation?: number; // Annual deduction in cents
     ebitda?: number; // Earnings Before Interest, Taxes, Depreciation, Amortization
     irr5Year?: number; // Internal Rate of Return (5 year exit)

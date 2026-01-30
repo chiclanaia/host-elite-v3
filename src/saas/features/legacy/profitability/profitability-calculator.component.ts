@@ -7,6 +7,8 @@ import { SessionStore } from '../../../../state/session.store';
 import { FinancialCalculator } from '../../../../services/financial-engine/engine';
 import { FinancialInput, FinancialOutput, TierLevel } from '../../../../services/financial-engine/types';
 import { Chart, registerables } from 'chart.js';
+import { LmnpService } from '../../../../services/lmnp.service';
+import { jsPDF } from 'jspdf';
 
 @Component({
   selector: 'saas-profitability-calculator',
@@ -167,12 +169,37 @@ export class ProfitabilityCalculatorComponent implements OnInit, AfterViewInit {
   }
 
   // RG_FIN_01: Save restriction for T0
-  saveSimulation() {
+  // Service injection
+  private lmnpService = inject(LmnpService);
+
+  // RG_FIN_01: Save restriction for T0
+  async saveSimulation() {
     if (this.isTierLocked(TierLevel.LOW)) {
       alert("Ne perdez plus vos calculs. Passez au Tier 1 pour historiser vos recherches.");
       return;
     }
-    console.log("Simulation saved");
+
+    // ValidForm check?
+    if (this.form.invalid) {
+      alert("Veuillez remplir correctement les champs obligatoires.");
+      return;
+    }
+
+    const val = this.form.value;
+    const res = this.results();
+    const name = `Simul. ${val.purchasePrice}€ - ${new Date().toLocaleDateString()}`;
+
+    const saved = await this.lmnpService.saveSimulation({
+      name: name,
+      parameters: val,
+      results: res
+    });
+
+    if (saved) {
+      alert("Simulation sauvegardée avec succès !");
+    } else {
+      alert("Erreur lors de la sauvegarde (Vérifiez votre connexion).");
+    }
   }
 
   // Tier 3: Bank Dossier PDF
@@ -181,7 +208,68 @@ export class ProfitabilityCalculatorComponent implements OnInit, AfterViewInit {
       alert("Cette fonctionnalité est réservée aux abonnés Gold (Tier 3). Elle génère un dossier bancaire complet.");
       return;
     }
-    window.print();
+
+    // Check results
+    const res = this.results();
+    const val = this.form.value;
+
+    if (!res) {
+      alert("Veuillez lancer une simulation d'abord.");
+      return;
+    }
+
+    const doc = new jsPDF();
+
+    // Header
+    doc.setFontSize(22);
+    doc.setTextColor(79, 70, 229); // Indigo
+    doc.text("Dossier Financier - Hôte d'Exception", 20, 20);
+
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 30);
+
+    // Section 1: Inputs
+    doc.setDrawColor(200);
+    doc.line(20, 35, 190, 35);
+
+    doc.setFontSize(16);
+    doc.setTextColor(0);
+    doc.text("1. Paramètres du Projet", 20, 45);
+
+    doc.setFontSize(11);
+    doc.text(`Prix d'achat: ${val.purchasePrice} €`, 30, 55);
+    doc.text(`Travaux: ${val.renovationCosts} €`, 30, 62);
+    doc.text(`Mobilier: ${val.furnitureCosts} €`, 30, 69);
+    doc.text(`Notaire: ${val.notaryFees} €`, 30, 76);
+
+    doc.text(`Revenus Locatifs (Est.): ${val.grossMonthlyRevenue} € / mois`, 110, 55);
+    doc.text(`Régime Fiscal: ${val.taxRegime}`, 110, 62);
+
+    // Section 2: Results
+    doc.line(20, 90, 190, 90);
+    doc.setFontSize(16);
+    doc.text("2. Performance Financière", 20, 100);
+
+    // Metrics
+    doc.setFontSize(12);
+    doc.setTextColor(0, 128, 0); // Green
+    doc.text(`Cashflow Mensuel Net: ${Math.round(res.netMonthlyCashFlow)} €`, 30, 115);
+    doc.text(`Rendement Brut: ${res.grossYield.toFixed(2)} %`, 30, 125);
+    doc.text(`Rendement Net: ${res.netYield.toFixed(2)} %`, 30, 135);
+
+    doc.setTextColor(0);
+    doc.text("Détail Fiscal (Année 1):", 110, 115);
+    doc.setFontSize(10);
+    doc.text(`Impôt Estimé: ${Math.round(res.yearlyTax / 12)} € / mois`, 110, 125);
+    doc.text(`Charges Déductibles: ${Math.round(res.yearlyExpenses / 12)} € / mois`, 110, 135);
+
+    // Footer
+    doc.setFontSize(10);
+    doc.setTextColor(150);
+    doc.text("Document généré automatiquement par l'IA Hôte d'Exception. Non contractuel.", 20, 280);
+
+    doc.save('dossier-lmnp-banque.pdf');
   }
 
   // RG_FIN_04: AI Extraction placeholder

@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { OnboardingService, OnboardingQuestion } from '../../../../services/onboarding.service';
 import { HostRepository } from '../../../../services/host-repository.service';
 import { SessionStore } from '../../../../state/session.store';
+import { DEFAULT_QUESTIONS } from '../../../../services/data/default-questions';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { TranslationService } from '../../../../services/translation.service';
 import { GeminiService } from '../../../../services/gemini.service';
@@ -23,6 +24,7 @@ export class PropertyAuditComponent implements OnInit {
     private store = inject(SessionStore);
     private fb = inject(FormBuilder);
     private gemini = inject(GeminiService);
+    private hostRepo = inject(HostRepository);
 
     questions = signal<OnboardingQuestion[]>([]);
     answers = signal<Map<string, any>>(new Map());
@@ -93,32 +95,85 @@ export class PropertyAuditComponent implements OnInit {
             const dimension = 'DIM_OPS';
             let qs = await this.onboardingService.getQuestionsByDimension(dimension);
 
-            // HYBRID LOGIC: If DB is incomplete (< 40 questions), we synthetically add the missing ones
-            // to ensure the user SEES the 40 items immediately.
-            if (dimension === 'DIM_OPS' && qs.length < 40) {
-                const existingKeys = new Set(qs.map(q => q.question_key));
-                for (let i = 1; i <= 40; i++) {
-                    const key = `AUDIT.accomodation_q${i}`;
-                    if (!existingKeys.has(key)) {
-                        qs.push({
-                            id: `synthetic_${i}`,
-                            dimension_id: 'DIM_OPS',
-                            question_key: key,
-                            level: i <= 10 ? 'Bronze' : (i <= 20 ? 'Silver' : 'Gold'),
-                            order_index: i,
-                            has_sub_question: false
-                        } as any);
-                    }
-                }
-                qs.sort((a, b) => a.order_index - b.order_index);
-            }
+            // Ensure DB has questions (Seeding) - REPLACES SYNTHETIC LOGIC
+            // In a real prod app, seeding should be done via migration script, 
+            // but for this MVP, we ensure questions exist on load.
+            await this.onboardingService.ensureQuestions(DEFAULT_QUESTIONS);
+
+            // Re-fetch now that we ensured they exist
+            qs = await this.onboardingService.getQuestionsByDimension(dimension);
 
             console.log(`[PropertyAudit] Loaded ${qs.length} questions for dimension ${dimension}`);
             this.questions.set([...qs]);
             const ans = await this.onboardingService.getAnswers(id, dimension);
             this.answers.set(ans);
 
-            this.initForm(qs, ans);
+            // Auto-Fill Logic: Link Property Data to Audit Answers
+            try {
+                const property = await this.hostRepo.getPropertyById(id);
+                if (property) {
+                    const newAnsMap = new Map<string, any>(ans);
+                    let hasUpdates = false;
+
+                    this.questions().forEach(q => {
+                        // Skip if already answered
+                        if (newAnsMap.has(q.id) && newAnsMap.get(q.id)?.answer) return;
+
+                        let inferredAnswer = false;
+                        let inferredSub = '';
+
+                        // Logic 1: Wifi (Q2)
+                        if (q.question_key.includes('accomodation_q2')) {
+                            if (property.wifi_code && property.wifi_code.length > 0) {
+                                inferredAnswer = true;
+                                inferredSub = property.wifi_code;
+                            }
+                        }
+
+                        // Logic 2: Equipments matching
+                        // We map question keys to equipment name keywords
+                        const equipMap: Record<string, string[]> = {
+                            'accomodation_q1': ['detecteur', 'fumee', 'smoke'],
+                            'accomodation_q3': ['secours', 'first aid'],
+                            'accomodation_q4': ['extincteur', 'fire'],
+                            'accomodation_q13': ['cafe', 'coffee'],
+                            'accomodation_q14': ['lave-linge', 'washing'],
+                            'accomodation_q15': ['seche-cheveux', 'hair'],
+                            'accomodation_q16': ['fer', 'iron'],
+                            'accomodation_q32': ['spa', 'jacuzzi', 'piscine']
+                        };
+
+                        // Extract 'accomodation_qX' from 'AUDIT.accomodation_qX'
+                        const shortKey = q.question_key.split('.').pop() || '';
+                        const keywords = equipMap[shortKey];
+
+                        if (keywords && property.property_equipments) {
+                            const hasEquip = property.property_equipments.some((e: any) =>
+                                keywords.some(k => e.name.toLowerCase().includes(k))
+                            );
+                            if (hasEquip) inferredAnswer = true;
+                        }
+
+                        if (inferredAnswer) {
+                            newAnsMap.set(q.id, { answer: true, sub_answer: inferredSub });
+                            hasUpdates = true;
+                        }
+                    });
+
+                    if (hasUpdates) {
+                        console.log("[PropertyAudit] Auto-filled answers from Property Data");
+                        this.answers.set(newAnsMap);
+                        // Optional: Auto-save these inferred answers?
+                        // For now, we likely want the user to see them pre-filled in the form.
+                        // We do NOT save immediately to DB to avoid "ghost" answers if user cancels.
+                        // The user will check the box (it will be checked) and click save.
+                    }
+                }
+            } catch (e) {
+                console.warn("[PropertyAudit] Auto-fill failed", e);
+            }
+
+            this.initForm(qs, this.answers());
         } catch (error) {
             console.error('Error loading audit data:', error);
         } finally {

@@ -109,3 +109,45 @@ export interface Feature {
   flavors?: { tier_id: string, config: any }[]; // [NEW] All available tier-specific configs
   feature_configurations?: any[]; // [NEW] Join results from database
 }
+
+// --- Feature-Specific Data Entities ---
+
+export interface RenovationRoom {
+  id: string;
+  property_id: string;
+  type: string;
+  area: number;
+  finish_level: 'Standard' | 'Premium' | 'Luxury';
+  budget_estimate: number;
+  actual_spend: number;
+  created_at?: string;
+}
+
+export interface RenovationQuote {
+  id: string;
+  room_id: string;
+  vendor_name: string;
+  amount: number;
+  is_preferred: boolean;
+  created_at?: string;
+}
+
+export interface ComplianceRule {
+  id: string;
+  city: string;
+  limit_days: number;
+  mandatory_req: string;
+  risk_level: number;
+  keywords: string[];
+  description: string;
+}
+
+export interface ConstructionTask {
+  id: string;
+  property_id: string;
+  title: string;
+  start_date: string;
+  end_date: string;
+  status: 'Pending' | 'In Progress' | 'Completed';
+  milestone_type?: string;
+}

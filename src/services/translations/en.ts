@@ -10,6 +10,7 @@ import { visibility } from './en/visibility';
 import { listing } from './en/listing';
 import { assistant } from './en/assistant';
 import { calendar } from './en/calendar';
+import { ph3 } from './en/ph3_features';
 
 export const en = {
     ...ui,
@@ -23,5 +24,6 @@ export const en = {
     ...visibility,
     ...listing,
     ...assistant,
-    ...calendar
+    ...calendar,
+    ...ph3
 };

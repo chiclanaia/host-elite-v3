@@ -1,0 +1,31 @@
+export const ph3 = {
+    // Guest AI Chatbot
+    'GUEST_AI_C.ContextualHospitalityAgent': 'Agent d\'Hospitalité Contextuel',
+    'GUEST_AI_C.RagdrivenAiGuestAssistantFor': 'Assistant voyageur IA piloté par RAG pour les propriétaires de biens.',
+    'GUEST_AI_C.RagBot': 'RAG + Gemini 1.5 Pro',
+    'GUEST_AI_C.SmsModeTier1Manual': 'MODE SMS (Tier 1 - Manuel)',
+    'GUEST_AI_C.KnowledgeBase': 'Base de Connaissances',
+    'GUEST_AI_C.CoachTip': 'Conseil du Coach',
+    'GUEST_AI_C.TopicFrequencyWordcloud': 'Nuage de Mots (Fréquence des Sujets)',
+    'GUEST_AI_C.Wifi': 'WiFi',
+    'GUEST_AI_C.Parking': 'Parking',
+    'GUEST_AI_C.Heating': 'Chauffage',
+    'GUEST_AI_C.Keys': 'Clés',
+    'GUEST_AI_C.Checkout': 'Départ',
+    'GUEST_AI_C.Pool': 'Piscine',
+    'GUEST_AI_C.Late': 'Retard',
+    'GUEST_AI_C.Noise': 'Bruit',
+    'GUEST_AI_C.HouseManualpdf': 'Manuel_Maison.pdf',
+    'GUEST_AI_C.IndexedRag': 'Indexé (RAG)',
+    'GUEST_AI_C.WifiAccess': 'Accès WiFi',
+    'GUEST_AI_C.FixedReply': 'Réponse Fixe',
+    'GUEST_AI_C.ConfidenceThreshold': 'Seuil de Confiance',
+    'GUEST_AI_C.Lax': 'Souple',
+    'GUEST_AI_C.Strict80': 'Strict (80%)',
+
+    // Compliance Sentinel
+    'COMPLY.SentinelTitle': 'Sentinelle Législative',
+    'COMPLY.SentinelDesc': 'Surveillance en temps réel des gazettes municipales et arrêtés préfectoraux.',
+    'COMPLY.NoActiveBans': 'Aucune interdiction active détectée',
+    'COMPLY.SentinelIsScanning': 'Analyse des gazettes municipales en cours...',
+};

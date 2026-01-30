@@ -1,7 +1,7 @@
 
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
-import { ContextData, Scores, ReportData, UserProfile, AppPlan, ApiKey, PlanConfig, AppSettings, View, Property, AppTier } from '../types';
+import { ContextData, Scores, ReportData, UserProfile, AppPlan, ApiKey, PlanConfig, AppSettings, View, Property, AppTier, RenovationRoom, RenovationQuote, ComplianceRule, ConstructionTask } from '../types';
 
 @Injectable({
     providedIn: 'root'
@@ -244,6 +244,25 @@ export class HostRepository {
             name: row.name,
             subViews: this.defaultSubViews
         }));
+    }
+
+    async getPropertyById(id: string): Promise<any> {
+        if (!this.supabaseService.isConfigured) return null;
+        const { data, error } = await this.supabase
+            .from('properties')
+            .select(`
+            *,
+            property_equipments (name, manual_url),
+            property_photos (url, category)
+        `)
+            .eq('id', id)
+            .single();
+
+        if (error) {
+            console.error("Error fetching property details by ID:", error);
+            return null;
+        }
+        return data;
     }
 
     async getPropertyByName(name: string): Promise<any> {
@@ -851,6 +870,124 @@ export class HostRepository {
                 });
             if (error) throw error;
         }
+    }
+
+    // --- Renovation Budget (FIN_02) ---
+
+    async getRenovationRooms(propertyId: string): Promise<RenovationRoom[]> {
+        if (!this.supabaseService.isConfigured) return [];
+        const { data, error } = await this.supabase
+            .from('renovation_rooms')
+            .select('*')
+            .eq('property_id', propertyId)
+            .order('created_at', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching renovation rooms:', error);
+            return [];
+        }
+        return data || [];
+    }
+
+    async upsertRenovationRoom(room: Partial<RenovationRoom>): Promise<RenovationRoom | null> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+        const { data, error } = await this.supabase
+            .from('renovation_rooms')
+            .upsert(room)
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    }
+
+    async deleteRenovationRoom(roomId: string): Promise<void> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+        const { error } = await this.supabase
+            .from('renovation_rooms')
+            .delete()
+            .eq('id', roomId);
+        if (error) throw error;
+    }
+
+    async getRenovationQuotes(roomId: string): Promise<RenovationQuote[]> {
+        if (!this.supabaseService.isConfigured) return [];
+        const { data, error } = await this.supabase
+            .from('renovation_quotes')
+            .select('*')
+            .eq('room_id', roomId);
+
+        if (error) {
+            console.error('Error fetching renovation quotes:', error);
+            return [];
+        }
+        return data || [];
+    }
+
+    async upsertRenovationQuote(quote: Partial<RenovationQuote>): Promise<void> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+        const { error } = await this.supabase
+            .from('renovation_quotes')
+            .upsert(quote);
+        if (error) throw error;
+    }
+
+    // --- Compliance Checker (LEG_00) ---
+
+    async getComplianceRuleForCity(city: string): Promise<ComplianceRule | null> {
+        if (!this.supabaseService.isConfigured) return null;
+
+        // Try exact match first
+        let { data, error } = await this.supabase
+            .from('compliance_rules')
+            .select('*')
+            .eq('city', city)
+            .maybeSingle();
+
+        if (error) {
+            console.error('Error fetching compliance rule:', error);
+            return null;
+        }
+
+        if (!data) {
+            // Try matching keywords if city not found directly
+            const { data: allRules } = await this.supabase
+                .from('compliance_rules')
+                .select('*');
+
+            const cityLower = city.toLowerCase();
+            data = allRules?.find(r =>
+                r.keywords?.some((k: string) => cityLower.includes(k.toLowerCase())) ||
+                cityLower.includes(r.city.toLowerCase())
+            ) || null;
+        }
+
+        return data;
+    }
+
+    // --- Construction Schedule (OPS_01) ---
+
+    async getConstructionTasks(propertyId: string): Promise<ConstructionTask[]> {
+        if (!this.supabaseService.isConfigured) return [];
+        const { data, error } = await this.supabase
+            .from('construction_tasks')
+            .select('*')
+            .eq('property_id', propertyId)
+            .order('start_date', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching construction tasks:', error);
+            return [];
+        }
+        return data || [];
+    }
+
+    async upsertConstructionTask(task: Partial<ConstructionTask>): Promise<void> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+        const { error } = await this.supabase
+            .from('construction_tasks')
+            .upsert(task);
+        if (error) throw error;
     }
 
     // --- Profitability Simulations (Tier 1+) ---

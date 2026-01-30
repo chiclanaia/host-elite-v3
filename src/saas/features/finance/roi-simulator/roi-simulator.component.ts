@@ -1,10 +1,12 @@
-import { Component, input, computed, inject, signal } from '@angular/core';
+import { Component, input, computed, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { GeminiService } from '../../../../services/gemini.service';
+import { HmrcService } from '../../../../services/hmrc.service';
 
 @Component({
   selector: 'fin-01-roi-simulator',
@@ -19,6 +21,14 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
         <div>
           <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'ROI.RoiCashflowArchitect' | translate }}</h1>
           <p class="text-slate-400 mt-2 max-w-2xl">{{ 'ROI.ProfessionalFinancialModelingEngineWith' | translate }}</p>
+          
+          @if (propertyDetails()) {
+            <div class="mt-4 flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-2 w-fit">
+               <span class="material-icons text-emerald-400 text-sm">home</span>
+               <span class="text-white text-xs font-bold">{{ propertyDetails().name }}</span>
+               <span class="text-slate-500 text-[10px]">{{ propertyDetails().address }}</span>
+            </div>
+          }
         </div>
          <div class="flex gap-2">
              <div class="px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-lg border border-indigo-500/30 text-xs font-mono flex items-center gap-2">
@@ -46,8 +56,10 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
            <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-white">{{ 'ROI.FinancialDesign' | translate }}</h3>
                 @if (isTier3()) {
-                    <button (click)="autoFill()" class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30 hover:bg-indigo-500/40 transition-colors flex items-center gap-1" data-debug-id="roi-autofill-btn">
-                        <span>✨</span>{{ 'ROI.AiEstimate' | translate }}</button>
+                    <button (click)="autoFill()" [disabled]="isAiLoading()" class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30 hover:bg-indigo-500/40 transition-colors flex items-center gap-1 disabled:opacity-50" data-debug-id="roi-autofill-btn">
+                        <span>{{ isAiLoading() ? '...' : '✨' }}</span>
+                        {{ isAiLoading() ? 'Analyzing Market...' : ('ROI.AiEstimate' | translate) }}
+                    </button>
                 }
            </div>
            
@@ -82,6 +94,18 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                   </div>
               </div>
 
+              <!-- AI Market Summary (Gold Tier) -->
+              @if (isTier3() && aiSummary()) {
+                  <div class="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-lg animate-fade-in">
+                      <h5 class="text-[10px] font-bold text-emerald-400 uppercase mb-1 flex items-center gap-2">
+                          <span class="material-icons text-[12px]">analytics</span> Market Analysis
+                      </h5>
+                      <p class="text-[10px] text-emerald-200/70 italic leading-relaxed">
+                          "{{ aiSummary() }}"
+                      </p>
+                  </div>
+              }
+
               <!-- Tier 2: Seasonality Engine -->
               <div [class.opacity-50]="!isTier2OrAbove()" [class.pointer-events-none]="!isTier2OrAbove()">
                    <div class="flex justify-between items-center mb-4 pt-4 border-t border-white/10">
@@ -93,18 +117,22 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                    <div class="space-y-3">
                        <div class="flex items-center gap-4">
                            <span class="text-xs text-slate-400 w-16">{{ 'ROI.Occupancy' | translate }}</span>
-                           <input type="range" class="flex-1 h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer" min="0" max="100" [value]="50"> 
-                           <span class="text-xs text-white font-mono w-8">65%</span>
+                           <input type="range" class="flex-1 h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer" 
+                                  min="0" max="100" [value]="baseOccupancy()" (input)="updateBaseOccupancy($event)"> 
+                           <span class="text-xs text-white font-mono w-8">{{ baseOccupancy() }}%</span>
                        </div>
                         <div class="grid grid-cols-6 gap-1 mt-2">
-                            <!-- Visual Heatmap of months -->
-                           <div *ngFor="let m of ['J','F','M','A','M','J']; let i = index" class="h-10 bg-black/20 rounded flex flex-col items-center justify-end pb-1 border border-white/5 relative group cursor-pointer hover:border-emerald-500/50">
-                               <div class="w-2 bg-emerald-500/50 rounded-t-sm" [style.height.%]="(i%2===0?40:80)"></div>
+                             <!-- Visual Heatmap of months -->
+                           <div *ngFor="let m of months; let i = index" 
+                                class="h-10 bg-black/20 rounded flex flex-col items-center justify-end pb-1 border border-white/5 relative group cursor-pointer hover:border-emerald-500/50"
+                                (click)="adjustSeasonality(i)">
+                               <div class="w-2 bg-emerald-500/50 rounded-t-sm transition-all duration-300" 
+                                    [style.height.%]="seasonalityFactors()[i] * 100"></div>
                                <span class="text-[8px] text-slate-500">{{m}}</span>
-                           </div>
-                           <div *ngFor="let m of ['J','A','S','O','N','D']; let i = index" class="h-10 bg-black/20 rounded flex flex-col items-center justify-end pb-1 border border-white/5 relative group cursor-pointer hover:border-emerald-500/50">
-                               <div class="w-2 bg-emerald-500/50 rounded-t-sm" [style.height.%]="(i%2!==0?30:90)"></div>
-                               <span class="text-[8px] text-slate-500">{{m}}</span>
+                               <!-- Tooltip on hover -->
+                               <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-800 text-[8px] px-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
+                                   {{ (seasonalityFactors()[i] * baseOccupancy()) | number:'1.0-0' }}%
+                               </div>
                            </div>
                         </div>
                    </div>
@@ -115,21 +143,42 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
         <!-- Right: Results & Visuals -->
         <div class="flex flex-col gap-6">
              <!-- Top: Cashflow Waterfall -->
-             <div class="bg-slate-900 rounded-xl border border-white/10 p-6 flex items-center justify-between relative overflow-hidden">
-                 <div class="z-10">
-                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">{{ 'ROI.NetAnnualCashflow' | translate }}</p>
-                     <h2 class="text-4xl font-black text-white" [class.text-rose-400]="netCashflow() < 0" [class.text-emerald-400]="netCashflow() > 0">
-                         {{ netCashflow() | currency:'EUR':'symbol':'1.0-0' }}
-                     </h2>
-                     <p class="text-xs mt-1" [class.text-rose-400]="netCashflow() < 0" [class.text-slate-500]="netCashflow() >= 0">
-                         {{ netCashflow() < 0 ? 'Negative Carry Warning' : 'Positive Leverage' }}
-                     </p>
+             <div class="bg-slate-900 rounded-xl border border-white/10 p-6 flex flex-col gap-4 relative overflow-hidden">
+                 <div class="flex items-center justify-between relative z-10">
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">{{ 'ROI.NetAnnualCashflow' | translate }}</p>
+                        <h2 class="text-4xl font-black text-white" [class.text-rose-400]="netCashflow() < 0" [class.text-emerald-400]="netCashflow() > 0">
+                            {{ netCashflow() | currency:'EUR':'symbol':'1.0-0' }}
+                        </h2>
+                        <p class="text-xs mt-1" [class.text-rose-400]="netCashflow() < 0" [class.text-slate-500]="netCashflow() >= 0">
+                            {{ netCashflow() < 0 ? 'Negative Carry Warning' : 'Positive Leverage' }}
+                        </p>
+                    </div>
+                    <div class="h-16 w-16 rounded-full border-4 flex items-center justify-center text-xs font-bold bg-slate-800"
+                        [class.border-rose-500]="netCashflow() < 0" [class.border-emerald-500]="netCashflow() > 0"
+                        [class.text-rose-400]="netCashflow() < 0" [class.text-emerald-400]="netCashflow() > 0">
+                        {{ (netCashflow() / (formValues()?.price || 1)) * 100 | number:'1.1-1' }}%
+                    </div>
                  </div>
-                 <div class="h-16 w-16 rounded-full border-4 flex items-center justify-center text-xs font-bold z-10 bg-slate-800"
-                      [class.border-rose-500]="netCashflow() < 0" [class.border-emerald-500]="netCashflow() > 0"
-                      [class.text-rose-400]="netCashflow() < 0" [class.text-emerald-400]="netCashflow() > 0">
-                     {{ (netCashflow() / (formValues()?.price || 1)) * 100 | number:'1.1-1' }}%
-                 </div>
+
+                 <!-- Tax Forecast Block (Tier 3 Only) -->
+                 @if (isTier3() && taxData()) {
+                     <div class="mt-2 pt-4 border-t border-white/5 flex items-center justify-between animate-fade-in">
+                        <div>
+                            <p class="text-[10px] text-slate-500 uppercase font-bold flex items-center gap-1">
+                                <span class="material-icons text-[10px]">account_balance_wallet</span> 
+                                HMRC Tax Estimate (UK FHL)
+                            </p>
+                            <div class="text-sm font-bold text-rose-300">
+                                -{{ taxData().estimatedTax | currency:'GBP':'symbol':'1.0-0' }} 
+                                <span class="text-[10px] font-normal text-slate-400">@ {{ taxData().effectiveRate | number:'1.0-1' }}%</span>
+                            </div>
+                        </div>
+                        <div class="text-[9px] text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded bg-emerald-500/5">
+                            MTD Compliant
+                        </div>
+                     </div>
+                 }
              </div>
 
              <!-- Middle: 10-Year Wealth Chart -->
@@ -175,7 +224,10 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 })
 export class RoiSimulatorComponent {
   feature = input.required<Feature>();
+  propertyDetails = input<any>();
   session = inject(SessionStore);
+  gemini = inject(GeminiService);
+  hmrc = inject(HmrcService);
 
   tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
   isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
@@ -185,15 +237,37 @@ export class RoiSimulatorComponent {
   form: FormGroup;
   formValues;
 
+  // AI & Tax Signals
+  isAiLoading = signal(false);
+  aiSummary = signal('');
+  taxData = signal<any>(null);
+
+  // Seasonality Engine
+  months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+  baseOccupancy = signal(65);
+  seasonalityFactors = signal([0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 1.2, 1.3, 0.9, 0.7, 0.5, 0.8]);
+
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       price: [200000, Validators.required],
-      rent: [150, Validators.required], // Daily rate actually? Spec says Monthly rent in legacy but daily in others. Stick to monthly for simplicity or daily * 30.
+      rent: [150, Validators.required],
       loan: [900, Validators.required],
-      condo: [0],
-      insurance: [0]
+      condo: [120],
+      insurance: [30]
     });
     this.formValues = toSignal(this.form.valueChanges, { initialValue: this.form.value });
+  }
+
+  updateBaseOccupancy(event: Event) {
+    const val = (event.target as HTMLInputElement).value;
+    this.baseOccupancy.set(parseInt(val, 10));
+  }
+
+  adjustSeasonality(index: number) {
+    if (!this.isTier2OrAbove()) return;
+    const factors = [...this.seasonalityFactors()];
+    factors[index] = (factors[index] + 0.1 > 1.5) ? 0.3 : factors[index] + 0.1;
+    this.seasonalityFactors.set(factors);
   }
 
   totalExpenses = computed(() => {
@@ -203,16 +277,69 @@ export class RoiSimulatorComponent {
 
   netCashflow = computed(() => {
     const v = this.formValues();
-    const income = (v?.rent || 0) * 30 * 0.65; // Quick hack: Daily * 30 * 65% occupancy
-    return income - this.totalExpenses();
+    const nightly = v?.rent || 0;
+    const baseOcc = this.baseOccupancy() / 100;
+
+    // Average monthly income across a year based on seasonality
+    const avgFactor = this.seasonalityFactors().reduce((a, b) => a + b, 0) / 12;
+    const effectiveOccupancy = Math.min(1, baseOcc * avgFactor);
+
+    const monthlyIncome = nightly * 30.42 * effectiveOccupancy;
+    const annualCashflow = (monthlyIncome - this.totalExpenses()) * 12;
+
+    // Trigger Tax Calculation as side effect if in Tier 3
+    if (this.isTier3()) {
+      this.updateTaxForecast(annualCashflow, this.totalExpenses() * 12);
+    }
+
+    return annualCashflow;
   });
 
-  autoFill() {
-    this.form.patchValue({
-      price: 250000,
-      rent: 140, // Nightly
-      loan: 1100,
-      condo: 150,
-    });
+  private async updateTaxForecast(annualIncome: number, annualExpenses: number) {
+    if (annualIncome <= 0) {
+      this.taxData.set(null);
+      return;
+    }
+    try {
+      const tax = await this.hmrc.calculateTax(annualIncome, annualExpenses);
+      this.taxData.set(tax);
+    } catch (e) {
+      console.error('Tax forecast failed', e);
+    }
+  }
+
+  async autoFill() {
+    this.isAiLoading.set(true);
+    const activeProperty = this.propertyDetails();
+    const address = activeProperty?.address || 'London, United Kingdom';
+
+    try {
+      const analysis = await this.gemini.getMarketAnalysis(address);
+
+      this.form.patchValue({
+        price: activeProperty?.purchase_price || 250000,
+        rent: analysis.estimatedNightlyRate,
+        loan: 1100, // Heuristic or based on interest
+        condo: 150,
+        insurance: 40
+      });
+
+      this.baseOccupancy.set(analysis.estimatedOccupancy);
+      this.aiSummary.set(analysis.summary);
+
+    } catch (error) {
+      console.error('AI Autofill failed', error);
+      // Fallback
+      this.form.patchValue({
+        price: 250000,
+        rent: 140,
+        loan: 1100,
+        condo: 150,
+        insurance: 40
+      });
+      this.baseOccupancy.set(72);
+    } finally {
+      this.isAiLoading.set(false);
+    }
   }
 }

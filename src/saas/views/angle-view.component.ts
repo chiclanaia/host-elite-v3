@@ -26,6 +26,7 @@ import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { WelcomeBookletService } from './welcome-booklet/welcome-booklet.service';
 import { OnboardingService, OnboardingQuestion } from '../../services/onboarding.service';
+import { DEFAULT_QUESTIONS } from '../../services/data/default-questions';
 
 
 
@@ -267,53 +268,19 @@ export class PhaseViewComponent implements OnInit {
                 questions = [];
             }
 
-            // Property synthetic questions logic for All Dimensions
-            // We map the dimension ID to the translation key prefix and the expected count.
-            const syntheticConfigs: Record<string, { prefix: string, count: number }> = {
-                'DIM_MKT': { prefix: 'AUDIT.marketing_q', count: 10 },
-                'DIM_EXP': { prefix: 'AUDIT.experience_q', count: 10 },
-                'DIM_OPS': { prefix: 'AUDIT.operations_q', count: 10 },
-                'DIM_PRICING': { prefix: 'AUDIT.pricing_q', count: 10 },
-                'DIM_LEGAL': { prefix: 'AUDIT.legal_q', count: 10 }
-            };
+            // Seeding Logic: Ensure Default Questions Exist
+            // Primarily for DIM_OPS but we can extend for others if we have default data
+            if (legacyDimId === 'DIM_OPS') {
+                await this.onboardingService.ensureQuestions(DEFAULT_QUESTIONS);
+            }
 
-            const config = syntheticConfigs[legacyDimId];
-
-            if (config && questions.length < config.count) {
-                const existingKeys = new Set(questions.map(q => q.question_key));
-                for (let i = 1; i <= config.count; i++) {
-                    const key = `${config.prefix}${i}`;
-                    const subKey = `${key}_sub`;
-
-                    // Check if sub-question exists in translations
-                    // translate() returns the key itself if not found, so specific check needed
-                    const translatedSub = this.translationService.translate(subKey);
-                    const hasSub = translatedSub && translatedSub !== subKey;
-
-                    if (!existingKeys.has(key)) {
-                        questions.push({
-                            id: `synthetic_${legacyDimId}_${i}`,
-                            question_key: key,
-                            level: i <= 3 ? 'Bronze' : (i <= 6 ? 'Silver' : 'Gold'), // Generic tiering
-                            order_index: i,
-                            has_sub_question: hasSub,
-                            sub_question_config: hasSub ? {
-                                id: `synthetic_${legacyDimId}_${i}_sub`,
-                                label_key: subKey,
-                                type: 'text',
-                                placeholder: '...'
-                            } : undefined,
-                            dimension_id: legacyDimId // Ensure dimension is set
-                        } as any);
-                    }
+            // Re-fetch in case we just seeded
+            if (questions.length === 0) {
+                try {
+                    questions = await this.onboardingService.getQuestionsByDimension(legacyDimId);
+                } catch (err) {
+                    console.warn(`[PropertyAudit] Retry fetch failed for ${legacyDimId}`, err);
                 }
-                questions.sort((a, b) => a.order_index - b.order_index);
-            } else if (legacyDimId === 'DIM_OPS' && questions.length < 40 && !config) {
-                // Fallback for the old specific logic if it was intended for Accommodation (unlikely here but keeping safe)
-                // The old code generated 40 questions for OPS using accomodation_q. 
-                // If that was the intent of "Property Audit" in OPS phase, we might have a conflict with above.
-                // Given the translation file has separate operations_q (10) and accomodation_q (40),
-                // and PropertyAuditComponent handles accomodation_q, we assume Phase Audit = operations_q.
             }
 
             if (!questions || questions.length === 0) {
