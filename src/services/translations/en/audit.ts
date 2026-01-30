@@ -152,4 +152,15 @@ export const audit = {
     'AUDIT.AIAnalyzing': 'Analyzing...',
     'AUDIT.NoteTitle': 'Note',
     'AUDIT.NoteDesc': 'The audit is saved automatically. You can return at any time to update your equipment.',
+
+    // Profitability Simulator (Used in audit context)
+    'PROFIT.Title': 'Profitability Simulator',
+    'PROFIT.Subtitle': 'Visualize your real cash-flow and make the right decisions',
+    'PROFIT.Inputs': 'Financial Data',
+    'PROFIT.MonthlyRevenue': 'Monthly Revenue (Rent)',
+    'PROFIT.MonthlyLoan': 'Monthly Loan Payment',
+    'PROFIT.MonthlyCharges': 'Monthly Charges (Total)',
+    'PROFIT.ChargesTooltip': 'Include everything! Condo fees, electricity, internet, insurance, taxes, maintenance...',
+    'PROFIT.RentWarning': 'Is this rent realistic? > 500€ seems high unless it\'s luxury.',
+    'NAV.profit-calculator': 'Simulator'
 };

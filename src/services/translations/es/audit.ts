@@ -152,4 +152,15 @@ export const audit = {
     'AUDIT.AIAnalyzing': 'Analizando...',
     'AUDIT.NoteTitle': 'Nota',
     'AUDIT.NoteDesc': 'La auditoría se guarda automáticamente. Puede volver en cualquier momento para actualizar su equipamiento.',
+
+    // Profitability Simulator
+    'PROFIT.Title': 'Simulador de Rentabilidad',
+    'PROFIT.Subtitle': 'Visualice su flujo de caja real y tome las mejores decisiones',
+    'PROFIT.Inputs': 'Datos Financieros',
+    'PROFIT.MonthlyRevenue': 'Ingresos Mensuales (Alquiler)',
+    'PROFIT.MonthlyLoan': 'Mensualidad del Préstamo',
+    'PROFIT.MonthlyCharges': 'Cargos Mensuales (Total)',
+    'PROFIT.ChargesTooltip': '¡Incluya todo! Gastos de comunidad, electricidad, internet, seguros, impuestos, mantenimiento...',
+    'PROFIT.RentWarning': '¿Es este alquiler realista? > 500€ parece alto a menos que sea de lujo.',
+    'NAV.profit-calculator': 'Simulador'
 };

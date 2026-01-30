@@ -217,10 +217,10 @@ export class PhaseViewComponent implements OnInit {
 
     getTierClass(tier: string | undefined): string {
         const t = tier || 'TIER_0';
-        if (t.includes('TIER_3') || t.includes('Gold')) return 'bg-yellow-400'; // Gold
-        if (t.includes('TIER_2') || t.includes('Silver')) return 'bg-slate-300'; // Silver
-        if (t.includes('TIER_1') || t.includes('Bronze')) return 'bg-amber-600'; // Bronze
-        return 'bg-emerald-500'; // Free/Starter (Green for visibility in debug)
+        if (t.includes('TIER_3') || t.includes('Gold')) return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]'; // Gold
+        if (t.includes('TIER_2') || t.includes('Silver')) return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]'; // Silver
+        if (t.includes('TIER_1') || t.includes('Bronze')) return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]'; // Bronze
+        return 'bg-slate-600'; // Free/Starter
     }
 
     getTierLabel(tier: string | undefined): string {

@@ -29,7 +29,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
       <!-- Scrollable Nav -->
       <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto custom-scrollbar">
         
-        <!-- Standard User Navigation (Hidden for Admins) -->
+
         @if (userRole() !== 'admin') {
             <!-- Main Navigation -->
             <div class="space-y-1">
@@ -165,13 +165,41 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                 </div>
             </div>
 
-            <!-- Training Menu (HIDDEN) -->
-            <!--
-            <div class="pt-6">
-                <div class="px-3 pb-3">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ 'SIDEBAR.Academy' | translate }}</span>
+        }
+        
+
+        <!-- Support -->
+        <div class="pt-6">
+            <div class="px-3 pb-3">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ 'NAV.support' | translate }}</span>
+            </div>
+            <div class="space-y-1">
+            @for (view of supportViews; track view.id) {
+                <a (click)="isLocked(view) ? null : changeView(view)"
+                class="group flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-all duration-200 border border-transparent"
+                [class]="activeView().id === view.id 
+                    ? 'bg-white/10 text-[#D4AF37] border-l-2 border-[#D4AF37] shadow-inner' 
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'"
+                [class.opacity-50]="isLocked(view)"
+                [class.cursor-not-allowed]="isLocked(view)"
+                [attr.data-debug-id]="'nav-support-' + view.id">
+                <div class="flex items-center">
+                    <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
+                          [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
+                          [innerHTML]="getIcon(view.icon)"></span>
+                    {{ 'NAV.' + view.id | translate }}
                 </div>
-                <div class="space-y-1">
+                </a>
+            }
+            </div>
+        </div>
+
+        <!-- Academy (Moved to bottom) -->
+        <div class="pt-6 pb-6">
+            <div class="px-3 pb-2">
+                <span class="text-[10px] font-bold text-[#D4AF37] uppercase tracking-widest">{{ 'SIDEBAR.Academy' | translate }}</span>
+            </div>
+            <div class="space-y-1">
                 @for (view of trainingViews; track view.id) {
                     <a (click)="isLocked(view) ? null : changeView(view)"
                     class="group flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-all duration-200 border border-transparent"
@@ -180,57 +208,27 @@ import { TranslatePipe } from '../pipes/translate.pipe';
                         : 'text-slate-400 hover:text-white hover:bg-white/5'"
                     [class.opacity-50]="isLocked(view)"
                     [class.cursor-not-allowed]="isLocked(view)"
-                    [attr.data-debug-id]="'nav-training-' + view.id">
-                    <div class="flex items-center">
-                        <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
-                              [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
-                              [innerHTML]="getIcon(view.icon)"></span>
-                        {{ 'NAV.' + view.id | translate }}
-                    </div>
-                    @if (view.featureId) {
-                        @if (getBadge(view.featureId); as badge) {
-                            <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ml-2 whitespace-nowrap opacity-80" [class]="badge.colorClass">
-                                {{ badge.label }}
-                            </span>
-                        }
-                    }
-                    < - - Lock Icon - - >
-                    @if (isLocked(view)) {
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-slate-600 ml-2"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
-                    }
+                    [attr.data-debug-id]="'nav-academy-' + view.id">
+                        <div class="flex items-center">
+                            <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
+                                  [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
+                                  [innerHTML]="getIcon(view.icon)"></span>
+                            {{ 'NAV.' + view.id | translate }}
+                        </div>
+                        
+                        <!-- Lock / Tier indicator -->
+                        <div class="flex items-center space-x-2 ml-2">
+                            @if (isLocked(view)) {
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-slate-600"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" /></svg>
+                            }
+                            @if (view.featureId) {
+                                <span class="w-2 h-2 rounded-full shadow-sm" [class]="getTierIndicatorClass(view.featureId)"></span>
+                            }
+                        </div>
                     </a>
                 }
-                </div>
             </div>
-            -->
-
-            <!-- Support -->
-            <div class="pt-6">
-                <div class="px-3 pb-3">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ 'NAV.support' | translate }}</span>
-                </div>
-                <div class="space-y-1">
-                @for (view of supportViews; track view.id) {
-                    <a (click)="isLocked(view) ? null : changeView(view)"
-                    class="group flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-all duration-200 border border-transparent"
-                    [class]="activeView().id === view.id 
-                        ? 'bg-white/10 text-[#D4AF37] border-l-2 border-[#D4AF37] shadow-inner' 
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'"
-                    [class.opacity-50]="isLocked(view)"
-                    [class.cursor-not-allowed]="isLocked(view)"
-                    [attr.data-debug-id]="'nav-support-' + view.id">
-                    <div class="flex items-center">
-                        <span class="w-5 h-5 mr-3 flex items-center justify-center transition-colors"
-                              [class]="activeView().id === view.id ? 'text-[#D4AF37]' : 'text-slate-500 group-hover:text-white'"
-                              [innerHTML]="getIcon(view.icon)"></span>
-                        {{ 'NAV.' + view.id | translate }}
-                    </div>
-                    </a>
-                }
-                </div>
-            </div>
-            
-        }
+        </div>
 
         <!-- Administration (Visible only for Admins) -->
         @if (userRole() === 'admin') {
@@ -305,6 +303,10 @@ export class SidebarComponent {
     private sanitizer: DomSanitizer = inject(DomSanitizer);
     private store = inject(SessionStore); // Injected to resolve badges
 
+    constructor() {
+        console.log('[Sidebar] Component initialized');
+    }
+
     isPropertyDropdownOpen = signal<boolean>(false);
 
     selectedProperty = computed(() => {
@@ -344,7 +346,7 @@ export class SidebarComponent {
         wheel: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M16.313 5.422a7.5 7.5 0 0 1 0 9.156 1 1 0 0 0-1.24 1.562 9.5 9.5 0 0 0 0-12.28 1 1 0 0 0 1.24 1.562ZM18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM5.5 10a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Z" /><path d="M10 6.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z" /></svg>`,
         logout: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.75a.75.75 0 0 0 0 1.5h9.5a.75.75 0 0 0 .75-.75Z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M15.28 6.22a.75.75 0 0 0-1.06 1.06L16.44 9.5H8.75a.75.75 0 0 0 0 1.5h7.69l-2.22 2.22a.75.75 0 1 0 1.06 1.06l3.5-3.5a.75.75 0 0 0 0-1.06l-3.5-3.5Z" clip-rule="evenodd" /></svg>`,
         support: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8.5-2.5a.75.75 0 0 1 1.5 0v.5c0 .534.213.984.57 1.332l.716.67c.5.471.814 1.12.814 1.849a3.5 3.5 0 0 1-7 0c0-.73.314-1.378.814-1.849l.716-.67A1.99 1.99 0 0 0 9.5 8v-.5a.75.75 0 0 1 .75-.75Z M10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>`,
-        property: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M5.5 10.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z" /><path fill-rule="evenodd" d="m.842 6.417 5.694 2.135a.75.75 0 0 0 .868-.14l5.695-4.272a.75.75 0 0 1 .983-.026l5.043 3.782a.75.75 0 0 1 .16.945l-2.424 4.31a.75.75 0 0 1-1.012.316l-5.74-2.152a.75.75 0 0 0-.868.14l-5.695 4.272a.75.75 0 0 1-.983.026L.99 11.62a.75.75 0 0 1-.148-.945L3.266 6.36a.75.75 0 0 1 1.012-.316l5.74 2.153a.75.75 0 0 0 .868-.14l5.695-4.272a.75.75 0 0 1 .983.026L19.01 7.38a.75.75 0 0 1 .148.945l-2.424 4.31a.75.75 0 0 1-1.012.316l-5.74-2.153a.75.75 0 0 0-.868.14l-5.695 4.272a.75.75 0 0 1-.983.026L.99 13.62a.75.75 0 0 1-.148-.945l2.424-4.31a.75.75 0 0 1 1.012-.316l.011.004Z" clip-rule="evenodd" /></svg>`,
+        property: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M5.5 10.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z" /><path fill-rule="evenodd" d="m.842 6.417 5.694 2.135a.75.75 0 0 0 .868-.14l5.695-4.272a.75.75 0 0 1 .983-.026l5.043 3.782a.75.75 0 0 1 .16.945l-2.424 4.31a.75.75 0 0 1-1.012.316l-5.74-2.152a.75.75 0 0 0-.868.14l-5.695 4.272a.75.75 0 0 1-.983.026L.99 11.62a.75.75 0 0 1-.148-.945L3.266 6.36a.75.75 0 0 1 1.012-.316l.011.004Z" clip-rule="evenodd" /></svg>`,
         widgets: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M3 4.75A.75.75 0 0 1 3.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 3 4.75ZM3 9.75A.75.75 0 0 1 3.75 9h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 3 9.75ZM3 14.75A.75.75 0 0 1 3.75 14h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 3 14.75ZM9.75 4a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM9.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM9.75 14a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z" /></svg>`,
         concierge: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4ZM5.25 4a.75.75 0 0 0-1.5 0v6a4.5 4.5 0 1 0 9 0V4a.75.75 0 0 0-1.5 0v6a3 3 0 1 1-6 0V4Z" /></svg>`,
         settings: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 0 1-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 0 1 .947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 0 1-2.287-.947ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" /></svg>`,
@@ -367,35 +369,39 @@ export class SidebarComponent {
 
     // New Helper to check permission
     isLocked(view: View): boolean {
-        // 1. Check feature lock if applicable
-        if (view.featureId && !this.store.hasFeature(view.featureId)) {
-            return true;
-        }
-
-        // 2. Check Plan Lock
-        if (view.requiredTier) {
-            const tiers = this.store.appTiers();
-            if (tiers.length === 0) {
-                const legacyTiers = ['Freemium', 'Bronze', 'Silver', 'Gold'];
-                const userTierIndex = legacyTiers.indexOf(this.userPlan() || 'Freemium');
-                const requiredTierIndex = legacyTiers.indexOf(view.requiredTier);
-                return userTierIndex < requiredTierIndex;
-            }
-
-            const planLevels = tiers.reduce((acc, t) => {
-                acc[t.tier_id] = t.rank_order;
-                acc[t.name] = t.rank_order;
-                return acc;
-            }, {} as Record<string, number>);
-
-            const userLevel = planLevels[this.userPlan() || 'TIER_0'] || 0;
-            const requiredLevel = planLevels[view.requiredTier || 'TIER_0'] || 0;
-            if (userLevel < requiredLevel) {
+        try {
+            // 1. Check feature lock if applicable
+            if (view.featureId && !this.store.hasFeature(view.featureId)) {
                 return true;
             }
-        }
 
-        return false;
+            // 2. Check Plan Lock
+            if (view.requiredTier) {
+                const tiers = this.store.appTiers();
+                if (tiers.length === 0) {
+                    const legacyTiers = ['Freemium', 'Bronze', 'Silver', 'Gold'];
+                    const userTierIndex = legacyTiers.indexOf(this.userPlan() || 'Freemium');
+                    const requiredTierIndex = legacyTiers.indexOf(view.requiredTier);
+                    return userTierIndex < requiredTierIndex;
+                }
+
+                const planLevels = tiers.reduce((acc, t) => {
+                    acc[t.tier_id] = t.rank_order;
+                    acc[t.name] = t.rank_order;
+                    return acc;
+                }, {} as Record<string, number>);
+
+                const userTierRank = planLevels[this.userPlan() || 'Freemium'] || 0;
+                const requiredRank = planLevels[view.requiredTier] || 0;
+
+                return userTierRank < requiredRank;
+            }
+
+            return false;
+        } catch (e) {
+            console.error('[Sidebar] Error in isLocked for view:', view.id, e);
+            return false; // Fail safe: show as unlocked or maybe handle gracefully. unlocked allows clicking which might error elsewhere, but safer for visibility.
+        }
     }
 
     getViewsForPhase(views: View[], phase: string): View[] {
