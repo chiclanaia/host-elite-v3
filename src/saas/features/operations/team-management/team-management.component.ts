@@ -5,12 +5,22 @@ import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
+interface TeamMember {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    permissions: string;
+    lastActive: string;
+    status: 'Active' | 'Pending';
+}
+
 @Component({
     selector: 'ops-06-team-management',
     standalone: true,
     imports: [CommonModule,
-    TranslatePipe
-  ],
+        TranslatePipe
+    ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
@@ -26,7 +36,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
        <div class="flex-1 bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col">
             <div class="flex justify-between items-center mb-6">
                  <h3 class="text-xl font-bold text-white">{{ 'TEAM.TeamMembers' | translate }}</h3>
-                 <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold flex items-center gap-2" data-debug-id="team-invite-btn">
+                 <button (click)="inviteMember()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold flex items-center gap-2" data-debug-id="team-invite-btn">
                      <span class="material-icons text-sm">person_add</span>{{ 'TEAM.Invite' | translate }}</button>
             </div>
 
@@ -43,49 +53,45 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                         </tr>
                     </thead>
                     <tbody class="text-sm">
-                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                            <td class="p-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs">JB</div>
-                                    <div>
-                                        <div class="text-white font-bold">{{ 'TEAM.JosBYou' | translate }}</div>
-                                        <div class="text-slate-500 text-xs">jose@example.com</div>
+                        @for (member of members(); track member.id) {
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td class="p-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs">
+                                            {{ member.name.substring(0, 2).toUpperCase() }}
+                                        </div>
+                                        <div>
+                                            <div class="text-white font-bold">{{ member.name }}</div>
+                                            <div class="text-slate-500 text-xs">{{ member.email }}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td class="p-3"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-xs font-bold border border-indigo-500/30">{{ 'TEAM.Owner' | translate }}</span></td>
-                            <td class="p-3 text-slate-400">{{ 'TEAM.FullAccess' | translate }}</td>
-                            <td class="p-3 text-emerald-400">{{ 'TEAM.Now' | translate }}</td>
-                            <td class="p-3"></td>
-                        </tr>
-                        
-                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                            <td class="p-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="h-8 w-8 rounded-full bg-slate-600 flex items-center justify-center text-white font-bold text-xs">MA</div>
-                                    <div>
-                                        <div class="text-white font-bold">{{ 'TEAM.MarieAdjunct' | translate }}</div>
-                                        <div class="text-slate-500 text-xs">marie@agency.com</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-600/20 text-slate-300 text-xs font-bold border border-slate-600/30">{{ 'TEAM.Cohost' | translate }}</span></td>
-                            <td class="p-3">
-                                 @if (tier() === 'TIER_3') {
-                                     <div class="flex gap-1">
-                                         <span class="w-2 h-2 rounded-full bg-emerald-500" title="{{ \'TEAM.Messages\' | translate }}"></span>
-                                         <span class="w-2 h-2 rounded-full bg-emerald-500" title="{{ \'TEAM.Calendar\' | translate }}"></span>
-                                         <span class="w-2 h-2 rounded-full bg-red-500" title="{{ \'TEAM.FinanceBlocked\' | translate }}"></span>
-                                     </div>
-                                 } @else {
-                                     <span class="text-slate-500 text-xs">{{ 'TEAM.StandardAccess' | translate }}</span>
-                                 }
-                            </td>
-                            <td class="p-3 text-slate-500">2 hours ago</td>
-                            <td class="p-3 text-right">
-                                <button class="text-slate-500 hover:text-white" data-debug-id="team-row-actions-1"><span class="material-icons text-sm">more_vert</span></button>
-                            </td>
-                        </tr>
+                                </td>
+                                <td class="p-3">
+                                    <span class="px-2 py-0.5 rounded text-xs font-bold border"
+                                          [class.bg-indigo-500/20]="member.role === 'Owner'"
+                                          [class.text-indigo-300]="member.role === 'Owner'"
+                                          [class.border-indigo-500/30]="member.role === 'Owner'"
+                                          [class.bg-slate-600/20]="member.role !== 'Owner'"
+                                          [class.text-slate-300]="member.role !== 'Owner'"
+                                          [class.border-slate-600/30]="member.role !== 'Owner'">
+                                        {{ member.role }}
+                                    </span>
+                                </td>
+                                <td class="p-3 text-slate-400">
+                                    {{ member.permissions }}
+                                </td>
+                                <td class="p-3" [class.text-emerald-400]="member.lastActive === 'Now'" [class.text-slate-500]="member.lastActive !== 'Now'">
+                                    {{ member.lastActive }}
+                                </td>
+                                <td class="p-3 text-right">
+                                    @if (member.role !== 'Owner') {
+                                        <button class="text-slate-500 hover:text-white" [attr.data-debug-id]="'team-row-actions-' + member.id">
+                                            <span class="material-icons text-sm">more_vert</span>
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -131,4 +137,38 @@ export class TeamManagementComponent {
 
     session = inject(SessionStore);
     tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
+
+    members = signal<TeamMember[]>([
+        {
+            id: '1',
+            name: 'JosB (You)',
+            email: 'jose@example.com',
+            role: 'Owner',
+            permissions: 'Full Access',
+            lastActive: 'Now',
+            status: 'Active'
+        },
+        {
+            id: '2',
+            name: 'Marie Adjunct',
+            email: 'marie@agency.com',
+            role: 'Cohost',
+            permissions: 'Standard Access',
+            lastActive: '2 hours ago',
+            status: 'Active'
+        }
+    ]);
+
+    inviteMember() {
+        const newMember: TeamMember = {
+            id: Math.random().toString(36).substr(2, 9),
+            name: 'New Team Member',
+            email: 'pending@invite.com',
+            role: 'Staff',
+            permissions: 'Restricted',
+            lastActive: 'Never',
+            status: 'Pending'
+        };
+        this.members.update(prev => [...prev, newMember]);
+    }
 }

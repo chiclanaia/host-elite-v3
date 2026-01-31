@@ -1001,6 +1001,9 @@ export const ui = {
     'ROI.RoiCashflowArchitect': 'Arquitecto de ROI y Flujo de Caja',
     'ROI.SeasonalityLogic': 'Lógica de estacionalidad',
     'ROI.Unlock10yearEquityAnalysisAnd': 'Desbloquee el análisis de capital a 10 años y los informes PDF listos para el banco.',
+    'ROI.PremiumFeature': 'Función Premium',
+    'ROI.UpgradeToSilverToUnlockGranular': 'Mejora a Silver para desbloquear el control granular mensual.',
+    'ROI.UpgradeToSilver': 'Mejorar a Silver',
     // Renovation Budget (FIN_02)
     'RENOV.SmartCapexPlanner': 'Planificador de Capex Inteligente',
     'RENOV.StrategicRenovationBudgetingToPrevent': 'Presupuestos estratégicos de renovación para evitar el sobre-equipamiento y maximizar el ROI de reventa.',

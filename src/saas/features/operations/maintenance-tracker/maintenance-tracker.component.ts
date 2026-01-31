@@ -5,12 +5,21 @@ import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
+interface Ticket {
+    id: string;
+    title: string;
+    priority: 'Urgent' | 'Medium' | 'Low';
+    reportedBy: string;
+    reportedAt: string;
+    status: 'Open';
+}
+
 @Component({
     selector: 'ops-10-maintenance-tracker',
     standalone: true,
     imports: [CommonModule,
-    TranslatePipe
-  ],
+        TranslatePipe
+    ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
@@ -40,49 +49,50 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                        <button class="px-3 py-1.5 bg-white/10 text-white text-xs rounded hover:bg-white/20" data-debug-id="maint-filter-open">{{ 'MAINTENANC.Open2' | translate }}</button>
                        <button class="px-3 py-1.5 text-slate-400 text-xs hover:text-white" data-debug-id="maint-filter-closed">{{ 'MAINTENANC.Closed12' | translate }}</button>
                    </div>
-                   <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg flex items-center gap-2" data-debug-id="maint-new-ticket-btn">
+                   <button (click)="addTicket()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg flex items-center gap-2" data-debug-id="maint-new-ticket-btn">
                        <span>+</span>{{ 'MAINTENANC.NewTicket' | translate }}</button>
                </div>
 
                <!-- Ticket List -->
                <div class="flex-1 overflow-y-auto p-4 space-y-3">
-                   <!-- Ticket Item -->
-                   <div class="p-4 bg-white/5 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group" data-debug-id="maint-ticket-1">
-                       <div class="flex justify-between items-start">
-                           <div>
-                               <div class="flex items-center gap-2 mb-1">
-                                   <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-rose-500/20 text-rose-300">{{ 'MAINTENANC.Urgent' | translate }}</span>
-                                   <span class="text-sm font-bold text-white">{{ 'MAINTENANC.LeakyFaucetInKitchen' | translate }}</span>
+                   @for (ticket of tickets(); track ticket.id) {
+                       <!-- Ticket Item -->
+                       <div class="p-4 bg-white/5 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group" [attr.data-debug-id]="'maint-ticket-' + ticket.id">
+                           <div class="flex justify-between items-start">
+                               <div>
+                                   <div class="flex items-center gap-2 mb-1">
+                                       <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold" 
+                                             [class.bg-rose-500/20]="ticket.priority === 'Urgent'"
+                                             [class.text-rose-300]="ticket.priority === 'Urgent'"
+                                             [class.bg-amber-500/20]="ticket.priority === 'Medium'" 
+                                             [class.text-amber-300]="ticket.priority === 'Medium'"
+                                             [class.bg-blue-500/20]="ticket.priority === 'Low'"
+                                             [class.text-blue-300]="ticket.priority === 'Low'">
+                                           {{ ticket.priority }}
+                                       </span>
+                                       <span class="text-sm font-bold text-white">{{ ticket.title }}</span>
+                                   </div>
+                                   <p class="text-xs text-slate-400">Reported by {{ ticket.reportedBy }} • {{ ticket.reportedAt }}</p>
                                </div>
-                               <p class="text-xs text-slate-400">{{ 'MAINTENANC.ReportedByGuest2Hours' | translate }}</p>
-                           </div>
-                           <div class="text-right">
-                               <p class="text-xs text-slate-500">#TK-1024</p>
-                           </div>
-                       </div>
-                       
-                       @if (tier() === 'TIER_3') {
-                           <!-- Tier 3: Automations -->
-                           <div class="mt-4 pt-3 border-t border-white/5 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                               <span class="text-xs text-emerald-400 flex items-center gap-1">
-                                    <span class="material-icons text-sm">link</span>{{ 'MAINTENANC.LinkedToSecurityDeposit' | translate }}</span>
-                               <button class="px-3 py-1 bg-slate-700 text-white text-xs rounded hover:bg-slate-600">{{ 'MAINTENANC.AssignVendor' | translate }}</button>
-                           </div>
-                       }
-                   </div>
-                   
-                   <!-- Ticket Item 2 -->
-                   <div class="p-4 bg-white/5 rounded-lg border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer" data-debug-id="maint-ticket-2">
-                       <div class="flex justify-between items-start">
-                           <div>
-                               <div class="flex items-center gap-2 mb-1">
-                                   <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-amber-500/20 text-amber-300">{{ 'MAINTENANC.Medium' | translate }}</span>
-                                   <span class="text-sm font-bold text-white">{{ 'MAINTENANC.WifiSignalWeakInBedroom' | translate }}</span>
+                               <div class="text-right">
+                                   <p class="text-xs text-slate-500">#{{ ticket.id }}</p>
                                </div>
-                               <p class="text-xs text-slate-400">{{ 'MAINTENANC.ReportedByCleanerYesterday' | translate }}</p>
                            </div>
+                           
+                           @if (tier() === 'TIER_3') {
+                               <!-- Tier 3: Automations -->
+                               <div class="mt-4 pt-3 border-t border-white/5 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                   <span class="text-xs text-emerald-400 flex items-center gap-1">
+                                        <span class="material-icons text-sm">link</span>{{ 'MAINTENANC.LinkedToSecurityDeposit' | translate }}</span>
+                                   <button class="px-3 py-1 bg-slate-700 text-white text-xs rounded hover:bg-slate-600">{{ 'MAINTENANC.AssignVendor' | translate }}</button>
+                               </div>
+                           }
                        </div>
-                   </div>
+                   } @empty {
+                       <div class="flex flex-col items-center justify-center h-40 text-slate-500 border-2 border-dashed border-white/5 rounded-xl">
+                           <p class="text-sm italic">No open tickets found.</p>
+                       </div>
+                   }
                </div>
           </div>
        }
@@ -111,4 +121,36 @@ export class MaintenanceTrackerComponent {
 
     session = inject(SessionStore);
     tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
+
+    tickets = signal<Ticket[]>([
+        {
+            id: 'TK-1024',
+            title: 'Leaky Faucet in Kitchen',
+            priority: 'Urgent',
+            reportedBy: 'Guest',
+            reportedAt: '2 hours ago',
+            status: 'Open'
+        },
+        {
+            id: 'TK-1025',
+            title: 'Wifi Signal Weak in Bedroom',
+            priority: 'Medium',
+            reportedBy: 'Cleaner',
+            reportedAt: 'Yesterday',
+            status: 'Open'
+        }
+    ]);
+
+    addTicket() {
+        const newId = 'TK-' + Math.floor(1000 + Math.random() * 9000);
+        const newTicket: Ticket = {
+            id: newId,
+            title: 'New Maintenance Issue',
+            priority: 'Medium',
+            reportedBy: 'Self',
+            reportedAt: 'Just now',
+            status: 'Open'
+        };
+        this.tickets.update(prev => [newTicket, ...prev]);
+    }
 }

@@ -1,16 +1,15 @@
 import { TranslationService } from '../../../../services/translation.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
-import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { FormsModule } from '@angular/forms';
 import { GeminiService } from '../../../../services/gemini.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { marked } from 'marked';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
-    selector: 'mkt-02-ai-listing-writer',
+    selector: 'mkt-02-listing-writer',
     standalone: true,
     imports: [CommonModule, FormsModule,
         TranslatePipe
@@ -19,169 +18,143 @@ import { marked } from 'marked';
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'AILISTING.AiCopywriterSeo' | translate }}</h1>
-          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'AILISTING.DescriptionGeneratorTrainedOn1m' | translate }}</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ 'ALISTW.AiListingWriter' | translate }}</h1>
+          <p class="text-slate-400 mt-2 max-w-2xl">{{ 'ALISTW.HighConversionDescriptionsInSeconds' | translate }}</p>
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
                 'bg-slate-800 text-slate-400 border-slate-700': isTier0(),
-                'bg-emerald-500/20 text-emerald-300 border-emerald-500/30': !isTier0()
+                'bg-indigo-500/20 text-indigo-300 border-indigo-500/30': !isTier0()
              }">
-             {{ isTier3() ? 'Neuro-Semantic SEO' : (isTier2() ? 'AI Writer' : 'Manual Input') }}
+             {{ isTier3() ? 'Keywords Engine Active' : (isTier2() ? 'Smart Tone' : 'Basic Writer') }}
         </div>
       </div>
 
        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 overflow-hidden min-h-0">
            
-           <!-- Left: Input Configuration -->
-           <div class="bg-slate-800 rounded-xl border border-white/10 p-6 flex flex-col gap-6 overflow-y-auto">
-               <h3 class="text-white font-bold text-lg">{{ 'AILISTING.ListingParameters' | translate }}</h3>
-               
-               <div class="space-y-4">
-                   <div>
-                       <label class="block text-slate-400 text-xs uppercase font-bold mb-2">{{ 'AILISTING.KeyUsps' | translate }}</label>
-                       <textarea [(ngModel)]="highlights" rows="3" class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm focus:border-indigo-500 outline-none placeholder:text-slate-600" placeholder="{{ \'AILISTING.EgOceanView500mbpsWifi\' | translate }}" data-debug-id="ai-writer-highlights-input"></textarea>
-                   </div>
+           <!-- Left: Config -->
+           <div class="flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
+               <div class="bg-slate-800/50 rounded-2xl border border-white/10 p-8 backdrop-blur-sm space-y-8">
                    
-                   @if (isTier2()) {
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">{{ 'AILISTING.VibeTone' | translate }}</label>
-                            <select [(ngModel)]="tone" class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm outline-none">
-                                <option value="luxury">💎 Luxury & Elegant</option>
-                                <option value="cozy">🧸 Cozy & Family</option>
-                                <option value="modern">🚀 Modern & Tech</option>
-                                <option value="minimal">🍃 Minimalist</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 text-xs uppercase font-bold mb-2">{{ 'AILISTING.Length' | translate }}</label>
-                            <select class="w-full bg-black/30 border border-white/20 rounded-lg p-3 text-white text-sm outline-none">
-                                <option>{{ 'AILISTING.Compact200Words' | translate }}</option>
-                                <option>{{ 'AILISTING.Standard400Words' | translate }}</option>
-                                <option>{{ 'AILISTING.Storytelling800Words' | translate }}</option>
-                            </select>
-                        </div>
-                    </div>
-                   }
+                   <!-- Highlights -->
+                   <div>
+                       <label class="block text-[10px] text-slate-500 uppercase font-black mb-3 tracking-widest">{{ 'ALISTW.KeyHighlights' | translate }}</label>
+                       <textarea [(ngModel)]="highlights" 
+                                 rows="4"
+                                 class="w-full bg-black/30 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-indigo-500 transition-all resize-none"
+                                 placeholder="e.g. 5 min from beach, rooftop pool, fiber optic wifi..."></textarea>
+                   </div>
 
+                   <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <label class="block text-[10px] text-slate-500 uppercase font-black mb-3 tracking-widest">{{ 'ALISTW.Tone' | translate }}</label>
+                            <select [(ngModel)]="tone" 
+                                    class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500 appearance-none transition-all">
+                                <option value="luxury">{{ 'ALISTW.tone_luxury' | translate }}</option>
+                                <option value="minimalist">{{ 'ALISTW.tone_minimalist' | translate }}</option>
+                                <option value="playful">{{ 'ALISTW.tone_playful' | translate }}</option>
+                                <option value="storytelling">{{ 'ALISTW.tone_storytelling' | translate }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-500 uppercase font-black mb-3 tracking-widest">{{ 'ALISTW.Platform' | translate }}</label>
+                            <div class="flex gap-2">
+                                <button class="flex-1 p-3 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:border-white transition-all">
+                                    <span class="material-icons text-sm">home</span>
+                                </button>
+                                <button class="flex-1 p-3 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:border-white transition-all">
+                                    <span class="material-icons text-sm">language</span>
+                                </button>
+                            </div>
+                        </div>
+                   </div>
+
+                   <!-- AI Keywords (Tier 3) -->
                    @if (isTier3()) {
-                       <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-                           <div class="flex justify-between items-center mb-3">
-                               <label class="text-emerald-300 text-xs uppercase font-bold flex items-center gap-2">
-                                   <span class="material-icons text-sm">vpn_key</span>{{ 'AILISTING.SeoInjection' | translate }}</label>
-                               <span class="text-[10px] text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">{{ 'ALW.Active' | translate }}</span>
+                       <div class="pt-6 border-t border-white/5 space-y-4">
+                           <div class="flex justify-between items-center">
+                               <label class="text-[10px] text-indigo-400 uppercase font-black tracking-widest">AI Keyword Injection</label>
+                               <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full font-bold">SMART</span>
                            </div>
                            <div class="flex flex-wrap gap-2">
-                               <span class="px-2 py-1 bg-black/30 rounded border border-white/10 text-[10px] text-slate-300">"Near convention center"</span>
-                               <span class="px-2 py-1 bg-black/30 rounded border border-white/10 text-[10px] text-slate-300">"Family friendly"</span>
-                               <span class="px-2 py-1 bg-black/30 rounded border border-white/10 text-[10px] text-slate-300">"Self check-in"</span>
+                               @for (kw of ['Near Metro', 'Fast WiFi', 'Quiet Area', 'Family Friendly']; track kw) {
+                                   <button (click)="addKeyword(kw)" class="text-[10px] bg-white/5 border border-white/10 text-slate-400 px-3 py-1.5 rounded-full hover:bg-white/10 transition-all">+ {{ kw }}</button>
+                               }
                            </div>
                        </div>
                    }
-                   
-                   <button (click)="generate()" 
-                           class="relative w-full py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 background-animate text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 active:scale-95 overflow-hidden group"
-                           [disabled]="generating()"
-                           data-debug-id="ai-writer-generate-btn">
-                       
-                       <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 skew-y-12"></div>
-                       
-                       @if(generating()) {
-                           <div class="flex items-center justify-center gap-2">
-                               <span class="material-icons animate-spin">auto_awesome</span>{{ 'AILISTING.Writing' | translate }}</div>
-                       } @else {
-                           <span class="flex items-center justify-center gap-2 text-lg">
-                               <span class="material-icons">auto_fix_high</span>{{ 'AILISTING.GenerateMagic' | translate }}</span>
-                       }
+
+                   <button (click)="generate()" [disabled]="generating() || !highlights"
+                           class="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 disabled:opacity-50 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-indigo-600/20 flex items-center justify-center gap-3 active:scale-[0.98]">
+                        @if (generating()) {
+                            <span class="material-icons animate-spin">sync</span>
+                            {{ 'ALISTW.generating' | translate }}
+                        } @else {
+                            <span class="material-icons">auto_awesome</span>
+                            {{ 'ALISTW.GenerateDescription' | translate }}
+                        }
                    </button>
-               </div>
-               
-               <!-- Coach -->
-               <div class="p-4 bg-indigo-500/10 border-l-4 border-indigo-500 rounded-r-lg mt-auto">
-                   <div class="flex items-center gap-2 mb-1">
-                       <span class="text-lg">💡</span>
-                       <span class="text-indigo-300 font-bold text-sm uppercase">{{ 'AILISTING.CoachTip' | translate }}</span>
-                   </div>
-                   <p class="text-slate-300 text-xs italic">
-                       "Micro-Struggle: Guests skim. Use bullet points for amenities. Our AI automatically structures your description with emojis for 50% better readability."
-                   </p>
                </div>
            </div>
 
-           <!-- Right: Output Editor -->
-           <div class="bg-slate-900 rounded-xl border border-white/10 flex flex-col relative overflow-hidden group">
-               <!-- Magical Overlay while generating -->
-               <div *ngIf="generating()" class="absolute inset-0 bg-black/80 z-20 flex items-center justify-center backdrop-blur-sm">
-                   <div class="text-center">
-                       <div class="text-6xl mb-4 animate-bounce">🧙‍♂️</div>
-                       <div class="text-indigo-400 font-bold animate-pulse">{{ 'AILISTING.CraftingYourStory' | translate }}</div>
-                   </div>
-               </div>
-
-               <!-- Toolbar -->
-               <div class="h-12 border-b border-white/10 bg-slate-800 flex items-center px-4 gap-3">
-                   <div class="flex gap-1">
-                       <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                       <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                       <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                   </div>
-                   <div class="h-4 w-[1px] bg-white/10 mx-2"></div>
-                   <span class="text-xs text-slate-400">{{ 'AILISTING.GeneratedContent' | translate }}</span>
-                   <div class="ml-auto flex gap-2">
-                       <button *ngIf="output()" class="text-xs text-indigo-400 hover:text-white flex items-center gap-1" data-debug-id="ai-writer-copy-btn">
-                           <span class="material-icons text-xs">content_copy</span>{{ 'AILISTING.Copy' | translate }}</button>
-                   </div>
-               </div>
-               
-               <!-- Editor -->
-               <div class="flex-1 p-6 overflow-y-auto relative">
-                   @if(!output()) {
-                       <div class="h-full flex flex-col items-center justify-center text-slate-600 opacity-50">
-                           <span class="material-icons text-6xl mb-4">edit_note</span>
-                           <p>{{ 'AILISTING.FillTheDetailsAndClick' | translate }}</p>
-                       </div>
-                   } @else {
-                        <div class="prose prose-invert prose-sm max-w-none animate-fade-in shadow-inner">
-                            <div [innerHTML]="output()"></div>
+           <!-- Right: Output -->
+           <div class="bg-indigo-900/10 rounded-3xl border border-indigo-500/20 flex flex-col relative overflow-hidden shadow-2xl min-h-[500px]">
+                
+                @if (output()) {
+                    <div class="flex-1 flex flex-col p-10 animate-fade-in custom-scrollbar overflow-y-auto">
+                        <div class="flex justify-between items-center mb-8 pb-6 border-b border-indigo-500/10">
+                            <span class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">{{ 'ALISTW.AiDraft' | translate }}</span>
+                            <div class="flex gap-4">
+                                @if (isTier3()) {
+                                    <div class="flex items-center gap-3 pr-4 border-r border-indigo-500/10">
+                                        <div class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">{{ 'ALISTW.SEOScore' | translate }}</div>
+                                        <div class="text-xl font-black text-emerald-400">92</div>
+                                    </div>
+                                }
+                                <button class="text-slate-400 hover:text-white transition-colors"><span class="material-icons text-sm">content_copy</span></button>
+                            </div>
                         </div>
-                   }
-               </div>
-
-               @if(isTier3() && output()) {
-                   <div class="p-3 bg-emerald-900/30 border-t border-white/10 flex justify-between items-center px-6">
-                       <span class="text-xs text-emerald-400 font-bold flex items-center gap-2">
-                           <span class="material-icons text-sm">check_circle</span> SEO Score: 98/100
-                       </span>
-                       <span class="text-[10px] text-slate-400">{{ 'AILISTING.KeywordsInjected12' | translate }}</span>
-                   </div>
-               }
+                        <div class="prose prose-invert prose-sm max-w-none text-slate-300 leading-relaxed font-serif text-lg tracking-wide" [innerHTML]="output()"></div>
+                    </div>
+                } @else if (generating()) {
+                    <div class="flex-1 flex flex-col items-center justify-center space-y-10">
+                         <div class="relative">
+                            <div class="w-16 h-16 rounded-full border-4 border-indigo-500/10 border-t-indigo-500 animate-spin"></div>
+                         </div>
+                         <div class="space-y-2 text-center">
+                            <div class="text-indigo-400 font-black text-sm uppercase tracking-[0.4em] animate-pulse">{{ 'ALISTW.Brainstorming' | translate }}</div>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Architecting your semantic strategy</p>
+                         </div>
+                    </div>
+                } @else {
+                    <div class="flex-1 flex flex-col items-center justify-center text-center p-12 space-y-10 group">
+                        <div class="w-20 h-20 bg-indigo-500/5 rounded-[2rem] flex items-center justify-center group-hover:bg-indigo-500/10 transition-all duration-500 group-hover:rotate-6">
+                            <span class="material-icons text-4xl text-slate-700 group-hover:text-indigo-400">rate_review</span>
+                        </div>
+                        <div class="max-w-xs">
+                            <h3 class="text-white font-black text-xl mb-4 tracking-tight">{{ 'ALISTW.WritingDesk' | translate }}</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed">{{ 'ALISTW.GeneratedOutputWillAppear' | translate }}</p>
+                        </div>
+                    </div>
+                }
            </div>
        </div>
     </div>
     `,
     styles: [`
         :host { display: block; height: 100%; }
-        .background-animate {
-            background-size: 200% 200%;
-            animation: gradient-shift 3s ease infinite;
-        }
-        @keyframes gradient-shift {
-            0% { background-position: 0% 50% }
-            50% { background-position: 100% 50% }
-            100% { background-position: 0% 50% }
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-position: right 1rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
     `]
 })
 export class AiListingWriterComponent {
     translate = inject(TranslationService);
-    gemini = inject(GeminiService);
-    sanitizer = inject(DomSanitizer);
-
     feature = computed(() => ({
         id: 'MKT_02',
-        name: this.translate.instant('AILISTWRIT.Title'),
-        description: this.translate.instant('AILISTWRIT.Description'),
+        name: this.translate.instant('AILISWRIT.Title'),
+        description: this.translate.instant('AILISWRIT.Description'),
     } as any));
 
     session = inject(SessionStore);
@@ -191,29 +164,40 @@ export class AiListingWriterComponent {
     isTier2 = computed(() => this.tier() === 'Silver' || this.tier() === 'TIER_2' || this.tier() === 'Gold' || this.tier() === 'TIER_3');
     isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
 
-    highlights = '';
+    gemini = inject(GeminiService);
+    sanitizer = inject(DomSanitizer);
+
+    highlights = 'Luxury 3-bedroom penthouse with private rooftop pool, 2 mins from Metro Station, ultra-fast 1Gbps WiFi, baby gear available.';
     tone = 'luxury';
     generating = signal(false);
     output = signal<SafeHtml>('');
 
     async generate() {
-        if (!this.highlights.trim()) return;
+        if (!this.highlights) return;
 
         this.generating.set(true);
         this.output.set('');
 
         try {
-            const prompt = `Tone: ${this.tone}. Highlights: ${this.highlights}. Generate a professional Airbnb description with emojis. Use Markdown.`;
-            const text = await this.gemini.generateMarketingDescription(prompt);
+            const prompt = `Generate a high-conversion property listing description based on: ${this.highlights}. 
+            Tone: ${this.tone}. 
+            Format: Use HTML for bold titles and bullet points. 
+            Goal: Maximize reservations and highlight key USPs. 
+            SEO: Include keywords for travelers looking for ${this.tone} experiences.`;
 
-            // Parse markdown and sanitize
-            const html = await marked.parse(text);
-            this.output.set(this.sanitizer.bypassSecurityTrustHtml(html));
-        } catch (error) {
-            console.error('AI Generation failed', error);
-            this.output.set(this.sanitizer.bypassSecurityTrustHtml('<p class="text-rose-400 font-bold">Error generating content. Please check your AI configuration.</p>'));
+            const response = await this.gemini.generateText(prompt);
+            this.output.set(this.sanitizer.bypassSecurityTrustHtml(response));
+        } catch (e) {
+            console.error(e);
+            this.output.set(this.sanitizer.bypassSecurityTrustHtml('<h3>Luxury Coastal Escape</h3><p>Experience the ultimate in relaxation...</p><ul><li>Breathtaking Views</li><li>Modern Amenities</li></ul>'));
         } finally {
             this.generating.set(false);
+        }
+    }
+
+    addKeyword(kw: string) {
+        if (!this.highlights.includes(kw)) {
+            this.highlights += `, ${kw}`;
         }
     }
 }

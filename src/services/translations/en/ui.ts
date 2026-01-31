@@ -979,6 +979,9 @@ export const ui = {
     'ROI.RoiCashflowArchitect': 'ROI & Cashflow Architect',
     'ROI.SeasonalityLogic': 'Seasonality Logic',
     'ROI.Unlock10yearEquityAnalysisAnd': 'Unlock 10-year equity analysis and Bank-Ready PDF reports.',
+    'ROI.PremiumFeature': 'Premium Feature',
+    'ROI.UpgradeToSilverToUnlockGranular': 'Upgrade to Silver to unlock granular monthly control.',
+    'ROI.UpgradeToSilver': 'Upgrade to Silver',
 
     // Compliance Checker (LEG_00)
     'COMPLY.ZoningRegulatorySentinel': 'Zoning & Regulatory Sentinel',

@@ -20,8 +20,8 @@ interface Asset {
     selector: 'exp-02-inventory',
     standalone: true,
     imports: [CommonModule,
-    TranslatePipe
-  ],
+        TranslatePipe
+    ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
@@ -171,7 +171,7 @@ interface Asset {
                            </div>
                        }
                        <!-- Add New (Empty) -->
-                       <div class="h-full min-h-[150px] border-2 border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-slate-500 hover:text-white hover:border-white/30 cursor-pointer transition-colors" data-debug-id="add-asset-btn">
+                       <div (click)="addItem()" class="h-full min-h-[150px] border-2 border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-slate-500 hover:text-white hover:border-white/30 cursor-pointer transition-colors" data-debug-id="add-asset-btn">
                            <span class="text-2xl mb-2">+</span>
                            <span class="text-xs">{{ 'INVENTORY_.AddItem' | translate }}</span>
                        </div>
@@ -196,7 +196,7 @@ export class InventoryGeneratorComponent {
     isTier3 = computed(() => this.tier() === 'TIER_3');
 
     assets = signal<Asset[]>([
-        { id: '1', name: this.translate.instant('INVEGENE.Title'), room: 'LIVING ROOM', value: 450, warrantyExp: '2026-12-01', aiConfidence: 98 },
+        { id: '1', name: 'Premium Sofa', room: 'LIVING ROOM', value: 450, warrantyExp: '2026-12-01', aiConfidence: 98 },
         { id: '2', name: 'Samsung 55" 4K', room: 'LIVING ROOM', value: 600, warrantyExp: '2025-06-15', aiConfidence: 99 },
         { id: '3', name: 'Nespresso Inissia', room: 'KITCHEN', value: 99, warrantyExp: '2024-01-20', aiConfidence: 95 },
         { id: '4', name: 'Oak Bed Frame', room: 'BEDROOM', value: 300, aiConfidence: 85 },
@@ -207,6 +207,17 @@ export class InventoryGeneratorComponent {
         if (!this.isTier3()) return;
         // Mock Scan Effect
         alert("AI Scan Simulation: Analyzing room topology... Detected assets added.");
+    }
+
+    addItem() {
+        const newItem: Asset = {
+            id: Math.random().toString(36).substr(2, 9),
+            name: 'New Asset Item',
+            room: 'OTHER',
+            value: 0,
+            aiConfidence: 0
+        };
+        this.assets.update(prev => [...prev, newItem]);
     }
 
     getIconForAsset(asset: Asset): string {

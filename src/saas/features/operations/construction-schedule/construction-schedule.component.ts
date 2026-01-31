@@ -36,26 +36,36 @@ import { FormsModule } from '@angular/forms';
             <h3 class="text-white font-bold mb-4">{{ 'CONSTRUCTI.CriticalPathGantt' | translate }}</h3>
             
             <div class="flex-1 space-y-4 overflow-y-auto">
-                 @for (task of tasks(); track task.id) {
-                     <div class="flex items-center gap-4 group">
-                         <div class="w-32 text-xs text-white font-bold truncate">{{ task.title }}</div>
-                         <div class="flex-1 bg-black/30 h-8 rounded relative border border-white/5 overflow-hidden">
-                             <!-- Simple Gantt Visualization -->
-                             <div class="absolute h-full flex items-center px-2 text-[10px] text-black font-bold transition-all"
-                                  [style.left.%]="calculateTaskPosition(task)"
-                                  [style.width.%]="calculateTaskWidth(task)"
-                                  [style.backgroundColor]="getTaskColor(task)">
-                                 {{ task.status }}
-                             </div>
-                         </div>
-                     </div>
-                 } @empty {
-                     <div class="flex flex-col items-center justify-center h-40 text-slate-500 gap-2 border-2 border-dashed border-white/5 rounded-xl">
-                         <span class="material-icons text-4xl opacity-20">event_busy</span>
-                         <p class="text-sm italic">{{ 'CONSTRUCTI.NoTasksFound' | translate }}</p>
-                         <button (click)="addTask()" class="mt-2 text-xs bg-orange-500/20 text-orange-300 px-4 py-1 rounded-full border border-orange-500/30 hover:bg-orange-500/40 transition-all font-bold">+ Plan Your First Task</button>
-                     </div>
-                 }
+                @if (!selectedPropertyId()) {
+                    <div class="h-full flex flex-col items-center justify-center text-slate-500 gap-4 border-2 border-dashed border-white/5 rounded-xl animate-pulse p-8">
+                        <span class="material-icons text-6xl opacity-20">home_work</span>
+                        <div class="text-center">
+                            <h3 class="text-lg font-bold text-white mb-2">No Property Selected</h3>
+                            <p class="text-sm italic">Please select a property to view or manage its construction schedule.</p>
+                        </div>
+                    </div>
+                } @else {
+                    @for (task of tasks(); track task.id) {
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-32 text-xs text-white font-bold truncate">{{ task.title }}</div>
+                            <div class="flex-1 bg-black/30 h-8 rounded relative border border-white/5 overflow-hidden">
+                                <!-- Simple Gantt Visualization -->
+                                <div class="absolute h-full flex items-center px-2 text-[10px] text-black font-bold transition-all"
+                                     [style.left.%]="calculateTaskPosition(task)"
+                                     [style.width.%]="calculateTaskWidth(task)"
+                                     [style.backgroundColor]="getTaskColor(task)">
+                                    {{ task.status }}
+                                </div>
+                            </div>
+                        </div>
+                    } @empty {
+                        <div class="flex flex-col items-center justify-center h-40 text-slate-500 gap-2 border-2 border-dashed border-white/5 rounded-xl">
+                            <span class="material-icons text-4xl opacity-20">event_busy</span>
+                            <p class="text-sm italic">{{ 'CONSTRUCTI.NoTasksFound' | translate }}</p>
+                            <button (click)="addTask()" class="mt-2 text-xs bg-orange-500/20 text-orange-300 px-4 py-1 rounded-full border border-orange-500/30 hover:bg-orange-500/40 transition-all font-bold">+ Plan Your First Task</button>
+                        </div>
+                    }
+                }
             </div>
 
             @if (tier() === 'TIER_3') {
