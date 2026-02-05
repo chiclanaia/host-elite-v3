@@ -34,10 +34,9 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
            <div class="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
                <!-- Baseline Costs -->
                <div class="bg-slate-800/50 rounded-2xl border border-white/10 p-6 backdrop-blur-sm">
-                   <h3 class="text-white font-bold mb-4 flex items-center gap-2">
-                       <span class="material-icons text-emerald-400 text-sm">payments</span>
-                       {{ 'YIELD.BaselineStrategy' | translate }}
-                   </h3>
+                    <h3 class="text-white font-bold mb-4 flex items-center gap-2">
+                        {{ 'YIELD.BaselineStrategy' | translate }}
+                    </h3>
                    <div class="space-y-6">
                        <div class="p-4 bg-black/20 rounded-xl border border-white/5">
                            <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1 tracking-wider">{{ 'YIELD.BreakevenPrice' | translate }}</label>

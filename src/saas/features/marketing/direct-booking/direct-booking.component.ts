@@ -96,8 +96,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                              <button class="bg-white text-black text-[10px] font-black px-4 py-2 rounded-lg">{{ 'DBOOK.UpgradeNow' | translate }}</button>
                         </div>
                     }
-                    <h3 class="text-white font-bold mb-4 flex items-center gap-2">
-                        <span class="material-icons text-emerald-400 text-sm">payments</span>
+                     <h3 class="text-white font-bold mb-4 flex items-center gap-2">
                         {{ 'DBOOK.PaymentGateway' | translate }}
                     </h3>
                     <div class="p-4 rounded-xl border border-white/10 bg-black/20 flex items-center justify-between">

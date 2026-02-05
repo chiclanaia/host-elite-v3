@@ -16,6 +16,21 @@
 
 <body class="bg-white text-slate-900 h-full font-sans">
   <app-root></app-root>
+  <div id="error-display" style="display: none; padding: 20px; background: #fee; border: 2px solid #c00; margin: 20px; font-family: monospace;">
+    <h2 style="color: #c00;">JavaScript Error:</h2>
+    <pre id="error-message" style="color: #333;"></pre>
+  </div>
+  <script>
+    window.addEventListener('error', function(e) {
+      document.getElementById('error-display').style.display = 'block';
+      document.getElementById('error-message').textContent = 
+        'Error: ' + e.message + '\nFile: ' + e.filename + '\nLine: ' + e.lineno + '\n' + (e.error && e.error.stack ? e.error.stack : '');
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      document.getElementById('error-display').style.display = 'block';
+      document.getElementById('error-message').textContent = 'Unhandled Promise Rejection: ' + e.reason;
+    });
+  </script>
 </body>
 
 </html>

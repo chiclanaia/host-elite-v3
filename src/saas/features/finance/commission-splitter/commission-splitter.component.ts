@@ -148,7 +148,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                 <!-- Multi-Owner Ledger (Tier 3) -->
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex-1 relative overflow-hidden group">
                      <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                         <span class="material-icons text-sm">account_balance_wallet</span>{{ 'COMMISSION.OwnerLedger' | translate }}</h3>
+                        {{ 'COMMISSION.OwnerLedger' | translate }}</h3>
 
                      @if (isTier3()) {
                          <div class="space-y-3">
@@ -174,8 +174,8 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                              </div>
                              
                              <div class="mt-6 pt-4 border-t border-white/10">
-                                 <button class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all" data-debug-id="comm-payout-btn">
-                                     <span class="material-icons text-sm">payments</span>{{ 'COMMISSION.TriggerStripePayout' | translate }}</button>
+                                  <button class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all" data-debug-id="comm-payout-btn">
+                                    {{ 'COMMISSION.TriggerStripePayout' | translate }}</button>
                              </div>
                          </div>
                      } @else {

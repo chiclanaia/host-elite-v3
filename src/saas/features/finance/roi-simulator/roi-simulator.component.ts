@@ -23,11 +23,10 @@ import { HmrcService } from '../../../../services/hmrc.service';
           <p class="text-slate-400 mt-2 max-w-2xl">{{ 'ROI.ProfessionalFinancialModelingEngineWith' | translate }}</p>
           
           @if (propertyDetails()) {
-            <div class="mt-4 flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-2 w-fit">
-               <span class="material-icons text-emerald-400 text-sm">home</span>
-               <span class="text-white text-xs font-bold">{{ propertyDetails().name }}</span>
-               <span class="text-slate-500 text-[10px]">{{ propertyDetails().address }}</span>
-            </div>
+             <div class="mt-4 flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-2 w-fit">
+                <span class="text-white text-xs font-bold">{{ propertyDetails().name }}</span>
+                <span class="text-slate-500 text-[10px]">{{ propertyDetails().address }}</span>
+             </div>
           }
         </div>
          <div class="flex gap-2">
@@ -52,159 +51,217 @@ import { HmrcService } from '../../../../services/hmrc.service';
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full min-h-0">
         <!-- Left: Inputs & Seasonality -->
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col overflow-y-auto">
-           <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-white">{{ 'ROI.FinancialDesign' | translate }}</h3>
-                @if (isTier3()) {
-                    <button (click)="autoFill()" [disabled]="isAiLoading()" class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30 hover:bg-indigo-500/40 transition-colors flex items-center gap-1 disabled:opacity-50" data-debug-id="roi-autofill-btn">
-                        <span>{{ isAiLoading() ? '...' : '✨' }}</span>
-                        {{ isAiLoading() ? 'Analyzing Market...' : ('ROI.AiEstimate' | translate) }}
-                    </button>
-                }
+        <div class="flex flex-col gap-4 overflow-y-auto pr-1">
+           <!-- Section 1: Financial Design -->
+           <div class="bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm overflow-hidden transition-all duration-300">
+                <button (click)="toggleDesign()" class="w-full text-left p-5 flex justify-between items-center hover:bg-white/5 transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <div>
+                            <h3 class="text-lg font-bold text-white leading-none">{{ 'ROI.FinancialDesign' | translate }}</h3>
+                            <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-bold">Core Investment Metrics</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        @if (isTier3()) {
+                            <button (click)="$event.stopPropagation(); autoFill()" [disabled]="isAiLoading()" 
+                                    class="text-[10px] bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30 hover:bg-indigo-500/40 transition-colors flex items-center gap-1 disabled:opacity-50">
+                                <span>{{ isAiLoading() ? '...' : '✨' }}</span>
+                                {{ isAiLoading() ? '...' : ('ROI.AiEstimate' | translate) }}
+                            </button>
+                        }
+                        @if (designExpanded()) {
+                            <span class="material-icons text-slate-500 transition-transform duration-300">expand_less</span>
+                        } @else {
+                            <span class="material-icons text-slate-500 transition-transform duration-300">expand_more</span>
+                        }
+                    </div>
+                </button>
+
+                <div class="p-5 pt-0 animate-fade-in" [class.hidden]="!designExpanded()">
+                    <form [formGroup]="form" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase mb-1.5 tracking-widest pl-1">{{ 'ROI.Price' | translate }}</label>
+                                <div class="relative group/input">
+                                    <input type="number" formControlName="price" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all text-sm font-mono" data-debug-id="roi-input-price">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 font-bold text-xs uppercase">€</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase mb-1.5 tracking-widest pl-1">{{ 'ROI.AvgNightlyRate' | translate }}</label>
+                                <div class="relative group/input">
+                                    <input type="number" formControlName="rent" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all text-sm font-mono" data-debug-id="roi-input-rent">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 font-bold text-xs uppercase">€</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
            </div>
-           
-           <form [formGroup]="form" class="space-y-6">
-              <!-- Core Numbers -->
-              <div class="grid grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">{{ 'ROI.Price' | translate }}</label>
-                    <input type="number" formControlName="price" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="roi-input-price">
-                  </div>
-                  <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">{{ 'ROI.AvgNightlyRate' | translate }}</label>
-                    <input type="number" formControlName="rent" class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-mono" data-debug-id="roi-input-rent">
-                  </div>
-              </div>
 
-              <!-- Expenses -->
-              <div>
-                  <div class="flex justify-between mb-2">
-                       <label class="block text-xs font-bold text-slate-400 uppercase">{{ 'ROI.MonthlyExpenses' | translate }}</label>
-                       <span class="text-xs text-slate-500">{{ totalExpenses() | currency:'EUR':'symbol':'1.0-0' }}/mo</span>
-                  </div>
-                  <div class="space-y-2">
-                      <div class="flex items-center gap-2">
-                          <span class="text-xs text-slate-400 w-24">{{ 'ROI.Loan' | translate }}</span>
-                          <input type="number" formControlName="loan" class="flex-1 bg-black/20 border border-white/10 rounded px-2 py-1 text-white text-xs" placeholder="0">
-                      </div>
-                      <div class="flex items-center gap-2">
-                          <span class="text-xs text-slate-400 w-24">{{ 'ROI.Billshoa' | translate }}</span>
-                          <input type="number" formControlName="condo" class="flex-1 bg-black/20 border border-white/10 rounded px-2 py-1 text-white text-xs" placeholder="0">
-                      </div>
-                  </div>
-              </div>
+           <!-- Section 2: Monthly Expenses -->
+           <div class="bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm overflow-hidden transition-all duration-300">
+                <button (click)="toggleExpenses()" class="w-full text-left p-5 flex justify-between items-center hover:bg-white/5 transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <div>
+                            <h3 class="text-lg font-bold text-white leading-none">{{ 'ROI.MonthlyExpenses' | translate }}</h3>
+                            <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-bold">Fixed & Variable Costs</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs text-rose-400 font-mono bg-rose-400/10 px-2 py-0.5 rounded border border-rose-400/20">{{ totalExpenses() | currency:'EUR':'symbol':'1.0-0' }}/mo</span>
+                        @if (expensesExpanded()) {
+                            <span class="material-icons text-slate-500 transition-transform duration-300">expand_less</span>
+                        } @else {
+                            <span class="material-icons text-slate-500 transition-transform duration-300">expand_more</span>
+                        }
+                    </div>
+                </button>
 
-              <!-- AI Market Summary (Gold Tier) -->
-              @if (isTier3() && aiSummary()) {
-                  <div class="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-lg animate-fade-in">
-                      <h5 class="text-xs font-bold text-emerald-400 uppercase mb-1 flex items-center gap-2">
-                          <span class="material-icons text-xs">analytics</span> Market Analysis
-                      </h5>
-                      <p class="text-xs text-emerald-200/70 italic leading-relaxed">
-                          "{{ aiSummary() }}"
-                      </p>
-                  </div>
-              }
+                <div class="p-5 pt-0 animate-fade-in" [class.hidden]="!expensesExpanded()">
+                    <form [formGroup]="form" class="space-y-3">
+                        <div class="flex items-center gap-3 bg-black/20 p-3 rounded-xl border border-white/5">
+                            <div class="flex-1">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ 'ROI.Loan' | translate }}</label>
+                                <input type="number" formControlName="loan" class="w-full bg-transparent border-none p-0 text-white text-sm font-bold placeholder:text-slate-700 outline-none" placeholder="0.00">
+                            </div>
+                            <span class="text-slate-600 font-bold text-xs pr-2">€</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-black/20 p-3 rounded-xl border border-white/5">
+                            <div class="flex-1">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ 'ROI.Billshoa' | translate }}</label>
+                                <input type="number" formControlName="condo" class="w-full bg-transparent border-none p-0 text-white text-sm font-bold placeholder:text-slate-700 outline-none" placeholder="0.00">
+                            </div>
+                            <span class="text-slate-600 font-bold text-xs pr-2">€</span>
+                        </div>
+                    </form>
+                </div>
+           </div>
 
-              <!-- Tier 2: Seasonality Engine -->
-              <div>
-                   <div class="flex justify-between items-center mb-4 pt-4 border-t border-white/10">
-                        <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                            <span class="material-icons text-sm text-cyan-400">calendar_month</span>{{ 'ROI.SeasonalityLogic' | translate }}</h4>
-                        @if (!isTier2OrAbove()) { <span class="text-xs text-amber-400 border border-amber-400/30 px-1.5 rounded">SILVER +</span> }
-                   </div>
-                   
-                   <div class="space-y-6">
-                       <div class="flex items-center gap-4">
-                           <span class="text-xs text-slate-400 w-16">{{ 'ROI.Occupancy' | translate }}</span>
-                           <input type="range" class="flex-1 h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer" 
-                                  min="0" max="100" [value]="baseOccupancy()" (input)="updateBaseOccupancy($event)"> 
-                           <span class="text-xs text-white font-mono w-8">{{ baseOccupancy() }}%</span>
-                       </div>
+           <!-- Section 3: Seasonality Logic -->
+           <div class="bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm overflow-hidden transition-all duration-300">
+                <button (click)="toggleSeasonality()" class="w-full text-left p-5 flex justify-between items-center hover:bg-white/5 transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <div>
+                            <h3 class="text-lg font-bold text-white leading-none">{{ 'ROI.SeasonalityLogic' | translate }}</h3>
+                            <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-bold">Demand & Dynamic Pricing</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        @if (!isTier2OrAbove()) { <span class="text-[10px] font-black text-amber-400 border border-amber-400/30 px-2 py-0.5 rounded-full bg-amber-400/10 uppercase tracking-tighter">Premium Access</span> }
+                        @if (seasonalityExpanded()) {
+                            <span class="material-icons text-slate-500 transition-transform duration-300">expand_less</span>
+                        } @else {
+                            <span class="material-icons text-slate-500 transition-transform duration-300">expand_more</span>
+                        }
+                    </div>
+                </button>
 
-                       <div class="flex items-center gap-4">
-                           <span class="text-xs text-slate-400 w-16">{{ 'ROI.Price' | translate }}</span>
-                           <input type="range" class="flex-1 h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer" 
-                                  min="0" max="1000" [value]="basePrice()" (input)="updateBasePrice($event)"> 
-                           <span class="text-xs text-white font-mono w-8">{{ basePrice() }}€</span>
-                       </div>
-
-                       <!-- Formal Seasonality Table -->
-                       <div class="bg-black/40 rounded-2xl border border-white/10 p-5 overflow-x-auto shadow-2xl relative group/table-container">
-                            <div [class.blur-sm]="!isTier2OrAbove()" [class.pointer-events-none]="!isTier2OrAbove()">
-                                <table class="w-full min-w-[850px] border-collapse">
-                                    <thead>
-                                        <tr>
-                                            <th class="w-24 text-left pb-4">
-                                                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">Season</span>
-                                            </th>
-                                            @for (m of months; track m; let i = $index) {
-                                                <th class="pb-4 px-1">
-                                                    <div class="flex flex-col items-center">
-                                                        <span class="text-xs font-black text-white uppercase tracking-widest">{{m}}</span>
-                                                    </div>
-                                                </th>
-                                            }
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Prop: Occupancy -->
-                                        <tr class="group/row hover:bg-white/[0.02] transition-colors">
-                                            <td class="py-3 border-t border-white/5">
-                                                <span class="text-xs font-black text-emerald-400 uppercase tracking-tight pl-1">Occupancy</span>
-                                            </td>
-                                            @for (m of months; track m; let i = $index) {
-                                                <td class="py-3 px-1 border-t border-white/5">
-                                                    <div class="relative group/field">
-                                                        <input type="number" 
-                                                               [value]="(seasonalityFactors()[i] * baseOccupancy()) | number:'1.0-0'" 
-                                                               (input)="updateMonthlyOccupancy(i, $event)"
-                                                               class="w-full bg-white/5 border border-white/10 rounded-lg py-2 text-sm text-white text-center font-bold focus:border-emerald-500/50 focus:bg-emerald-500/10 focus:ring-1 focus:ring-emerald-500/20 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                               min="0" max="150">
-                                                        <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-emerald-500 font-bold opacity-0 group-hover/field:opacity-40 group-focus-within/field:opacity-100 transition-opacity">%</span>
-                                                    </div>
-                                                </td>
-                                            }
-                                        </tr>
-                                        <!-- Prop: Nightly Rate -->
-                                        <tr class="group/row hover:bg-white/[0.02] transition-colors">
-                                            <td class="py-3 border-t border-white/5">
-                                                <span class="text-xs font-black text-indigo-400 uppercase tracking-tight pl-1">Nightly Price</span>
-                                            </td>
-                                            @for (m of months; track m; let i = $index) {
-                                                <td class="py-3 px-1 border-t border-white/5">
-                                                    <div class="relative group/field">
-                                                        <input type="number" 
-                                                               [value]="(priceFactors()[i] * (formValues()?.rent || 0)) | number:'1.0-0'" 
-                                                               (input)="updateMonthlyPrice(i, $event)"
-                                                               class="w-full bg-white/5 border border-white/10 rounded-lg py-2 text-sm text-white text-center font-bold focus:border-indigo-500/50 focus:bg-indigo-500/10 focus:ring-1 focus:ring-indigo-500/20 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                               min="0">
-                                                        <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-indigo-500 font-bold opacity-0 group-hover/field:opacity-40 group-focus-within/field:opacity-100 transition-opacity">€</span>
-                                                    </div>
-                                                </td>
-                                            }
-                                        </tr>
-                                    </tbody>
-                                </table>
+                <div class="p-5 pt-0 animate-fade-in" [class.hidden]="!seasonalityExpanded()">
+                    <div class="space-y-6">
+                        <div class="space-y-4 bg-black/20 p-4 rounded-xl border border-white/5">
+                            <div class="flex items-center gap-4">
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ 'ROI.Occupancy' | translate }}</span>
+                                        <span class="text-xs text-white font-mono font-bold">{{ baseOccupancy() }}%</span>
+                                    </div>
+                                    <input type="range" class="w-full h-1 bg-slate-700/50 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
+                                           min="0" max="100" [value]="baseOccupancy()" (input)="updateBaseOccupancy($event)"> 
+                                </div>
                             </div>
 
-                            <!-- Padlock Overlay (Cadenas) -->
-                            @if (!isTier2OrAbove()) {
-                                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] rounded-2xl transition-all group-hover/table-container:bg-black/60">
-                                    <div class="p-4 bg-slate-900 shadow-2xl rounded-full border border-white/10 mb-3 animate-bounce">
-                                        <span class="material-icons text-4xl text-indigo-400">lock</span>
+                            <div class="flex items-center gap-4">
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ 'ROI.Price' | translate }}</span>
+                                        <span class="text-xs text-white font-mono font-bold">{{ basePrice() }}€</span>
                                     </div>
-                                    <h4 class="text-white font-bold text-lg mb-1">{{ 'ROI.PremiumFeature' | translate }}</h4>
-                                    <p class="text-slate-400 text-xs mb-4 max-w-[200px] text-center">{{ 'ROI.UpgradeToSilverToUnlockGranular' | translate }}</p>
-                                    <button class="px-6 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-full text-xs font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 transition-transform active:scale-95">
-                                        {{ 'ROI.UpgradeToSilver' | translate }}
-                                    </button>
+                                    <input type="range" class="w-full h-1 bg-slate-700/50 rounded-lg appearance-none cursor-pointer accent-indigo-500" 
+                                           min="0" max="1000" [value]="basePrice()" (input)="updateBasePrice($event)"> 
                                 </div>
-                            }
-                       </div>
-                   </div>
-              </div>
-           </form>
+                            </div>
+                        </div>
+
+                        <!-- Formal Seasonality Table -->
+                        <div class="bg-black/60 rounded-2xl border border-white/10 overflow-hidden shadow-2xl relative group/table-container">
+                             <div class="overflow-x-auto p-4" [class.blur-[2px]]="!isTier2OrAbove()" [class.pointer-events-none]="!isTier2OrAbove()">
+                                 <table class="w-full min-w-[850px] border-collapse">
+                                     <thead>
+                                         <tr>
+                                             <th class="w-24 text-left pb-3">
+                                                 <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">Month</span>
+                                             </th>
+                                             @for (m of months; track m; let i = $index) {
+                                                 <th class="pb-3 px-1">
+                                                     <div class="flex flex-col items-center">
+                                                         <span class="text-[10px] font-black text-white uppercase tracking-widest">{{m}}</span>
+                                                     </div>
+                                                 </th>
+                                             }
+                                         </tr>
+                                     </thead>
+                                     <tbody>
+                                         <!-- Prop: Occupancy -->
+                                         <tr class="group/row">
+                                             <td class="py-2 border-t border-white/5">
+                                                 <div class="flex items-center gap-1.5 pl-1">
+                                                     <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                                                     <span class="text-[9px] font-black text-emerald-400 uppercase tracking-tighter">Occ %</span>
+                                                 </div>
+                                             </td>
+                                             @for (m of months; track m; let i = $index) {
+                                                 <td class="py-2 px-1 border-t border-white/5">
+                                                     <input type="number" 
+                                                            [value]="(seasonalityFactors()[i] * baseOccupancy()) | number:'1.0-0'" 
+                                                            (input)="updateMonthlyOccupancy(i, $event)"
+                                                            class="w-full bg-white/5 border border-white/10 rounded px-1 py-1.5 text-[11px] text-white text-center font-bold focus:border-emerald-500/50 focus:bg-emerald-500/10 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                            min="0" max="150">
+                                                 </td>
+                                             }
+                                         </tr>
+                                         <!-- Prop: Nightly Rate -->
+                                         <tr class="group/row">
+                                             <td class="py-2 border-t border-white/5">
+                                                 <div class="flex items-center gap-1.5 pl-1">
+                                                     <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                                                     <span class="text-[9px] font-black text-indigo-400 uppercase tracking-tighter">Price €</span>
+                                                 </div>
+                                             </td>
+                                             @for (m of months; track m; let i = $index) {
+                                                 <td class="py-2 px-1 border-t border-white/5">
+                                                     <input type="number" 
+                                                            [value]="(priceFactors()[i] * (formValues()?.rent || 0)) | number:'1.0-0'" 
+                                                            (input)="updateMonthlyPrice(i, $event)"
+                                                            class="w-full bg-white/5 border border-white/10 rounded px-1 py-1.5 text-[11px] text-white text-center font-bold focus:border-indigo-500/50 focus:bg-indigo-500/10 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                            min="0" max="5000">
+                                                 </td>
+                                             }
+                                         </tr>
+                                     </tbody>
+                                 </table>
+                             </div>
+
+                             @if (!isTier2OrAbove()) {
+                                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] transition-all group-hover/table-container:bg-black/60">
+                                    <div class="bg-black/60 border border-white/10 p-6 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-sm animate-fade-in-up">
+                                        <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-orange-600/20">
+                                            <span class="material-icons text-white text-3xl">lock</span>
+                                        </div>
+                                        <h4 class="text-white font-black text-lg mb-1 uppercase tracking-tight">{{ 'ROI.PremiumFeature' | translate }}</h4>
+                                        <p class="text-slate-400 text-xs mb-6 px-4 font-medium leading-relaxed">
+                                            {{ 'ROI.UpgradeToSilverToUnlockGranular' | translate }}
+                                        </p>
+                                        <button class="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-black py-3 px-8 rounded-xl transition-all shadow-lg active:scale-95 text-xs uppercase tracking-widest">
+                                            {{ 'ROI.UpgradeToSilver' | translate }}
+                                        </button>
+                                    </div>
+                                </div>
+                             }
+                        </div>
+                    </div>
+                </div>
+           </div>
         </div>
 
         <!-- Right: Results & Visuals -->
@@ -233,7 +290,6 @@ import { HmrcService } from '../../../../services/hmrc.service';
                      <div class="mt-2 pt-4 border-t border-white/5 flex items-center justify-between animate-fade-in">
                         <div>
                             <p class="text-xs text-slate-500 uppercase font-bold flex items-center gap-1">
-                                <span class="material-icons text-xs">account_balance_wallet</span> 
                                 HMRC Tax Estimate (UK FHL)
                             </p>
                             <div class="text-sm font-bold text-rose-300">
@@ -298,6 +354,15 @@ export class RoiSimulatorComponent {
   gemini = inject(GeminiService);
   hmrc = inject(HmrcService);
 
+  // Collapsible Sections State
+  designExpanded = signal(true);
+  expensesExpanded = signal(true);
+  seasonalityExpanded = signal(true);
+
+  toggleDesign() { this.designExpanded.set(!this.designExpanded()); }
+  toggleExpenses() { this.expensesExpanded.set(!this.expensesExpanded()); }
+  toggleSeasonality() { this.seasonalityExpanded.set(!this.seasonalityExpanded()); }
+
   tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
   isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
   isTier2OrAbove = computed(() => ['TIER_2', 'TIER_3', 'Silver', 'Gold'].includes(this.tier()));
@@ -314,6 +379,7 @@ export class RoiSimulatorComponent {
   // Seasonality Engine
   months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   baseOccupancy = signal(65);
+  basePrice = computed(() => this.formValues()?.rent || 0);
   seasonalityFactors = signal([0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 1.2, 1.3, 0.9, 0.7, 0.5, 0.8]);
   priceFactors = signal([1.0, 1.0, 1.0, 1.0, 1.2, 1.5, 1.8, 2.0, 1.2, 1.0, 0.9, 1.5]);
 
@@ -342,6 +408,11 @@ export class RoiSimulatorComponent {
   updateBaseOccupancy(event: Event) {
     const val = (event.target as HTMLInputElement).value;
     this.baseOccupancy.set(parseInt(val, 10));
+  }
+
+  updateBasePrice(event: Event) {
+    const val = (event.target as HTMLInputElement).value;
+    this.form.patchValue({ rent: parseInt(val, 10) }, { emitEvent: true });
   }
 
   adjustSeasonality(index: number) {

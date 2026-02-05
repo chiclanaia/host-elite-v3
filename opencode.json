@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "nvidia": {
+      "npm": "@ai-sdk/openai",
+      "name": "NVIDIA",
+      "options": {
+        "baseURL": "https://integrate.api.nvidia.com/v1",
+        "apiKey": "{env:NVIDIA_API_KEY}"
+      },
+      "models": {
+        "kimi-k2.5": {
+          "id": "moonshotai/kimi-k2.5",
+          "options": {
+            "extra_body": {
+              "chat_template_kwargs": { "thinking": true }
+            }
+          }
+        }
+      }
+    }
+  },
+  "model": "nvidia/kimi-k2.5",
+  "instructions": [
+    "After making code edits, always run 'npm run build' to verify the changes compile successfully. Do not wait for the user to ask - run it automatically."
+  ]
+}

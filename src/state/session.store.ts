@@ -291,6 +291,9 @@ export class SessionStore {
     }
 
     private async processAuthenticatedUser(user: any) {
+        // Refresh Global Config now that we are authenticated (or just to be sure)
+        await this.loadGlobalConfig();
+
         // 1. Fetch Profile
         let profile = null;
         try {

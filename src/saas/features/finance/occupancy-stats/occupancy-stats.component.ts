@@ -122,7 +122,7 @@ import { FormsModule } from '@angular/forms';
        <div class="flex-1 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm relative overflow-hidden flex flex-col">
            <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                    <span class="material-icons text-indigo-400">calendar_month</span>{{ 'OCC.OccupancyHeatmap' | translate }}</h3>
+                    {{ 'OCC.OccupancyHeatmap' | translate }}</h3>
                 <div class="flex gap-4 text-[10px] uppercase font-bold text-slate-500">
                     <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-slate-800 border border-slate-700"></div>{{ 'OCC.Empty' | translate }}</span>
                     <span class="flex items-center gap-1"><div class="w-3 h-3 rounded bg-indigo-500/40"></div>{{ 'OCC.LowRate' | translate }}</span>
