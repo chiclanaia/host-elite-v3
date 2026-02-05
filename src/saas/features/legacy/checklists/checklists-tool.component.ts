@@ -39,19 +39,11 @@ export class ChecklistsToolComponent implements OnInit {
     selectedChecklist = signal<ChecklistWithItems | null>(null);
     isLoading = signal<boolean>(true);
 
-    userTier = computed(() => this.store.userProfile()?.plan || 'Freemium');
-
-    public tierRanking: Record<string, number> = {
-        'Freemium': 0,
-        'Bronze': 1,
-        'Silver': 2,
-        'Gold': 3
-    };
+    userTier = computed(() => this.store.userProfile()?.plan || 'TIER_0');
 
     filteredChecklists = computed(() => {
         const checklists = this.availableChecklists();
-        const userTier = this.userTier();
-        const userTierRank = this.tierRanking[userTier] || 0;
+        const userTierRank = this.store.getTierRank(this.userTier());
 
         // Group by category
         const byCategory: Record<string, ChecklistWithItems[]> = {};
@@ -68,26 +60,26 @@ export class ChecklistsToolComponent implements OnInit {
 
             // Find accessible checklists
             const accessible = group.filter(c => {
-                const rank = this.tierRanking[c.tier] !== undefined ? this.tierRanking[c.tier] : -1;
+                const rank = this.store.getTierRank(this.store.normalizeTierId(c.tier));
                 return rank <= userTierRank;
             });
 
             // Sort by rank DESC (Highest first)
             accessible.sort((a, b) => {
-                const rankA = this.tierRanking[a.tier] !== undefined ? this.tierRanking[a.tier] : -1;
-                const rankB = this.tierRanking[b.tier] !== undefined ? this.tierRanking[b.tier] : -1;
+                const rankA = this.store.getTierRank(this.store.normalizeTierId(a.tier));
+                const rankB = this.store.getTierRank(this.store.normalizeTierId(b.tier));
                 return rankB - rankA;
             });
 
             const bestAccessible = accessible.length > 0 ? accessible[0] : null;
-            const bestRank = bestAccessible && this.tierRanking[bestAccessible.tier] !== undefined
-                ? this.tierRanking[bestAccessible.tier]
+            const bestRank = bestAccessible
+                ? this.store.getTierRank(this.store.normalizeTierId(bestAccessible.tier))
                 : -1;
 
             // Logic: Show Best Accessible + Higher Tiers (Locked)
             // Hide Lower Tiers
             group.forEach(c => {
-                const cRank = this.tierRanking[c.tier] !== undefined ? this.tierRanking[c.tier] : -1;
+                const cRank = this.store.getTierRank(this.store.normalizeTierId(c.tier));
 
                 const isBest = bestAccessible && c.id === bestAccessible.id;
                 const isHigher = cRank > bestRank;
@@ -105,8 +97,8 @@ export class ChecklistsToolComponent implements OnInit {
             const catCompare = catA.localeCompare(catB);
             if (catCompare !== 0) return catCompare;
 
-            const rankA = this.tierRanking[a.tier] || 0;
-            const rankB = this.tierRanking[b.tier] || 0;
+            const rankA = this.store.getTierRank(this.store.normalizeTierId(a.tier));
+            const rankB = this.store.getTierRank(this.store.normalizeTierId(b.tier));
             return rankA - rankB;
         });
     });
@@ -149,13 +141,13 @@ export class ChecklistsToolComponent implements OnInit {
     }
 
     isTierAllowed(checklistTier: string): boolean {
-        const userRank = this.tierRanking[this.userTier()] || 0;
-        const requiredRank = this.tierRanking[checklistTier] || 0;
+        const userRank = this.store.getTierRank(this.userTier());
+        const requiredRank = this.store.getTierRank(this.store.normalizeTierId(checklistTier));
         return userRank >= requiredRank;
     }
 
     getTierLevelLabel(tier: string): number {
-        return (this.tierRanking[tier] || 0) + 1;
+        return this.store.getTierRank(this.store.normalizeTierId(tier)) + 1;
     }
 
     getTotalTime(checklist: ChecklistWithItems): number {
@@ -166,13 +158,13 @@ export class ChecklistsToolComponent implements OnInit {
         if (!currentChecklist.category) return currentChecklist.items;
 
         // 1. Get current checklist's rank
-        const currentRank = this.tierRanking[currentChecklist.tier] || 0;
+        const currentRank = this.store.getTierRank(this.store.normalizeTierId(currentChecklist.tier));
         const currentCategory = currentChecklist.category.toLowerCase().trim();
 
         // 2. Find all checklists in the same category with rank <= currentRank
         const relevantChecklists = this.availableChecklists().filter(c => {
             const cCategory = c.category?.toLowerCase().trim();
-            const cRank = this.tierRanking[c.tier] || 0;
+            const cRank = this.store.getTierRank(this.store.normalizeTierId(c.tier));
             return cCategory === currentCategory && cRank <= currentRank;
         });
 
@@ -224,12 +216,7 @@ export class ChecklistsToolComponent implements OnInit {
     }
 
     getTierBadgeClass(tier: string): string {
-        switch (tier) {
-            case 'Bronze': return 'bg-orange-500/10 text-orange-200 border-orange-500/20';
-            case 'Silver': return 'bg-slate-400/10 text-slate-200 border-slate-400/20';
-            case 'Gold': return 'bg-[#D4AF37]/10 text-[#D4AF37] border-[#D4AF37]/20';
-            default: return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
-        }
+        return this.store.getTierClass(tier);
     }
 
     getSectionIcon(section: string): SafeHtml {

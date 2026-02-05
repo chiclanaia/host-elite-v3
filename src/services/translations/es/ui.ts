@@ -50,6 +50,7 @@ export const ui = {
     'COMMON.Tier.Bronze': 'Bronce',
     'COMMON.Tier.Silver': 'Plata',
     'COMMON.Tier.Gold': 'Oro',
+    'COMMON.Tier.Free': 'Gratis',
     'SIDEBAR.Management': 'Gestión',
     'SIDEBAR.Personal': 'Personal',
     'SIDEBAR.MyProperties': 'Mis Propiedades',

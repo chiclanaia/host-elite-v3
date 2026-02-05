@@ -11,6 +11,7 @@ import { listing } from './es/listing';
 import { assistant } from './es/assistant';
 import { calendar } from './es/calendar';
 import { ph3 } from './es/ph3_features';
+import { roi } from './es/roi';
 
 export const es = {
     ...ui,
@@ -25,5 +26,6 @@ export const es = {
     ...listing,
     ...assistant,
     ...calendar,
-    ...ph3
+    ...ph3,
+    ...roi
 };

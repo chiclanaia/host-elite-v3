@@ -183,17 +183,11 @@ export class PhaseViewComponent implements OnInit {
 
 
     isFeatureLocked(feature: Feature): boolean {
-        const levels: Record<string, number> = { 'Freemium': 0, 'TIER_0': 0, 'Bronze': 1, 'TIER_1': 1, 'Silver': 2, 'TIER_2': 2, 'Gold': 3, 'TIER_3': 3 };
-        const userLevel = levels[this.userPlan()] || 0;
-        const requiredLevel = levels[feature.required_tier || 'TIER_0'] || 0;
-        return userLevel < requiredLevel;
+        return this.store.userTierRank() < this.store.getTierRank(feature.required_tier);
     }
 
     isFlavorLocked(tierId: string): boolean {
-        const levels: Record<string, number> = { 'Freemium': 0, 'TIER_0': 0, 'Bronze': 1, 'TIER_1': 1, 'Silver': 2, 'TIER_2': 2, 'Gold': 3, 'TIER_3': 3 };
-        const userLevel = levels[this.userPlan()] || 0;
-        const targetLevel = levels[tierId] || 0;
-        return userLevel < targetLevel;
+        return this.store.userTierRank() < this.store.getTierRank(tierId);
     }
 
     formatFlavor(tierId: string, config: any): string {
@@ -212,24 +206,15 @@ export class PhaseViewComponent implements OnInit {
 
     getSortedFlavors(feature: Feature) {
         if (!feature.flavors) return [];
-        const levels: Record<string, number> = { 'TIER_0': 0, 'TIER_1': 1, 'TIER_2': 2, 'TIER_3': 3 };
-        return [...feature.flavors].sort((a, b) => levels[a.tier_id] - levels[b.tier_id]);
+        return [...feature.flavors].sort((a, b) => this.store.getTierRank(a.tier_id) - this.store.getTierRank(b.tier_id));
     }
 
     getTierClass(tier: string | undefined): string {
-        const t = tier || 'TIER_0';
-        if (t.includes('TIER_3') || t.includes('Gold')) return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]'; // Gold
-        if (t.includes('TIER_2') || t.includes('Silver')) return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]'; // Silver
-        if (t.includes('TIER_1') || t.includes('Bronze')) return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]'; // Bronze
-        return 'bg-slate-600'; // Free/Starter
+        return this.store.getTierClass(tier);
     }
 
     getTierLabel(tier: string | undefined): string {
-        const t = tier || 'TIER_0';
-        if (t.includes('TIER_3') || t.includes('Gold')) return 'Gold';
-        if (t.includes('TIER_2') || t.includes('Silver')) return 'Silver';
-        if (t.includes('TIER_1') || t.includes('Bronze')) return 'Bronze';
-        return 'Free';
+        return this.translationService.translate(this.store.getTierTranslationKey(tier));
     }
 
     // --- Property Audit / Onboarding Logic ---

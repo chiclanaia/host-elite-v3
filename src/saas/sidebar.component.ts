@@ -323,6 +323,7 @@ export class SidebarComponent {
 
     public store = inject(SessionStore); // Injected to resolve badges and phases
     private sanitizer: DomSanitizer = inject(DomSanitizer);
+    private translationService = inject(TranslationService);
 
     constructor() {
         console.log('[Sidebar] Component initialized');
@@ -398,30 +399,13 @@ export class SidebarComponent {
 
             // 2. Check Plan Lock
             if (view.requiredTier) {
-                const tiers = this.store.appTiers();
-                if (tiers.length === 0) {
-                    const legacyTiers = ['Freemium', 'Bronze', 'Silver', 'Gold'];
-                    const userTierIndex = legacyTiers.indexOf(this.userPlan() || 'Freemium');
-                    const requiredTierIndex = legacyTiers.indexOf(view.requiredTier);
-                    return userTierIndex < requiredTierIndex;
-                }
-
-                const planLevels = tiers.reduce((acc, t) => {
-                    acc[t.tier_id] = t.rank_order;
-                    acc[t.name] = t.rank_order;
-                    return acc;
-                }, {} as Record<string, number>);
-
-                const userTierRank = planLevels[this.userPlan() || 'Freemium'] || 0;
-                const requiredRank = planLevels[view.requiredTier] || 0;
-
-                return userTierRank < requiredRank;
+                return this.store.userTierRank() < this.store.getTierRank(view.requiredTier);
             }
 
             return false;
         } catch (e) {
             console.error('[Sidebar] Error in isLocked for view:', view.id, e);
-            return false; // Fail safe: show as unlocked or maybe handle gracefully. unlocked allows clicking which might error elsewhere, but safer for visibility.
+            return false;
         }
     }
 
@@ -430,38 +414,21 @@ export class SidebarComponent {
     }
 
     getTierIndicatorClass(tier: string): string {
-        const tiers = this.store.appTiers();
-        const tierId = tiers.find(t => t.name === tier)?.tier_id || tier;
-
-        switch (tierId) {
-            case 'Bronze':
-            case 'TIER_1': return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]';
-            case 'Silver':
-            case 'TIER_2': return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]';
-            case 'Gold':
-            case 'TIER_3': return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]';
-            default: return 'bg-slate-600';
-        }
+        return this.store.getTierClass(tier);
     }
 
     displayPlanName = computed(() => {
         const tier = this.userPlan();
-        const tiers = this.store.appTiers();
-        const tierData = tiers.find(t => t.tier_id === tier || t.name === tier);
-        return tierData?.name || tier;
+        return this.translationService.translate(this.store.getTierTranslationKey(tier));
     });
 
     getPlanColor = computed(() => {
         const tier = this.userPlan();
-        const tiers = this.store.appTiers();
-        const tierId = tiers.find(t => t.name === tier)?.tier_id || tier;
+        const tierId = this.store.normalizeTierId(tier);
 
         switch (tierId) {
-            case 'Bronze':
-            case 'TIER_1': return 'text-amber-400';
-            case 'Silver':
-            case 'TIER_2': return 'text-slate-300';
-            case 'Gold':
+            case 'TIER_1': return 'text-amber-500';
+            case 'TIER_2': return 'text-slate-400';
             case 'TIER_3': return 'text-yellow-400';
             default: return 'text-slate-500';
         }

@@ -134,6 +134,52 @@ export class SessionStore {
         return this.userFeatures().includes(featureId);
     }
 
+    public normalizeTierId(plan: string | undefined): AppPlan {
+        if (!plan) return 'TIER_0';
+        const p = plan.toString().toLowerCase();
+        if (p === 'tier_0' || p === 'freemium' || p === 'free') return 'TIER_0';
+        if (p === 'tier_1' || p === 'bronze') return 'TIER_1';
+        if (p === 'tier_2' || p === 'silver') return 'TIER_2';
+        if (p === 'tier_3' || p === 'gold') return 'TIER_3';
+        return 'TIER_0';
+    }
+
+    readonly userTierId = computed(() => {
+        return this.normalizeTierId(this.userProfile()?.plan);
+    });
+
+    readonly userTierRank = computed(() => {
+        const id = this.userTierId();
+        const ranks: Record<string, number> = { 'TIER_0': 0, 'TIER_1': 1, 'TIER_2': 2, 'TIER_3': 3 };
+        return ranks[id] || 0;
+    });
+
+    getTierRank(tierId: string | undefined): number {
+        const id = this.normalizeTierId(tierId);
+        const ranks: Record<string, number> = { 'TIER_0': 0, 'TIER_1': 1, 'TIER_2': 2, 'TIER_3': 3 };
+        return ranks[id] || 0;
+    }
+
+    getTierClass(tierId: string | undefined): string {
+        const id = this.normalizeTierId(tierId);
+        switch (id) {
+            case 'TIER_3': return 'bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]'; // Gold
+            case 'TIER_2': return 'bg-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.5)]'; // Silver
+            case 'TIER_1': return 'bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]'; // Bronze
+            default: return 'bg-slate-600'; // Free/Starter
+        }
+    }
+
+    getTierTranslationKey(tierId: string | undefined): string {
+        const id = this.normalizeTierId(tierId);
+        switch (id) {
+            case 'TIER_3': return 'COMMON.Tier.Gold';
+            case 'TIER_2': return 'COMMON.Tier.Silver';
+            case 'TIER_1': return 'COMMON.Tier.Bronze';
+            default: return 'COMMON.Tier.Free';
+        }
+    }
+
     // Badge Logic helper
     // Determines which plan *introduces* a feature first.
     getFeatureBadge(featureId: string): { label: string, colorClass: string } | null {
@@ -149,28 +195,22 @@ export class SessionStore {
         if (!featurePlan) return null;
 
         const planId = featurePlan.id;
-        const tier = tiers.find(t => t.tier_id === planId || t.name === planId);
+        const effectiveId = this.normalizeTierId(planId);
 
         let colorClass = 'bg-gray-100 text-gray-600'; // Default
-        const effectiveId = tier?.tier_id || planId;
 
         switch (effectiveId) {
-            case 'Freemium':
             case 'TIER_0': colorClass = 'bg-slate-800 text-white'; break;
-            case 'Bronze':
             case 'TIER_1': colorClass = 'bg-amber-100 text-amber-800 border border-amber-200'; break;
-            case 'Silver':
             case 'TIER_2': colorClass = 'bg-slate-200 text-slate-700 border border-slate-300'; break;
-            case 'Gold':
             case 'TIER_3': colorClass = 'bg-yellow-100 text-yellow-800 border border-yellow-300'; break;
         }
 
         // Special concise label logic
-        let label = tier?.name || planId;
-        if (effectiveId === 'TIER_0' || effectiveId === 'Freemium') label = 'FREE';
-        else if (effectiveId === 'TIER_1' || effectiveId === 'Bronze') label = 'BRZ';
-        else if (effectiveId === 'TIER_2' || effectiveId === 'Silver') label = 'SIL';
-        else if (effectiveId === 'TIER_3' || effectiveId === 'Gold') label = 'GOLD';
+        let label = 'FREE';
+        if (effectiveId === 'TIER_1') label = 'BRZ';
+        else if (effectiveId === 'TIER_2') label = 'SIL';
+        else if (effectiveId === 'TIER_3') label = 'GOLD';
 
         return { label, colorClass };
     }
@@ -371,7 +411,7 @@ export class SessionStore {
             email: user.email || '',
             full_name: profile?.full_name || user.user_metadata?.full_name || 'Hôte',
             role: role,
-            plan: profile?.plan || 'Freemium',
+            plan: this.normalizeTierId(profile?.plan),
             subscription_status: profile?.subscription_status || 'active',
             email_confirmed: profile?.email_confirmed || false,
             language: lang,
@@ -476,10 +516,11 @@ export class SessionStore {
             // Let's assume user wants it persisted.
             localStorage.setItem('debug_simulated_plan', plan);
 
-            this.userProfile.update(u => u ? { ...u, plan } : null);
+            const normalizedPlan = this.normalizeTierId(plan);
+            this.userProfile.update(u => u ? { ...u, plan: normalizedPlan } : null);
             // Reload features for this plan
             try {
-                const features = await this.repository.getPlanFeatures(plan);
+                const features = await this.repository.getPlanFeatures(normalizedPlan);
                 this.userFeatures.set(features);
             } catch (e) {
                 console.warn("Could not fetch plan features for debug:", e);

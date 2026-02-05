@@ -10,8 +10,8 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
     selector: 'fin-03-lmnp-tax-simulator',
     standalone: true,
     imports: [CommonModule, ReactiveFormsModule,
-    TranslatePipe
-  ],
+        TranslatePipe
+    ],
     template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
@@ -202,11 +202,10 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                                 </table>
                             </div>
                        } @else {
-                           <div class="absolute inset-0 bg-black/60 z-10 flex items-center justify-center p-4 text-center backdrop-blur-[1px]">
-                               <div>
-                                   <span class="text-2xl mb-2 block">🔒</span>
-                                   <p class="text-xs text-indigo-200 mb-2 font-bold">{{ 'LMNP.StandardFeature' | translate }}</p>
-                                   <p class="text-[10px] text-slate-400">{{ 'LMNP.UnlockThe10yearAmortizationEngine' | translate }}</p>
+                           <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-[2px] rounded-2xl group cursor-pointer transition-all hover:bg-black/50">
+                               <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-900/90 rounded-full border border-white/10 shadow-lg transform group-hover:scale-105 transition-all">
+                                   <span class="text-sm">🔒</span>
+                                   <span class="text-white text-[10px] font-medium uppercase tracking-wide">{{ 'COMMON.UpgradeToUnlock' | translate }}</span>
                                </div>
                            </div>
                        }

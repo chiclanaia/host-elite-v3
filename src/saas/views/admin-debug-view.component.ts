@@ -320,7 +320,7 @@ export class AdminDebugViewComponent {
     supabaseService = inject(SupabaseService);
     notifService = inject(NotificationService);
 
-    plans: AppPlan[] = ['Freemium', 'Bronze', 'Silver', 'Gold'];
+    plans: AppPlan[] = ['TIER_0', 'TIER_1', 'TIER_2', 'TIER_3'];
     allUsers = signal<UserProfile[]>([]);
     userProperties = signal<any[]>([]);
     isLoadingProperties = signal(false);
@@ -499,7 +499,7 @@ export class AdminDebugViewComponent {
         }
     }
 
-    currentPlan = this.store.userProfile()?.plan ? () => this.store.userProfile()!.plan : () => 'Freemium';
+    currentPlan = this.store.userProfile()?.plan ? () => this.store.userProfile()!.plan : () => 'TIER_0';
 
     setPlan(plan: AppPlan) {
         this.store.setPlan(plan);
@@ -509,9 +509,9 @@ export class AdminDebugViewComponent {
         const base = "border-2 shadow-inner ";
         if (active) {
             switch (plan) {
-                case 'Bronze': return base + "bg-amber-900/40 border-amber-500/50 text-amber-200";
-                case 'Silver': return base + "bg-slate-700/60 border-slate-400 text-slate-100 shadow-slate-900/50";
-                case 'Gold': return base + "bg-yellow-900/40 border-yellow-500/50 text-yellow-200 shadow-yellow-900/50";
+                case 'TIER_1': return base + "bg-amber-900/40 border-amber-500/50 text-amber-200";
+                case 'TIER_2': return base + "bg-slate-700/60 border-slate-400 text-slate-100 shadow-slate-900/50";
+                case 'TIER_3': return base + "bg-yellow-900/40 border-yellow-500/50 text-yellow-200 shadow-yellow-900/50";
                 default: return base + "bg-slate-800 border-white/30 text-white";
             }
         } else {
@@ -521,9 +521,9 @@ export class AdminDebugViewComponent {
 
     getTierIndicatorClass(tier: string): string {
         switch (tier) {
-            case 'Bronze': return 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]';
-            case 'Silver': return 'bg-slate-400 shadow-[0_0_8px_rgba(148,163,184,0.6)]';
-            case 'Gold': return 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]';
+            case 'TIER_1': return 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]';
+            case 'TIER_2': return 'bg-slate-400 shadow-[0_0_8px_rgba(148,163,184,0.6)]';
+            case 'TIER_3': return 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]';
             default: return 'bg-slate-600';
         }
     }

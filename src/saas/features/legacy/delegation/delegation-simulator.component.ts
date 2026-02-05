@@ -1,5 +1,6 @@
 import { Component, computed, EventEmitter, Output, signal, input, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SessionStore } from '../../../../state/session.store';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { GeminiService } from '../../../../services/gemini.service';
@@ -16,12 +17,14 @@ export class DelegationSimulatorComponent {
     @Output() close = new EventEmitter<void>();
     private geminiService = inject(GeminiService);
 
-    userPlan = input<string>('Freemium');
+    userPlan = input<string>('TIER_0');
+
+    private store = inject(SessionStore);
     propertyDetails = input<any>(null);
 
-    // Can only view "Supplier Interaction" if plan is Silver or Gold
-    canViewSupplierSection = computed(() => ['Silver', 'Gold', 'TIER_2', 'TIER_3'].includes(this.userPlan()));
-    isGold = computed(() => this.userPlan() === 'Gold' || this.userPlan() === 'TIER_3');
+    // Can only view "Supplier Interaction" if plan is Silver or Gold (Rank >= 2)
+    canViewSupplierSection = computed(() => this.store.getTierRank(this.userPlan()) >= 2);
+    isGold = computed(() => this.store.getTierRank(this.userPlan()) >= 3);
 
     // Toggle for Supplier Section
     isSupplierSectionOpen = signal(false);

@@ -194,9 +194,9 @@ export class OccupancyStatsComponent {
     // Inputs from parent (Angle View)
     propertyDetails = input<any>();
 
-    tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
-    isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
-    isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
+    tier = computed(() => this.session.userProfile()?.plan || 'TIER_0');
+    isTier0 = computed(() => this.tier() === 'TIER_0');
+    isTier3 = computed(() => this.tier() === 'TIER_3');
 
     isLoading = signal(false);
     icalUrl = signal<string | null>(null);

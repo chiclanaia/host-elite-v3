@@ -11,6 +11,7 @@ import { listing } from './fr/listing';
 import { assistant } from './fr/assistant';
 import { calendar } from './fr/calendar';
 import { ph3 } from './fr/ph3_features';
+import { roi } from './fr/roi';
 
 export const fr = {
     ...ui,
@@ -25,5 +26,6 @@ export const fr = {
     ...listing,
     ...assistant,
     ...calendar,
-    ...ph3
+    ...ph3,
+    ...roi
 };

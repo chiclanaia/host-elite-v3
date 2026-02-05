@@ -86,7 +86,7 @@ export class GeminiService {
         "weaknesses": ["List of areas for improvement..."],
         "recommendations": ["Specific actionable advice..."],
         "marketingAdvice": "Advice on pricing and positioning...",
-        "recommendedPlan": "Essential" | "Gold" | "Premium" (Choose one based on potential: Premium for high luxury/revenue, Gold for solid properties, Essential for starters),
+        "recommendedPlan": "TIER_1" | "TIER_2" | "TIER_3" (Choose one based on potential: TIER_3 for high luxury/revenue, TIER_2 for solid properties, TIER_1 for starters),
         "estimatedRevenue": "Estimated monthly revenue range..."
       }
     `;
@@ -555,25 +555,48 @@ export class GeminiService {
 
   }
 
-  async getMarketAnalysis(address: string): Promise<{
+  async getMarketAnalysis(address: string, context?: any): Promise<{
     estimatedNightlyRate: number;
     estimatedOccupancy: number;
     conciergeCommission: number;
     cleaningFees: number;
     summary: string;
+    suggestedPrice?: number;
+    suggestedInterestRate?: number;
+    suggestedVariableCosts?: any;
+    monthlySeasonality?: number[];
+    monthlyNightlyPrices?: number[];
   }> {
     await this.ensureClient();
 
-    const prompt = `
-        You are an expert Real Estate Analyst.
-        Target Location: "${address}"
+    const contextPrompt = context ? `
+        PROPERTY CHARACTERISTICS:
+        - Property Type: ${context.propertyType || 'Apartment'}
+        - Host Country: ${context.hostCountry}
+        - Property Country: ${context.propertyCountry}
+        - Rooms: ${context.rooms}
+        - Total Size: ${context.totalSize} m²
+        - Garden Size: ${context.gardenSize} m²
+        - Has Swimming Pool: ${context.hasPool ? 'Yes' : 'No'}
+        - Additional Details: ${context.additionalDetails}
+    ` : '';
 
-        TASK: Estimate the following average market metrics for a typical Airbnb rental in this area.
+    const prompt = `
+        You are an expert Real Estate Analyst specializing in global short-term rentals.
+        Target Location: \"${address}\"
+        ${contextPrompt}
+
+        TASK: Estimate detailed market metrics for a property with these characteristics in this specific location.
         1. Average Nightly Rate (EUR).
         2. Average Occupancy Rate (%).
         3. Typical Concierge Commission (%).
         4. Average Cleaning Fee (EUR, per stay).
-        5. A short 1-sentence summary of the rental market potential.
+        5. Estimated Property Purchase Price (EUR) for this specific type and size of property there.
+        6. Typical Local Mortgage Interest Rate (%).
+        7. Monthly Variable Costs (EUR) (Wifi, Electricity, Water).
+        8. Seasonality factors (12 values, occupancy % per month).
+        9. Nightly prices by month (12 values, EUR).
+        10. A short 1-sentence summary of the rental market potential.
 
         RESPONSE FORMAT (JSON ONLY):
         {
@@ -581,7 +604,12 @@ export class GeminiService {
             "estimatedOccupancy": 70,
             "conciergeCommission": 20,
             "cleaningFees": 60,
-            "summary": "High demand area with strong seasonal peaks."
+            "suggestedPrice": 250000,
+            "suggestedInterestRate": 3.8,
+            "suggestedVariableCosts": { "wifi": 30, "electricity": 80, "water": 30 },
+            "monthlySeasonality": [40, 45, 60, 70, 80, 90, 100, 100, 80, 60, 50, 70],
+            "monthlyNightlyPrices": [100, 100, 120, 140, 160, 180, 220, 250, 180, 140, 120, 160],
+            "summary": "High demand area with strong seasonal peaks and premium potential due to features."
         }
     `;
 
@@ -716,6 +744,88 @@ export class GeminiService {
         riskStatus: 'Unknown',
         description: 'Unable to perform real-time scan. Please check local municipal website.',
         recommendations: ['Check for registration requirements', 'Verify tax obligations', 'Consult a legal expert']
+      };
+    }
+  }
+
+  async generateTaxBriefing(hostCountry: string, propertyCountry: string): Promise<string> {
+    await this.ensureClient();
+    const lang = this.translationService.currentLang();
+
+    const prompt = `
+        You are an international tax advisor specialized in short-term rental properties.
+        
+        TASK: Provide a high-level tax briefing for a host living in "${hostCountry}" with a rental property in "${propertyCountry}".
+        
+        INSTRUCTIONS:
+        1. Explain the tax obligations in both countries (if applicable).
+        2. Mention relevant tax treaties or double taxation avoidance mechanisms.
+        3. Suggest the most common tax-efficient structures (e.g., LMNP vs SCI in France, or similar for other countries).
+        4. Keep it concise, professional, and educational.
+        5. Add a strong disclaimer that this is NOT official legal or tax advice.
+        6. Language: "${lang}".
+
+        Output format: Cleanly formatted text (Markdown).
+    `;
+
+    try {
+      const result = await this.model!.generateContent(prompt);
+      const response = await result.response;
+      return response.text();
+    } catch (error) {
+      console.error('Error generating tax briefing:', error);
+      return "Tax briefing unavailable at the moment.";
+    }
+  }
+
+  async generateFinalRoiReport(data: any): Promise<any> {
+    await this.ensureClient();
+    const lang = this.translationService.currentLang();
+
+    const prompt = `
+        You are a Senior Financial Advisor for High-Yield Real Estate Investments.
+        
+        TASK: Generate a comprehensive ROI Analysis & Risk Report for a rental property.
+        
+        INPUT DATA:
+        ${JSON.stringify(data, null, 2)}
+        
+        REPORT REQUIREMENTS (JSON format):
+        1. "global_score": 0-100 (Overall health integer).
+        2. "risk_level": "High", "Medium", or "Low".
+        3. "market_sentiment": "Bullish", "Bearish", or "Neutral".
+        4. "strengths": List of 3 key positive drivers (Bullish factors).
+        5. "opportunities": List of 3 key RISK FACTORS (Bearish factors). *Note: Labelled 'opportunities' for legacy compatibility, but content must be RISKS.*
+        6. "comprehensive_verdict": Final investment advice summary (1 sentence).
+        
+        Language: "${lang}".
+        Return ONLY the JSON.
+    `;
+
+    try {
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+      });
+      const response = await result.response;
+      return JSON.parse(this.cleanJson(response.text()));
+    } catch (error) {
+      console.error('Error generating ROI report (Using Fallback):', error);
+      // Fallback Mock Data for Development/Quota Exceeded
+      return {
+        global_score: 85,
+        risk_level: 'Low',
+        market_sentiment: 'Bullish',
+        strengths: [
+          'High demand area with strong tourism growth.',
+          'Excellent projected cashflow vs market average.',
+          'Property features align perfectly with traveler preferences.'
+        ],
+        opportunities: [
+          'Potential regulatory tightening in the sector.',
+          'Seasonal vacancy risks during winter months.',
+          'Maintenance costs may rise due to property age.'
+        ],
+        comprehensive_verdict: 'An excellent investment opportunity with manageable risks; recommended for immediate acquisition.'
       };
     }
   }

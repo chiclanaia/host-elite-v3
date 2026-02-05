@@ -2,6 +2,7 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { SessionStore } from '../../../../state/session.store';
 import { EventsDiscoveryService, LocalEvent } from '../../../../services/events-discovery.service';
 import { GeminiService } from '../../../../services/gemini.service';
 import { CalendarService } from '../calendar-tool/calendar.service';
@@ -188,6 +189,7 @@ export class MarketAlertsComponent {
   private eventsService = inject(EventsDiscoveryService);
   private geminiService = inject(GeminiService);
   private calendarService = inject(CalendarService);
+  private store = inject(SessionStore);
 
   events = signal<LocalEvent[]>([]);
   isLoading = signal(false);
@@ -196,11 +198,8 @@ export class MarketAlertsComponent {
   addedEventIds = signal<Set<string>>(new Set());
   radiusKm = 20;
 
-  isGoldUser = computed(() => this.userPlan() === 'Gold' || this.userPlan() === 'TIER_3');
-  hasSilverAccess = computed(() => {
-    const plan = this.userPlan();
-    return plan === 'Silver' || plan === 'Gold' || plan === 'TIER_2' || plan === 'TIER_3';
-  });
+  isGoldUser = computed(() => this.store.getTierRank(this.userPlan()) >= 3);
+  hasSilverAccess = computed(() => this.store.getTierRank(this.userPlan()) >= 2);
 
   isEventAdded(eventId: string): boolean {
     return this.addedEventIds().has(eventId);

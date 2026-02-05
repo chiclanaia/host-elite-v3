@@ -9,12 +9,12 @@ type Ecosystem = 'urban' | 'ski' | 'coastal' | 'rural';
 type Residency = 'resident' | 'non-resident-eu' | 'non-resident-global';
 
 @Component({
-  selector: 'fin-00-profitability-suite',
-  standalone: true,
-  imports: [CommonModule, FormsModule,
-    TranslatePipe
-  ],
-  template: `
+    selector: 'fin-00-profitability-suite',
+    standalone: true,
+    imports: [CommonModule, FormsModule,
+        TranslatePipe
+    ],
+    template: `
     <div class="h-full flex flex-col gap-6 animate-fade-in-up">
       <!-- Header -->
       <div class="flex flex-col md:flex-row justify-between items-start gap-4">
@@ -135,30 +135,28 @@ type Residency = 'resident' | 'non-resident-eu' | 'non-resident-global';
                            <span class="material-icons text-sm">picture_as_pdf</span>{{ 'PROFIT.ExportStrategy' | translate }}</button>
                    </div>
                 } @else {
-                    <div class="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')] bg-cover opacity-10 blur-sm"></div>
-                    <div class="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center">
-                        <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-amber-500/20">
-                            <span class="text-2xl text-white font-bold">🔒</span>
-                        </div>
-                        <h3 class="text-white font-bold mb-2">{{ 'PROFIT.UnlockVirtualBanker' | translate }}</h3>
-                        <p class="text-slate-400 text-xs max-w-xs mb-6">{{ 'PROFIT.ExpertTierAnalyzesYourResidency' | translate }}</p>
-                         <button class="px-6 py-2 bg-white text-black text-xs font-bold rounded-full hover:scale-105 transition-transform" data-debug-id="fin-00-upgrade-btn">{{ 'PROFIT.UpgradeToGold' | translate }}</button>
-                    </div>
-                }
+                     <div class="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')] bg-cover opacity-10 blur-sm"></div>
+                     <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-[2px] rounded-2xl group cursor-pointer transition-all hover:bg-black/50">
+                         <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-900/90 rounded-full border border-white/10 shadow-lg transform group-hover:scale-105 transition-all">
+                             <span class="text-sm">🔒</span>
+                             <span class="text-white text-[10px] font-medium uppercase tracking-wide">{{ 'COMMON.UpgradeToUnlock' | translate }}</span>
+                         </div>
+                     </div>
+                 }
           </div>
       </div>
     </div>
   `,
-  styles: [`:host { display: block; height: 100%; }`]
+    styles: [`:host { display: block; height: 100%; }`]
 })
 export class ProfitabilitySuiteComponent {
-  feature = input.required<Feature>();
-  session = inject(SessionStore);
+    feature = input.required<Feature>();
+    session = inject(SessionStore);
 
-  tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
-  isTier2OrAbove = computed(() => ['TIER_2', 'TIER_3', 'Silver', 'Gold'].includes(this.tier()));
-  isTier3 = computed(() => ['TIER_3', 'Gold'].includes(this.tier()));
+    tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
+    isTier2OrAbove = computed(() => ['TIER_2', 'TIER_3', 'Silver', 'Gold'].includes(this.tier()));
+    isTier3 = computed(() => ['TIER_3', 'Gold'].includes(this.tier()));
 
-  residency = signal<Residency>('resident');
-  ecosystem = signal<Ecosystem>('urban');
+    residency = signal<Residency>('resident');
+    ecosystem = signal<Ecosystem>('urban');
 }

@@ -107,19 +107,21 @@ export class ProfitabilityCalculatorComponent implements OnInit, AfterViewInit {
     if (this.results()) this.renderExpenseChart();
   }
 
-  userPlan = computed(() => this.store.userProfile()?.plan || 'Freemium');
+  userPlan = computed(() => this.store.userProfile()?.plan || 'TIER_0');
 
   syncTierWithPlan() {
-    const plan = this.userPlan();
-    if (plan === 'Gold') this.activeTier.set(TierLevel.EXPERT);
-    else if (plan === 'Silver' || plan === 'Bronze') this.activeTier.set(TierLevel.LOW);
+    // Determine active tier based on SessionStore rank
+    const rank = this.store.getTierRank(this.userPlan());
+    if (rank >= 3) this.activeTier.set(TierLevel.EXPERT);
+    else if (rank >= 1) this.activeTier.set(TierLevel.LOW);
     else this.activeTier.set(TierLevel.BASIC);
   }
 
   isTierLocked(tier: TierLevel): boolean {
     const levels = { 'BASIC': 0, 'LOW': 1, 'MEDIUM': 2, 'EXPERT': 3 };
-    const userLevel = { 'Freemium': 0, 'Bronze': 1, 'Silver': 2, 'Gold': 3 }[this.userPlan()] || 0;
-    return userLevel < levels[tier];
+    const requiredRank = levels[tier];
+    const userRank = this.store.getTierRank(this.userPlan());
+    return userRank < requiredRank;
   }
 
   nextStep() {

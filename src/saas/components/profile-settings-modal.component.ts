@@ -7,6 +7,7 @@ import { SupabaseService } from '../../services/supabase.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { NotificationService } from '../../services/notification.service';
 import { HostRepository } from '../../services/host-repository.service';
+import { TranslationService } from '../../services/translation.service';
 import { PlanConfig } from '../../types';
 
 @Component({
@@ -102,7 +103,7 @@ import { PlanConfig } from '../../types';
                             <select [formControl]="planControl" (change)="onPlanChange($event)"
                                     class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all appearance-none cursor-pointer">
                               <option *ngFor="let t of store.appTiers()" [value]="t.tier_id">
-                                {{ t.name }}
+                                {{ getTierName(t.tier_id) }}
                               </option>
                             </select>
                         </div>
@@ -120,7 +121,7 @@ import { PlanConfig } from '../../types';
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ 'PROFILE.Language' | translate }}</label>
-                            <span *ngIf="planControl.value !== 'Gold'" class="text-[10px] text-amber-500 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 flex items-center gap-1">
+                            <span *ngIf="planControl.value !== 'TIER_3'" class="text-[10px] text-amber-500 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 flex items-center gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                                   <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
                                 </svg>
@@ -129,16 +130,16 @@ import { PlanConfig } from '../../types';
                         </div>
                         <div class="relative">
                             <select formControlName="language"
-                                    [attr.disabled]="planControl.value !== 'Gold' ? true : null"
+                                    [attr.disabled]="planControl.value !== 'TIER_3' ? true : null"
                                     class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all appearance-none"
-                                    [class.opacity-50]="planControl.value !== 'Gold'"
-                                    [class.cursor-not-allowed]="planControl.value !== 'Gold'">
+                                    [class.opacity-50]="planControl.value !== 'TIER_3'"
+                                    [class.cursor-not-allowed]="planControl.value !== 'TIER_3'">
                               <option value="" disabled>{{ 'PROFILE.SelectLanguage' | translate }}</option>
                               <option value="en">English</option>
                               <option value="fr">Français</option>
                               <option value="es">Español</option>
                             </select>
-                            <div *ngIf="planControl.value !== 'Gold'" class="absolute inset-0 z-10 cursor-not-allowed" title="Upgrade to Gold to change language"></div>
+                            <div *ngIf="planControl.value !== 'TIER_3'" class="absolute inset-0 z-10 cursor-not-allowed" title="Upgrade to Gold to change language"></div>
                         </div>
                     </div>
 
@@ -244,6 +245,7 @@ export class ProfileModalComponent {
   private fb = inject(FormBuilder);
   private notificationService = inject(NotificationService);
   private repository = inject(HostRepository);
+  private translationService = inject(TranslationService);
 
   profile = this.store.userProfile;
   profileForm: FormGroup;
@@ -261,9 +263,10 @@ export class ProfileModalComponent {
 
   constructor() {
     const user = this.profile();
+    const currentPlan = this.store.normalizeTierId(user?.plan);
 
     // Separate control for Plan to handle events manually
-    this.planControl = new FormControl(user?.plan || 'Freemium');
+    this.planControl = new FormControl(currentPlan);
 
     this.profileForm = this.fb.group({
       full_name: [user?.full_name || '', [Validators.required, Validators.minLength(2)]],
@@ -272,28 +275,31 @@ export class ProfileModalComponent {
     });
   }
 
-  // Removed loadPlans() as we use store.appTiers() and store.allPlans() directly in template and logic.
+  // Helper to get localized tier name
+  getTierName(tierId: string | undefined): string {
+    return this.translationService.translate(this.store.getTierTranslationKey(tierId));
+  }
 
   onPlanChange(event: any) {
-    const newPlanId = event.target.value;
-    const currentPlanId = this.profile()?.plan || 'Freemium';
+    const newPlanId = this.store.normalizeTierId(event.target.value);
+    const currentPlanId = this.store.normalizeTierId(this.profile()?.plan);
 
     if (newPlanId === currentPlanId) return;
 
-    const newPlan = this.store.allPlans().find(p => p.id === newPlanId);
-    const currentPlan = this.store.allPlans().find(p => p.id === currentPlanId);
+    const newPlan = this.store.allPlans().find(p => this.store.normalizeTierId(p.id) === newPlanId);
+    const currentPlan = this.store.allPlans().find(p => this.store.normalizeTierId(p.id) === currentPlanId);
 
     if (!newPlan) return;
 
     // Validation: Require Stripe ID for paid plans
-    if (newPlanId !== 'TIER_0' && newPlanId !== 'Freemium') {
+    if (newPlanId !== 'TIER_0') {
       const stripeId = this.profileForm.get('stripe_customer_id')?.value;
       if (!stripeId || stripeId.trim() === '') {
         // Revert changes
         this.planControl.setValue(currentPlanId, { emitEvent: false });
         this.notificationService.postNotification({
-          title: 'Payment Info Required',
-          message: 'Please enter your Stripe Customer ID first to upgrade your plan.',
+          title: this.translationService.translate('NOTIF.StripeRequiredTitle') || 'Payment Info Required',
+          message: this.translationService.translate('NOTIF.StripeRequiredMsg') || 'Please enter your Stripe Customer ID first to upgrade your plan.',
           type: 'warning'
         });
         // Focus the input
@@ -322,37 +328,18 @@ export class ProfileModalComponent {
 
   cancelChange() {
     // Reset selection
-    this.planControl.setValue(this.profile()?.plan || 'Freemium');
+    const currentPlan = this.store.normalizeTierId(this.profile()?.plan);
+    this.planControl.setValue(currentPlan);
     this.confirmationStep.set('none');
     this.pendingPlan.set(null);
   }
 
   confirmChange() {
-    // Commit the change to the form value concept (though we don't have it in the main group anymore)
-    // We will handle it in onSave, but here we just exit the wizard state
-    // Actually, we want to update the UI reflectively but essentially we just wait for the user to click "Save" 
-    // OR, usually plan changes are immediate. The user request implies a modal pop *when deciding*, likely meaning immediate action?
-    // "when the user decides to change his/her plan... confirm... notification"
-    // Integrating it into the main Save action is safer for atomicity, but the prompt implies a specific flow for the plan.
-    // Let's assume the confirmation MERESLY ACCEPTS the new value into the pending form state for the final "Save".
-    // BUT the prompt says "notification to the user... in both case upgrade or downgrade accepted".
-    // This implies immediate feedback. However, having a "Save" button on the modal suggests batch saving.
-    // Compromise: We confirm the selection in the UI, show a toast "Plan selected: X", and then they hit Save to persist everything.
-    // Or, better user experience: Changing plan is a significant action, maybe we persist it immediately? 
-    // Let's stick to: Confirm -> Set Control Value -> Return to Form -> User clicks Save.
-    // Wait, the Prompt says "confirm the upgrade... for the downgrade...".
-
-    // Changing approach: The Confirmation Modal is strictly for the logical acceptance. 
-    // We will treat the plan change as part of the overall "Save" payload. 
-    // EXCEPT: If the plan change requires payment (stripe), usually it's immediate. 
-    // Given the current scope (SaaS template), I will just confirm the UI selection and notify.
-
-    const tiers = this.store.appTiers();
-    const tier = tiers.find(t => t.tier_id === this.pendingPlan()?.id || t.name === this.pendingPlan()?.id);
+    const tierName = this.getTierName(this.pendingPlan()?.id);
 
     this.notificationService.postNotification({
-      title: 'Plan Selection Updated',
-      message: `Plan changed to ${tier?.name || this.pendingPlan()?.id}. Don't forget to Save.`,
+      title: this.translationService.translate('NOTIF.PlanSelectedTitle') || 'Plan Selection Updated',
+      message: this.translationService.translate('NOTIF.PlanSelectedMsg', { tier: tierName }) || `Plan changed to ${tierName}. Don't forget to Save.`,
       type: 'info'
     });
 
@@ -373,13 +360,13 @@ export class ProfileModalComponent {
     if (this.profileForm.invalid || this.isSaving()) return;
 
     // Final Validation: Require Stripe ID for paid plans
-    const selectedPlan = this.planControl.value;
+    const selectedPlan = this.store.normalizeTierId(this.planControl.value);
     const stripeId = this.profileForm.value.stripe_customer_id;
 
-    if (selectedPlan !== 'TIER_0' && selectedPlan !== 'Freemium' && (!stripeId || stripeId.trim() === '')) {
+    if (selectedPlan !== 'TIER_0' && (!stripeId || stripeId.trim() === '')) {
       this.notificationService.postNotification({
-        title: 'Payment Info Required',
-        message: 'You cannot save a paid plan without a valid Stripe Customer ID.',
+        title: this.translationService.translate('NOTIF.StripeRequiredTitle') || 'Payment Info Required',
+        message: this.translationService.translate('NOTIF.StripeRequiredMsg') || 'You cannot save a paid plan without a valid Stripe Customer ID.',
         type: 'error'
       });
       // Focus the input
@@ -402,15 +389,15 @@ export class ProfileModalComponent {
 
       await this.store.updateProfile({
         full_name: this.profileForm.value.full_name,
-        plan: this.planControl.value, // Get from standalone control
+        plan: selectedPlan, // Get normalized ID from standalone control
         stripe_customer_id: this.profileForm.value.stripe_customer_id,
         language: this.profileForm.value.language,
         avatar_url: avatarUrl
       });
 
       this.notificationService.postNotification({
-        title: 'Profile Updated',
-        message: 'Your profile settings have been saved.',
+        title: this.translationService.translate('PROFILE.Updated') || 'Profile Updated',
+        message: this.translationService.translate('PROFILE.SavedMsg') || 'Your profile settings have been saved.',
         type: 'success'
       });
 

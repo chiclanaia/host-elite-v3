@@ -80,7 +80,7 @@ export class SaaSAppComponent implements OnInit {
   properties = signal<Property[]>([]);
 
   // Debug: Available Tiers for Selector
-  availableTiers = ['Freemium', 'TIER_0', 'TIER_1', 'TIER_2', 'TIER_3'];
+  availableTiers = ['TIER_0', 'TIER_1', 'TIER_2', 'TIER_3'];
 
   onPlanChange(plan: string): void {
     console.log('[SaaSApp] Switching Plan to:', plan);
