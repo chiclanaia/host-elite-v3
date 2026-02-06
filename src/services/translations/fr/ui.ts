@@ -1219,11 +1219,9 @@ export const ui = {
     'RENOV.FileTooLarge': 'Fichier trop volumineux. La taille maximale est de 10 Mo.',
     'RENOV.InvalidFileType': 'Type de fichier non valide. Veuillez télécharger un fichier PDF.',
     'RENOV.Progress': 'Progrès',
-    'RENOV.ActualSpend': 'Dépenses Réelles',
     'RENOV.Remaining': 'Restant',
     'RENOV.ActualVsBudget': 'Réel vs Budget',
     'RENOV.TotalActualSpend': 'Dépenses Réelles Totales',
-    'RENOV.Variance': 'Écart',
     'RENOV.AddRoomsToSeeChart': 'Ajoutez des pièces pour voir le graphique de comparaison',
 
     'SEC24.Add45': 'Add. (45%)',
