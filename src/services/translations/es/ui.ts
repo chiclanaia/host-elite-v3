@@ -1005,6 +1005,8 @@ export const ui = {
     'ROI.PremiumFeature': 'Función Premium',
     'ROI.UpgradeToSilverToUnlockGranular': 'Mejora a Silver para desbloquear el control granular mensual.',
     'ROI.UpgradeToSilver': 'Mejorar a Silver',
+    'ROI.PropertyProfiler': 'Perfil de la Propiedad',
+    'ROI.LocalizationCharacteristics': 'Localización & Características',
     // Renovation Budget (FIN_02)
     'RENOV.SmartCapexPlanner': 'Planificador de Capex Inteligente',
     'RENOV.StrategicRenovationBudgetingToPrevent': 'Presupuestos estratégicos de renovación para evitar el sobre-equipamiento y maximizar el ROI de reventa.',
@@ -1294,6 +1296,8 @@ export const ui = {
     'FEATURE.FIN_00_CONSULT.Desc': 'Suite completa de análisis de rentabilidad',
     'FEATURE.FIN_01.Title': 'Simulador ROI',
     'FEATURE.FIN_01.Desc': 'Simulador de retorno de inversión',
+    'FEATURE.FIN_01_PROPERTY_PROFILER.Title': 'Perfil de la Propiedad',
+    'FEATURE.FIN_01_PROPERTY_PROFILER.Desc': 'Características detalladas de la propiedad y mapeo de ubicación',
     'FEATURE.FIN_02.Title': 'Presupuesto Renovación',
     'FEATURE.FIN_02.Desc': 'Gestión y seguimiento del presupuesto de renovación',
     'FEATURE.FIN_03.Title': 'Simulador Fiscal LMNP',
