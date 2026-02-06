@@ -1124,6 +1124,8 @@ export const ui = {
     'ROI.PremiumFeature': 'Fonctionnalité Premium',
     'ROI.UpgradeToSilverToUnlockGranular': 'Passez au plan Silver pour débloquer le contrôle granulaire par mois.',
     'ROI.UpgradeToSilver': 'Passer au Silver',
+    'ROI.PropertyProfiler': 'Profil du Bien',
+    'ROI.LocalizationCharacteristics': 'Localisation & Caractéristiques',
 
     // Compliance Checker (LEG_00)
     'COMPLY.ZoningRegulatorySentinel': 'Sentinelle Zonage & Réglementation',
@@ -1481,6 +1483,8 @@ export const ui = {
     'FEATURE.PRI_03.Desc': 'Intelligence Concurrentielle en Temps Réel',
     'FEATURE.FIN_00_CONSULT.Desc': 'Suite complète d\'analyse de rentabilité',
     'FEATURE.FIN_01.Desc': 'Simulateur de retour sur investissement',
+    'FEATURE.FIN_01_PROPERTY_PROFILER.Title': 'Profil du Bien',
+    'FEATURE.FIN_01_PROPERTY_PROFILER.Desc': 'Caractéristiques détaillées du bien et cartographie de localisation',
     'FEATURE.FIN_02.Desc': 'Gestion et suivi du budget rénovation',
     'FEATURE.FIN_03.Desc': 'Simulateur fiscal pour LMNP',
     'FEATURE.FIN_04.Desc': 'Simulateur d\'impact Section 24',

@@ -1003,6 +1003,8 @@ export const ui = {
     'ROI.PremiumFeature': 'Premium Feature',
     'ROI.UpgradeToSilverToUnlockGranular': 'Upgrade to Silver to unlock granular monthly control.',
     'ROI.UpgradeToSilver': 'Upgrade to Silver',
+    'ROI.PropertyProfiler': 'Property Profiler',
+    'ROI.LocalizationCharacteristics': 'Localization & Characteristics',
 
     // Compliance Checker (LEG_00)
     'COMPLY.ZoningRegulatorySentinel': 'Zoning & Regulatory Sentinel',
@@ -1496,6 +1498,8 @@ export const ui = {
     'FEATURE.FIN_00_CONSULT.Desc': 'Profitability Suite Description',
     'FEATURE.FIN_01.Title': 'ROI Simulator',
     'FEATURE.FIN_01.Desc': 'ROI Simulator Description',
+    'FEATURE.FIN_01_PROPERTY_PROFILER.Title': 'Property Profiler',
+    'FEATURE.FIN_01_PROPERTY_PROFILER.Desc': 'Detailed property characteristics and location mapping',
     'FEATURE.FIN_02.Title': 'Renovation Budget',
     'FEATURE.FIN_02.Desc': 'Renovation Budget Description',
     'FEATURE.FIN_03.Title': 'LMNP Tax Simulator',
