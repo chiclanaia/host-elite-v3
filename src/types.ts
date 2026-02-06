@@ -132,6 +132,34 @@ export interface RenovationQuote {
   created_at?: string;
 }
 
+export interface QuoteFile {
+  id: string;
+  property_id: string;
+  file_name: string;
+  file_path: string;
+  file_size: number;
+  uploaded_at: string;
+  created_at?: string;
+}
+
+export interface CapexAnalysis {
+  overallScore: number;
+  budgetVsQuotes: {
+    totalBudget: number;
+    totalQuotes: number;
+    variance: number;
+    variancePercent: number;
+  };
+  recommendations: string[];
+  risks: string[];
+  opportunities: string[];
+  propertyInsights?: {
+    location?: string;
+    estimatedValue?: number;
+    marketTrends?: string;
+  };
+}
+
 export interface ComplianceRule {
   id: string;
   city: string;

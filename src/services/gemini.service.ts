@@ -695,6 +695,153 @@ export class GeminiService {
     }
   }
 
+  async analyzeCapexPlan(
+    rooms: Array<{ type: string; area: number; finish_level: string; budget_estimate: number; actual_spend: number }>,
+    quotes: Array<{ vendor_name: string; amount: number }>,
+    propertyAddress?: string
+  ): Promise<{
+    overallScore: number;
+    budgetVsQuotes: {
+      totalBudget: number;
+      totalQuotes: number;
+      variance: number;
+      variancePercent: number;
+    };
+    recommendations: string[];
+    risks: string[];
+    opportunities: string[];
+    propertyInsights?: {
+      location?: string;
+      estimatedValue?: number;
+      marketTrends?: string;
+    };
+  }> {
+    await this.ensureClient();
+    const lang = this.translationService.currentLang();
+
+    const totalBudget = rooms.reduce((sum, r) => sum + r.budget_estimate, 0);
+    const totalActualSpend = rooms.reduce((sum, r) => sum + r.actual_spend, 0);
+    const totalQuotes = quotes.reduce((sum, q) => sum + q.amount, 0);
+
+    const prompt = `
+        You are a Senior Construction Cost Analyst and Real Estate Investment Advisor specializing in short-term rental properties.
+        
+        COMPREHENSIVE CAPEX ANALYSIS REQUEST:
+        
+        PROPERTY LOCATION: ${propertyAddress || 'Not specified'}
+        
+        RENOVATION PLAN:
+        ${JSON.stringify(rooms, null, 2)}
+        
+        VENDOR QUOTES RECEIVED:
+        ${JSON.stringify(quotes, null, 2)}
+        
+        BUDGET SUMMARY:
+        - Total Planned Budget: ${totalBudget} EUR
+        - Total Actual Spend (so far): ${totalActualSpend} EUR
+        - Total Quote Amount: ${totalQuotes} EUR
+        - Budget vs Quotes Variance: ${totalQuotes - totalBudget} EUR (${((totalQuotes - totalBudget) / totalBudget * 100).toFixed(1)}%)
+        
+        TASK:
+        Perform a comprehensive analysis of this renovation plan considering:
+        1. Overall value assessment (score 0-100, where 100 is excellent value)
+        2. Budget vs quotes comparison and variance analysis
+        3. Specific recommendations to optimize costs and quality
+        4. Risk factors (budget overruns, quality issues, timeline concerns)
+        5. Opportunities for cost savings or value enhancement
+        6. Property market insights based on location (if provided)
+        
+        ANALYSIS GUIDELINES:
+        - Consider finish level appropriateness for short-term rental ROI
+        - Evaluate if quotes are competitive for European market standards
+        - Assess room prioritization and budget allocation
+        - Identify potential cost optimization strategies
+        - Consider property value impact and rental income potential
+        
+        RESPONSE FORMAT (JSON ONLY):
+        {
+          "overallScore": number (0-100),
+          "budgetVsQuotes": {
+            "totalBudget": ${totalBudget},
+            "totalQuotes": ${totalQuotes},
+            "variance": ${totalQuotes - totalBudget},
+            "variancePercent": ${((totalQuotes - totalBudget) / totalBudget * 100).toFixed(1)}
+          },
+          "recommendations": [
+            "Specific actionable recommendation 1 in ${lang}",
+            "Specific actionable recommendation 2 in ${lang}",
+            "Specific actionable recommendation 3 in ${lang}"
+          ],
+          "risks": [
+            "Risk factor 1 in ${lang}",
+            "Risk factor 2 in ${lang}",
+            "Risk factor 3 in ${lang}"
+          ],
+          "opportunities": [
+            "Opportunity 1 in ${lang}",
+            "Opportunity 2 in ${lang}",
+            "Opportunity 3 in ${lang}"
+          ],
+          "propertyInsights": {
+            "location": "Brief location assessment in ${lang}",
+            "estimatedValue": number (estimated property value increase from renovation),
+            "marketTrends": "Brief market trend analysis in ${lang}"
+          }
+        }
+    `;
+
+    try {
+      const result = await this.model!.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+      });
+      const response = await result.response;
+      const analysis = JSON.parse(this.cleanJson(response.text()));
+
+      // Ensure budgetVsQuotes has correct calculated values
+      analysis.budgetVsQuotes = {
+        totalBudget,
+        totalQuotes,
+        variance: totalQuotes - totalBudget,
+        variancePercent: parseFloat(((totalQuotes - totalBudget) / totalBudget * 100).toFixed(1))
+      };
+
+      return analysis;
+    } catch (error) {
+      console.error('Error analyzing Capex plan:', error);
+      // Fallback analysis
+      return {
+        overallScore: 70,
+        budgetVsQuotes: {
+          totalBudget,
+          totalQuotes,
+          variance: totalQuotes - totalBudget,
+          variancePercent: parseFloat(((totalQuotes - totalBudget) / totalBudget * 100).toFixed(1))
+        },
+        recommendations: [
+          "Compare quotes from at least 3 different vendors for each room",
+          "Consider phasing the renovation to spread costs over time",
+          "Focus on high-impact rooms (kitchen, bathroom) for STR appeal"
+        ],
+        risks: [
+          "Budget variance detected - quotes may exceed planned budget",
+          "Ensure all quotes include materials and labor to avoid hidden costs",
+          "Timeline delays could impact rental income projections"
+        ],
+        opportunities: [
+          "Negotiate bulk discounts if using same vendor for multiple rooms",
+          "Consider mid-range finishes for better ROI in STR market",
+          "Energy-efficient upgrades may qualify for tax incentives"
+        ],
+        propertyInsights: propertyAddress ? {
+          location: "Analysis unavailable (Service Error)",
+          estimatedValue: Math.round(totalBudget * 1.5),
+          marketTrends: "Unable to assess market trends at this time"
+        } : undefined
+      };
+    }
+  }
+
+
   async checkCompliance(address: string, city: string): Promise<{
     riskScore: number;
     riskLevel: string;

@@ -6,7 +6,7 @@ import { SessionStore } from '../../../../state/session.store';
 import { TranslationService } from '../../../../services/translation.service';
 import { HostRepository } from '../../../../services/host-repository.service';
 import { GeminiService } from '../../../../services/gemini.service';
-import { RenovationRoom } from '../../../../types';
+import { RenovationRoom, QuoteFile, CapexAnalysis } from '../../../../types';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
@@ -139,28 +139,79 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
                 <!-- Sidebar -->
                 <div class="flex flex-col gap-6">
-                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col items-center">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 self-start"> {{ 'RENOV.SpendDistribution' | translate }}</h3>
-                        <div class="w-40 h-40 rounded-full relative mb-6"
-                            [style.background]="'conic-gradient(#10B981 0% ' + kitchenShare() + '%, #6366F1 ' + kitchenShare() + '% ' + (kitchenShare() + bathShare()) + '%, #F59E0B ' + (kitchenShare() + bathShare()) + '% 100%)'">
-                            <div class="absolute inset-0 m-8 bg-slate-900 rounded-full flex flex-col items-center justify-center border border-white/10">
-                                <span class="text-[10px] text-slate-500"> {{ 'RENOV.TotalBudget' | translate }}</span>
-                                <span class="text-lg font-bold text-white"> {{ totalBudget() | currency: 'EUR': 'symbol': '1.0-0' }}</span>
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">{{ 'RENOV.ActualVsBudget' | translate }}</h3>
+                        
+                        <!-- Legend -->
+                        <div class="flex gap-4 mb-4 text-xs">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded bg-indigo-500"></div>
+                                <span class="text-slate-400">{{ 'RENOV.Budget' | translate }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded bg-emerald-500"></div>
+                                <span class="text-slate-400">{{ 'RENOV.ActualSpend' | translate }}</span>
                             </div>
                         </div>
 
-                        <div class="w-full space-y-2 text-xs">
-                            <div class="flex justify-between text-emerald-400">
-                                <span class="flex items-center gap-2"> <div class="w-2 h-2 rounded-full bg-emerald-500"></div> {{ 'RENOV.Kitchen' | translate }}</span>
-                                <span>{{ kitchenShare() | number: '1.0-0' }}% </span>
+                        <!-- Bar Chart -->
+                        <div class="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar">
+                            @for (room of rooms(); track $index) {
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-white font-medium">{{ room.type }}</span>
+                                        <span class="text-slate-400 font-mono">{{ room.area }}m²</span>
+                                    </div>
+                                    
+                                    <!-- Budget Bar -->
+                                    <div class="relative h-6 bg-slate-800 rounded overflow-hidden">
+                                        <div class="absolute inset-0 bg-indigo-500/30 transition-all" 
+                                             [style.width.%]="(room.budget_estimate / getMaxValue()) * 100"></div>
+                                        <div class="absolute inset-0 flex items-center justify-end pr-2">
+                                            <span class="text-[10px] font-bold text-indigo-300">{{ room.budget_estimate | currency: 'EUR': 'symbol': '1.0-0' }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Actual Spend Bar -->
+                                    <div class="relative h-6 bg-slate-800 rounded overflow-hidden">
+                                        <div class="absolute inset-0 transition-all" 
+                                             [class]="room.actual_spend > room.budget_estimate ? 'bg-rose-500/30' : 'bg-emerald-500/30'"
+                                             [style.width.%]="(room.actual_spend / getMaxValue()) * 100"></div>
+                                        <div class="absolute inset-0 flex items-center justify-end pr-2">
+                                            <span class="text-[10px] font-bold" 
+                                                  [class]="room.actual_spend > room.budget_estimate ? 'text-rose-300' : 'text-emerald-300'">
+                                                {{ room.actual_spend | currency: 'EUR': 'symbol': '1.0-0' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            
+                            @if (rooms().length === 0) {
+                                <div class="flex flex-col items-center justify-center py-8 text-center">
+                                    <span class="material-icons text-slate-600 text-4xl mb-2">bar_chart</span>
+                                    <p class="text-xs text-slate-500">{{ 'RENOV.AddRoomsToSeeChart' | translate }}</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Totals -->
+                        <div class="mt-4 pt-4 border-t border-white/10 space-y-2 text-xs">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">{{ 'RENOV.TotalBudget' | translate }}</span>
+                                <span class="font-mono font-bold text-indigo-300">{{ totalBudget() | currency: 'EUR': 'symbol': '1.0-0' }}</span>
                             </div>
-                            <div class="flex justify-between text-indigo-400">
-                                <span class="flex items-center gap-2"> <div class="w-2 h-2 rounded-full bg-indigo-500"></div> {{ 'RENOV.Bathroom' | translate }}</span>
-                                <span>{{ bathShare() | number: '1.0-0' }}% </span>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">{{ 'RENOV.TotalActualSpend' | translate }}</span>
+                                <span class="font-mono font-bold" [class]="totalActualSpend() > totalBudget() ? 'text-rose-300' : 'text-emerald-300'">
+                                    {{ totalActualSpend() | currency: 'EUR': 'symbol': '1.0-0' }}
+                                </span>
                             </div>
-                            <div class="flex justify-between text-amber-400">
-                                <span class="flex items-center gap-2"> <div class="w-2 h-2 rounded-full bg-amber-500"></div>{{ 'RENOV.Other' | translate }}</span>
-                                <span>{{ 100 - kitchenShare() - bathShare() | number: '1.0-0' }}% </span>
+                            <div class="flex justify-between pt-2 border-t border-white/5">
+                                <span class="text-white font-bold">{{ 'RENOV.Variance' | translate }}</span>
+                                <span class="font-mono font-bold" [class]="totalActualSpend() > totalBudget() ? 'text-rose-400' : 'text-emerald-400'">
+                                    {{ (totalActualSpend() - totalBudget()) | currency: 'EUR': 'symbol': '1.0-0' }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -261,8 +312,24 @@ export class RenovationBudgetComponent {
 
     tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
     isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
+    isTier1 = computed(() => this.tier() === 'Bronze' || this.tier() === 'TIER_1');
+    isTier2 = computed(() => this.tier() === 'Silver' || this.tier() === 'TIER_2');
     isTier2OrAbove = computed(() => ['TIER_2', 'TIER_3', 'Silver', 'Gold'].includes(this.tier()));
     isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
+
+    // Tier-based limits
+    maxRooms = computed(() => {
+        if (this.isTier0()) return 1;
+        if (this.isTier1()) return 3;
+        if (this.isTier2()) return 6;
+        return Infinity; // tier_3 unlimited
+    });
+    maxQuotes = computed(() => {
+        if (this.isTier0()) return 0;
+        if (this.isTier1()) return 1;
+        if (this.isTier2()) return 3;
+        return 5; // tier_3
+    });
 
     properties = signal<any[]>([]);
     selectedPropertyId = signal<string | null>(null);
@@ -270,6 +337,10 @@ export class RenovationBudgetComponent {
     auditResult = signal<boolean>(false);
     auditData = signal<any>(null);
     rooms = signal<RenovationRoom[]>([]);
+    quoteFiles = signal<QuoteFile[]>([]);
+    capexAnalysis = signal<CapexAnalysis | null>(null);
+    isUploadingFile = signal<boolean>(false);
+    isAnalyzing = signal<boolean>(false);
 
     constructor() {
         this.loadInitialData();
@@ -280,13 +351,15 @@ export class RenovationBudgetComponent {
         this.properties.set(props);
         if (props.length > 0) {
             this.selectedPropertyId.set(props[0].id);
-            this.loadRooms(props[0].id);
+            await this.loadRooms(props[0].id);
+            await this.loadQuoteFiles(props[0].id);
         }
     }
 
     async onPropertyChange(id: string) {
         this.selectedPropertyId.set(id);
-        this.loadRooms(id);
+        await this.loadRooms(id);
+        await this.loadQuoteFiles(id);
     }
 
     async loadRooms(propertyId: string) {
@@ -295,20 +368,31 @@ export class RenovationBudgetComponent {
     }
 
     totalBudget = computed(() => this.rooms().reduce((acc, r) => acc + Number(r.budget_estimate || 0), 0));
-    kitchenShare = computed(() => {
-        const total = this.totalBudget() || 1;
-        const kitchen = this.rooms().filter(r => r.type === 'Kitchen').reduce((acc, r) => acc + Number(r.budget_estimate || 0), 0);
-        return (kitchen / total) * 100;
+    totalActualSpend = computed(() => this.rooms().reduce((acc, r) => acc + Number(r.actual_spend || 0), 0));
+    remainingBudget = computed(() => Math.max(0, this.totalBudget() - this.totalActualSpend()));
+    spentPercentage = computed(() => {
+        const total = this.totalBudget();
+        if (total === 0) return 0;
+        return Math.min(100, (this.totalActualSpend() / total) * 100);
     });
-    bathShare = computed(() => {
-        const total = this.totalBudget() || 1;
-        const bath = this.rooms().filter(r => r.type === 'Bathroom').reduce((acc, r) => acc + Number(r.budget_estimate || 0), 0);
-        return (bath / total) * 100;
-    });
+
+    getMaxValue(): number {
+        const rooms = this.rooms();
+        if (rooms.length === 0) return 1;
+        const maxBudget = Math.max(...rooms.map(r => r.budget_estimate || 0));
+        const maxSpend = Math.max(...rooms.map(r => r.actual_spend || 0));
+        return Math.max(maxBudget, maxSpend, 1);
+    }
 
     async addRoom() {
         const propId = this.selectedPropertyId();
         if (!propId) return;
+
+        // Check tier-based room limit
+        if (this.rooms().length >= this.maxRooms()) {
+            alert(`Room limit reached for your tier. Maximum: ${this.maxRooms()} rooms.`);
+            return;
+        }
 
         const newRoom: Partial<RenovationRoom> = {
             property_id: propId,
@@ -380,6 +464,108 @@ export class RenovationBudgetComponent {
             console.error('Audit failed', error);
             this.auditData.set(null);
             this.auditResult.set(false);
+        }
+    }
+
+    // --- Quote File Management (Smart Capex Planner) ---
+
+    async onFileSelected(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (!input.files || input.files.length === 0) return;
+
+        const file = input.files[0];
+        const propId = this.selectedPropertyId();
+        if (!propId) return;
+
+        // Check tier-based quote limit
+        if (this.quoteFiles().length >= this.maxQuotes()) {
+            alert(`Quote limit reached for your tier. Maximum: ${this.maxQuotes()} quotes.`);
+            return;
+        }
+
+        this.isUploadingFile.set(true);
+        try {
+            const uploaded = await this.repository.uploadQuoteFile(propId, file);
+            if (uploaded) {
+                this.quoteFiles.update(files => [...files, uploaded]);
+            }
+        } catch (error: any) {
+            console.error('File upload failed:', error);
+            alert(error.message || 'Failed to upload file');
+        } finally {
+            this.isUploadingFile.set(false);
+            // Reset input
+            input.value = '';
+        }
+    }
+
+    async deleteQuoteFile(fileId: string) {
+        if (!confirm('Are you sure you want to delete this quote?')) return;
+
+        try {
+            await this.repository.deleteQuoteFile(fileId);
+            this.quoteFiles.update(files => files.filter(f => f.id !== fileId));
+        } catch (error) {
+            console.error('Failed to delete file:', error);
+            alert('Failed to delete quote file');
+        }
+    }
+
+    async loadQuoteFiles(propertyId: string) {
+        const files = await this.repository.getQuoteFiles(propertyId);
+        this.quoteFiles.set(files);
+    }
+
+    async getFileUrl(filePath: string): Promise<string> {
+        return await this.repository.getQuoteFileUrl(filePath);
+    }
+
+    // --- Comprehensive AI Analysis (Tier 3) ---
+
+    async triggerComprehensiveAnalysis() {
+        const propId = this.selectedPropertyId();
+        if (!propId) return;
+
+        if (this.rooms().length === 0) {
+            alert('Please add at least one room before running analysis');
+            return;
+        }
+
+        this.isAnalyzing.set(true);
+        this.capexAnalysis.set(null);
+
+        try {
+            // Get property address for context
+            const property = this.properties().find(p => p.id === propId);
+            const propertyAddress = property?.address;
+
+            // Prepare room data
+            const roomsData = this.rooms().map(r => ({
+                type: r.type,
+                area: r.area,
+                finish_level: r.finish_level,
+                budget_estimate: r.budget_estimate,
+                actual_spend: r.actual_spend
+            }));
+
+            // Prepare quote data (mock for now - would need to extract from uploaded PDFs)
+            const quotesData = this.quoteFiles().map(f => ({
+                vendor_name: f.file_name.replace('.pdf', ''),
+                amount: 0 // Would be extracted from PDF in production
+            }));
+
+            const analysis = await this.gemini.analyzeCapexPlan(
+                roomsData,
+                quotesData,
+                propertyAddress
+            );
+
+            this.capexAnalysis.set(analysis);
+        } catch (error) {
+            console.error('Comprehensive analysis failed:', error);
+            alert('Failed to generate comprehensive analysis');
+        } finally {
+            this.isAnalyzing.set(false);
         }
     }
 }

@@ -1,7 +1,7 @@
 
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
-import { ContextData, Scores, ReportData, UserProfile, AppPlan, ApiKey, PlanConfig, AppSettings, View, Property, AppTier, RenovationRoom, RenovationQuote, ComplianceRule, ConstructionTask } from '../types';
+import { ContextData, Scores, ReportData, UserProfile, AppPlan, ApiKey, PlanConfig, AppSettings, View, Property, AppTier, RenovationRoom, RenovationQuote, QuoteFile, CapexAnalysis, ComplianceRule, ConstructionTask } from '../types';
 
 @Injectable({
     providedIn: 'root'
@@ -930,6 +930,108 @@ export class HostRepository {
             .from('renovation_quotes')
             .upsert(quote);
         if (error) throw error;
+    }
+
+    // --- Quote File Management (Smart Capex Planner) ---
+
+    async uploadQuoteFile(propertyId: string, file: File): Promise<QuoteFile | null> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+
+        // Validate file type
+        if (file.type !== 'application/pdf') {
+            throw new Error("Only PDF files are allowed");
+        }
+
+        // Validate file size (5MB limit)
+        const MAX_SIZE = 5 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+            throw new Error("File size must be less than 5MB");
+        }
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${propertyId}/quote_${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        // 1. Upload the file to Supabase Storage
+        const { error: uploadError } = await this.supabase.storage
+            .from('renovation-quotes')
+            .upload(filePath, file, { upsert: false });
+
+        if (uploadError) {
+            console.error('Error uploading quote file:', uploadError);
+            throw uploadError;
+        }
+
+        // 2. Save metadata to database
+        const { data, error: dbError } = await this.supabase
+            .from('renovation_quote_files')
+            .insert({
+                property_id: propertyId,
+                file_name: file.name,
+                file_path: filePath,
+                file_size: file.size
+            })
+            .select()
+            .single();
+
+        if (dbError) {
+            // Cleanup: delete uploaded file if DB insert fails
+            await this.supabase.storage.from('renovation-quotes').remove([filePath]);
+            throw dbError;
+        }
+
+        return data;
+    }
+
+    async getQuoteFiles(propertyId: string): Promise<QuoteFile[]> {
+        if (!this.supabaseService.isConfigured) return [];
+        const { data, error } = await this.supabase
+            .from('renovation_quote_files')
+            .select('*')
+            .eq('property_id', propertyId)
+            .order('uploaded_at', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching quote files:', error);
+            return [];
+        }
+        return data || [];
+    }
+
+    async deleteQuoteFile(fileId: string): Promise<void> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+
+        // Get file path before deleting from DB
+        const { data: fileData } = await this.supabase
+            .from('renovation_quote_files')
+            .select('file_path')
+            .eq('id', fileId)
+            .single();
+
+        if (fileData?.file_path) {
+            // Delete from storage
+            await this.supabase.storage
+                .from('renovation-quotes')
+                .remove([fileData.file_path]);
+        }
+
+        // Delete from database
+        const { error } = await this.supabase
+            .from('renovation_quote_files')
+            .delete()
+            .eq('id', fileId);
+
+        if (error) throw error;
+    }
+
+    async getQuoteFileUrl(filePath: string): Promise<string> {
+        if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
+
+        const { data } = this.supabase.storage
+            .from('renovation-quotes')
+            .getPublicUrl(filePath);
+
+        return data.publicUrl;
     }
 
     // --- Compliance Checker (LEG_00) ---

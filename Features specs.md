@@ -67,3 +67,47 @@ for tier_0 the report shall only show the net clashflow and profitbility percent
 for tier_1 it should showreport for tier_0 and a ten yers cashflow and profitability chart
 for tier_2 it show tier_1 plus a simplified P&L and a graph showing yearly P&L over next 10 years
 for tier_3 it shows tier_2 , the P&L shall consider the potential taxes that the owner may incur and and a detailed analysis of the investment profitability, highlighting fincacial (taxes obligations) and the ptential risk or challenges that the future owner may face.
+
+
+
+Smart Capex Planner feature:
+
+1/ tier_0
+1.a/ the Room Budget Planner
+- add 1 room
+1.b/ Spend Distribution
+- not available
+1.c/ handshake Vendor Matrix 
+- not available
+1.d/ ai quote analysis
+- not available
+
+2/ tier_1
+1.a/ the Room Budget Planner
+- add 3 room
+1.b/ Spend Distribution
+- shows the % of spend per room chart and relative number %
+1.c/ handshake Vendor Matrix 
+- attach up to 1 quote as pdf format
+1.d/ ai quote analysis
+- not available
+
+3/ tier_2
+1.a/ the Room Budget Planner
+- add up to 6 rooms
+1.b/ Spend Distribution
+- shows the % of spend per room chart and relative number %
+1.c/ handshake Vendor Matrix 
+- attach up to 3 qutoes, as pdf format
+1.d/ ai quote analysis
+- not available
+
+4/ tier_4
+1.a/ the Room Budget Planner
+- add unlimited number of rooms
+1.b/ Spend Distribution
+- shows the % of spend per room chart and relative number %
+1.c/ handshake Vendor Matrix 
+- attach up to 5 quotes, as pdf format
+1.d/ ai quote analysis
+- the ai quote analysis should analyse the budget planner and look at the attached quotes, analyse them and provide a wise advice regarding the construction work that is being planned. if details regarding the property location can be extracted, use them to fill in the property details.
