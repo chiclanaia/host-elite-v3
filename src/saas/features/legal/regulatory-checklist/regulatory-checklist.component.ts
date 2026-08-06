@@ -1,5 +1,5 @@
 import { TranslationService } from '../../../../services/translation.service';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
@@ -23,6 +23,11 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
               }
           </div>
           <p class="text-slate-400 mt-2 max-w-2xl">{{ 'REGCHECK.NeverFailAnInspectionStore' | translate }}</p>
+          @if (propertyDetails()?.rental_mode && propertyDetails()?.rental_mode !== 'entire_place') {
+            <span class="inline-block mt-2 px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-xs font-bold text-indigo-300">
+              {{ rentalModeLabel() }}
+            </span>
+          }
         </div>
         <div class="px-4 py-2 rounded-lg border text-xs font-mono uppercase tracking-wider"
              [ngClass]="{
@@ -44,7 +49,14 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                 }
             </div>
             
-            <div class="space-y-4">
+             <div class="space-y-4">
+                @if (documents().length === 0) {
+                  <div class="flex flex-col items-center justify-center py-12 text-center">
+                     <span class="text-4xl mb-3">📂</span>
+                     <p class="text-slate-400 text-sm">No documents yet</p>
+                     <p class="text-slate-500 text-xs mt-1">Upload your first document to get started.</p>
+                  </div>
+                }
                 @for (doc of documents(); track doc.id) {
                     <div class="p-4 bg-white/5 rounded-lg border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors group" 
                          [class.border-l-4]="isTier3()"
@@ -93,7 +105,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                             </div>
                         } @else {
                              @if (isTier2()) {
-                                 <div class="text-[10px] text-slate-400 font-mono px-2 py-1 bg-white/5 rounded">Mandatory in {{ region() }}</div>
+                                 <div class="text-[10px] text-slate-400 font-mono px-2 py-1 bg-white/5 rounded">Regional requirement</div>
                              }
                              <div class="flex items-center">
                                 <span class="mr-3 text-xs text-slate-500 font-mono hidden md:block">{{ 'REGCHECK.ManualCheck' | translate }}</span>
@@ -125,14 +137,8 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                      </div>
                 </div>
                 
-                <h3 class="text-2xl font-black text-white mb-1">{{ isTier3() ? '98%' : '33%' }}</h3>
-                <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">{{ 'REGCHECK.AuditReady' | translate }}</p>
-
-                @if(!isTier3()) {
-                    <div class="mt-4 w-full p-3 bg-amber-500/10 border border-amber-500/30 rounded text-center">
-                        <p class="text-[10px] text-amber-200">{{ 'REGCHECK.RiskOfFineHigh' | translate }}</p>
-                    </div>
-                }
+                <h3 class="text-2xl font-black text-slate-500 mb-1">N/A</h3>
+                <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">{{ 'REGCHECK.AuditReady' | translate }}</p>
             </div>
 
             @if (!isTier3()) {
@@ -142,20 +148,11 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                     <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded shadow-lg transition-all" data-debug-id="regulatory-upgrade-link">{{ 'REGCHECK.UpgradeToSilver' | translate }}</button>
                 </div>
             } @else {
-                 <!-- Gold Only Widget -->
+                 <!-- Gold Only Widget (placeholder) -->
                  <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
                     <h4 class="font-bold text-emerald-400 text-sm mb-2 flex items-center gap-2">
                         <span class="animate-pulse">●</span>{{ 'REGCHECK.ActiveMonitoring' | translate }}</h4>
-                    <ul class="space-y-2">
-                        <li class="flex items-center justify-between text-xs text-slate-300">
-                            <span>{{ 'REGCHECK.JurisdictionRules' | translate }}</span>
-                            <span class="text-emerald-400 font-bold">{{ 'REGCHECK.ParisUpdated' | translate }}</span>
-                        </li>
-                        <li class="flex items-center justify-between text-xs text-slate-300">
-                            <span>{{ 'REGCHECK.NextAudit' | translate }}</span>
-                            <span class="text-white">{{ 'REGCHECK.ThreeDays' | translate }}</span>
-                        </li>
-                    </ul>
+                    <p class="text-xs text-slate-400">Connect your property to enable automated regulatory monitoring.</p>
                  </div>
             }
             
@@ -177,11 +174,21 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 })
 export class RegulatoryChecklistComponent {
     translate = inject(TranslationService);
+    propertyDetails = input<any>();
     feature = computed(() => ({
         id: 'LEG_01',
         name: this.translate.instant('REGUCHEC.Title'),
         description: this.translate.instant('REGUCHEC.Description'),
     } as any));
+
+    rentalModeLabel = computed(() => {
+        const rm = this.propertyDetails()?.rental_mode;
+        switch (rm) {
+            case 'private_rooms': return 'Private Rooms';
+            case 'both': return 'Entire Place & Rooms';
+            default: return 'Entire Place';
+        }
+    });
 
     session = inject(SessionStore);
     tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
@@ -190,11 +197,5 @@ export class RegulatoryChecklistComponent {
     isTier2 = computed(() => this.tier() === 'Silver' || this.tier() === 'TIER_2' || this.tier() === 'Gold' || this.tier() === 'TIER_3');
     isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
 
-    region = signal('Paris'); // Mock region for Tier 2
-
-    documents = computed(() => [
-        { id: 1, name: this.translate.instant('REGCHECK.IdCardPassport'), description: this.translate.instant('REGCHECK.IdProofDesc'), status: 'valid', expiry: '2028-01-01', aiVerified: true },
-        { id: 2, name: this.translate.instant('REGCHECK.PropertyInsurance'), description: this.translate.instant('REGCHECK.PnoDesc'), status: 'missing', expiry: null },
-        { id: 3, name: this.translate.instant('REGCHECK.SafetyCert'), description: this.translate.instant('REGCHECK.SafetyDesc'), status: 'missing', expiry: null }
-    ]);
+    documents = signal<any[]>([]);
 }

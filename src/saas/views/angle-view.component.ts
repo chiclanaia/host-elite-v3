@@ -10,15 +10,16 @@ import { GeminiService } from '../../services/gemini.service';
 import { SessionStore } from '../../state/session.store';
 
 import { MicrositeConfig, BuilderPhoto, SectionDef, resolveMicrositeConfig } from './welcome-booklet/booklet-definitions';
-import { MicrositeContainerComponent } from '../features/legacy/microsite/microsite-container.component';
+import { MicrositeEditorWrapperComponent } from '../components/universal-editor/wrappers';
+import { ListingEditorWrapperComponent } from '../components/universal-editor/wrappers';
 import { AiPromptsComponent } from '../features/legacy/ai-prompts/ai-prompts.component';
 import { VisibilityAuditComponent } from '../features/legacy/visibility-audit/visibility-audit.component';
 import { BookletToolComponent } from '../features/legacy/booklet-tool/booklet-tool.component';
-import { ListingEditorComponent } from '../features/legacy/listing-editor/listing-editor.component';
 import { ListingOptimizationComponent } from '../features/marketing/listing-optimization/listing-optimization.component';
 import { AiMessageAssistantComponent } from '../features/legacy/ai-message-assistant/ai-message-assistant.component';
 import { ChecklistsToolComponent } from '../features/legacy/checklists/checklists-tool.component';
 import { DelegationSimulatorComponent } from '../features/legacy/delegation/delegation-simulator.component';
+import { CraftjsEditorComponent } from '../features/listing-editor/components/craftjs-editor.component';
 import { CalendarToolComponent } from '../features/legacy/calendar-tool/components/calendar-tool.component';
 import { ProfitabilityCalculatorComponent } from '../features/legacy/profitability/profitability-calculator.component';
 import { MarketAlertsComponent } from '../features/legacy/market-alerts/market-alerts.component';
@@ -46,14 +47,15 @@ import { WelcomeBookletViewComponent } from './welcome-booklet-view.component';
         AiMessageAssistantComponent,
         ChecklistsToolComponent,
         ListingOptimizationComponent,
-        ListingEditorComponent,
-        MicrositeContainerComponent,
+        ListingEditorWrapperComponent,
+        MicrositeEditorWrapperComponent,
         DelegationSimulatorComponent,
         CalendarToolComponent,
         ProfitabilityCalculatorComponent,
         MarketAlertsComponent,
         PropertyAuditComponent,
-        WelcomeBookletViewComponent
+        WelcomeBookletViewComponent,
+        CraftjsEditorComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './angle-view.component.html',
@@ -127,8 +129,7 @@ export class PhaseViewComponent implements OnInit {
     });
 
     private legacyToolMapping: Record<string, string> = {
-        // Marketing - MKT_00 opens ListingEditorComponent (WYSIWYG listing editor)
-        'MKT_00': 'listing-editor',
+        // Marketing - MKT_00 opens the GrapesJS Studio SDK editor
         'MKT_01': 'booklet',
         'MKT_02': 'microsite',
         // Experience
@@ -186,6 +187,12 @@ export class PhaseViewComponent implements OnInit {
         this.activeToolId.set(null);
         this.activeFeatureComponent.set(null);
 
+        // MKT_00 opens the Studio SDK editor directly
+        if (feature.id === 'MKT_00') {
+            this.activeToolId.set('craftjs-editor');
+            return;
+        }
+
         const ComponentClass = FEATURE_COMPONENTS[feature.id];
         if (ComponentClass) {
             this.activeFeature.set(feature);
@@ -207,7 +214,7 @@ export class PhaseViewComponent implements OnInit {
     openFeatureById(featureId: string) {
         // Handle MKT features
         if (featureId === 'MKT_00') {
-            this.activeToolId.set('listing-editor');
+            this.activeToolId.set('craftjs-editor');
             return;
         } else if (featureId === 'MKT_01') {
             this.bookletService.activeTab.set('booklet');
@@ -244,6 +251,7 @@ export class PhaseViewComponent implements OnInit {
     closeTool() {
         this.activeToolId.set(null);
         this.activeFeatureComponent.set(null);
+        this.activeFeature.set(null);
     }
 
 

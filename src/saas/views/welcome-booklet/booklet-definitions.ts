@@ -29,6 +29,27 @@ export const WIDGET_DEFINITIONS: Record<string, { name: string, icon: string }> 
 };
 
 export const CONTROL_LABELS: Record<string, Record<string, string>> = {
+    'propertyDetails': {
+        property_type: 'BOOKLET.fields.property_type',
+        rental_mode: 'BOOKLET.fields.rental_mode',
+        rental_rooms: 'BOOKLET.fields.rental_rooms',
+        bedrooms: 'BOOKLET.fields.bedrooms',
+        bathrooms: 'BOOKLET.fields.bathrooms',
+        surface_area: 'BOOKLET.fields.surface_area',
+        max_guests: 'BOOKLET.fields.max_guests',
+        bed_count: 'BOOKLET.fields.bed_count',
+    },
+    'arrival': {
+        checkInTime: 'BOOKLET.fields.checkInTime',
+        arrivalInstructions: 'BOOKLET.fields.arrivalInstructions',
+        keyRetrieval: 'BOOKLET.fields.keyRetrieval',
+        accessCodes: 'BOOKLET.fields.accessCodes',
+        parkingArrival: 'BOOKLET.fields.parkingArrival',
+        lateArrival: 'BOOKLET.fields.lateArrival',
+        meetingPoint: 'BOOKLET.fields.meetingPoint',
+        firstSteps: 'BOOKLET.fields.firstSteps',
+        baggageStorage: 'BOOKLET.fields.baggageStorage',
+    },
     'welcome': {
         welcomeMessage: 'BOOKLET.fields.welcomeMessage',
         hostContact: 'BOOKLET.fields.hostContact',
@@ -216,6 +237,8 @@ export const CONTROL_LABELS: Record<string, Record<string, string>> = {
 
 // Raw sections configuration with SVG strings
 export const SECTIONS_CONFIG: BookletSection[] = [
+    { id: 'propertyDetails', formGroupName: 'propertyDetails', editorTitle: `BOOKLET.propertyDetails`, previewTitle: 'BOOKLET.propertyDetails', description: 'BOOKLET.desc.propertyDetails', iconSource: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18h18m-9-9.75v9a2.25 2.25 0 0 1-2.25 2.25h-1.5a2.25 2.25 0 0 1-2.25-2.25v-9a2.25 2.25 0 0 1 2.25-2.25h1.5m-9 9.75h9m-9-9.75v9a2.25 2.25 0 0 1-2.25 2.25h-1.5a2.25 2.25 0 0 1-2.25-2.25v-9a2.25 2.25 0 0 1 2.25-2.25h1.5" /></svg>` },
+    { id: 'arrival', formGroupName: 'arrival', editorTitle: `BOOKLET.arrival`, previewTitle: 'BOOKLET.arrival', description: 'BOOKLET.desc.arrival', iconSource: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" /></svg>` },
     { id: 'welcome', formGroupName: 'welcome', editorTitle: `BOOKLET.welcome_editor`, previewTitle: 'BOOKLET.welcome', description: 'BOOKLET.desc.welcome', iconSource: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h7.5"/></svg>` },
     { id: 'accessibility', formGroupName: 'accessibility', editorTitle: `BOOKLET.accessibility`, previewTitle: 'BOOKLET.accessibility', description: 'BOOKLET.desc.accessibility', iconSource: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6"><path d="M11.53 2.3A1.85 1.85 0 0 0 10 3.85V11h3.85a1.85 1.85 0 1 0 0-3.7H12V5.7A1.85 1.85 0 0 0 11.53 2.3ZM12 12.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z" /><path d="M4.53 11.2A3.3 3.3 0 0 0 2 14.5v.5a1 1 0 0 0 1 1h1.5a1 1 0 0 0 1-1v-.5a3.3 3.3 0 0 0-2.97-3.3Zm13 0A3.3 3.3 0 0 0 14.56 14v1.5a1 1 0 0 0 1 1H17a1 1 0 0 0 1-1v-1.5a3.3 3.3 0 0 0-3.47-3.3Z" /><path fill-rule="evenodd" d="M12 1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM9.5 3.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0Z" clip-rule="evenodd" /></svg>` },
     { id: 'systems', formGroupName: 'systems', editorTitle: `BOOKLET.systems`, previewTitle: 'BOOKLET.systems', description: 'BOOKLET.desc.systems', iconSource: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 0 1-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 0 1 .947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 0 1-2.287-.947ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" /></svg>` },
@@ -247,8 +270,10 @@ export interface FaqItem {
 
 // -- Microsite Definitions --
 
+export type MicrositeTemplate = 'modern' | 'cozy' | 'luxury' | 'editorial' | 'cinematic' | 'minimal' | 'story';
+
 export interface MicrositeConfig {
-    template: 'modern' | 'cozy' | 'luxury';
+    template: MicrositeTemplate;
     primaryColor: string;
     showDescription: boolean;
     showContact: boolean;
@@ -259,7 +284,9 @@ export interface MicrositeConfig {
     headline: string;
     buttonStyle?: 'rounded' | 'sharp' | 'pill';
     font?: 'inter' | 'serif' | 'mono';
-    iconStyle?: 'emoji' | 'minimalist' | 'drawn'; // New option
+    iconStyle?: 'emoji' | 'minimalist' | 'drawn';
+    theme?: Record<string, any>;
+    layoutId?: string;
 }
 
 export interface BuilderPhoto {
@@ -323,4 +350,318 @@ export function resolveMicrositeConfig(bookletData: any, savedConfig: Partial<Mi
         ...defaults,
         visibleSections: smartSections
     };
+}
+
+// -- Universal Editor field typing --
+
+import type { EditorSection, SectionField } from '../../components/universal-editor/models/editor-section';
+
+type FieldType = SectionField['type'];
+
+interface FieldTypeMeta {
+    type: FieldType;
+    placeholder?: string;
+    options?: { value: string; label: string }[];
+}
+
+export const PROPERTY_TYPE_OPTIONS = [
+    { value: 'Entire Home', label: 'Entire Home' },
+    { value: 'Apartment', label: 'Apartment' },
+    { value: 'Private Room', label: 'Private Room' },
+    { value: 'Shared Room', label: 'Shared Room' },
+    { value: 'Villa', label: 'Villa' },
+    { value: 'Cabin', label: 'Cabin' },
+    { value: 'Chalet', label: 'Chalet' },
+    { value: 'Cottage', label: 'Cottage' },
+    { value: 'Loft', label: 'Loft' },
+    { value: 'Studio', label: 'Studio' },
+];
+
+export const RENTAL_MODE_OPTIONS = [
+    { value: 'entire_place', label: 'Entire Place' },
+    { value: 'private_rooms', label: 'Private Rooms Only' },
+    { value: 'both', label: 'Both Entire Place & Rooms' },
+];
+
+export const FIELD_TYPES: Record<string, Record<string, FieldTypeMeta>> = {
+    propertyDetails: {
+        property_type: { type: 'select', options: PROPERTY_TYPE_OPTIONS },
+        rental_mode: { type: 'select', options: RENTAL_MODE_OPTIONS },
+        bedrooms: { type: 'text', placeholder: '2' },
+        bathrooms: { type: 'text', placeholder: '1' },
+        surface_area: { type: 'text', placeholder: '80 m²' },
+        max_guests: { type: 'text', placeholder: '4' },
+        bed_count: { type: 'text', placeholder: '3' },
+    },
+    arrival: {
+        checkInTime: { type: 'text', placeholder: '15:00' },
+        arrivalInstructions: { type: 'richtext' },
+        keyRetrieval: { type: 'richtext' },
+        accessCodes: { type: 'text', placeholder: 'Door code, alarm code' },
+        parkingArrival: { type: 'richtext' },
+        lateArrival: { type: 'richtext' },
+        meetingPoint: { type: 'richtext' },
+        firstSteps: { type: 'richtext' },
+        baggageStorage: { type: 'richtext' },
+    },
+    welcome: {
+        welcomeMessage: { type: 'richtext' },
+        hostContact: { type: 'text', placeholder: 'Your phone number' },
+        emergencyContact: { type: 'text', placeholder: 'Emergency phone number' },
+        localEmergencyNumber: { type: 'text', placeholder: '112 (EU), 911 (US)' },
+        doctor: { type: 'text' },
+        dentist: { type: 'text' },
+        vet: { type: 'text' },
+        poisonControl: { type: 'text' },
+    },
+    accessibility: {
+        accessibilityInstructions: { type: 'richtext' },
+        babyEquipment: { type: 'richtext' },
+        medicalEquipmentRental: { type: 'richtext' },
+    },
+    systems: {
+        wifi: { type: 'text', placeholder: 'Network + password' },
+        heating: { type: 'richtext' },
+        airConditioning: { type: 'richtext' },
+        ventilation: { type: 'richtext' },
+        circuitBreaker: { type: 'richtext' },
+        waterValve: { type: 'richtext' },
+        fireplace: { type: 'richtext' },
+        shutters: { type: 'richtext' },
+        safe: { type: 'richtext' },
+    },
+    security: {
+        alarm: { type: 'richtext' },
+        fireExtinguisher: { type: 'richtext' },
+        firstAid: { type: 'richtext' },
+        detectors: { type: 'richtext' },
+        evacuation: { type: 'richtext' },
+    },
+    kitchen: {
+        refrigerator: { type: 'richtext' },
+        freezer: { type: 'richtext' },
+        oven: { type: 'richtext' },
+        microwave: { type: 'richtext' },
+        cooktop: { type: 'richtext' },
+        rangeHood: { type: 'richtext' },
+        dishwasher: { type: 'richtext' },
+        coffeeMaker: { type: 'richtext' },
+        espressoMachine: { type: 'richtext' },
+        kettle: { type: 'richtext' },
+        toaster: { type: 'richtext' },
+        mixer: { type: 'richtext' },
+        foodProcessor: { type: 'richtext' },
+        juicer: { type: 'richtext' },
+        wineCellar: { type: 'richtext' },
+        iceMachine: { type: 'richtext' },
+        racletteMachine: { type: 'richtext' },
+        basicSupplies: { type: 'richtext' },
+        extras: { type: 'richtext' },
+    },
+    livingRoom: {
+        television: { type: 'richtext' },
+        audioSystem: { type: 'richtext' },
+        videoGames: { type: 'richtext' },
+        dvdPlayer: { type: 'richtext' },
+        library: { type: 'richtext' },
+        boardGames: { type: 'richtext' },
+    },
+    bedrooms: {
+        beddingAndPillows: { type: 'richtext' },
+        extraLinens: { type: 'richtext' },
+        linenChangeProcedure: { type: 'richtext' },
+        robesAndSlippers: { type: 'richtext' },
+        hairDryer: { type: 'richtext' },
+        sewingKit: { type: 'richtext' },
+        mosquitoRepellent: { type: 'richtext' },
+    },
+    laundry: {
+        washingMachine: { type: 'richtext' },
+        dryer: { type: 'richtext' },
+        dryingRack: { type: 'richtext' },
+        iron: { type: 'richtext' },
+        ironingBoard: { type: 'richtext' },
+        vacuum: { type: 'richtext' },
+        cleaningSupplies: { type: 'richtext' },
+    },
+    wellness: {
+        swimmingPool: { type: 'richtext' },
+        jacuzzi: { type: 'richtext' },
+        saunaHammam: { type: 'richtext' },
+        barbecue: { type: 'richtext' },
+        gardenFurniture: { type: 'richtext' },
+        outdoorLighting: { type: 'richtext' },
+        beachEquipment: { type: 'richtext' },
+        sportsEquipment: { type: 'richtext' },
+        outdoorShower: { type: 'richtext' },
+    },
+    parking: {
+        parkingRules: { type: 'richtext' },
+        garageOpening: { type: 'richtext' },
+    },
+    rules: {
+        quietHours: { type: 'text', placeholder: '22:00 - 08:00' },
+        partyPolicy: { type: 'richtext' },
+        nonSmokingPolicy: { type: 'richtext' },
+        keyManagement: { type: 'richtext' },
+    },
+    pets: {
+        specificRules: { type: 'richtext' },
+        petSupplies: { type: 'richtext' },
+        wasteBags: { type: 'richtext' },
+        petFriendlyPlaces: { type: 'richtext' },
+        petsitterContact: { type: 'richtext' },
+    },
+    waste: {
+        indoorTrash: { type: 'richtext' },
+        recyclingRules: { type: 'richtext' },
+        outdoorTrash: { type: 'richtext' },
+        pickupDays: { type: 'richtext' },
+    },
+    dining: {
+        bakery: { type: 'richtext' },
+        supermarket: { type: 'richtext' },
+        localMarket: { type: 'richtext' },
+        recommendedRestaurants: { type: 'richtext' },
+        vegetarianOptions: { type: 'richtext' },
+        allergyFriendly: { type: 'richtext' },
+        dogFriendly: { type: 'richtext' },
+        barsAndCafes: { type: 'richtext' },
+        deliveryServices: { type: 'richtext' },
+        privateChef: { type: 'richtext' },
+        localTastings: { type: 'richtext' },
+    },
+    activities: {
+        hiking: { type: 'richtext' },
+        mountainBiking: { type: 'richtext' },
+        bikeRental: { type: 'richtext' },
+        waterSports: { type: 'richtext' },
+        beaches: { type: 'richtext' },
+        horseRiding: { type: 'richtext' },
+        golf: { type: 'richtext' },
+        tennisPadel: { type: 'richtext' },
+        climbing: { type: 'richtext' },
+        gym: { type: 'richtext' },
+        museums: { type: 'richtext' },
+        monuments: { type: 'richtext' },
+        themeParks: { type: 'richtext' },
+        childActivities: { type: 'richtext' },
+        spas: { type: 'richtext' },
+        cinemas: { type: 'richtext' },
+        theaters: { type: 'richtext' },
+    },
+    localInfo: {
+        localCustoms: { type: 'richtext' },
+        openingHours: { type: 'richtext' },
+        localHolidays: { type: 'richtext' },
+        festivalCalendar: { type: 'richtext' },
+        touristOffice: { type: 'richtext' },
+    },
+    transport: {
+        localTaxis: { type: 'richtext' },
+        rideSharing: { type: 'richtext' },
+        busTramStops: { type: 'richtext' },
+        trainStation: { type: 'richtext' },
+        airport: { type: 'richtext' },
+        carRental: { type: 'richtext' },
+    },
+    administrative: {
+        policeNonEmergency: { type: 'richtext' },
+        lostDocuments: { type: 'richtext' },
+        embassies: { type: 'richtext' },
+        translationServices: { type: 'richtext' },
+        postOffice: { type: 'richtext' },
+    },
+    extraServices: {
+        midStayCleaning: { type: 'richtext' },
+        laundryService: { type: 'richtext' },
+        preArrivalGrocery: { type: 'richtext' },
+    },
+    departure: {
+        checkoutTime: { type: 'text', placeholder: '11:00' },
+        lateCheckout: { type: 'richtext' },
+        cleaningInstructions: { type: 'richtext' },
+        linenManagement: { type: 'richtext' },
+        keyReturn: { type: 'richtext' },
+        closingChecklist: { type: 'richtext' },
+        reviewRequest: { type: 'richtext' },
+        improvementSuggestions: { type: 'richtext' },
+    },
+};
+
+export const SECTION_ICONS: Record<string, string> = {
+    propertyDetails: '🏠',
+    arrival: '🔑',
+    welcome: '👋',
+    accessibility: '♿',
+    systems: '⚙️',
+    security: '🔒',
+    kitchen: '🍳',
+    livingRoom: '🛋️',
+    bedrooms: '🛏️',
+    laundry: '🧺',
+    wellness: '💆',
+    parking: '🅿️',
+    rules: '📜',
+    pets: '🐾',
+    waste: '♻️',
+    dining: '🍽️',
+    activities: '🥾',
+    localInfo: 'ℹ️',
+    transport: '🚌',
+    administrative: '🏛️',
+    extraServices: '✨',
+    departure: '👋',
+};
+
+export function buildWelcomeBookletSections(): EditorSection[] {
+    const sections: EditorSection[] = [
+        {
+            id: 'general',
+            label: 'BOOKLET.GeneralInfo',
+            icon: '📍',
+            category: 'content' as const,
+            required: true,
+            fields: [
+                { key: 'address', label: 'BOOKLET.Address', type: 'text', placeholder: '12 Rue de la Paix, 75000 Paris' },
+                { key: 'coverImageUrl', label: 'BOOKLET.CoverImage', type: 'text', placeholder: 'https://...' },
+                { key: 'gpsCoordinates', label: 'BOOKLET.GpsCoordinates', type: 'text', placeholder: 'https://maps.google.com/...' },
+            ],
+        },
+        ...SECTIONS_CONFIG
+            .filter(s => !!CONTROL_LABELS[s.formGroupName])
+            .map(s => {
+                const labels = CONTROL_LABELS[s.formGroupName];
+                const types = FIELD_TYPES[s.formGroupName] || {};
+                const fields: SectionField[] = Object.keys(labels)
+                    .filter(key => !key.endsWith('_pdf') && key !== 'rental_rooms')
+                    .map(key => ({
+                        key,
+                        label: labels[key],
+                        type: types[key]?.type || 'richtext',
+                        placeholder: types[key]?.placeholder,
+                        options: types[key]?.options,
+                    }));
+                return {
+                    id: s.id,
+                    label: s.editorTitle,
+                    icon: SECTION_ICONS[s.id] || '📋',
+                    category: 'content' as const,
+                    required: false,
+                    fields,
+                };
+            }),
+        {
+            id: 'photo-gallery',
+            label: 'BOOKLET.PropertyPhotos',
+            icon: '📸',
+            category: 'media' as const,
+            required: false,
+            fields: [
+                { key: 'selectedPhotos', label: 'BOOKLET.SelectPhotos', type: 'photo-picker' },
+            ],
+        },
+    ];
+
+    return sections;
 }

@@ -1,7 +1,7 @@
 export const booklet = {
     // Booklet View
     'BOOKLET.DataEntry': 'Saisie Données',
-    'BOOKLET.WelcomeBook': 'Welcome Book',
+    'BOOKLET.WelcomeBook': 'Livret de Bienvenue',
     'BOOKLET.PublicMicrosite': 'Microsite Public',
 
     // Booklet Sections
@@ -16,6 +16,17 @@ export const booklet = {
     'BOOKLET.Category': 'Catégorie',
     'BOOKLET.ChooseCategory': '-- Choisir --',
     'BOOKLET.EnterDetails': 'Saisissez les informations ou utilisez l\'IA...',
+
+    // Fields - Property Details
+    'BOOKLET.fields.property_type': 'Type de propriété',
+    'BOOKLET.fields.rooms': 'Nombre de pièces',
+    'BOOKLET.fields.bedrooms': 'Chambres',
+    'BOOKLET.fields.bathrooms': 'Salles de bain',
+    'BOOKLET.fields.surface_area': 'Surface (m²)',
+    'BOOKLET.fields.max_guests': 'Voyageurs max',
+    'BOOKLET.fields.bed_count': 'Nombre de lits',
+    'BOOKLET.fields.rental_mode': 'Mode de location',
+    'BOOKLET.fields.rental_rooms': 'Chambres à louer',
 
     // Fields - Welcome
     'BOOKLET.fields.welcomeMessage': 'Message de bienvenue / Description',
@@ -237,6 +248,29 @@ export const booklet = {
     'BOOKLET.extraServices': 'Services Additionnels',
     'BOOKLET.departure': 'Procédure de Départ',
 
+    'BOOKLET.propertyDetails': 'Détails de la Propriété',
+    'BOOKLET.desc.propertyDetails': 'Caractéristiques physiques et capacités du logement',
+
+    'BOOKLET.arrival': "Procédure d'Arrivée",
+    'BOOKLET.desc.arrival': "Instructions d'arrivée, récupération des clés et informations",
+
+    'BOOKLET.fields.checkInTime': "Heure d'arrivée",
+    'BOOKLET.fields.arrivalInstructions': "Instructions d'arrivée",
+    'BOOKLET.fields.keyRetrieval': 'Récupération des clés',
+    'BOOKLET.fields.accessCodes': "Codes d'accès",
+    'BOOKLET.fields.parkingArrival': "Stationnement à l'arrivée",
+    'BOOKLET.fields.lateArrival': "Procédure d'arrivée tardive",
+    'BOOKLET.fields.meetingPoint': 'Point de rendez-vous',
+    'BOOKLET.fields.firstSteps': 'Premières étapes',
+    'BOOKLET.fields.baggageStorage': 'Consigne bagages',
+
+    'BOOKLET.arrival_time': "Heure d'arrivée",
+    'BOOKLET.arrival_instructions': "Instructions d'arrivée",
+    'BOOKLET.arrival_keys': 'Récupération des clés',
+    'BOOKLET.arrival_codes': "Codes d'accès",
+    'BOOKLET.arrival_parking': 'Stationnement',
+    'BOOKLET.arrival_late': 'Arrivée tardive',
+
     'BOOKLET.PropertyPhotos': 'Photos de la Propriété',
     'BOOKLET.ManageCategories': 'Gérer les catégories',
     'BOOKLET.AddPhoto': 'Ajouter une Photo',
@@ -288,7 +322,7 @@ export const booklet = {
     'BOOKLET.structure_desc': 'Activez ou désactivez les sections que vous souhaitez afficher dans le livret d\'accueil invité.',
     'BOOKLET.icon_style_label': 'Style des Icônes',
     'BOOKLET.icon_style_tooltip': 'Choisissez le style des icônes',
-    'BOOKLET.icon_emoji': 'Emojis (Fun)',
+    'BOOKLET.icon_emoji': 'Emojis (Amusant)',
     'BOOKLET.icon_minimalist': 'Minimaliste (Épuré)',
     'BOOKLET.icon_drawn': 'Dessiné (Artistique)',
     'BOOKLET.desc.welcome': 'Infos d\'arrivée & wifi',

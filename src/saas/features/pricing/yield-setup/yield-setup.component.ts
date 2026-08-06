@@ -1,10 +1,11 @@
 import { TranslationService } from '../../../../services/translation.service';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Feature } from '../../../../types';
 import { SessionStore } from '../../../../state/session.store';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { GeminiService } from '../../../../services/gemini.service';
 
 @Component({
     selector: 'pri-01-yield-setup',
@@ -40,7 +41,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                    <div class="space-y-6">
                        <div class="p-4 bg-black/20 rounded-xl border border-white/5">
                            <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1 tracking-wider">{{ 'YIELD.BreakevenPrice' | translate }}</label>
-                           <div class="text-3xl font-mono text-white font-bold">€85.00</div>
+                            <div class="text-3xl font-mono text-white font-bold">€{{ basePrice().toFixed(2) }}</div>
                            <p class="text-[10px] text-slate-500 mt-1">{{ 'YIELD.FixedCostsCleaning30Nights' | translate }}</p>
                        </div>
                        <div>
@@ -139,45 +140,77 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                         <div class="flex items-center gap-2">
                             <div class="w-2 h-2 bg-amber-500 rounded-full"></div> <span class="text-slate-500">{{ 'YIELD.High' | translate }}</span>
                         </div>
-                    </div>
-                </div>
+</div>
+                 </div>
 
-                <!-- Heatmap Bars -->
-                <div class="flex-1 flex items-end justify-between gap-1 md:gap-2 pb-6 relative">
+                 <!-- Left Y-Axis (Demand %) -->
+                 <div class="absolute left-0 top-0 bottom-6 w-10 flex flex-col justify-between text-[9px] text-slate-500 font-mono pr-2 py-2">
+                     <span class="self-end">100%</span>
+                     <span class="self-end">75%</span>
+                     <span class="self-end">50%</span>
+                     <span class="self-end">25%</span>
+                     <span class="self-end">0%</span>
+                 </div>
+
+                 <!-- Right Y-Axis (Price €) -->
+                 <div class="absolute right-0 top-0 bottom-6 w-12 flex flex-col justify-between text-[9px] text-orange-400 font-mono pl-2 py-2">
+                     <span class="self-start">€{{ priceRange().tick1 }}</span>
+                     <span class="self-start">€{{ priceRange().tick2 }}</span>
+                     <span class="self-start">€{{ priceRange().tick3 }}</span>
+                     <span class="self-start">€{{ priceRange().tick4 }}</span>
+                     <span class="self-start">€{{ priceRange().tick5 }}</span>
+                 </div>
+
+                 <!-- Grid Lines -->
+                 <div class="absolute left-10 right-12 top-0 bottom-6 flex flex-col justify-between pointer-events-none">
+                     <div class="border-b border-white/5"></div>
+                     <div class="border-b border-white/5"></div>
+                     <div class="border-b border-white/5"></div>
+                     <div class="border-b border-white/5"></div>
+                     <div class="border-b border-white/5"></div>
+                 </div>
+
+                 <!-- Heatmap Bars -->
+                <div class="ml-10 mr-12 flex-1 min-h-[200px] flex items-end justify-between gap-1 md:gap-2 pb-6 relative">
                     
-                    @if(isTier3()) {
-                        <!-- AI Projection Line Overlay -->
-                        <div class="absolute inset-x-0 bottom-6 h-[70%] pointer-events-none z-10">
+                    @if(isTier2()) {
+                        <!-- Projection Line Overlay -->
+                        <div class="absolute inset-x-0 bottom-6 top-0 pointer-events-none z-10">
                             <svg class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
                                 <path [attr.d]="svgPath()" 
                                       fill="none" 
-                                      stroke="url(#gradient-ai)" 
-                                      stroke-width="2" 
-                                      stroke-dasharray="4,4" 
-                                      class="opacity-70 drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]"></path>
-                                <defs>
-                                    <linearGradient id="gradient-ai" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" style="stop-color:#6366f1" />
-                                        <stop offset="100%" style="stop-color:#10b981" />
-                                    </linearGradient>
-                                </defs>
+                                      stroke="#818cf8" 
+                                      stroke-width="3" 
+                                      stroke-dasharray="6,4" 
+                                      class="drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]"></path>
+                                <path [attr.d]="pricePath()" 
+                                      fill="none" 
+                                      stroke="#fbbf24" 
+                                      stroke-width="3" 
+                                      class="drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]"></path>
                             </svg>
                         </div>
-                        <div class="absolute top-0 right-0 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[10px] px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-2 z-20 shadow-lg">
-                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
-                            <span>✨ AI Predictive Demand</span>
+                        <div class="absolute top-0 right-0 flex flex-col gap-2 z-20">
+                            <div class="bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[10px] px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-2 shadow-lg">
+                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                                <span>✨ AI Demand</span>
+                            </div>
+                            <div class="bg-orange-500/10 border border-orange-500/30 text-orange-300 text-[10px] px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-2 shadow-lg">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>
+                                <span>💰 Est. Price</span>
+                            </div>
                         </div>
                     }
 
                     <!-- Bars -->
                     @for (month of forecast(); track month.name) {
                         <div class="flex-1 group/bar relative">
-                            <div class="w-full bg-opacity-20 transition-all duration-500 rounded-t-lg relative flex items-end overflow-hidden"
+                            <div class="w-full transition-all duration-500 rounded-t-lg relative flex items-end overflow-hidden"
                                  [style.height.%]="month.demand"
-                                 [class.bg-slate-700]="month.demand < 50"
-                                 [class.bg-emerald-500]="month.demand >= 50 && month.demand < 80"
-                                 [class.bg-amber-500]="month.demand >= 80"
-                                 [class.hover:bg-opacity-40]="true">
+                                 [class.bg-slate-500]="month.demand < 50"
+                                 [class.bg-emerald-400]="month.demand >= 50 && month.demand < 80"
+                                 [class.bg-amber-400]="month.demand >= 80"
+                                 [class.opacity-90]="true">
                                  <!-- Bar Animation Overlay -->
                                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                             </div>
@@ -190,7 +223,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                                 </div>
                                 <div class="flex justify-between gap-4">
                                     <span class="text-slate-400">Avg Price:</span>
-                                    <span class="text-emerald-400">€{{ (85 * (1 + margin()/100) * (0.5 + month.demand/100)).toFixed(0) }}</span>
+                                    <span class="text-emerald-400">€{{ effectiveMonthlyPrices()[$index] }}</span>
                                 </div>
                             </div>
                         </div>
@@ -207,7 +240,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                 <div class="mt-8 pt-8 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-6">
                     <div class="text-center md:text-left">
                         <div class="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Projected ADR</div>
-                        <div class="text-xl font-mono text-white font-bold">€{{ (85 * (1 + margin()/100) * 1.2).toFixed(0) }}</div>
+                        <div class="text-xl font-mono text-white font-bold">€{{ (basePrice() * (1 + margin()/100)).toFixed(0) }}</div>
                     </div>
                     <div class="text-center md:text-left">
                         <div class="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Peak Occupancy</div>
@@ -215,7 +248,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
                     </div>
                     <div class="text-center md:text-left">
                         <div class="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Margin Capture</div>
-                        <div class="text-xl font-mono text-amber-400 font-bold">€{{ (85 * (margin()/100)).toFixed(0) }}/night</div>
+                        <div class="text-xl font-mono text-amber-400 font-bold">€{{ (basePrice() * (margin()/100)).toFixed(0) }}/night</div>
                     </div>
                     <div class="text-center md:text-left">
                         <button (click)="recalculate()" 
@@ -247,22 +280,60 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
         }
     `]
 })
-export class YieldSetupComponent {
+export class YieldSetupComponent implements OnInit {
     translate = inject(TranslationService);
-    feature = computed(() => ({
+    session = inject(SessionStore);
+    geminiService = inject(GeminiService);
+    featureData = computed(() => ({
         id: 'PRI_01',
         name: this.translate.instant('YIELSETU.Title'),
         description: this.translate.instant('YIELSETU.Description'),
     } as any));
 
-    session = inject(SessionStore);
     tier = computed(() => this.session.userProfile()?.plan || 'Freemium');
+
+    isLoadingMarket = signal(false);
 
     isTier0 = computed(() => this.tier() === 'Freemium' || this.tier() === 'TIER_0');
     isTier2 = computed(() => this.tier() === 'Silver' || this.tier() === 'TIER_2' || this.tier() === 'Gold' || this.tier() === 'TIER_3');
     isTier3 = computed(() => this.tier() === 'Gold' || this.tier() === 'TIER_3');
 
     margin = signal(25);
+
+    /** Dynamic base price per night from AI market analysis. Fallback to €85 kept for backward compatibility. */
+    basePrice = signal(85);
+    /** Monthly prices directly from AI analysis (if available) for more accurate seasonal pricing. */
+    monthlyPrices = signal<number[] | null>(null);
+
+    /** Number of bedrooms/rooms for the property. Used to scale pricing. */
+    propertyRooms = signal(2);
+
+    /** Rental mode: how this property is rented out. */
+    rentalMode = signal<string>('entire_place');
+
+    /**
+     * Room count multiplier for pricing.
+     * Only applies to 'entire_place' (whole-property pricing).
+     * Market-data benchmarks (baseADR) are for 2-bedroom properties.
+     * Uses sqrt scaling (diminishing returns) which matches industry STR patterns.
+     * Examples: 1 room→0.71x, 2 rooms→1.00x, 3→1.22x, 4→1.41x, 6→1.73x
+     */
+    roomsMultiplier = computed(() => {
+        if (this.rentalMode() === 'private_rooms') return 1;
+        const rooms = this.propertyRooms();
+        const baseline = 2;
+        if (rooms <= 0) return 1;
+        return Math.sqrt(rooms / baseline);
+    });
+
+    /** Effective base price after accounting for rental mode and room count. */
+    effectiveBasePrice = computed(() => {
+        return Math.round(this.basePrice() * this.roomsMultiplier());
+    });
+
+    @Input() feature?: any;
+    @Input() propertyDetails?: any;
+    @Input() selectFeature?: (featureId: string) => void;
 
     forecast = signal([
         { name: 'January', demand: 40 },
@@ -288,11 +359,106 @@ export class YieldSetupComponent {
         return d;
     });
 
+    pricePath = computed(() => {
+        const bounds = this.priceBounds();
+        const effectivePrices = this.effectiveMonthlyPrices();
+        const prices = effectivePrices.map((price, i) => {
+            const normalizedY = ((price - bounds.minRaw) / (bounds.maxRaw - bounds.minRaw)) * 100;
+            return `${(i * 100) / 11},${100 - Math.max(0, Math.min(100, normalizedY))}`;
+        });
+        let d = `M ${prices[0]}`;
+        for (let i = 0; i < prices.length; i++) {
+            d += ` L ${prices[i]}`;
+        }
+        return d;
+    });
+
+    effectiveMonthlyPrices = computed(() => {
+        const aiPrices = this.monthlyPrices();
+        if (aiPrices && aiPrices.length === 12) return aiPrices;
+        const bp = this.effectiveBasePrice();
+        const m = this.margin();
+        return this.forecast().map(month =>
+            Math.round(bp * (0.5 + month.demand / 100) * (1 + m / 100))
+        );
+    });
+
+    /** Shared raw price bounds (unrounded) used by both pricePath() and priceRange(). */
+    priceBounds = computed(() => {
+        const bp = this.effectiveBasePrice();
+        const marginPct = this.margin();
+        const minRaw = bp * 0.5 * (1 + marginPct / 100);
+        const maxRaw = bp * 1.5 * (1 + marginPct / 100);
+        return { minRaw, maxRaw };
+    });
+
+    priceRange = computed(() => {
+        const bounds = this.priceBounds();
+        const minPrice = Math.floor(bounds.minRaw);
+        const maxPrice = Math.ceil(bounds.maxRaw);
+        const step = (maxPrice - minPrice) / 4;
+        return {
+            tick1: maxPrice,
+            tick2: Math.round(maxPrice - step),
+            tick3: Math.round(maxPrice - 2 * step),
+            tick4: Math.round(maxPrice - 3 * step),
+            tick5: minPrice
+        };
+    });
+
     recalculate() {
-        // Simulation of dynamic recalculation
-        this.forecast.update(prev => prev.map(m => ({
-            ...m,
-            demand: Math.min(100, Math.max(20, m.demand + (Math.random() * 10 - 5)))
-        })));
+        this.loadMarketAnalysis();
+    }
+
+    ngOnInit() {
+        this.loadMarketAnalysis();
+    }
+
+    async loadMarketAnalysis() {
+        if (!this.propertyDetails) return;
+        
+        this.isLoadingMarket.set(true);
+        try {
+            const db = this.propertyDetails;
+            this.propertyRooms.set(db.rooms || db.bedrooms || 2);
+            this.rentalMode.set(db.rental_mode || 'entire_place');
+            const context = {
+                propertyType: db.type || db.property_type || 'Apartment',
+                hostCountry: db.country || 'Spain',
+                propertyCountry: db.country || 'Spain',
+                rooms: db.rooms || db.bedrooms || 2,
+                totalSize: db.size || db.surface_area || 80,
+                gardenSize: db.gardenSize || 0,
+                hasPool: db.hasPool || false,
+                rentalMode: db.rental_mode || 'entire_place',
+                additionalDetails: db.description || db.listing_description || ''
+            };
+
+            const address = db.address || db.location || 'Spain';
+            const analysis = await this.geminiService.getMarketAnalysis(address, context);
+
+            // Use AI-estimated nightly rate as the base price for much more accurate pricing
+            if (analysis.estimatedNightlyRate && analysis.estimatedNightlyRate > 0) {
+                this.basePrice.set(analysis.estimatedNightlyRate);
+            }
+
+            // Use AI monthly prices if available for granular seasonal pricing
+            if (analysis.monthlyNightlyPrices && analysis.monthlyNightlyPrices.length === 12) {
+                this.monthlyPrices.set(analysis.monthlyNightlyPrices);
+            }
+
+            if (analysis.monthlySeasonality && analysis.monthlySeasonality.length === 12) {
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                               'July', 'August', 'September', 'October', 'November', 'December'];
+                this.forecast.set(months.map((name, i) => ({
+                    name,
+                    demand: analysis.monthlySeasonality![i]
+                })));
+            }
+        } catch (error) {
+            console.error('Failed to load market analysis:', error);
+        } finally {
+            this.isLoadingMarket.set(false);
+        }
     }
 }

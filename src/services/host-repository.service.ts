@@ -1,6 +1,7 @@
 
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
+import { LoggingService } from './logging.service';
 import { ContextData, Scores, ReportData, UserProfile, AppPlan, ApiKey, PlanConfig, AppSettings, View, Property, AppTier, RenovationRoom, RenovationQuote, QuoteFile, CapexAnalysis, ComplianceRule, ConstructionTask } from '../types';
 
 @Injectable({
@@ -8,6 +9,7 @@ import { ContextData, Scores, ReportData, UserProfile, AppPlan, ApiKey, PlanConf
 })
 export class HostRepository {
     private supabaseService = inject(SupabaseService);
+    private loggingService = inject(LoggingService);
 
     // Helper to access raw client if needed, guarded by service configuration
     private get supabase() { return this.supabaseService.supabase; }
@@ -171,10 +173,10 @@ export class HostRepository {
     async saveDiagnosticResult(context: ContextData, scores: Scores, report: ReportData): Promise<void> {
         if (!this.supabaseService.isConfigured) throw new Error("Database not configured");
 
+        const startTime = Date.now();
         const { user } = await this.supabaseService.getUser();
         if (!user) throw new Error("User not authenticated");
 
-        // 1. Insert the main Diagnostic row
         const { data: diagnostic, error: diagError } = await this.supabase
             .from('diagnostics')
             .insert({
@@ -203,7 +205,6 @@ export class HostRepository {
             throw new Error("Error: Diagnostic could not be created (no data returned).");
         }
 
-        // 2. Insert Strengths and Opportunities
         const points = [
             ...report.strengths.map(s => ({ diagnostic_id: diagnostic.id, type: 'strength', content: s })),
             ...report.opportunities.map(o => ({ diagnostic_id: diagnostic.id, type: 'opportunity', content: o }))
@@ -216,18 +217,23 @@ export class HostRepository {
         if (pointsError) {
             console.error('Error saving points:', pointsError);
         }
+
+        this.loggingService.logDatabaseQuery('INSERT', 'diagnostics + diagnostic_points', 1 + points.length, Date.now() - startTime);
     }
 
     async getProperties(): Promise<Property[]> {
         if (!this.supabaseService.isConfigured) return [];
 
+        const startTime = Date.now();
         const { user } = await this.supabaseService.getUser();
         if (!user) return [];
 
         const { data, error } = await this.supabase
             .from('properties')
-            .select('id, name')
+            .select('id, name, mdx_content')
             .eq('owner_id', user.id);
+
+        this.loggingService.logDatabaseQuery('SELECT', 'properties', data?.length || 0, Date.now() - startTime);
 
         if (error) {
             // Table doesn't exist yet or other error
@@ -242,6 +248,7 @@ export class HostRepository {
         return data.map(row => ({
             id: row.id,
             name: row.name,
+            mdx_content: row.mdx_content,
             subViews: this.defaultSubViews
         }));
     }
@@ -338,6 +345,14 @@ export class HostRepository {
             arrival_instructions: formData.experience?.arrivalInstructions,
             house_rules_text: formData.experience?.houseRules,
             emergency_contact_info: formData.experience?.emergencyContact,
+            property_type: formData.propertyDetails?.property_type,
+            rental_mode: formData.propertyDetails?.rental_mode || 'entire_place',
+            rooms: formData.propertyDetails?.rooms,
+            bedrooms: formData.propertyDetails?.bedrooms,
+            bathrooms: formData.propertyDetails?.bathrooms,
+            surface_area: formData.propertyDetails?.surface_area,
+            max_guests: formData.propertyDetails?.max_guests,
+            bed_count: formData.propertyDetails?.bed_count,
         };
 
         const { error: propError } = await this.supabase
@@ -369,6 +384,31 @@ export class HostRepository {
         if (formData.photos && Array.isArray(formData.photos)) {
             await this.savePropertyPhotos(propertyId, formData.photos);
         }
+    }
+
+    async saveMdxContent(propertyName: string, mdxContent: string): Promise<void> {
+        if (!this.supabaseService.isConfigured) throw new Error("Database not configured");
+
+        const { user } = await this.supabaseService.getUser();
+        if (!user) throw new Error("User not authenticated");
+
+        const { data: properties, error: fetchError } = await this.supabase
+            .from('properties')
+            .select('id')
+            .eq('owner_id', user.id)
+            .eq('name', propertyName)
+            .limit(1);
+
+        if (fetchError || !properties || properties.length === 0) {
+            throw new Error("Property not found");
+        }
+
+        const { error: updateError } = await this.supabase
+            .from('properties')
+            .update({ mdx_content: mdxContent })
+            .eq('id', properties[0].id);
+
+        if (updateError) throw updateError;
     }
 
     async savePropertyPhotos(propertyId: string, photos: { url: string, category: string }[]): Promise<void> {
@@ -776,9 +816,9 @@ export class HostRepository {
         return data as ApiKey[];
     }
 
-    async addApiKey(name: string, clearKey: string): Promise<void> {
+    async addApiKey(name: string, clearKey: string, provider: string = 'gemini'): Promise<void> {
         if (!this.supabaseService.isConfigured) throw new Error("DB not configured");
-        const { error } = await this.supabase.rpc('add_api_key', { key_name: name, clear_key: clearKey });
+        const { error } = await this.supabase.rpc('add_api_key', { key_name: name, clear_key: clearKey, p_provider: provider });
         if (error) throw error;
     }
 

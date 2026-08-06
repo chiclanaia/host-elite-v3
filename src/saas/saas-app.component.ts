@@ -27,6 +27,7 @@ import { NotificationCenterComponent } from './components/notification-center.co
 import { NotificationService } from '../services/notification.service';
 import { ProfileModalComponent } from './components/profile-settings-modal.component';
 import { CalendarToolComponent } from './features/legacy/calendar-tool/components/calendar-tool.component';
+import { LoggingService } from '../services/logging.service';
 
 import { ProfitabilityViewComponent } from './views/profitability-view.component';
 import { WelcomeBookletService } from './views/welcome-booklet/welcome-booklet.service';
@@ -70,6 +71,7 @@ export class SaaSAppComponent implements OnInit {
 
   // Data Layer Injection
   private repository = inject(HostRepository);
+  private loggingService = inject(LoggingService);
   protected store = inject(SessionStore);
   private fb: FormBuilder = inject(FormBuilder);
   translationService = inject(TranslationService);
@@ -169,16 +171,12 @@ export class SaaSAppComponent implements OnInit {
       this.isCreatingProperty.set(false);
     }
 
-    // UX Improvement: Preserve or Default property when switching angles/tabs
     let targetPropertyName = view.propertyName;
 
-    // 1. If no specific property requested, try to keep the current one
     if (!targetPropertyName) {
       targetPropertyName = this.activeView().propertyName;
     }
 
-    // 2. If still no property and we are going to a Phase view or Welcome Booklet, try to pick the first one
-    // This ensures components like 'Marketing Description' have a context to load data.
     if (!targetPropertyName && (view.id.startsWith('PH_') || view.id === 'welcome-booklet')) {
       const props = this.properties();
       if (props.length > 0) {
@@ -186,12 +184,19 @@ export class SaaSAppComponent implements OnInit {
       }
     }
 
-    // 3. Update the view
     if (targetPropertyName && (view.id.startsWith('PH_') || view.id === 'welcome-booklet' || view.id === 'manage-property')) {
       this.activeView.set({ ...view, propertyName: targetPropertyName });
     } else {
       this.activeView.set(view);
     }
+
+    this.loggingService.logUserEvent('View changed', { viewId: view.id, property: targetPropertyName });
+  }
+  
+  toggleSidebar(): void {
+    // This will be handled by the sidebar component via a service or event
+    // For now, dispatch a custom event
+    window.dispatchEvent(new CustomEvent('toggle-sidebar'));
   }
 
   goToPropertyHome(): void {

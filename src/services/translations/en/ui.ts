@@ -130,6 +130,10 @@ export const ui = {
     'WELCOME.HouseRules': 'House rules',
     'WELCOME.Emergency': 'Emergencies',
     'WELCOME.Cleaning': 'Cleaning',
+    'LISTING.RentalMode': 'Rental Mode',
+    'LISTING.RentalModeEntirePlace': 'Entire Place',
+    'LISTING.RentalModePrivateRooms': 'Private Rooms Only',
+    'LISTING.RentalModeBoth': 'Both Entire Place & Rooms',
     'LISTING.About': 'About this listing',
     'LISTING.Equipments': 'Amenities',
     'LISTING.NoEquipments': 'No amenities configured.',
@@ -1302,6 +1306,10 @@ export const ui = {
     'YIELD.Jun': 'Jun',
     'YIELD.Jun180': 'Jun: €180',
     'YIELD.LastMinuteDeal': 'Last Minute Deal',
+    'YIELD.AnalyzingMarket': 'Analyzing market...',
+    'YIELD.AIMarketRate': 'AI Market Rate',
+    'YIELD.BasedOnLocationalAnalysis': 'Based on location analysis',
+    'YIELD.EstOccupancy': 'Est. Occupancy',
     'YIELD.Low': 'Low',
     'YIELD.Mar': 'Mar',
     'YIELD.May': 'May',
@@ -1645,5 +1653,11 @@ export const ui = {
     'DASHBOARD.NoRevenueData': 'No revenue data available',
     'DASHBOARD.NoExpenseData': 'No expense data available',
     'DASHBOARD.NoPropertiesData': 'No properties found',
-    'DASHBOARD.PropertyOverview': 'Property performance and key metrics'
+    'DASHBOARD.PropertyOverview': 'Property performance and key metrics',
+
+    // Property Website Builder
+    'PROPERTY.Builder': 'Property Website Builder',
+    'PROPERTY.ExportHTML': 'Export HTML',
+    'FEATURE.MKT_05.Title': 'Property Website Builder',
+    'FEATURE.MKT_05.Desc': 'Create a beautiful single-page website for your property'
 };

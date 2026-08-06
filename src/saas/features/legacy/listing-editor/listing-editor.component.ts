@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal, effect, output } from '@angular/core';
+import { Component, computed, effect, inject, input, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WelcomeBookletListingComponent } from '../../../views/welcome-booklet/components/welcome-booklet-listing.component';
@@ -25,6 +25,49 @@ interface ListingStyle {
     headerStyle: string;
 }
 
+interface ListingLayout {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+}
+
+interface ListingTheme {
+    id: string;
+    name: string;
+    primaryColor: string;
+    backgroundColor: string;
+    textColor: string;
+    accentColor: string;
+    fontFamily: string;
+    fontHeading: string;
+}
+
+const LAYOUTS: ListingLayout[] = [
+    { id: 'classic', name: 'Classic Elegance', description: 'Traditional layout with hero image', icon: 'dashboard' },
+    { id: 'modern', name: 'Modern Minimal', description: 'Clean design with white space', icon: 'blur_on' },
+    { id: 'luxe', name: 'Luxe Premium', description: 'Gold accents, high-end feel', icon: 'diamond' },
+    { id: 'story', name: 'Storytelling', description: 'Narrative flow, guest journey', icon: 'menu_book' },
+    { id: 'gallery', name: 'Gallery Focus', description: 'Photo-heavy grid layouts', icon: 'photo_library' },
+    { id: 'compact', name: 'Compact', description: 'Dense info, smaller photos', icon: 'view_agenda' },
+    { id: 'split', name: 'Split View', description: 'Photos left, details right', icon: 'view_column' },
+    { id: 'hero', name: 'Hero First', description: 'Large photo, minimal text', icon: 'photo_camera' },
+    { id: 'minimal', name: 'Minimalist', description: 'Text-focused, tiny photos', icon: 'subject' }
+];
+
+const THEMES: ListingTheme[] = [
+    { id: 'light', name: 'Light', primaryColor: '#1f2937', backgroundColor: '#ffffff', textColor: '#374151', accentColor: '#3b82f6', fontFamily: 'system-ui', fontHeading: 'Georgia', icon: 'light_mode' },
+    { id: 'dark', name: 'Dark', primaryColor: '#f5f5f4', backgroundColor: '#1c1917', textColor: '#e7e5e4', accentColor: '#d4af37', fontFamily: 'system-ui', fontHeading: 'Georgia', icon: 'dark_mode' },
+    { id: 'warm', name: 'Warm', primaryColor: '#7c2d12', backgroundColor: '#fef3c7', textColor: '#431407', accentColor: '#c2410c', fontFamily: 'system-ui', fontHeading: 'Trebuchet MS', icon: 'wb_twilight' },
+    { id: 'ocean', name: 'Ocean', primaryColor: '#0c4a6e', backgroundColor: '#e0f2fe', textColor: '#082f49', accentColor: '#0ea5e9', fontFamily: 'system-ui', fontHeading: 'Verdana', icon: 'water' },
+    { id: 'forest', name: 'Forest', primaryColor: '#14532d', backgroundColor: '#f0fdf4', textColor: '#052e16', accentColor: '#22c55e', fontFamily: 'system-ui', fontHeading: 'Palatino', icon: 'forest' },
+    { id: 'rose', name: 'Rose', primaryColor: '#881337', backgroundColor: '#fdf2f8', textColor: '#500724', accentColor: '#fb7185', fontFamily: 'system-ui', fontHeading: 'Garamond', icon: 'local_florist' },
+    { id: 'midnight', name: 'Midnight', primaryColor: '#e2e8f0', backgroundColor: '#0f172a', textColor: '#94a3b8', accentColor: '#8b5cf6', fontFamily: 'system-ui', fontHeading: 'Courier New', icon: 'nightlight' },
+    { id: 'sunset', name: 'Sunset', primaryColor: '#7c2d12', backgroundColor: '#fff7ed', textColor: '#7c2d12', accentColor: '#f97316', fontFamily: 'system-ui', fontHeading: 'Georgia', icon: 'wb_sunny' },
+    { id: 'arctic', name: 'Arctic', primaryColor: '#0c4a6e', backgroundColor: '#f0f9ff', textColor: '#164e63', accentColor: '#06b6d4', fontFamily: 'system-ui', fontHeading: 'Arial', icon: 'ac_unit' },
+    { id: 'cocoa', name: 'Cocoa', primaryColor: '#3f2e26', backgroundColor: '#f5f0eb', textColor: '#2c1810', accentColor: '#a78b6b', fontFamily: 'Georgia', fontHeading: 'Georgia', icon: 'coffee' }
+];
+
 @Component({
     selector: 'app-listing-editor',
     standalone: true,
@@ -39,7 +82,7 @@ interface ListingStyle {
         .drag-handle:active { cursor: grabbing; }
     `]
 })
-export class ListingEditorComponent {
+export class ListingEditorComponent implements OnInit, OnDestroy {
     propertyName = input.required<string>();
     close = output<void>();
 
@@ -48,6 +91,13 @@ export class ListingEditorComponent {
     private repository = inject(HostRepository);
     private store = inject(SessionStore);
     private translationService = inject(TranslationService);
+
+    // Layouts and themes
+    layouts = LAYOUTS;
+    themes = THEMES;
+    activeTab = signal<'layout' | 'theme' | 'content'>('layout');
+    selectedLayout = signal(LAYOUTS[0]);
+    selectedTheme = signal(THEMES[0]);
 
     isSaving = signal(false);
     saveMessage = signal<string | null>(null);
@@ -96,12 +146,33 @@ export class ListingEditorComponent {
 
     backgroundColors = ['#ffffff', '#f9fafb', '#f3f4f6', '#e5e7eb', '#1f2937', '#0f172a', '#7c3aed', '#059669'];
 
+    ngOnInit(): void {}
+    ngOnDestroy(): void {}
+
     constructor() {
         effect(() => {
             const prop = this.propertyName();
             if (prop) {
                 this.loadPropertyData(prop);
             }
+        });
+
+        // Sync layout to service
+        effect(() => {
+            const layout = this.selectedLayout();
+            this.bookletService.listingEditorLayout.set(layout);
+        });
+
+        // Sync theme to service
+        effect(() => {
+            const theme = this.selectedTheme();
+            this.bookletService.listingEditorTheme.set(theme);
+        });
+
+        // Sync photos to service
+        effect(() => {
+            const photos = this.propertyPhotos();
+            this.bookletService.propertyPhotos.set(photos);
         });
     }
 
@@ -111,9 +182,35 @@ export class ListingEditorComponent {
             if (prop) {
                 this.existingPropertyId.set(prop.id);
                 this.listingTitle = prop.listing_title || prop.name || '';
-                this.listingDescription = prop.listing_description || '';
                 this.coverImageUrl = prop.cover_image_url || '';
                 this.selectedCoverPhoto.set(this.coverImageUrl);
+                
+                // Load multi-language descriptions (from localStorage or DB)
+                const currentLang = this.translationService.currentLang() || 'en';
+                let description = prop.listing_description || '';
+                
+                // First try localStorage
+                const storedDesc = localStorage.getItem(`listing_descriptions_${prop.id}`);
+                if (storedDesc) {
+                    try {
+                        const allDesc = JSON.parse(storedDesc);
+                        description = allDesc[currentLang] || allDesc['en'] || description;
+                        // Save to localStorage for future use
+                        localStorage.setItem(`listing_descriptions_${prop.id}`, JSON.stringify(allDesc));
+                    } catch {}
+                }
+                // Then try DB stored descriptions_all
+                else if (prop.marketing?.descriptions_all) {
+                    try {
+                        const allDesc = typeof prop.marketing.descriptions_all === 'string' 
+                            ? JSON.parse(prop.marketing.descriptions_all) 
+                            : prop.marketing.descriptions_all;
+                        description = allDesc[currentLang] || allDesc['en'] || description;
+                        localStorage.setItem(`listing_descriptions_${prop.id}`, JSON.stringify(allDesc));
+                    } catch {}
+                }
+                
+                this.listingDescription = description;
                 
                 // Update service for preview
                 this.bookletService.listingEditorTitle.set(this.listingTitle);
@@ -178,10 +275,25 @@ export class ListingEditorComponent {
         
         this.isSaving.set(true);
         try {
-            await this.repository.updatePropertyData(this.existingPropertyId()!, {
+            // Get all language descriptions from localStorage
+            const propertyId = this.existingPropertyId()!;
+            const storedDesc = localStorage.getItem(`listing_descriptions_${propertyId}`);
+            let allDescriptions = { en: '', fr: '', es: '' };
+            
+            if (storedDesc) {
+                allDescriptions = JSON.parse(storedDesc);
+            }
+            
+            // Update current language description
+            const currentLang = this.translationService.currentLang() || 'en';
+            allDescriptions[currentLang] = this.listingDescription;
+            
+            // Save to DB (use current language as main, store all in additional_data)
+            await this.repository.updatePropertyData(propertyId, {
                 marketing: {
                     title: this.listingTitle,
-                    description: this.listingDescription,
+                    description: this.listingDescription, // Current language
+                    descriptions_all: allDescriptions, // All languages
                     coverImageUrl: this.coverImageUrl
                 }
             });
@@ -209,19 +321,61 @@ export class ListingEditorComponent {
             const prop = await this.repository.getPropertyByName(this.propertyName());
             if (!prop) return;
 
-            const result = await this.geminiService.generateText(
-                `Generate a compelling, high-converting property listing description (2-3 paragraphs) for a rental property. Highlight unique features, location benefits, and create emotional appeal for potential guests. Just return the description text, no markdown.`
-            );
+            const basePrompt = `
+You are an expert copywriter specializing in high-converting vacation rental listings.
 
-            if (result) {
-                this.listingDescription = result;
-                this.onDescriptionChange(result);
-            }
+PROPERTY DETAILS:
+- Name: ${prop.name}
+- Location: ${prop.address || prop.city || prop.country || 'Not specified'}
+- Type: ${prop.property_type || 'Apartment'}
+- Bedrooms: ${prop.bedrooms || 'Studio'}
+- Bathrooms: ${prop.bathrooms || '1'}
+- Max Guests: ${prop.max_guests || '2'}
+- Size: ${prop.size || 'Not specified'} m²
+- Amenities: ${prop.amenities?.join(', ') || 'Not specified'}
+- Special Features: ${prop.additional_details || 'None'}
 
-            this.saveMessage.set('AI Description generated!');
+TASK: Write a compelling, high-converting property listing description (3-4 paragraphs) that:
+1. Creates an emotional hook in the first paragraph
+2. Highlights unique features and amenities
+3. Describes the location and nearby attractions
+4. Ends with a call-to-action for booking
+
+TONE: Warm, inviting, professional, and aspirational
+FORMAT: Plain text only, no markdown, no headings
+`;
+
+            // Generate in all 3 languages
+            const [descEn, descFr, descEs] = await Promise.all([
+                this.geminiService.generateText(basePrompt + 'LANGUAGE: English\n\nWrite the description now:'),
+                this.geminiService.generateText(basePrompt + 'LANGUAGE: French\n\nWrite the description now:'),
+                this.geminiService.generateText(basePrompt + 'LANGUAGE: Spanish\n\nWrite the description now:')
+            ]);
+
+            // Store all translations
+            const allDescriptions = {
+                en: descEn || '',
+                fr: descFr || '',
+                es: descEs || ''
+            };
+
+            // Use current language description
+            const currentLang = this.translationService.currentLang() || 'en';
+            this.listingDescription = allDescriptions[currentLang] || descEn;
+            this.onDescriptionChange(this.listingDescription);
+
+            // Store in localStorage for persistence (will be saved to DB on save)
+            localStorage.setItem(`listing_descriptions_${this.existingPropertyId()}`, JSON.stringify(allDescriptions));
+
+            this.saveMessage.set('✨ AI descriptions generated in EN, FR, ES!');
             setTimeout(() => this.saveMessage.set(null), 3000);
-        } catch (e) {
+        } catch (e: any) {
             console.error('Error generating:', e);
+            const message = e?.message?.includes('after multiple attempts') 
+                ? 'AI service temporarily unavailable. Please try again in a few moments.'
+                : 'Error generating description';
+            this.saveMessage.set(message);
+            setTimeout(() => this.saveMessage.set(null), 5000);
         } finally {
             this.isSaving.set(false);
         }

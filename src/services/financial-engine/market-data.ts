@@ -10,7 +10,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.72,
         baseADR: 24500,
         nightLimit: 120,
-        regulatoryRisk: 'Critical',
         type: MarketType.URBAN_STRICT,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: 'Urban-Elevator', premiumCost: 4500 }
     },
@@ -22,7 +21,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.45,
         baseADR: 35000,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.SEASONAL_HIGH,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: 'Ski-Maint', premiumCost: 15000 }
     },
@@ -34,7 +32,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.58,
         baseADR: 28000,
         nightLimit: 90,
-        regulatoryRisk: 'High',
         type: MarketType.LUXURY_COASTAL,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: '', premiumCost: 0 }
     },
@@ -46,7 +43,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.48,
         baseADR: 17500,
         nightLimit: null,
-        regulatoryRisk: 'Low',
         type: MarketType.HERITAGE_RURAL,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: '', premiumCost: 0 }
     },
@@ -58,7 +54,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.42,
         baseADR: 14500,
         nightLimit: null,
-        regulatoryRisk: 'Low',
         type: MarketType.FAMILY_RURAL,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: '', premiumCost: 0 }
     },
@@ -70,7 +65,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.50,
         baseADR: 13500,
         nightLimit: null,
-        regulatoryRisk: 'Low',
         type: MarketType.NATURE_COASTAL,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: '', premiumCost: 0 }
     },
@@ -82,7 +76,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.55,
         baseADR: 16000,
         nightLimit: 180,
-        regulatoryRisk: 'Medium',
         type: MarketType.WINE_TOURISM,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: '', premiumCost: 0 }
     },
@@ -94,7 +87,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.65,
         baseADR: 14500,
         nightLimit: 180,
-        regulatoryRisk: 'Medium',
         type: MarketType.URBAN_VALUE,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: '', premiumCost: 0 }
     },
@@ -106,7 +98,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.52,
         baseADR: 19500,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.SPORTS_COASTAL,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: '', premiumCost: 0 }
     },
@@ -118,7 +109,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.60,
         baseADR: 13000,
         nightLimit: 150,
-        regulatoryRisk: 'Low',
         type: MarketType.EMERGING,
         operationalCosts: { laborMultiplier: 1.25, utilityIndex: 1.15, avgTouristTax: 450, linenReplacementRoom: 16000, mgmtFeePct: 0.22, localPremiumType: '', premiumCost: 0 }
     },
@@ -132,7 +122,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.78,
         baseADR: 17000,
         nightLimit: 90,
-        regulatoryRisk: 'High',
         type: MarketType.URBAN_BUSINESS,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: 'Urban-Communidad', premiumCost: 9500 }
     },
@@ -144,7 +133,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.74,
         baseADR: 21500,
         nightLimit: 31,
-        regulatoryRisk: 'Critical',
         type: MarketType.URBAN_COASTAL,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: 'Urban-Communidad', premiumCost: 9500 }
     },
@@ -156,7 +144,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.55,
         baseADR: 32000,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.LUXURY,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: '', premiumCost: 0 }
     },
@@ -168,7 +155,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.62,
         baseADR: 18500,
         nightLimit: null,
-        regulatoryRisk: 'Low',
         type: MarketType.RESORT,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: '', premiumCost: 0 }
     },
@@ -180,7 +166,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.58,
         baseADR: 31000,
         nightLimit: null,
-        regulatoryRisk: 'Critical',
         type: MarketType.HIGH_END_ISLAND,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: 'Island-Water', premiumCost: 2500 }
     },
@@ -192,7 +177,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.82,
         baseADR: 13000,
         nightLimit: null,
-        regulatoryRisk: 'Low',
         type: MarketType.STEADY_STATE,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: 'Island-Water', premiumCost: 2500 }
     },
@@ -204,7 +188,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.70,
         baseADR: 14500,
         nightLimit: null,
-        regulatoryRisk: 'Low',
         type: MarketType.GROWTH,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: 'Urban-Communidad', premiumCost: 9500 }
     },
@@ -216,7 +199,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.65,
         baseADR: 11500,
         nightLimit: null,
-        regulatoryRisk: 'Low',
         type: MarketType.YIELD,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: '', premiumCost: 0 }
     },
@@ -228,7 +210,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.68,
         baseADR: 24000,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.GOURMET_PREMIUM,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: '', premiumCost: 0 }
     },
@@ -240,7 +221,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.50,
         baseADR: 19000,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.BOUTIQUE_COASTAL,
         operationalCosts: { laborMultiplier: 0.95, utilityIndex: 1.10, avgTouristTax: 220, linenReplacementRoom: 11000, mgmtFeePct: 0.18, localPremiumType: '', premiumCost: 0 }
     },
@@ -259,7 +239,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.82,
         baseADR: 27500,
         nightLimit: 90,
-        regulatoryRisk: 'Critical',
         type: MarketType.GLOBAL_HUB,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: '', premiumCost: 0 }
     },
@@ -271,7 +250,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.60,
         baseADR: 21000,
         nightLimit: null,
-        regulatoryRisk: 'High', // Council Tax Premium
         type: MarketType.PREMIUM_COASTAL,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: 'Coast-Salt-Tax', premiumCost: 5000 }
     },
@@ -283,7 +261,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.64,
         baseADR: 23000,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.LUXURY_RURAL,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: '', premiumCost: 0 }
     },
@@ -295,7 +272,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.52,
         baseADR: 16000,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.REMOTE_NATURE,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: 'Highland-Heat', premiumCost: 18000 }
     },
@@ -307,7 +283,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.65,
         baseADR: 19500,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.NATIONAL_PARK,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: '', premiumCost: 0 }
     },
@@ -319,7 +294,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.75,
         baseADR: 22000,
         nightLimit: 90,
-        regulatoryRisk: 'High',
         type: MarketType.URBAN_FESTIVAL,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: '', premiumCost: 0 }
     },
@@ -331,7 +305,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.72,
         baseADR: 13500,
         nightLimit: null,
-        regulatoryRisk: 'Low',
         type: MarketType.URBAN_GROWTH,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: '', premiumCost: 0 }
     },
@@ -343,7 +316,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.68,
         baseADR: 12500,
         nightLimit: null,
-        regulatoryRisk: 'Low',
         type: MarketType.CITY_CENTRAL,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: '', premiumCost: 0 }
     },
@@ -355,7 +327,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.70,
         baseADR: 16500,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.WEEKEND_COASTAL,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: 'Coast-Salt-Tax', premiumCost: 5000 }
     },
@@ -367,7 +338,6 @@ export const MARKET_DATA: MarketData[] = [
         baseOccupancy: 0.70,
         baseADR: 19000,
         nightLimit: null,
-        regulatoryRisk: 'Medium',
         type: MarketType.HISTORY_TOURISM,
         operationalCosts: { laborMultiplier: 1.45, utilityIndex: 1.85, avgTouristTax: 0, linenReplacementRoom: 18500, mgmtFeePct: 0.20, localPremiumType: '', premiumCost: 0 }
     }
@@ -379,4 +349,225 @@ export function getMarketsByCountry(country: Country): MarketData[] {
 
 export function getMarketByName(name: string): MarketData | undefined {
     return MARKET_DATA.find(m => m.marketName === name);
+}
+
+/**
+ * Fuzzy-match an address string to the closest known market.
+ * Uses keyword matching against known city/region names for each market.
+ *
+ * Examples:
+ *   "Calle Mayor, Madrid, Spain"            -> "Madrid Centre"
+ *   "12 Rue de Rivoli, Paris, France"       -> "Paris Central"
+ *   "Somewhere in the Cotswolds, UK"        -> "Cotswolds Villages"
+ *   "Calle de la Mar, Barcelona, Spain"     -> "Barcelona Beach"
+ *   "Unknown Village, Nowhere"              -> undefined
+ */
+export function findClosestMarket(address: string): MarketData | undefined {
+  if (!address) return undefined;
+
+  const addr = address.toLowerCase();
+
+  // Priority-ordered keywords map: each entry maps a market name to its identifying keywords.
+  // More specific/unique keywords should come before generic ones.
+  const marketKeywords: Array<{ name: string; keywords: string[] }> = [
+    // ── FRANCE ──
+    {
+      name: 'Paris Central',
+      keywords: ['paris', 'ile de france', 'île-de-france', 'arrondissement'],
+    },
+    {
+      name: 'French Alps Ski',
+      keywords: [
+        'alps', 'alpes', 'chamonix', 'courchevel', 'val thorens',
+        'méribel', 'meribel', 'megève', 'megeve', 'tignes',
+        "val d'isère", 'val disere', 'les arcs', 'savoie', 'haute-savoie',
+      ],
+    },
+    {
+      name: 'Cote d Azur',
+      keywords: [
+        "côte d'azur", 'cote d azur', 'nice', 'cannes', 'saint-tropez',
+        'antibes', 'monaco', 'monte carlo', 'villefranche', 'menton',
+        'eze', 'grasse',
+      ],
+    },
+    {
+      name: 'Provence Rural',
+      keywords: [
+        'provence', 'aix-en-provence', 'aix en provence', 'avignon',
+        'arles', 'apt', 'gordes', 'roussillon', 'lourmarin',
+        'vaucluse', 'luberon',
+      ],
+    },
+    {
+      name: 'Dordogne Valley',
+      keywords: ['dordogne', 'périgord', 'perigord', 'sarlat', 'bergerac'],
+    },
+    {
+      name: 'Brittany Coast',
+      keywords: [
+        'brittany', 'bretagne', 'rennes', 'brest', 'saint-malo',
+        'lorient', 'vannes', 'quimper', 'dinard', "côtes d'armor",
+        'cotes d armor', 'finistère', 'finistere', 'morbihan',
+      ],
+    },
+    {
+      name: 'Bordeaux Wine',
+      keywords: [
+        'bordeaux', 'saint-émilion', 'saint emilion', 'médoc',
+        'medoc', 'pomerol', 'graves', 'entre-deux-mers',
+      ],
+    },
+    {
+      name: 'Lyon Gastronomy',
+      keywords: ['lyon', 'rhône', 'rhone', 'villeurbanne'],
+    },
+    {
+      name: 'Biarritz Surf',
+      keywords: [
+        'biarritz', 'bayonne', 'basque', 'pays basque', 'anglet',
+        'saint-jean-de-luz', 'hendaye',
+      ],
+    },
+    {
+      name: 'Montpellier Growth',
+      keywords: [
+        'montpellier', 'languedoc', 'sète', 'sete', 'nîmes', 'nimes',
+        'hérault', 'herault',
+      ],
+    },
+
+    // ── SPAIN ──
+    {
+      name: 'Madrid Centre',
+      keywords: ['madrid'],
+    },
+    {
+      name: 'Barcelona Beach',
+      keywords: ['barcelona', 'catalunya', 'cataluña', 'catalonia', 'sitges'],
+    },
+    {
+      name: 'Marbella Premium',
+      keywords: ['marbella', 'puerto banús', 'puerto banus', 'estepona', 'mijas'],
+    },
+    {
+      name: 'Costa del Sol',
+      keywords: [
+        'costa del sol', 'costa de la luz', 'málaga', 'malaga', 'torremolinos',
+        'fuengirola', 'benalmádena', 'benalmadena', 'chiclana',
+        'cadiz', 'cádiz', 'conil', 'vejer', 'san fernando',
+        'puerto real', 'el puerto de santa maría', 'rota', 'chipiona',
+        'sanlúcar', 'sanlucar',
+      ],
+    },
+    {
+      name: 'Balearic Islands',
+      keywords: [
+        'balearic', 'baleares', 'mallorca', 'ibiza', 'menorca',
+        'palma', 'mahón', 'mahon',
+      ],
+    },
+    {
+      name: 'Canary Islands',
+      keywords: [
+        'canary', 'canarias', 'tenerife', 'gran canaria',
+        'lanzarote', 'fuerteventura', 'la palma',
+      ],
+    },
+    {
+      name: 'Valencia City',
+      keywords: ['valencia'],
+    },
+    {
+      name: 'Alicante Value',
+      keywords: ['alicante', 'costa blanca', 'benidorm', 'elche'],
+    },
+    {
+      name: 'San Sebastian',
+      keywords: ['san sebastian', 'donostia', 'san sebastián', 'san sebastian spain'],
+    },
+    {
+      name: 'Costa Brava',
+      keywords: [
+        'costa brava', 'girona', 'lloret', 'figueres',
+        'cadaqués', 'cadaques', 'roses', 'tossa de mar',
+      ],
+    },
+
+    // ── UK ──
+    {
+      name: 'London Zone 1',
+      keywords: [
+        'london', 'westminster', 'kensington', 'chelsea',
+        'mayfair', 'soho', 'city of london', 'covent garden',
+      ],
+    },
+    {
+      name: 'Cornwall Coastal',
+      keywords: [
+        'cornwall', 'st ives', 'newquay', 'penzance',
+        'falmouth', 'truro', 'padstow',
+      ],
+    },
+    {
+      name: 'Cotswolds Villages',
+      keywords: [
+        'cotswolds', 'cotswold', 'cheltenham',
+        'stow-on-the-wold', 'bourton-on-the-water', 'broadway',
+      ],
+    },
+    {
+      name: 'Scottish Highlands',
+      keywords: [
+        'highlands', 'scottish', 'inverness', 'loch ness',
+        'isle of skye', 'fort william', 'ben nevis',
+        'sutherland', 'caithness',
+      ],
+    },
+    {
+      name: 'Lake District',
+      keywords: [
+        'lake district', 'windermere', 'keswick', 'ambleside',
+        'cumbria', 'grasmere',
+      ],
+    },
+    {
+      name: 'Edinburgh City',
+      keywords: ['edinburgh'],
+    },
+    {
+      name: 'Manchester Tech',
+      keywords: ['manchester', 'salford'],
+    },
+    {
+      name: 'Birmingham Hub',
+      keywords: ['birmingham', 'west midlands'],
+    },
+    {
+      name: 'Brighton Pier',
+      keywords: ['brighton', 'hove', 'east sussex'],
+    },
+    {
+      name: 'Bath Heritage',
+      keywords: ['bath', 'bristol'],
+    },
+  ];
+
+  // Score each market by counting how many of its keywords appear in the address
+  let bestMatch: MarketData | undefined;
+  let bestScore = 0;
+
+  for (const entry of marketKeywords) {
+    const matchScore = entry.keywords.reduce((score, kw) => {
+      return score + (addr.includes(kw) ? 1 : 0);
+    }, 0);
+
+    if (matchScore > bestScore) {
+      bestScore = matchScore;
+      bestMatch = MARKET_DATA.find((m) => m.marketName === entry.name);
+    }
+  }
+
+  // Only return a match if at least one keyword was found
+  return bestScore > 0 ? bestMatch : undefined;
 }

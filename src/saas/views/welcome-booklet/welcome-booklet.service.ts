@@ -26,6 +26,8 @@ export class WelcomeBookletService implements OnDestroy {
     activeTab = signal<'edit' | 'listing' | 'microsite' | 'booklet'>('edit');
     listingEditorTitle = signal<string>('');
     listingEditorStyle = signal<any>({});
+    listingEditorLayout = signal<any>(null);
+    listingEditorTheme = signal<any>(null);
     isLoading = signal(false);
     saveMessage = signal<string | null>(null);
 
@@ -34,6 +36,7 @@ export class WelcomeBookletService implements OnDestroy {
     activeWidgets = signal<Record<string, boolean>>({});
     propertyPhotos = signal<{ url: string, category: string }[]>([]);
     propertyEquipments = signal<string[]>([]);
+    propertyDetails = signal<{ bedrooms?: number, bathrooms?: number, maxGuests?: number, rental_mode?: string, property_type?: string }>({});
 
     // FAQ Signal (derived from form)
     faqItems = signal<FaqItem[]>([]);
@@ -95,8 +98,12 @@ export class WelcomeBookletService implements OnDestroy {
             if (fields) {
                 const group: any = {};
                 for (const key in fields) {
-                    group[key] = [''];
-                    group[key + '_pdf'] = [''];
+                    if (key === 'rental_rooms') {
+                        group[key] = this.fb.array([]);
+                    } else {
+                        group[key] = [''];
+                        group[key + '_pdf'] = [''];
+                    }
                 }
                 (form as FormGroup).addControl(section.formGroupName, this.fb.group(group));
             }
@@ -121,6 +128,13 @@ export class WelcomeBookletService implements OnDestroy {
                 console.log('[WelcomeBookletService] Loaded Property Data:', prop);
                 this.propertyId.set(prop.id);
                 if (prop.property_equipments) this.propertyEquipments.set(prop.property_equipments.map((e: any) => e.name));
+                this.propertyDetails.set({
+                    bedrooms: prop.bedrooms || 0,
+                    bathrooms: prop.bathrooms || 0,
+                    maxGuests: prop.max_guests || 0,
+                    rental_mode: prop.rental_mode || 'entire_place',
+                    property_type: prop.property_type || '',
+                });
 
                 // Photos
                 const pArray = this.editorForm.get('photos') as FormArray;
@@ -134,12 +148,26 @@ export class WelcomeBookletService implements OnDestroy {
                 // MAPPING: DB (French) -> Form (English)
                 defaults = {
                     address: prop.address || '',
+                    propertyDetails: {
+                        property_type: prop.property_type || '',
+                        rental_mode: prop.rental_mode || 'entire_place',
+                        rooms: prop.rooms || '',
+                        bedrooms: prop.bedrooms || '',
+                        bathrooms: prop.bathrooms || '',
+                        surface_area: prop.surface_area || '',
+                        max_guests: prop.max_guests || '',
+                        bed_count: prop.bed_count || '',
+                    },
                     welcome: {
                         welcomeMessage: prop.listing_description || '',
                         hostContact: prop.cleaning_contact_info || '',
                         emergencyContact: prop.emergency_contact_info || ''
                     },
                     systems: { wifi: prop.wifi_code ? `Wi-Fi Code: ${prop.wifi_code}` : '' },
+                    arrival: { 
+                        arrivalInstructions: prop.arrival_instructions || '',
+                        keyRetrieval: prop.arrival_instructions || ''
+                    },
                     rules: { quietHours: prop.house_rules_text || '', keyManagement: prop.arrival_instructions || '' }
                 };
                 if (prop.cover_image_url) defaults.coverImageUrl = prop.cover_image_url;
@@ -177,15 +205,21 @@ export class WelcomeBookletService implements OnDestroy {
 
                 console.log('[WelcomeBookletService] Patching Booklet Data:', booklet.welcome);
 
-                // Load FAQ
+                // Load FAQ - handle both array and object forms
                 const faqArray = this.editorForm.get('faq') as FormArray;
                 faqArray.clear();
-                if (booklet.faq) {
-                    booklet.faq.forEach((f: FaqItem) => faqArray.push(this.fb.group(f)));
-                    this.faqItems.set(booklet.faq);
+                const faqData = booklet.faq || booklet.faqSection;
+                if (faqData) {
+                    const faqItems = Array.isArray(faqData) ? faqData : (faqData.items || []);
+                    faqItems.forEach((f: FaqItem) => faqArray.push(this.fb.group(f)));
+                    this.faqItems.set(faqItems);
                 }
 
-                this.editorForm.patchValue(this.removeEmpty(booklet));
+                // Patch scalar fields, exclude FormArray fields
+                const { photos: _p, faq: _f, systems: _s, arrival: _a, rules: _r, welcome: _w, ...scalarFields } = booklet;
+                if (Object.keys(scalarFields).length > 0) {
+                    this.editorForm.patchValue(this.removeEmpty(scalarFields));
+                }
                 if (booklet.gpsCoordinates) this.editorForm.patchValue({ gpsCoordinates: booklet.gpsCoordinates });
             }
 
@@ -260,6 +294,9 @@ export class WelcomeBookletService implements OnDestroy {
                 const photos = this.editorForm.value.photos;
                 await this.repository.savePropertyPhotos(this.propertyId()!, photos);
                 this.propertyPhotos.set(photos.filter((p: any) => p.url));
+                await this.repository.updatePropertyData(this.propertyId()!, {
+                    propertyDetails: this.editorForm.value.propertyDetails
+                });
             }
             this.saveMessage.set(this.translationService.translate('COMMON.Saved'));
             setTimeout(() => this.saveMessage.set(null), 3000);

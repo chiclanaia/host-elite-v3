@@ -1,43 +1,41 @@
 
-import { Injectable, inject } from '@angular/core';
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
+import { Injectable, inject, signal } from '@angular/core';
 import { ContextData, ReportData, Scores } from '../types';
 import { SupabaseService } from './supabase.service';
 import { TranslationService } from './translation.service';
+import { AIService, AIProviderType } from './ai/ai.service';
+import { AIConfigService } from './ai/ai-config.service';
+import { LoggingService } from './logging.service';
+import { findClosestMarket } from './financial-engine/market-data';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GeminiService {
-  private genAI: GoogleGenerativeAI | null = null;
-  private model: GenerativeModel | null = null;
   private supabaseService = inject(SupabaseService);
   private translationService = inject(TranslationService);
+  private aiService = inject(AIService);
+  private aiConfigService = inject(AIConfigService);
+  private loggingService = inject(LoggingService);
+  
+  private useNewProvider = signal(false);
+  private isNewInitialized = signal(false);
 
-  constructor() {
-    // Initialisation paresseuse (lazy load) lors de la première requête
+constructor() {
   }
 
-  // ... (existing code omitted for brevity)
-
-
-  private async ensureClient(): Promise<void> {
-    if (this.genAI) return;
-
+  async enableNewProvider(provider?: AIProviderType, apiKey?: string): Promise<void> {
+    if (this.isNewInitialized()) return;
     try {
-      // Appel RPC pour récupérer la clé déchiffrée
-      const { data, error } = await this.supabaseService.supabase.rpc('get_decrypted_active_key');
-
-      if (error || !data) {
-        console.error("Erreur lors de la récupération de la clé API:", error);
-        throw new Error("Impossible de récupérer la clé API active depuis le serveur.");
-      }
-
-      this.genAI = new GoogleGenerativeAI(data);
-      this.model = this.genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      await this.aiConfigService.initialize();
+      const activeProvider = provider || this.aiConfigService.activeProvider as AIProviderType;
+      const key = apiKey || await this.aiConfigService.fetchApiKey();
+      await this.aiService.initialize(activeProvider, key || undefined);
+      this.useNewProvider.set(true);
+      this.isNewInitialized.set(true);
+      console.log(`[GeminiService] Using global AI provider: ${activeProvider}`);
     } catch (e) {
-      console.error("Failed to initialize Gemini Client", e);
-      throw new Error("Service IA non configuré. Veuillez contacter l'administrateur.");
+      console.error('[GeminiService] Failed to enable new provider:', e);
     }
   }
 
@@ -64,7 +62,7 @@ export class GeminiService {
 
 
   async generateReport(context: ContextData, scores: Scores): Promise<any> {
-    await this.ensureClient();
+    await this.enableNewProvider();
     const lang = this.translationService.currentLang();
 
     const prompt = `
@@ -92,11 +90,7 @@ export class GeminiService {
     `;
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      return JSON.parse(this.cleanJson(response.text()));
+      return await this.aiService.generateJSON(prompt);
     } catch (error) {
       console.error('Error generating report:', error);
       throw error;
@@ -105,10 +99,9 @@ export class GeminiService {
 
   async getConciergeResponse(propertyName: string, context: string, question: string): Promise<string> {
     try {
-      await this.ensureClient();
+      await this.enableNewProvider();
       const lang = this.translationService.currentLang();
 
-      // Strict prompt engineering to restrict knowledge to the provided context
       const prompt = `
           Tu es le concierge virtuel IA dédié à la propriété nommée "${propertyName}".
           
@@ -128,16 +121,15 @@ export class GeminiService {
           Question de l'invité : "${question}"
         `;
 
-      const result = await this.model!.generateContent(prompt);
-      const response = await result.response;
-      return response.text();
+      return await this.aiService.generateText(prompt);
     } catch (error) {
+      console.error('[GeminiService] getConciergeResponse failed:', error);
       return "Désolé, je ne peux pas répondre pour le moment (Service IA indisponible).";
     }
   }
 
   async autoFillBooklet(address: string, emptyDataStructure: any): Promise<any> {
-    await this.ensureClient();
+    await this.enableNewProvider();
     const lang = this.translationService.currentLang();
 
     const prompt = `
@@ -166,11 +158,7 @@ export class GeminiService {
       `;
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      return JSON.parse(this.cleanJson(response.text()));
+      return await this.aiService.generateJSON(prompt);
     } catch (error) {
       console.error('Error auto-filling booklet:', error);
       throw error;
@@ -178,7 +166,7 @@ export class GeminiService {
   }
 
   async findEquipmentManuals(equipmentList: string[]): Promise<Record<string, string>> {
-    await this.ensureClient();
+    await this.enableNewProvider();
 
     const prompt = `
         For each appliance description below, find the official user manual PDF URL.
@@ -187,11 +175,7 @@ export class GeminiService {
       `;
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      return JSON.parse(this.cleanJson(response.text()));
+      return await this.aiService.generateJSON(prompt);
     } catch (error) {
       console.error('Error finding manuals:', error);
       return {};
@@ -199,7 +183,7 @@ export class GeminiService {
   }
 
   async generateMarketingDescription(propertyContext: string): Promise<string> {
-    await this.ensureClient();
+    await this.enableNewProvider();
     const lang = this.translationService.currentLang();
 
     const prompt = `
@@ -220,9 +204,7 @@ export class GeminiService {
       `;
 
     try {
-      const result = await this.model!.generateContent(prompt);
-      const response = await result.response;
-      return response.text();
+      return await this.aiService.generateText(prompt);
     } catch (error) {
       console.error('Error generating description:', error);
       return "Erreur lors de la génération de la description.";
@@ -230,7 +212,7 @@ export class GeminiService {
   }
 
   async generateMicrositeDesign(propertyData: any): Promise<any> {
-    await this.ensureClient();
+    await this.enableNewProvider();
 
     const prompt = `
         You are a world-class Web Designer specialized in Hospitality.
@@ -258,11 +240,7 @@ export class GeminiService {
       `;
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      return JSON.parse(this.cleanJson(response.text()));
+      return await this.aiService.generateJSON(prompt);
     } catch (error) {
       console.error('Error generating design:', error);
       throw error;
@@ -270,7 +248,7 @@ export class GeminiService {
   }
 
   async generateOptimizedListing(context: string, photos: { url: string; id: string }[], maxPhotos: number): Promise<{ description: string; selectedPhotoIds: string[] }> {
-    await this.ensureClient();
+    await this.enableNewProvider();
 
     // 1. Prepare Images
     const photosToAnalyze = photos.slice(0, 30);
@@ -336,15 +314,29 @@ export class GeminiService {
     });
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: parts }]
-      });
-      const response = await result.response;
+      // Note: Image analysis not supported in agnostic service - use text-only fallback
+      const prompt = `
+        You are an expert Vacation Rental Copywriter and Photographer.
+        
+        TASK: Write an "Irresistible" Listing Description.
+        - Use the "Selling the Experience" methodology.
+        - Tone: Warm, professional, inviting.
+        - Language: ${this.translationService.currentLang()}.
 
-      const parsed = JSON.parse(this.cleanJson(response.text()));
+        CONTEXT PROPERTY DATA:
+        ${context}
+
+        RESPONSE FORMAT (JSON ONLY):
+        {
+          "description": "Your markdown formatted description...",
+          "selectedPhotoIds": []
+        }
+    `;
+
+      const result = await this.aiService.generateJSON(prompt);
       return {
-        description: parsed.description,
-        selectedPhotoIds: parsed.selectedPhotoIds || []
+        description: result.description || '',
+        selectedPhotoIds: result.selectedPhotoIds || []
       };
     } catch (error) {
       console.error('Error generating optimized listing:', error);
@@ -353,7 +345,7 @@ export class GeminiService {
   }
 
   async generateVisibilityAudit(context: any, language: string): Promise<any> {
-    if (!this.genAI) await this.ensureClient();
+    await this.enableNewProvider();
 
     try {
       const prompt = `You are an expert SEO and Digital Marketing Auditor for Vacation Rentals.
@@ -400,11 +392,7 @@ export class GeminiService {
             }
             Do not include markdown code blocks. Just the JSON string.`;
 
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      return JSON.parse(this.cleanJson(response.text()));
+      return await this.aiService.generateJSON(prompt);
     } catch (error) {
       console.error('Gemini Audit Error:', error);
       // Fallback mock
@@ -428,7 +416,7 @@ export class GeminiService {
   async generateFaqList(propertyName: string, propertyContext: string, address: string): Promise<{ question: string, answer: string }[]> {
     console.log('[GeminiService] generateFaqList called for:', propertyName);
     console.warn('[GeminiService] GENERATING FAQ FOR ADDRESS:', address); // CORRECT PLACEMENT
-    await this.ensureClient();
+    await this.enableNewProvider();
 
     const prompt = `
         You are an expert Host Assistant for a vacation rental.
@@ -455,15 +443,9 @@ export class GeminiService {
 
     try {
       console.log('[GeminiService] Sending prompt to AI...');
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      const text = response.text();
-      console.log('[GeminiService] Raw AI response:', text);
-      const parsed = JSON.parse(this.cleanJson(text));
-      console.log('[GeminiService] Parsed FAQ:', parsed);
-      return parsed;
+      const result = await this.aiService.generateJSON<{ question: string, answer: string }[]>(prompt);
+      console.log('[GeminiService] Parsed FAQ:', result);
+      return result;
     } catch (error: any) {
       console.error('[GeminiService] Error generating FAQ list:', error);
       // Smart Offline Fallback WITH DEBUG INFO
@@ -567,7 +549,54 @@ export class GeminiService {
     monthlySeasonality?: number[];
     monthlyNightlyPrices?: number[];
   }> {
-    await this.ensureClient();
+    await this.enableNewProvider();
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // Look up local market data from our curated market-data.ts
+    // ──────────────────────────────────────────────────────────────────────────
+    const matchedMarket = findClosestMarket(address);
+    let marketContextPrompt = '';
+    let marketADR = 0;       // daily rate in EUR (converted from cents)
+    let marketOccupancy = 0; // occupancy percentage (converted from 0-1)
+    let marketName = '';
+
+    if (matchedMarket) {
+      // baseADR and avgPrice2Bed are stored in cents (e.g., 24500 = €245.00)
+      marketADR = Math.round(matchedMarket.baseADR / 100);
+      marketOccupancy = Math.round(matchedMarket.baseOccupancy * 100);
+      marketName = matchedMarket.marketName;
+      const avgPrice2BedEur = Math.round(matchedMarket.avgPrice2Bed / 100);
+      const touristTaxEur = Math.round(matchedMarket.operationalCosts.avgTouristTax / 100);
+      const mgmtFeePct = Math.round(matchedMarket.operationalCosts.mgmtFeePct * 100);
+      const capitalGrowthPct = (matchedMarket.capitalGrowthEst * 100).toFixed(1);
+      const nightLimitStr = matchedMarket.nightLimit !== null ? String(matchedMarket.nightLimit) : 'None';
+
+      marketContextPrompt = `
+        LOCAL MARKET BENCHMARK DATA (from verified market research for ${marketName}):
+        - Matched Market: ${marketName} (${matchedMarket.country})
+        - Market Type: ${matchedMarket.type}
+        - Average 2-Bedroom Property Price: €${avgPrice2BedEur.toLocaleString()}
+        - Baseline ADR (Average Daily Rate): €${marketADR}
+        - Baseline Occupancy Rate: ${marketOccupancy}%
+        - Annual Capital Growth Estimate: ${capitalGrowthPct}%
+        - Night Limit (regulatory): ${nightLimitStr}
+        - Typical Tourist Tax: €${touristTaxEur}
+        - Typical Management Fee: ${mgmtFeePct}%
+
+        IMPORTANT INSTRUCTIONS FOR USING THIS DATA:
+        1. Use the Baseline ADR (€${marketADR}) as your CENTRAL ANCHOR for the nightly rate.
+        2. The final estimatedNightlyRate should be within ±40% of €${marketADR}
+           (i.e., between €${Math.round(marketADR * 0.6)} and €${Math.round(marketADR * 1.4)})
+           UNLESS the property has exceptional premium features justifying more.
+        3. The final estimatedOccupancy should be within ±15 percentage points of ${marketOccupancy}%
+           (i.e., between ${Math.max(0, marketOccupancy - 15)}% and ${Math.min(100, marketOccupancy + 15)}%).
+        4. Adjust UP for: swimming pool, luxury finishes, sea view, larger size, high-demand sub-location.
+        5. Adjust DOWN for: smaller size, older condition, less desirable sub-area, no amenities.
+        6. Use the Average 2-Bed Property Price (€${avgPrice2BedEur.toLocaleString()}) as a baseline
+           for estimatedPropertyPrice, scaled proportionally by property size and rooms.
+        7. IMPORTANT: This baseline ADR is for a 2-bedroom property. The property being analyzed has ${context?.rooms || 'unknown'} rooms. Scale the nightly rate accordingly — more rooms = higher rate, fewer rooms = lower rate.
+      `;
+    }
 
     const contextPrompt = context ? `
         PROPERTY CHARACTERISTICS:
@@ -583,11 +612,20 @@ export class GeminiService {
 
     const prompt = `
         You are an expert Real Estate Analyst specializing in global short-term rentals.
-        Target Location: \"${address}\"
+        Target Location: "${address}"
         ${contextPrompt}
+        ${marketContextPrompt}
 
         TASK: Estimate detailed market metrics for a property with these characteristics in this specific location.
-        1. Average Nightly Rate (EUR).
+
+        IMPORTANT — PRICING DEFINITION:
+        - "Average Nightly Rate" means the price for the ENTIRE property per night (not per room, not per person).
+        - The LOCAL MARKET BENCHMARK DATA below shows baseline ADR for a 2-bedroom property.
+        - If this property has MORE than 2 rooms, scale the nightly rate UP proportionally.
+        - If this property has FEWER than 2 rooms, scale accordingly.
+        - A 6-bedroom villa should have a significantly higher nightly rate than a 2-bedroom apartment in the same area.
+
+        1. Average Nightly Rate (EUR) — for the ENTIRE property.
         2. Average Occupancy Rate (%).
         3. Typical Concierge Commission (%).
         4. Average Cleaning Fee (EUR, per stay).
@@ -614,33 +652,71 @@ export class GeminiService {
     `;
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      return JSON.parse(this.cleanJson(response.text()));
+      return await this.aiService.generateJSON(prompt);
     } catch (error) {
       console.error('Error getting market analysis:', error);
+
+      // ──────────────────────────────────────────────────────────────────────
+      // Improved fallback using matched market data (if available)
+      // ──────────────────────────────────────────────────────────────────────
+      if (matchedMarket) {
+        // Calculate a reasonable cleaning fee from linen replacement cost
+        const cleaningFeeEst = Math.max(
+          35,
+          Math.round((matchedMarket.operationalCosts.linenReplacementRoom / 100) * 0.4)
+        );
+        const mgmtFeePct = Math.round(matchedMarket.operationalCosts.mgmtFeePct * 100);
+
+        return {
+          estimatedNightlyRate: marketADR,
+          estimatedOccupancy: marketOccupancy,
+          conciergeCommission: mgmtFeePct,
+          cleaningFees: cleaningFeeEst,
+          summary: `Market data for ${marketName} (AI unavailable). Using benchmark: €${marketADR}/night, ${marketOccupancy}% occupancy.`,
+        };
+      }
+
+      // ──────────────────────────────────────────────────────────────────────
+      // Original fallback (unchanged) — used when no market was matched
+      // ──────────────────────────────────────────────────────────────────────
       return {
         estimatedNightlyRate: 100,
         estimatedOccupancy: 65,
         conciergeCommission: 20,
         cleaningFees: 50,
-        summary: "Analysis unavailable (Service Error)."
+        summary: "Analysis unavailable (Service Error).",
       };
     }
   }
 
-  async generateText(prompt: string): Promise<string> {
-    await this.ensureClient();
-    try {
-      const result = await this.model!.generateContent(prompt);
-      const response = await result.response;
-      return response.text();
-    } catch (error) {
-      console.error('Error generating text:', error);
-      throw error;
+  async generateText(prompt: string, retries = 3): Promise<string> {
+    await this.enableNewProvider();
+    const startTime = Date.now();
+    this.loggingService.logUserEvent('AI generateText called', { promptLength: prompt.length });
+    
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const result = await this.aiService.generateText(prompt);
+        this.loggingService.logAiPrompt('gemini', 'default', prompt, 'success', Date.now() - startTime);
+        return result;
+      } catch (error: any) {
+        const is503 = error?.message?.includes('503') || error?.status === 503;
+        const isRateLimit = error?.message?.includes('429');
+        
+        if ((is503 || isRateLimit) && attempt < retries) {
+          const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+          console.warn(`[AI] ${is503 ? 'Server busy' : 'Rate limited'}, retrying in ${delay}ms (attempt ${attempt}/${retries})...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+        
+        console.error('Error generating text:', error);
+        this.loggingService.logAiPrompt('gemini', 'default', prompt, 'error', Date.now() - startTime, { error: String(error) });
+        throw error;
+      }
     }
+    
+    throw new Error('AI Service unavailable after multiple attempts');
   }
   async auditRenovationQuote(roomType: string, area: number, amount: number, finishLevel: string): Promise<{
     isReasonable: boolean;
@@ -649,7 +725,7 @@ export class GeminiService {
     observations: string;
     tips: string[];
   }> {
-    await this.ensureClient();
+    await this.enableNewProvider();
     const lang = this.translationService.currentLang();
 
     const prompt = `
@@ -678,11 +754,7 @@ export class GeminiService {
     `;
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      return JSON.parse(this.cleanJson(response.text()));
+      return await this.aiService.generateJSON(prompt);
     } catch (error) {
       console.error('Error auditing renovation quote:', error);
       return {
@@ -716,7 +788,7 @@ export class GeminiService {
       marketTrends?: string;
     };
   }> {
-    await this.ensureClient();
+    await this.enableNewProvider();
     const lang = this.translationService.currentLang();
 
     const totalBudget = rooms.reduce((sum, r) => sum + r.budget_estimate, 0);
@@ -791,13 +863,24 @@ export class GeminiService {
     `;
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      const analysis = JSON.parse(this.cleanJson(response.text()));
+      const analysis = await this.aiService.generateJSON<{
+        overallScore: number;
+        budgetVsQuotes: {
+          totalBudget: number;
+          totalQuotes: number;
+          variance: number;
+          variancePercent: number;
+        };
+        recommendations: string[];
+        risks: string[];
+        opportunities: string[];
+        propertyInsights?: {
+          location?: string;
+          estimatedValue?: number;
+          marketTrends?: string;
+        };
+      }>(prompt);
 
-      // Ensure budgetVsQuotes has correct calculated values
       analysis.budgetVsQuotes = {
         totalBudget,
         totalQuotes,
@@ -842,22 +925,27 @@ export class GeminiService {
   }
 
 
-  async checkCompliance(address: string, city: string): Promise<{
+  async checkCompliance(address: string, city: string, rentalMode?: string): Promise<{
     riskScore: number;
     riskLevel: string;
     riskStatus: string;
     description: string;
     recommendations: string[];
   }> {
-    await this.ensureClient();
+    await this.enableNewProvider();
     const lang = this.translationService.currentLang();
+
+    const rentalContext = rentalMode && rentalMode !== 'entire_place'
+      ? `\n        - Rental Type: ${rentalMode === 'private_rooms' ? 'Private Rooms only (not entire place)' : 'Both entire place and individual rooms'}
+        IMPORTANT: Room-by-room rentals may face different regulations than whole-property rentals in this jurisdiction. Consider both scenarios in your analysis.`
+      : '';
 
     const prompt = `
         You are a Legal Compliance Expert specialized in Short-Term Rental (STR) regulations and municipal zoning.
         
         TASK: Analyze the compliance risk for a potential Airbnb at the following location.
         - Address: ${address}
-        - City: ${city}
+        - City: ${city}${rentalContext}
 
         INSTRUCTIONS:
         1. Research or use your knowledge about STR laws in this city (e.g., Paris, Barcelona, London, NYC, etc.).
@@ -878,25 +966,15 @@ export class GeminiService {
     `;
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      return JSON.parse(this.cleanJson(response.text()));
+      return await this.aiService.generateJSON(prompt);
     } catch (error) {
       console.error('Error checking compliance:', error);
-      return {
-        riskScore: 50,
-        riskLevel: 'Moderate Risk',
-        riskStatus: 'Unknown',
-        description: 'Unable to perform real-time scan. Please check local municipal website.',
-        recommendations: ['Check for registration requirements', 'Verify tax obligations', 'Consult a legal expert']
-      };
+      throw new Error('Compliance check failed. Please try again later.');
     }
   }
 
   async generateTaxBriefing(hostCountry: string, propertyCountry: string): Promise<string> {
-    await this.ensureClient();
+    await this.enableNewProvider();
     const lang = this.translationService.currentLang();
 
     const prompt = `
@@ -916,9 +994,7 @@ export class GeminiService {
     `;
 
     try {
-      const result = await this.model!.generateContent(prompt);
-      const response = await result.response;
-      return response.text();
+      return await this.aiService.generateText(prompt);
     } catch (error) {
       console.error('Error generating tax briefing:', error);
       return "Tax briefing unavailable at the moment.";
@@ -926,7 +1002,7 @@ export class GeminiService {
   }
 
   async generateFinalRoiReport(data: any): Promise<any> {
-    await this.ensureClient();
+    await this.enableNewProvider();
     const lang = this.translationService.currentLang();
 
     const prompt = `
@@ -950,14 +1026,9 @@ export class GeminiService {
     `;
 
     try {
-      const result = await this.model!.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-      });
-      const response = await result.response;
-      return JSON.parse(this.cleanJson(response.text()));
+      return await this.aiService.generateJSON(prompt);
     } catch (error) {
       console.error('Error generating ROI report (Using Fallback):', error);
-      // Fallback Mock Data for Development/Quota Exceeded
       return {
         global_score: 85,
         risk_level: 'Low',

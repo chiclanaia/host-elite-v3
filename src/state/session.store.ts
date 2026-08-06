@@ -5,6 +5,7 @@ import { GeminiService } from '../services/gemini.service';
 import { HostRepository } from '../services/host-repository.service';
 import { SupabaseService } from '../services/supabase.service';
 import { TranslationService } from '../services/translation.service';
+import { LoggingService } from '../services/logging.service';
 
 export type AppStep = 'landing' | 'onboarding_context' | 'evaluation' | 'loading' | 'results' | 'dashboard';
 
@@ -16,7 +17,8 @@ export class SessionStore {
     private geminiService = inject(GeminiService);
     private repository = inject(HostRepository);
     private supabaseService = inject(SupabaseService);
-    private translationService = inject(TranslationService); // NEW
+    private translationService = inject(TranslationService);
+    private loggingService = inject(LoggingService);
 
     // ... (rest of store)
 
@@ -287,6 +289,9 @@ export class SessionStore {
             if (msg.includes("Email not confirmed")) {
                 msg = "Email non confirmé. Si vous venez de vous inscrire, vérifiez vos spams ou demandez à l'admin de désactiver la confirmation obligatoire.";
             }
+            if (msg.includes("Invalid login credentials")) {
+                msg = "Email ou mot de passe incorrect";
+            }
             this.error.set(msg);
         } finally {
             this.isLoading.set(false);
@@ -297,28 +302,25 @@ export class SessionStore {
     async register(email: string, password: string, fullName: string): Promise<boolean> {
         this.isLoading.set(true);
         this.error.set(null);
+        this.loggingService.logUserEvent('User registration attempt', { email: email.substring(0, 5) + '***' });
         try {
-            // L'inscription crée l'utilisateur dans auth.users
             const { user, session, error } = await this.supabaseService.signUp(email, password, fullName);
             if (error) throw error;
 
             if (user) {
-                // Si une session existe (email confirmation désactivé), on essaie de finaliser
                 if (session) {
                     try {
-                        // On tente de créer le profil, mais on n'échoue pas si ça plante (car le Trigger SQL peut l'avoir déjà fait)
                         await this.repository.createProfile(user.id, email, fullName);
                     } catch (dbError: any) {
-                        // On ignore l'erreur RLS (42501) ou Duplicate Key (23505) ici.
-                        // Cela signifie généralement que le Trigger a déjà fait le travail ou que la sécurité bloque l'écriture manuelle.
                         console.log("Info: Tentative de création de profil ignorée (gérée par Trigger ou déjà existant).", dbError.message);
                     }
 
                     await this.processAuthenticatedUser(user);
+                    this.loggingService.logUserEvent('User registered', { userId: user.id });
                     return true;
                 } else {
-                    // Pas de session => Confirmation Email requise
                     this.error.set("Compte créé ! Veuillez vérifier vos emails pour activer le compte.");
+                    this.loggingService.logUserEvent('Registration pending email confirmation', { userId: user.id });
                     return false;
                 }
             }
@@ -332,6 +334,7 @@ export class SessionStore {
             }
 
             this.error.set(msg);
+            this.loggingService.logUserEvent('Registration failed', { error: msg });
         } finally {
             this.isLoading.set(false);
         }
@@ -412,7 +415,7 @@ export class SessionStore {
 
     private setUserFromSupabase(user: any, profile: UserProfile | null = null) {
         const role = profile?.role || user.app_metadata?.role || 'user';
-        const lang = profile?.language || 'fr'; // Default to FR
+        const lang = profile?.language || 'en';
 
         this.userProfile.set({
             id: user.id,
@@ -452,6 +455,7 @@ export class SessionStore {
     setContext(data: ContextData): void {
         this.contextData.set(data);
         this.currentStep.set('evaluation');
+        this.loggingService.logUserEvent('Context submitted, moving to evaluation');
     }
 
     async submitEvaluation(scores: Scores): Promise<void> {
@@ -459,41 +463,40 @@ export class SessionStore {
         this.currentStep.set('loading');
         this.error.set(null);
         this.isLoading.set(true);
+        this.loggingService.logUserEvent('Evaluation started', { scores: Object.keys(scores) });
 
         try {
             const context = this.contextData();
             if (!context) throw new Error("Missing context data");
 
-            // 1. Call AI Logic
+            const startTime = Date.now();
             const report = await this.geminiService.generateReport(context, scores);
             this.reportData.set(report);
+            this.loggingService.logAiPrompt('gemini', 'default', 'generateReport', 'success', Date.now() - startTime);
 
-            // 2. Persist Data via Repository
-            await this.repository.saveDiagnosticResult(context, scores, report);
-
-            // 3. Update profile Plan recommendation locally
-            if (this.userProfile()) {
+            const profile = this.userProfile();
+            if (profile?.id) {
+                await this.repository.saveDiagnosticResult(context, scores, report);
                 this.userProfile.update(u => u ? { ...u, plan: report.recommendedPlan } : null);
             }
 
             this.currentStep.set('results');
+            this.loggingService.logUserEvent('Evaluation completed, showing results');
         } catch (err: any) {
             console.error("Evaluation Error:", err);
 
-            // Safe error extraction
             let msg = 'Une erreur inconnue est survenue.';
             if (err instanceof Error) {
                 msg = err.message;
             } else if (typeof err === 'object' && err !== null) {
-                // Supabase sometimes returns an error object with message or details
                 msg = err.message || err.details || JSON.stringify(err);
             } else if (typeof err === 'string') {
                 msg = err;
             }
 
             this.error.set(msg);
-            // Stay on evaluation step to allow retry
             this.currentStep.set('evaluation');
+            this.loggingService.logSystem('Evaluation failed: ' + msg, 'ERROR', { error: msg });
         } finally {
             this.isLoading.set(false);
         }
@@ -501,18 +504,21 @@ export class SessionStore {
 
     enterDashboard(): void {
         this.currentStep.set('dashboard');
+        this.loggingService.logUserEvent('Entered dashboard');
     }
 
     async resetSession(): Promise<void> {
+        const userId = this.userProfile()?.id;
         await this.supabaseService.signOut();
         this.contextData.set(null);
         this.scores.set(null);
         this.reportData.set(null);
         this.userProfile.set(null);
-        this.userFeatures.set([]); // Reset features
+        this.userFeatures.set([]);
         this.error.set(null);
         this.showEmailWarning.set(false);
         this.currentStep.set('landing');
+        this.loggingService.logUserEvent('User logged out', { userId });
     }
 
     // Debug Helper

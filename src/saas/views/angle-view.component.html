@@ -184,7 +184,7 @@
 
 } @else {
 <!-- Active Tool View (Preserved) -->
-<div class="animate-fade-in-up">
+<div class="animate-fade-in-up h-full flex flex-col">
     @if (activeFeatureComponent(); as ComponentClass) {
     <div class="h-full relative z-10 p-6 flex flex-col">
         <button (click)="closeTool()" class="mb-4 self-start text-sm text-slate-400 hover:text-white flex items-center"
@@ -207,14 +207,18 @@
     } @else if (activeToolId() === 'listing-optimization') {
     <mkt-00-listing-audit class="h-full block"></mkt-00-listing-audit>
     } @else if (activeToolId() === 'microsite') {
-    <app-microsite-container [propertyName]="view().propertyName!" (close)="closeTool()">
-    </app-microsite-container>
+    <app-microsite-editor-wrapper [propertyName]="view().propertyName!" (close)="closeTool()">
+    </app-microsite-editor-wrapper>
     } @else if (activeToolId() === 'ai-prompts') {
     <app-ai-prompts [propertyName]="view().propertyName!" (close)="closeTool()"></app-ai-prompts>
     } @else if (activeToolId() === 'visibility-audit') {
     <app-visibility-audit [propertyName]="view().propertyName!" (close)="closeTool()"></app-visibility-audit>
     } @else if (activeToolId() === 'listing-editor') {
-    <app-listing-editor [propertyName]="view().propertyName!" (close)="closeTool()"></app-listing-editor>
+    <app-listing-editor-wrapper [propertyName]="view().propertyName!" (close)="closeTool()"></app-listing-editor-wrapper>
+    } @else if (activeToolId() === 'craftjs-editor') {
+    <app-craftjs-editor class="h-full block" [propertyName]="view().propertyName!" (close)="closeTool()"></app-craftjs-editor>
+    } @else if (activeToolId() === 'website-builder') {
+    <app-property-website-builder-wrapper [propertyName]="view().propertyName!" (close)="closeTool()"></app-property-website-builder-wrapper>
     } @else if (activeToolId() === 'listing-optimization') {
     <mkt-00-listing-audit class="h-full block"></mkt-00-listing-audit>
     } @else if (activeToolId() === 'booklet') {
